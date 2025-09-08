@@ -23,10 +23,6 @@ env/
 db.sqlite3
 media/
 static/
-.env
-
-#Pip dependencies
-requirements.txt
 
 
 #Node.js / React
