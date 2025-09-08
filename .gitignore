@@ -25,10 +25,6 @@ media/
 static/
 .env
 
-#Pip dependencies
-requirements.txt
-
-
 #Node.js / React
 
 #Dependencies
