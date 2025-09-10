@@ -1,38 +1,28 @@
-# Please Update the contents of this file.
-
-#General ignores
-
-#Sensitive environment variables
+# General ignores
 .env
 .DS_Store
 Thumbs.db
 
-
-#Python / Django
-
-Byte-code files
-pycache/
+# Python / Django
+__pycache__/
 *.py[cod]
 
-#Virtual environment
+# Virtual environment
 myenv/
 venv/
 env/
 
-#Django-specific files
+# Django-specific files
 db.sqlite3
 media/
 static/
 
-
-#Node.js / React
-
-#Dependencies
+# Node.js / React
 /frontend/node_modules/
 /frontend/dist/
 /frontend/build/
 
-#Log files
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
