@@ -37,11 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', # Add this to enable Django REST Framework
+    'corsheaders', # Add this to handle Cross-Origin Resource Sharing
+    'appraisals',
+    'employees',
+    'users',
+    'notifications',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Add this middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -49,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'performance_appraisal_backend.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'performance_appraisal_backend.wsgi.application'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database
@@ -124,3 +131,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django REST Framework settings
+# http://www.django-rest-framework.org/api-guide/settings/
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
+
+# CORS settings for allowing your React frontend to connect
+# https://pypi.org/project/django-cors-headers/
+CORS_ALLOWED_ORIGINS = [
+    # Add your React frontend's URL here in production.
+    # For development, you can use:
+    "http://localhost:3000",
+]
