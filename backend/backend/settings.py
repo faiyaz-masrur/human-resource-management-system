@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'appraisals',
     'employees',
     'users',
-    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -85,16 +84,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'performance_appraisal'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': '3306',
-
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'performance-appraisal', 
+        'USER': 'postgres', # name of the database user
+        'PASSWORD': 'root', # database password
+        'HOST': 'localhost', # Or the IP address of your database server
+        'PORT': '5432', # The default PostgreSQL port
     }
 }
+
 
 
 # Password validation

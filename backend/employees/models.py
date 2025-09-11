@@ -1,12 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
-# A custom user model is a common practice for Django apps.
-# For this example, we will extend the built-in User model.
 class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
+    """
+    Model for an employee in the system.
+    
+    This model is linked to the custom user model defined in settings.AUTH_USER_MODEL.
+    """
+    # The OneToOneField now correctly references the custom user model.
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employee')
     employee_id = models.CharField(max_length=50, unique=True, help_text="A unique ID for the employee.")
     employee_name = models.CharField(max_length=255)
     designation = models.CharField(max_length=100)
