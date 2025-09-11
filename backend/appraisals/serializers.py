@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     EmployeeAppraisal,
     AttendanceSummary,
-    SalaryRecommendation,
+    SalaryVariance,
     ReportingManagerReview,
     HRReview,
     FinalReview
@@ -20,7 +20,7 @@ class AttendanceSummarySerializer(serializers.ModelSerializer):
 
 class SalaryRecommendationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SalaryRecommendation
+        model = SalaryVariance
         fields = '__all__'
 
 class ReportingManagerReviewSerializer(serializers.ModelSerializer):
