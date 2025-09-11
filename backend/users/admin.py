@@ -29,3 +29,4 @@ admin.site.site_title = "Performance Appraisal System Admin Portal"
 admin.site.index_title = "Performance Appraisal System Admin Portal"
 
 admin.site.register(User, CustomUserAdmin)
+
