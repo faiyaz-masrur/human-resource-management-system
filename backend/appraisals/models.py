@@ -1,4 +1,5 @@
 from django.db import models
+
 from employees.models import Employee
 
 class EmployeeAppraisal(models.Model):
@@ -200,3 +201,4 @@ class FinalReview(models.Model):
     
     def __str__(self):
         return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.employee_name}"
+
