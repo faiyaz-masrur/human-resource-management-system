@@ -57,17 +57,48 @@ class AttendanceSummary(models.Model):
     def __str__(self):
         return f"Attendance for {self.employee.employee_name}"
 
-class SalaryRecommendation(models.Model):
+class SalaryVariance(models.Model):
     """
     Model for salary and promotion recommendations, used in the HR review.
     """
     recommendation_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='salary_recommendations')
-    current_basic = models.DecimalField(max_digits=10, decimal_places=2)
-    current_gross = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Use DecimalField for financial calculations to avoid floating point inaccuracies
+    current_basic = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    current_gross = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # Recommendation status
+    PROMOTION_INCREMENT = 'Promotion with Increment'
+    PROMOTION_PP_ONLY = 'Promotion with PP only'
+    INCREMENT_NO_PROMO = 'Increment without Promotion'
+    PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
+    DEFERRED = 'Promotion/Increment/PP Deferred'
+    RECOMMENDATION_CHOICES = [
+        (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
+        (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
+        (INCREMENT_NO_PROMO, 'Increment Recommended without Promotion'),
+        (PAY_PROGRESSION_ONLY, 'Only Pay Progression (PP) Recommended'),
+        (DEFERRED, 'Promotion/Increment/PP Deferred'),
+    ]
+    
+    recommendation = models.CharField(max_length=100, choices=RECOMMENDATION_CHOICES, blank=True)
+    
+    def save(self, *args, **kwargs):
+        # Calculation should be done here before saving the model instance
+        if self.current_basic is not None:
+            self.current_gross = self.current_basic / 0.55
+        
+        if self.proposed_basic is not None:
+            self.proposed_gross = self.proposed_basic / 0.55
+            
+        if self.proposed_gross is not None and self.current_gross is not None:
+            self.gross_difference = self.proposed_gross - self.current_gross
+            
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"Salary Recommendation for {self.employee.employee_name}"
@@ -120,7 +151,7 @@ class HRReview(models.Model):
     reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='hr_appraisals')
     remarks = models.TextField(max_length=1000, null=True, blank=True)
     attendance_summary = models.ForeignKey(AttendanceSummary, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
-    salary_recommendation = models.OneToOneField(SalaryRecommendation, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
+    salary_recommendation = models.OneToOneField(SalaryVariance, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
     
     # Decisions as per data field document
     promotion_recommended_with_increment = models.BooleanField(default=False)
@@ -143,6 +174,20 @@ class FinalReview(models.Model):
         ('coo', 'COO'),
         ('ceo', 'CEO'),
     ]
+    
+    
+    PROMOTION_INCREMENT = 'Promotion with Increment'
+    PROMOTION_PP_ONLY = 'Promotion with PP only'
+    INCREMENT_NO_PROMO = 'Increment without Promotion'
+    PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
+    DEFERRED = 'Promotion/Increment/PP Deferred'
+    RECOMMENDATION_CHOICES = [
+    (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
+    (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
+    (INCREMENT_NO_PROMO, 'Increment Recommended without Promotion'),
+    (PAY_PROGRESSION_ONLY, 'Only Pay Progression (PP) Recommended'),
+    (DEFERRED, 'Promotion/Increment/PP Deferred'),
+]
 
     appraisal = models.ForeignKey(EmployeeAppraisal, on_delete=models.PROTECT, related_name='final_reviews')
     reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='final_review_appraisals')
@@ -151,11 +196,7 @@ class FinalReview(models.Model):
     decision_remarks = models.TextField(max_length=500, null=True, blank=True)
     
     # Decisions as per data field document
-    promotion_recommended_with_increment = models.BooleanField(default=False)
-    promotion_recommended_with_pp = models.BooleanField(default=False)
-    increment_recommended = models.BooleanField(default=False)
-    pay_progression_recommended = models.BooleanField(default=False)
-    promotion_increment_pp_deferred = models.BooleanField(default=False)
+    decision = models.CharField(max_length=100, choices=RECOMMENDATION_CHOICES, blank=True)
     
     def __str__(self):
         return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.employee_name}"
