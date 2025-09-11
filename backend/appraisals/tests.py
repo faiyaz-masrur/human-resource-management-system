@@ -1,4 +1,5 @@
 from django.test import TestCase
+
 from django.urls import reverse
 from employees.models import Employee # Assuming a related Employee model
 
@@ -68,3 +69,4 @@ class AttendanceSummaryModelTest(TestCase):
         summary.save()
         summary.calculate_and_rate_attendance(total_working_days)
         self.assertEqual(summary.attendance_rating, 'Very Good')
+

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework', # Add this to enable Django REST Framework
     'corsheaders', # Add this to handle Cross-Origin Resource Sharing
     'appraisals',
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     'corsheaders.middleware.CorsMiddleware', # Add this middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,12 +85,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'performance-appraisal', 
-        'USER': 'postgres', # name of the database user
-        'PASSWORD': 'root', # database password
-        'HOST': 'localhost', # Or the IP address of your database server
-        'PORT': '5432', # The default PostgreSQL port
+
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'performance_appraisal'),
+        'USER': os.environ.get('DB_USER', 'root'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': '3306',
+
     }
 }
 
@@ -132,6 +138,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'users.User'
+
 # Django REST Framework settings
 # http://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
@@ -147,3 +155,4 @@ CORS_ALLOWED_ORIGINS = [
     # For development, you can use:
     "http://localhost:3000",
 ]
+
