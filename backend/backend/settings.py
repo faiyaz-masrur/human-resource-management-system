@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework', # Add this to enable Django REST Framework
-    'corsheaders', # Add this to handle Cross-Origin Resource Sharing
+    'rest_framework', # Django REST Framework
+    'corsheaders', # Handle Cross-Origin Resource Sharing
     'appraisals',
     'employees',
     'users',
@@ -143,6 +143,7 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        
     ]
 }
 

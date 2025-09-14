@@ -4,3 +4,5 @@ psycopg2-binary
 djangorestframework
 django-cors-headers
 Pillow
+markdown # Markdown support for the browsable API.
+django-filter  # Filtering support
