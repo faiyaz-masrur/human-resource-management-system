@@ -2,15 +2,34 @@ from django.db import models
 
 from employees.models import Employee
 
+class AppraisalTimer(models.Model):
+    """
+    Model to define a specific review period for appraisals.
+    This allows a single period to be referenced by multiple employee appraisals.
+    """
+    
+    class Meta:
+        verbose_name_plural = "Appraisal Timer"
+    
+    review_period_start = models.DateField()
+    review_period_end = models.DateField()
+
+    def __str__(self):
+        return f"Appraisal Period: {self.review_period_start} to {self.review_period_end}"
+
 class EmployeeAppraisal(models.Model):
     """
     Appraisal form filled out by the employee.
     
+    The review period is now linked to the AppraisalTimer model.
     """
     appraisal_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='self_appraisals')
-    review_period_start = models.DateField()
-    review_period_end = models.DateField()
+    
+    # Link to the new AppraisalTimer model to get the start and end dates
+    appraisal_period = models.ForeignKey(AppraisalTimer, on_delete=models.PROTECT, related_name='appraisals')
+    appraisal_date = models.DateField(auto_now_add=True)
+    
     achievements = models.TextField(max_length=1000)
     strengths = models.TextField(max_length=1000)
     improvements = models.TextField(max_length=1000)
@@ -23,8 +42,9 @@ class EmployeeAppraisal(models.Model):
     
     is_review_period_active = models.BooleanField(default=True)
     
+       
     def __str__(self):
-        return f"Self-Appraisal for {self.employee.employee_name} ({self.review_period_start} - {self.review_period_end})"
+        return f"Self-Appraisal for {self.employee.employee_name} ({self.appraisal_period.review_period_start} - {self.appraisal_period.review_period_end})"
 
 class AttendanceSummary(models.Model):
     """
@@ -201,4 +221,3 @@ class FinalReview(models.Model):
     
     def __str__(self):
         return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.employee_name}"
-

@@ -110,6 +110,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 # Registering the models separately with fieldsets
 
+'''
 @admin.register(WorkExperience)
 class WorkExperienceAdmin(admin.ModelAdmin):
     list_display = ('employee', 'organization', 'designation', 'start_date', 'end_date')
@@ -172,3 +173,4 @@ class ProfessionalCertificateAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return True
+'''
