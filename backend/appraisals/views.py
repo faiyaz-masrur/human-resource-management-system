@@ -5,9 +5,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-# Import the custom permissions from the users app
-from .permissions import IsReportingManager, IsHR, IsFinalReviewer
-
 from .models import (
     EmployeeAppraisal, 
     ReportingManagerReview, 
@@ -48,7 +45,7 @@ class ReportingManagerReviewAPIView(APIView):
     """
     API view to handle the Reporting Manager's review.
     """
-    permission_classes = [IsAuthenticated, IsReportingManager]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, appraisal_id):
         """
@@ -74,7 +71,7 @@ class HRReviewAPIView(APIView):
     """
     API view to handle the HR review.
     """
-    permission_classes = [IsAuthenticated, IsHR]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, appraisal_id):
         """
@@ -100,7 +97,7 @@ class FinalReviewAPIView(APIView):
     """
     API view to handle the final review.
     """
-    permission_classes = [IsAuthenticated, IsFinalReviewer]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, appraisal_id):
         """
