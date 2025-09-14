@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class UsersConfig(AppConfig):
+class SystemConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'users'
+    name = 'system'
+    verbose_name = "System Management"
