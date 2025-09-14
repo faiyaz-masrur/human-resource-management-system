@@ -6,7 +6,6 @@ from system.models import User, Department, Designation, Grade, SubGrade
 # A custom user model is a common practice for Django apps.
 # For this example, we will extend the built-in User model.
 class Employee(User):
-    employee_id = models.CharField(max_length=50, unique=True, help_text="A unique ID for the employee.")
     employee_name = models.CharField(max_length=255)
     department = models.ForeignKey(
         Department,
@@ -80,4 +79,4 @@ class ProfessionalCertificate(models.Model):
     certificate_file = models.FileField(upload_to='professional_certificates/', null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.certificate_name
