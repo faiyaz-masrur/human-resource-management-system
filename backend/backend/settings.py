@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 import os
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework', # Add this to enable Django REST Framework
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist', 
     'corsheaders', # Add this to handle Cross-Origin Resource Sharing
+    'system',
     'appraisals',
     'employees',
-    'users',
     'notifications',
 ]
 
@@ -133,16 +135,23 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'system.User'
 
 # Django REST Framework settings
 # http://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ]
@@ -156,3 +165,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+SIMPLE_JWT = {
+    # This is the inactivity timeout. It will be reset on each refresh.
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    # This is the absolute maximum lifetime of the session.
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    
+    # This makes the refresh token single-use, which is more secure.
+    'ROTATE_REFRESH_TOKENS': True,
+    # This adds the old refresh token to a blacklist after it's used.
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
