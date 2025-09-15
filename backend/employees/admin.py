@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Employee, WorkExperience, Education, ProfessionalCertificate
+from django.contrib.auth.admin import UserAdmin
 
 # Inline classes to allow editing related models within the Employee admin page
 
@@ -18,11 +19,37 @@ class ProfessionalCertificateInline(admin.StackedInline):
 # Main admin class for the Employee model
 
 @admin.register(Employee)
-class EmployeeAdmin(admin.ModelAdmin):
-    # ... (existing EmployeeAdmin configuration) ...
+class EmployeeAdmin(UserAdmin):
+    model = Employee
     list_display = ('email', 'employee_id', 'employee_name', 'designation', 'department', 'reporting_manager')
     list_filter = ('department', 'grade', 'reviewed_by_rm', 'reviewed_by_hr', 'reviewed_by_hod')
     search_fields = ('employee_name', 'designation', 'department')
+    add_fieldsets = (
+        ('System Information', {
+            'fields': ('email', 'password1', 'password2')
+        }),
+        ('Employee Information', {
+            'fields': ('employee_id', 'employee_name')
+        }),
+        ('Dependent and Designation', {
+            'fields': ('department', 'designation')
+        }),
+        ('Grade and Financial Information', {
+            'fields': ('grade', 'basic_salary')
+        }),
+        ('Important Dates', {
+            'fields': ('joining_date',)
+        }),
+        ('Permissions', {
+            'fields': ('is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo', 'is_staff', 'is_superuser', 'is_active'),
+        }),
+        ('Review Status', {
+            'fields': ('reviewed_by_rm', 'reviewed_by_hr', 'reviewed_by_hod', 'reviewed_by_coo', 'reviewed_by_ceo')
+        }),
+        ('Reporting to', {
+            'fields': ('reporting_manager',)
+        })
+    )
     fieldsets = (
         ('System Information', {
             'fields': ('email', 'password')
@@ -72,7 +99,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         if obj is None:
             return (
                 ('System Information', {
-                    'fields': ('email', 'password')
+                    'fields': ('email', 'password1', 'password2')
                 }),
                 ('Employee Information', {
                     'fields': ('employee_id', 'employee_name')

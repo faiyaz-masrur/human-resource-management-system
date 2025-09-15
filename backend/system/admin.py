@@ -84,6 +84,5 @@ admin.site.site_header = "Performance Appraisal System Admin Portal"
 admin.site.site_title = "Performance Appraisal System Admin Portal"
 admin.site.index_title = "Performance Appraisal System Admin Portal"
 
-admin.site.register(User, CustomUserAdmin)
 admin.site.unregister(Group)
 

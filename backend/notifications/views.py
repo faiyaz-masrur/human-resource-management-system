@@ -1,3 +1,12 @@
-from django.shortcuts import render
+# notifications/views.py
+from rest_framework import generics, permissions
+from .models import Notification
+from .serializers import NotificationSerializer
 
-# Create your views here.
+class NotificationListView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Fetch notifications only for the logged-in employee
+        return Notification.objects.filter(employee=self.request.user).order_by('-created_at')
