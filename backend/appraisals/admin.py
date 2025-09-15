@@ -3,7 +3,7 @@ from .models import AppraisalTimer
 
 @admin.register(AppraisalTimer)
 class AppraisalTimerAdmin(admin.ModelAdmin):
-    list_display = ('review_period_start', 'review_period_end')
+    list_display = ('review_period_start', 'review_period_end', 'remind_date')
 
     def has_add_permission(self, request):
         """

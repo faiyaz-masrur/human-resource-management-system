@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta, date
 
 from employees.models import Employee
 
@@ -13,6 +14,29 @@ class AppraisalTimer(models.Model):
     
     review_period_start = models.DateField()
     review_period_end = models.DateField()
+    remind_date = models.DateField(null=True, blank=True) 
+    
+    def save(self, *args, **kwargs):
+        """
+        The dates are not automatically updated here to prevent them
+        from changing on every save. This will be handled by a scheduled task.
+        """
+        if self.review_period_end and not self.remind_date:
+            calculated_remind_date = self.review_period_end - timedelta(days=7)
+            self.remind_date = date(calculated_remind_date.year, calculated_remind_date.month, calculated_remind_date.day)
+        
+        print("Start Date: ", self.review_period_start)
+        print("End Date: ", self.review_period_end)
+        print("Reminder Time: ", self.remind_date)
+            
+        super().save(*args, **kwargs)
+    
+    def is_active_period(self):
+        """
+        Checks if today's date falls within the defined appraisal review period.
+        """
+        today = date.today()
+        return self.review_period_start <= today <= self.review_period_end
 
     def __str__(self):
         return f"Appraisal Period: {self.review_period_start} to {self.review_period_end}"
@@ -26,9 +50,7 @@ class EmployeeAppraisal(models.Model):
     appraisal_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='self_appraisals')
     
-    # Link to the new AppraisalTimer model to get the start and end dates
-    appraisal_period = models.ForeignKey(AppraisalTimer, on_delete=models.PROTECT, related_name='appraisals')
-    appraisal_date = models.DateField(auto_now_add=True)
+    appraisal_submitted_date = models.DateField(auto_now_add=True)
     
     achievements = models.TextField(max_length=1000)
     strengths = models.TextField(max_length=1000)
@@ -42,7 +64,7 @@ class EmployeeAppraisal(models.Model):
     
     is_review_period_active = models.BooleanField(default=True)
     
-       
+        
     def __str__(self):
         return f"Self-Appraisal for {self.employee.employee_name} ({self.appraisal_period.review_period_start} - {self.appraisal_period.review_period_end})"
 
@@ -202,6 +224,7 @@ class FinalReview(models.Model):
     INCREMENT_NO_PROMO = 'Increment without Promotion'
     PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
     DEFERRED = 'Promotion/Increment/PP Deferred'
+    
     RECOMMENDATION_CHOICES = [
     (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
     (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
