@@ -1,22 +1,90 @@
 from django.db import models
+from datetime import timedelta, date
 
 from employees.models import Employee
 
-class AppraisalTimer(models.Model):
+from django.db import models
+from datetime import date
+
+
+class EmployeeAppraisalTimer(models.Model):
     """
-    Model to define a specific review period for appraisals.
-    This allows a single period to be referenced by multiple employee appraisals.
+    Timer for Employee self-appraisal submission.
+    Defines the allowed period for employees to submit their appraisal.
     """
-    
-    class Meta:
-        verbose_name_plural = "Appraisal Timer"
-    
-    review_period_start = models.DateField()
-    review_period_end = models.DateField()
+
+    employee_appraisal_start = models.DateField(null=True, blank=True)
+    employee_appraisal_end = models.DateField(null=True, blank=True)
+    employee_appraisal_remind = models.DateField(null=True, blank=True)
+
+    def is_active_period(self):
+        """Check if today's date falls within the employee appraisal period."""
+        today = date.today()
+        return (
+            self.employee_appraisal_start is not None
+            and self.employee_appraisal_end is not None
+            and self.employee_appraisal_start <= today <= self.employee_appraisal_end
+        )
 
     def __str__(self):
-        return f"Appraisal Period: {self.review_period_start} to {self.review_period_end}"
+        return f"Employee Appraisal Period: {self.employee_appraisal_start} to {self.employee_appraisal_end}"
 
+    class Meta:
+        verbose_name_plural = "Employee Appraisal Timer"
+        
+class ReportingManagerAppraisalTimer(models.Model):
+    """
+    Timer for Reporting Manager review period.
+    Defines the review timeframe for managers to evaluate employee appraisals.
+    """
+
+    reporting_manager_review_start = models.DateField(null=True, blank=True)
+    reporting_manager_review_end = models.DateField(null=True, blank=True)
+    reporting_manager_review_remind = models.DateField(null=True, blank=True)
+
+    def is_active_period(self):
+        """Check if today's date falls within the reporting manager review period."""
+        today = date.today()
+        return (
+            self.reporting_manager_review_start is not None
+            and self.reporting_manager_review_end is not None
+            and self.reporting_manager_review_remind <= today <= self.reporting_manager_review_end
+        )
+
+    def __str__(self):
+        return f"Manager Review Period: {self.reporting_manager_review_start} to {self.reporting_manager_review_end}"
+
+    class Meta:
+        verbose_name_plural = "Reporting Manager Appraisal Timer"
+        
+        
+
+class ReviewerAppraisalTimer(models.Model):
+    """
+    Timer for Reviewer (HR/HOD/COO/CEO) appraisal review period.
+    Defines the timeframe for higher-level reviewers to complete their evaluations.
+    """
+
+    reviewer_period_start = models.DateField(null=True, blank=True)
+    reviewer_period_end = models.DateField(null=True, blank=True)
+    reviewer_period_remind = models.DateField(null=True, blank=True)
+
+    def is_active_period(self):
+        """Check if today's date falls within the reviewer appraisal period."""
+        today = date.today()
+        return (
+            self.reviewer_period_start is not None
+            and self.reviewer_period_end is not None
+            and self.reviewer_period_start <= today <= self.reviewer_period_end
+        )
+
+    def __str__(self):
+        return f"Reviewer Appraisal Period: {self.reviewer_period_start} to {self.reviewer_period_end}"
+
+    class Meta:
+        verbose_name_plural = "Reviewer Appraisal Timer"
+
+        
 class EmployeeAppraisal(models.Model):
     """
     Appraisal form filled out by the employee.
@@ -26,9 +94,7 @@ class EmployeeAppraisal(models.Model):
     appraisal_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='self_appraisals')
     
-    # Link to the new AppraisalTimer model to get the start and end dates
-    appraisal_period = models.ForeignKey(AppraisalTimer, on_delete=models.PROTECT, related_name='appraisals')
-    appraisal_date = models.DateField(auto_now_add=True)
+    appraisal_submitted_date = models.DateField(auto_now_add=True)
     
     achievements = models.TextField(max_length=1000)
     strengths = models.TextField(max_length=1000)
@@ -42,7 +108,7 @@ class EmployeeAppraisal(models.Model):
     
     is_review_period_active = models.BooleanField(default=True)
     
-       
+        
     def __str__(self):
         return f"Self-Appraisal for {self.employee.employee_name} ({self.appraisal_period.review_period_start} - {self.appraisal_period.review_period_end})"
 
@@ -202,6 +268,7 @@ class FinalReview(models.Model):
     INCREMENT_NO_PROMO = 'Increment without Promotion'
     PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
     DEFERRED = 'Promotion/Increment/PP Deferred'
+    
     RECOMMENDATION_CHOICES = [
     (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
     (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
