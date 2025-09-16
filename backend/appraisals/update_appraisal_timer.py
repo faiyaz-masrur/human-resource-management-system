@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING("⚠ Employee Appraisal Timer has no start/end date set."))
 
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"❌ Error updating Employee Appraisal Timer: {e}"))
+            self.stdout.write(self.style.ERROR(f" Error updating Employee Appraisal Timer: {e}"))
             logger.error(f"Error updating Employee Appraisal Timer: {e}", exc_info=True)
 
         # ---------------- Reporting Manager Appraisal Timer ----------------
@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 manager_timer.save()
 
                 self.stdout.write(self.style.SUCCESS(
-                    f"✅ Reporting Manager Timer updated: "
+                    f" Reporting Manager Timer updated: "
                     f"{manager_timer.reporting_manager_review_start} to {manager_timer.reporting_manager_review_end}, "
                     f"Reminder: {manager_timer.reporting_manager_review_remind}"
                 ))
@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING("⚠ Reporting Manager Timer has no start/end date set."))
 
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"❌ Error updating Reporting Manager Appraisal Timer: {e}"))
+            self.stdout.write(self.style.ERROR(f" Error updating Reporting Manager Appraisal Timer: {e}"))
             logger.error(f"Error updating Reporting Manager Appraisal Timer: {e}", exc_info=True)
 
         # ---------------- Reviewer Appraisal Timer ----------------
@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 reviewer_timer.save()
 
                 self.stdout.write(self.style.SUCCESS(
-                    f"✅ Reviewer Timer updated: "
+                    f" Reviewer Timer updated: "
                     f"{reviewer_timer.reviewer_period_start} to {reviewer_timer.reviewer_period_end}, "
                     f"Reminder: {reviewer_timer.reviewer_period_remind}"
                 ))
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING("⚠ Reviewer Timer has no start/end date set."))
 
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"❌ Error updating Reviewer Appraisal Timer: {e}"))
+            self.stdout.write(self.style.ERROR(f" Error updating Reviewer Appraisal Timer: {e}"))
             logger.error(f"Error updating Reviewer Appraisal Timer: {e}", exc_info=True)
 
-        self.stdout.write(self.style.SUCCESS("🎯 Yearly update completed for all timers."))
+        self.stdout.write(self.style.SUCCESS(" Yearly update completed for all timers."))
