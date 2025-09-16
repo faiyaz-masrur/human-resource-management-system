@@ -1,14 +1,14 @@
 from django.contrib import admin
-from .models import EmployeeAppraisalTimer, ReportingManagerAppraisalTimer, ReviewerAppraisalTimer
+from .models import EmployeeAppraisalTimer, ReportingManagerAppraisalTimer, FinalReviewerAppraisalTimer
 
 
 @admin.register(EmployeeAppraisalTimer)
 class EmployeeAppraisalTimerAdmin(admin.ModelAdmin):
-    list_display = ('employee_appraisal_start', 'employee_appraisal_end', 'employee_appraisal_remind')
+    list_display = ('employee_self_appraisal_start', 'employee_self_appraisal_end', 'employee_self_appraisal_remind')
 
     def has_add_permission(self, request):
         """
-        Allows adding a new object only if no AppraisalTimer instance exists yet.
+        Allows adding a new object only if no EmployeeAppraisalTimer instance exists yet.
         This enforces the "only one active" appraisal period.
         """
         return EmployeeAppraisalTimer.objects.count() == 0
@@ -37,18 +37,18 @@ class ReportingManagerAppraisalTimerAdmin(admin.ModelAdmin):
         return ReportingManagerAppraisalTimer.objects.count() > 1
 
 
-@admin.register(ReviewerAppraisalTimer)
-class ReviewerAppraisalTimerAdmin(admin.ModelAdmin):
-    list_display = ('reviewer_period_start', 'reviewer_period_end', 'reviewer_period_remind')
+@admin.register(FinalReviewerAppraisalTimer)
+class FinalReviewerAppraisalTimerAdmin(admin.ModelAdmin):
+    list_display = ('final_review_start', 'final_review_end', 'final_review_remind')
 
     def has_add_permission(self, request):
         """
-        Allows adding a new object only if no ReviewerAppraisalTimer exists yet.
+        Allows adding a new object only if no FinalReviewerAppraisalTimer exists yet.
         """
-        return ReviewerAppraisalTimer.objects.count() == 0
+        return FinalReviewerAppraisalTimer.objects.count() == 0
 
     def has_delete_permission(self, request, obj=None):
         """
         Prevents deleting the last remaining instance.
         """
-        return ReviewerAppraisalTimer.objects.count() > 1
+        return FinalReviewerAppraisalTimer.objects.count() > 1

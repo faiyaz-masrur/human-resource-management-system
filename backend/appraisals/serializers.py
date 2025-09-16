@@ -3,20 +3,23 @@ from .models import (
     EmployeeAppraisal,
     EmployeeAppraisalTimer,
     ReportingManagerAppraisalTimer,
-    ReviewerAppraisalTimer,
+    FinalReviewerAppraisalTimer,
     AttendanceSummary,
     SalaryVariance,
     ReportingManagerReview,
     HRReview,
-    FinalReview
+    FinalReview,
+    EmployeeAppraisalTrack,
+    ReportingManagerAppraisalTrack,
 )
+
 
 # --- Timer Serializers ---
 
 class EmployeeAppraisalTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAppraisalTimer
-        fields = ['employee_appraisal_start', 'employee_appraisal_end', 'employee_appraisal_remind']
+        fields = ['employee_self_appraisal_start', 'employee_self_appraisal_end', 'employee_self_appraisal_remind']
 
 
 class ReportingManagerAppraisalTimerSerializer(serializers.ModelSerializer):
@@ -25,21 +28,19 @@ class ReportingManagerAppraisalTimerSerializer(serializers.ModelSerializer):
         fields = ['reporting_manager_review_start', 'reporting_manager_review_end', 'reporting_manager_review_remind']
 
 
-class ReviewerAppraisalTimerSerializer(serializers.ModelSerializer):
+class FinalReviewerAppraisalTimerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ReviewerAppraisalTimer
-        fields = ['reviewer_period_start', 'reviewer_period_end', 'reviewer_period_remind']
+        model = FinalReviewerAppraisalTimer
+        fields = ['final_review_start', 'final_review_end', 'final_review_remind']
 
 
 # --- Main Appraisal / Review Serializers ---
 
 class EmployeeAppraisalSerializer(serializers.ModelSerializer):
-    appraisal_period = EmployeeAppraisalTimerSerializer(read_only=True)
-
     class Meta:
         model = EmployeeAppraisal
         fields = '__all__'
-        read_only_fields = ['appraisal_submitted_date', 'appraisal_period']
+        read_only_fields = ['submission_date']
 
 
 class AttendanceSummarySerializer(serializers.ModelSerializer):
@@ -48,7 +49,7 @@ class AttendanceSummarySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SalaryRecommendationSerializer(serializers.ModelSerializer):
+class SalaryVarianceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalaryVariance
         fields = '__all__'
@@ -58,18 +59,34 @@ class ReportingManagerReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportingManagerReview
         fields = '__all__'
+        read_only_fields = ['submission_date']
 
 
 class HRReviewSerializer(serializers.ModelSerializer):
-    attendance_summary = AttendanceSummarySerializer(read_only=True)
-    salary_recommendation = SalaryRecommendationSerializer(read_only=True)
-
     class Meta:
         model = HRReview
         fields = '__all__'
+        read_only_fields = ['submission_date']
 
 
 class FinalReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalReview
         fields = '__all__'
+        read_only_fields = ['submission_date']
+
+
+# --- Tracking Serializers ---
+
+class EmployeeAppraisalTrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeAppraisalTrack
+        fields = '__all__'
+        read_only_fields = ['last_updated']
+
+
+class ReportingManagerAppraisalTrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportingManagerAppraisalTrack
+        fields = '__all__'
+        read_only_fields = ['updated_at']

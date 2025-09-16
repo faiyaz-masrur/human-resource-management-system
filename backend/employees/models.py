@@ -1,11 +1,10 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from system.models import User, Department, Designation, Grade, SubGrade
 
-
-# A custom user model is a common practice for Django apps.
-# For this example, we will extend the built-in User model.
+# -----------------------------
+# Employee Model
+# -----------------------------
 class Employee(User):
     employee_name = models.CharField(max_length=255)
     employee_id = models.CharField(max_length=4, validators=[MinLengthValidator(4)], unique=True)
@@ -29,12 +28,16 @@ class Employee(User):
         related_name="subgrade"
     )
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Link to Reporting Manager
     reporting_manager = models.ForeignKey(
-        'self', 
+        'ReportingManager',
         on_delete=models.SET_NULL,
-        null=True, blank=True, 
-        related_name='managed_employees'
+        null=True,
+        blank=True,
+        related_name='team_members'
     )
+
     responsibilities = models.TextField(blank=True)
     reviewed_by_rm = models.BooleanField(default=False)
     reviewed_by_hr = models.BooleanField(default=False)
@@ -47,11 +50,28 @@ class Employee(User):
 
     def __str__(self):
         return self.employee_name
-    
+
     class Meta:
         verbose_name = "Employee"
         verbose_name_plural = "Employees"
 
+# -----------------------------
+# Reporting Manager Model
+# -----------------------------
+class ReportingManager(models.Model):
+    manager = models.OneToOneField(
+        Employee,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='as_manager'
+    )
+
+    def __str__(self):
+        return f"{self.manager.employee_name} ({self.manager.employee_id})"
+
+# -----------------------------
+# Work Experience Model
+# -----------------------------
 class WorkExperience(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='work_experiences')
     organization = models.CharField(max_length=255)
@@ -62,6 +82,9 @@ class WorkExperience(models.Model):
     def __str__(self):
         return f"{self.designation} at {self.organization}"
 
+# -----------------------------
+# Education Model
+# -----------------------------
 class Education(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='education')
     degree = models.CharField(max_length=100)
@@ -72,6 +95,9 @@ class Education(models.Model):
     def __str__(self):
         return f"{self.degree} from {self.institution}"
 
+# -----------------------------
+# Professional Certificate Model
+# -----------------------------
 class ProfessionalCertificate(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='professional_certificates')
     certificate_name = models.CharField(max_length=255)
