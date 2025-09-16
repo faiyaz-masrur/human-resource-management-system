@@ -6,7 +6,7 @@ from .managers import CustomUserManager
 
 # Create your models here.
 class User(AbstractUser):
-    id = id = models.UUIDField(
+    id = models.UUIDField(
         primary_key=True, 
         default=uuid.uuid4, 
         editable=False, 
@@ -63,7 +63,7 @@ class Designation(models.Model):
         verbose_name_plural = "Designations"
 
     def __str__(self):
-        return f"{self.name} ({self.department.name})"
+        return f"{self.name}"
 
 
 class Grade(models.Model):
