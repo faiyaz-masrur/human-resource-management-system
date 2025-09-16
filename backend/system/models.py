@@ -14,13 +14,27 @@ class User(AbstractUser):
     )
     username = None
     email = models.EmailField(_('email address'), unique=True)
-    
-    
 
     # Remove first_name and last_name fields
     first_name = None
     last_name = None
     date_joined = None
+    employee_name = None
+    employee_id = None
+    department = None
+    designation = None
+    joining_date = None
+    grade = None
+    basic_salary = None
+    reporting_manager = None
+    responsibilities = None
+    reviewed_by_rm = None
+    reviewed_by_hr = None
+    reviewed_by_hod = None
+    reviewed_by_coo = None
+    reviewed_by_ceo = None
+    signature = None
+    image = None
 
     is_rm = models.BooleanField(default=False)
     is_hr = models.BooleanField(default=False)
