@@ -31,8 +31,7 @@ class EmployeeAppraisalTimer(models.Model):
 
     class Meta:
         verbose_name_plural = "Employee Appraisal Timer"
-        verbose_name_plural = "Employee Appraisal Timers"
-
+        
 class ReportingManagerAppraisalTimer(models.Model):
     """
     Timer for Reporting Manager review period.

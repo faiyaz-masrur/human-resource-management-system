@@ -7,7 +7,6 @@ from rest_framework.generics import ListAPIView
 from system.permissions import IsEmployee, IsRM, IsHR, IsHOD, IsCOO, IsCEO
 
 from .models import (
-    AppraisalTimer,
     EmployeeAppraisal,
     ReportingManagerReview, 
     HRReview, 
