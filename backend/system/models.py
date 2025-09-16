@@ -5,22 +5,36 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 class User(AbstractUser):
-    """
-    Custom user model using UUID as PK and email as unique identifier.
-    Compatible with Django admin and sessions.
-    """
-    id = models.UUIDField(
+    id = id = models.UUIDField(
         primary_key=True, 
         default=uuid.uuid4, 
         editable=False
     )
     username = None
     email = models.EmailField(_('email address'), unique=True)
-
     
+    
+
+    # Remove first_name and last_name fields
     first_name = None
     last_name = None
     date_joined = None
+    employee_name = None
+    employee_id = None
+    department = None
+    designation = None
+    joining_date = None
+    grade = None
+    basic_salary = None
+    reporting_manager = None
+    responsibilities = None
+    reviewed_by_rm = None
+    reviewed_by_hr = None
+    reviewed_by_hod = None
+    reviewed_by_coo = None
+    reviewed_by_ceo = None
+    signature = None
+    image = None
 
     # Roles
     is_rm = models.BooleanField(default=False)
@@ -65,7 +79,7 @@ class Designation(models.Model):
         verbose_name_plural = "Designations"
 
     def __str__(self):
-        return f"{self.name} ({self.department.name})"
+        return f"{self.name}"
 
 
 class Grade(models.Model):

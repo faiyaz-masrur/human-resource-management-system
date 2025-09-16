@@ -3,92 +3,73 @@ from .models import Employee, WorkExperience, Education, ProfessionalCertificate
 
 
 class WorkExperienceSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the WorkExperience model.
-    """
     class Meta:
         model = WorkExperience
-        fields =  '__all__'
-
+        fields = ["id", "organization", "designation", "start_date", "end_date"]
 
 
 class EducationSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Education model.
-    """
     class Meta:
         model = Education
-        fields =  '__all__'
-
+        fields = ["id", "degree", "institution", "year", "certificate_file"]
 
 
 class ProfessionalCertificateSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the ProfessionalCertificate model.
-    """
     class Meta:
         model = ProfessionalCertificate
-        fields =  '__all__'
+        fields = ["id", "certificate_name", "credential_id", "institution", "issue_date", "certificate_file"]
 
 
-
-class EmployeeProfileSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Employee model, focusing on fields an employee can edit.
-    It includes nested serializers for work experience, education, and certificates.
-    """
+class EmployeeSerializer(serializers.ModelSerializer):
     work_experiences = WorkExperienceSerializer(many=True, required=False)
     education = EducationSerializer(many=True, required=False)
     professional_certificates = ProfessionalCertificateSerializer(many=True, required=False)
-    
-    # These fields are read-only as they are set by HR/Admins
-    email = serializers.EmailField(read_only=True)
-    employee_id = serializers.CharField(read_only=True)
-    department = serializers.CharField(source='department.department_name', read_only=True)
-    designation = serializers.CharField(source='designation.designation_name', read_only=True)
-    joining_date = serializers.DateField(read_only=True)
-    grade = serializers.CharField(source='grade.sub_grade_name', read_only=True)
-    basic_salary = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    reporting_manager = serializers.CharField(source='reporting_manager.employee_name', read_only=True)
-    employee_name = serializers.CharField(read_only=True)
+    department = serializers.CharField(source='department.name', allow_null=True)
+    designation = serializers.CharField(source='designation.name', allow_null=True)
+    grade = serializers.CharField(source='grade.name', allow_null=True)
+    reporting_manager = serializers.CharField(source='reporting_manager.employee_name', allow_null=True)
 
 
     class Meta:
-        model = Employee
+        model = Employee 
         fields = [
-            'id', 'employee_name', 'email', 'employee_id', 'department', 'designation', 
-            'joining_date', 'grade', 'basic_salary', 'reporting_manager', 
-            'responsibilities', 'signature', 'image',
-            'work_experiences', 'education', 'professional_certificates'
+            "id","employee_id", "employee_name", "department", "designation",
+            "joining_date", "grade", "reporting_manager",
+            "responsibilities", "work_experiences", "education", "professional_certificates",
+            "signature", "image"
         ]
-        read_only_fields = ['id']
+        read_only_fields = [
+            "id","employee_id", "employee_name", "department", "designation",
+            "joining_date", "grade", "reporting_manager"
+        ]
 
     def update(self, instance, validated_data):
-        """
-        Custom update method to handle nested updates for related models.
-        It deletes existing related objects and creates new ones.
-        """
-        # Handle nested data for Work Experience
-        work_experiences_data = validated_data.pop('work_experiences', [])
-        instance.work_experiences.all().delete()
-        for exp_data in work_experiences_data:
-            WorkExperience.objects.create(employee=instance, **exp_data)
+        # Extract nested relations
+        work_experiences = validated_data.pop("work_experiences", None)
+        educations = validated_data.pop("education", None)
+        certificates = validated_data.pop("professional_certificates", None)
 
-        # Handle nested data for Education
-        education_data = validated_data.pop('education', [])
-        instance.education.all().delete()
-        for edu_data in education_data:
-            Education.objects.create(employee=instance, **edu_data)
-
-        # Handle nested data for Professional Certificates
-        professional_certificates_data = validated_data.pop('professional_certificates', [])
-        instance.professional_certificates.all().delete()
-        for cert_data in professional_certificates_data:
-            ProfessionalCertificate.objects.create(employee=instance, **cert_data)
-
-        # Update and save the Employee instance
+        # Update allowed fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
+
+        # Update work experiences
+        if work_experiences is not None:
+            instance.work_experiences.all().delete()
+            for exp in work_experiences:
+                WorkExperience.objects.create(employee=instance, **exp)
+
+        # Update education
+        if educations is not None:
+            instance.education.all().delete()
+            for edu in educations:
+                Education.objects.create(employee=instance, **edu)
+
+        # Update certificates
+        if certificates is not None:
+            instance.professional_certificates.all().delete()
+            for cert in certificates:
+                ProfessionalCertificate.objects.create(employee=instance, **cert)
 
         return instance

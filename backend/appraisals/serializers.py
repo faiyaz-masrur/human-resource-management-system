@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from .models import (
-    EmployeeAppraisal,
     EmployeeAppraisalTimer,
     ReportingManagerAppraisalTimer,
     FinalReviewerAppraisalTimer,
+    EmployeeAppraisal,
+    ReportingManagerReview,
     AttendanceSummary,
     SalaryVariance,
-    ReportingManagerReview,
     HRReview,
     FinalReview,
     EmployeeAppraisalTrack,

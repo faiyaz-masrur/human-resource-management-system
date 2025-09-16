@@ -150,7 +150,7 @@ class EmployeeAdmin(UserAdmin):
                 from_email = settings.EMAIL_HOST_USER
                 recipient_list = [obj.email]
             
-                send_mail(subject, message, from_email, recipient_list, fail_silently=False)  
+                send_mail(subject, message, from_email, recipient_list, fail_silently=True)  
         super().save_model(request, obj, form, change)
 
 '''
