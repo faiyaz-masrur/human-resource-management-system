@@ -1,14 +1,20 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinLengthValidator
 from .managers import CustomUserManager
 
 # Create your models here.
 class User(AbstractUser):
+    id = id = models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False, 
+        unique=True
+    )
     username = None
-    email = models.EmailField(_('email address'), primary_key=True)
-    employee_id = models.CharField(max_length=4, validators=[MinLengthValidator(4)], unique=True)
+    email = models.EmailField(_('email address'), unique=True)
+    
     
 
     # Remove first_name and last_name fields

@@ -5,7 +5,7 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['employee_id', 'email', 'is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo']
+        fields = ['id', 'email', 'is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo']
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

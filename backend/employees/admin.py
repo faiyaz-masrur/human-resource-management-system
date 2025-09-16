@@ -1,8 +1,9 @@
 from django.contrib import admin
 from .models import Employee, WorkExperience, Education, ProfessionalCertificate
 from django.contrib.auth.admin import UserAdmin
-
-# Inline classes to allow editing related models within the Employee admin page
+from .forms import EmployeeCreationForm
+from django.conf import settings
+from django.core.mail import send_mail
 
 class WorkExperienceInline(admin.StackedInline):
     model = WorkExperience
@@ -20,13 +21,14 @@ class ProfessionalCertificateInline(admin.StackedInline):
 
 @admin.register(Employee)
 class EmployeeAdmin(UserAdmin):
+    add_form = EmployeeCreationForm
     model = Employee
     list_display = ('email', 'employee_id', 'employee_name', 'designation', 'department', 'reporting_manager')
     list_filter = ('department', 'grade', 'reviewed_by_rm', 'reviewed_by_hr', 'reviewed_by_hod')
     search_fields = ('employee_name', 'designation', 'department')
     add_fieldsets = (
         ('System Information', {
-            'fields': ('email', 'password1', 'password2')
+            'fields': ('email',)
         }),
         ('Employee Information', {
             'fields': ('employee_id', 'employee_name')
@@ -99,7 +101,7 @@ class EmployeeAdmin(UserAdmin):
         if obj is None:
             return (
                 ('System Information', {
-                    'fields': ('email', 'password1', 'password2')
+                    'fields': ('email',)
                 }),
                 ('Employee Information', {
                     'fields': ('employee_id', 'employee_name')
@@ -134,8 +136,21 @@ class EmployeeAdmin(UserAdmin):
         if obj is None:
             return []
         return super().get_inline_instances(request, obj)
-
-# Registering the models separately with fieldsets
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Auto-generate password for new employees and send it via email.
+        """
+        if not change: 
+            raw_password = getattr(obj, "_raw_password", None)
+            if raw_password:
+                subject = 'Your Hr Orbit Employee Account Created'
+                message = f'Hello {obj.employee_name},\n\nYour employee account has been created.\n\nEmail: {obj.email}\nPassword: {raw_password}\n\nPlease change your password after logging in.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [obj.email]
+            
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)  
+        super().save_model(request, obj, form, change)
 
 '''
 @admin.register(WorkExperience)

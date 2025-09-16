@@ -3,19 +3,20 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from .models import User, Department, Designation, Grade, SubGrade
 
+@admin.register(User)
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ('email', 'employee_id', 'is_staff', 'is_superuser', 'is_active')
-    list_display_links = ('email', 'employee_id')
-    list_filter = ('employee_id', 'is_staff', 'is_superuser', 'is_active')
+    list_display = ('email', 'id', 'is_staff', 'is_superuser', 'is_active')
+    list_display_links = ('email', 'id')
+    list_filter = ('id', 'is_staff', 'is_superuser', 'is_active')
     fieldsets = (
-        (None, {'fields': ('employee_id', 'email', 'password')}),
+        (None, {'fields': ('id', 'email', 'password')}),
         ('Permissions', {
             'fields': ('is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo', 'is_staff', 'is_superuser', 'is_active'),
         }),
         ('Dates', {'fields': ('last_login',)}),
     )
-    search_fields = ('email', 'employee_id')
+    search_fields = ('email', 'id')
     ordering = ('email',)
 
     def has_add_permission(self, request):

@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinLengthValidator
 from system.models import User, Department, Designation, Grade, SubGrade
 
 
@@ -7,6 +8,7 @@ from system.models import User, Department, Designation, Grade, SubGrade
 # For this example, we will extend the built-in User model.
 class Employee(User):
     employee_name = models.CharField(max_length=255)
+    employee_id = models.CharField(max_length=4, validators=[MinLengthValidator(4)], unique=True)
     department = models.ForeignKey(
         Department,
         on_delete=models.SET_NULL,
