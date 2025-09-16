@@ -15,7 +15,7 @@ from .models import (
     FinalReview,
     EmployeeAppraisalTimer,
     ReportingManagerAppraisalTimer,
-    ReviewerAppraisalTimer,
+    FinalReviewerAppraisalTimer,
 )
 from .serializers import (
     EmployeeAppraisalSerializer,
@@ -45,7 +45,7 @@ class EmployeeSelfAppraisalAPIView(APIView):
         appraisal_timer = EmployeeAppraisalTimer.objects.first()
         if not appraisal_timer or not appraisal_timer.is_active_period():
             return Response(
-                {'error': 'The appraisal period is not currently active.'},
+                {'error': 'The employee self-appraisal period is not currently active.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -53,8 +53,7 @@ class EmployeeSelfAppraisalAPIView(APIView):
         if serializer.is_valid():
             with transaction.atomic():
                 serializer.save(
-                    employee=request.user.employee_profile,
-                    appraisal_period=appraisal_timer
+                    employee=request.user.employee_profile
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -70,10 +69,9 @@ class ManagerAppraisalListAPIView(ListAPIView):
                 return EmployeeAppraisal.objects.none()
 
             manager_profile = self.request.user.employee_profile
-            # Filter self-appraisals submitted within the manager review period
             return EmployeeAppraisal.objects.filter(
                 employee__reporting_manager=manager_profile,
-                appraisal_submitted_date__range=(timer.reporting_manager_review_start, timer.reporting_manager_review_end)
+                submission_date__range=(timer.reporting_manager_review_start, timer.reporting_manager_review_end)
             )
         except AttributeError:
             return EmployeeAppraisal.objects.none()
@@ -92,11 +90,11 @@ class ReportingManagerReviewAPIView(APIView):
 
         try:
             appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
-            manager_review, created = ReportingManagerReview.objects.get_or_create(
-                appraisal=appraisal,
-                defaults={'reviewer': request.user.employee_profile}
+            rm_review, created = ReportingManagerReview.objects.get_or_create(
+                employee_appraisal=appraisal,
+                reporting_manager=request.user.employee_profile
             )
-            serializer = ReportingManagerReviewSerializer(instance=manager_review, data=request.data)
+            serializer = ReportingManagerReviewSerializer(instance=rm_review, data=request.data)
 
             if serializer.is_valid():
                 with transaction.atomic():
@@ -112,7 +110,7 @@ class HRReviewAPIView(APIView):
     permission_classes = [IsHR]
 
     def post(self, request, appraisal_id):
-        timer = ReviewerAppraisalTimer.objects.first()
+        timer = FinalReviewerAppraisalTimer.objects.first()
         if not timer or not timer.is_active_period():
             return Response(
                 {'error': 'The HR review period is not currently active.'},
@@ -122,8 +120,8 @@ class HRReviewAPIView(APIView):
         try:
             appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
             hr_review, created = HRReview.objects.get_or_create(
-                appraisal=appraisal,
-                defaults={'reviewer': request.user.employee_profile}
+                employee_appraisal=appraisal,
+                hr_reviewer=request.user.employee_profile
             )
             serializer = HRReviewSerializer(instance=hr_review, data=request.data)
 
@@ -141,7 +139,7 @@ class FinalReviewAPIView(APIView):
     permission_classes = [IsHODCOOCEO]
 
     def post(self, request, appraisal_id):
-        timer = ReviewerAppraisalTimer.objects.first()
+        timer = FinalReviewerAppraisalTimer.objects.first()
         if not timer or not timer.is_active_period():
             return Response(
                 {'error': 'The final review period is not currently active.'},
@@ -151,18 +149,14 @@ class FinalReviewAPIView(APIView):
         try:
             appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
             final_review_instance, created = FinalReview.objects.get_or_create(
-                appraisal=appraisal,
+                employee_appraisal=appraisal,
                 reviewer=request.user.employee_profile
             )
             serializer = FinalReviewSerializer(instance=final_review_instance, data=request.data)
 
             if serializer.is_valid():
                 with transaction.atomic():
-                    serializer.save(
-                        appraisal=appraisal,
-                        reviewer=request.user.employee_profile,
-                        reviewer_role=request.user.role
-                    )
+                    serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

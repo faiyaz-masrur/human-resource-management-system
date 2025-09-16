@@ -1,90 +1,85 @@
 from django.db import models
-from datetime import timedelta, date
-
+from datetime import date
 from employees.models import Employee
 
-from django.db import models
-from datetime import date
 
+# -------------------------
+# Timer Models
+# -------------------------
 
 class EmployeeAppraisalTimer(models.Model):
     """
-    Timer for Employee self-appraisal submission.
-    Defines the allowed period for employees to submit their appraisal.
+    Defines the period for Employee self-appraisal submission.
     """
+    employee_self_appraisal_start = models.DateField(null=True, blank=True)
+    employee_self_appraisal_end = models.DateField(null=True, blank=True)
+    employee_self_appraisal_remind = models.DateField(null=True, blank=True)
 
-    employee_appraisal_start = models.DateField(null=True, blank=True)
-    employee_appraisal_end = models.DateField(null=True, blank=True)
-    employee_appraisal_remind = models.DateField(null=True, blank=True)
+    class Meta:
+        verbose_name_plural = "1. Employee Appraisal Timers"
 
     def is_active_period(self):
-        """Check if today's date falls within the employee appraisal period."""
         today = date.today()
         return (
-            self.employee_appraisal_start is not None
-            and self.employee_appraisal_end is not None
-            and self.employee_appraisal_start <= today <= self.employee_appraisal_end
+            self.employee_self_appraisal_start is not None
+            and self.employee_self_appraisal_end is not None
+            and self.employee_self_appraisal_start <= today <= self.employee_self_appraisal_end
         )
 
     def __str__(self):
-        return f"Employee Appraisal Period: {self.employee_appraisal_start} to {self.employee_appraisal_end}"
+        return f"Employee Appraisal Timer ({self.employee_self_appraisal_start} - {self.employee_self_appraisal_end})"
 
-    class Meta:
-        verbose_name_plural = "Employee Appraisal Timer"
-        
+
 class ReportingManagerAppraisalTimer(models.Model):
     """
-    Timer for Reporting Manager review period.
-    Defines the review timeframe for managers to evaluate employee appraisals.
+    Defines the period for Reporting Manager reviews.
     """
-
     reporting_manager_review_start = models.DateField(null=True, blank=True)
     reporting_manager_review_end = models.DateField(null=True, blank=True)
     reporting_manager_review_remind = models.DateField(null=True, blank=True)
 
+    class Meta:
+        verbose_name_plural = "2. Reporting Manager Appraisal Timers"
+
     def is_active_period(self):
-        """Check if today's date falls within the reporting manager review period."""
         today = date.today()
         return (
             self.reporting_manager_review_start is not None
             and self.reporting_manager_review_end is not None
-            and self.reporting_manager_review_remind <= today <= self.reporting_manager_review_end
+            and self.reporting_manager_review_start <= today <= self.reporting_manager_review_end
         )
 
     def __str__(self):
-        return f"Manager Review Period: {self.reporting_manager_review_start} to {self.reporting_manager_review_end}"
+        return f"RM Appraisal Timer ({self.reporting_manager_review_start} - {self.reporting_manager_review_end})"
+
+
+class FinalReviewerAppraisalTimer(models.Model):
+    """
+    Defines the period for higher-level reviewers (HOD, COO, CEO, HR).
+    """
+    final_review_start = models.DateField(null=True, blank=True)
+    final_review_end = models.DateField(null=True, blank=True)
+    final_review_remind = models.DateField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "Reporting Manager Appraisal Timer"
-        
-        
-
-class ReviewerAppraisalTimer(models.Model):
-    """
-    Timer for Reviewer (HR/HOD/COO/CEO) appraisal review period.
-    Defines the timeframe for higher-level reviewers to complete their evaluations.
-    """
-
-    reviewer_period_start = models.DateField(null=True, blank=True)
-    reviewer_period_end = models.DateField(null=True, blank=True)
-    reviewer_period_remind = models.DateField(null=True, blank=True)
+        verbose_name_plural = "3. Final Reviewer Appraisal Timers"
 
     def is_active_period(self):
-        """Check if today's date falls within the reviewer appraisal period."""
         today = date.today()
         return (
-            self.reviewer_period_start is not None
-            and self.reviewer_period_end is not None
-            and self.reviewer_period_start <= today <= self.reviewer_period_end
+            self.final_review_start is not None
+            and self.final_review_end is not None
+            and self.final_review_start <= today <= self.final_review_end
         )
 
     def __str__(self):
-        return f"Reviewer Appraisal Period: {self.reviewer_period_start} to {self.reviewer_period_end}"
+        return f"Reviewer Appraisal Timer ({self.final_review_start} - {self.final_review_end})"
 
-    class Meta:
-        verbose_name_plural = "Reviewer Appraisal Timer"
 
-        
+# -------------------------
+# Self Appraisal & Supporting Models
+# -------------------------
+
 class EmployeeAppraisal(models.Model):
     """
     Appraisal form filled out by the employee.
@@ -288,3 +283,62 @@ class FinalReview(models.Model):
     
     def __str__(self):
         return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.employee_name}"
+
+
+# -------------------------
+# Tracking Models
+# -------------------------
+
+class EmployeeAppraisalTrack(models.Model):
+    """
+    Tracks appraisal progress for each employee.
+    """
+    STATUS_CHOICES = [
+        ('self', 'Self-Appraisal Submitted'),
+        ('rm', 'Reporting Manager Reviewed'),
+        ('hr', 'HR Reviewed'),
+        ('hod', 'HOD Reviewed'),
+        ('coo', 'COO Reviewed'),
+        ('ceo', 'CEO Reviewed'),
+        ('completed', 'Process Completed'),
+    ]
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_track')
+    appraisal_cycle = models.ForeignKey(EmployeeAppraisalTimer, on_delete=models.CASCADE, related_name='employee_tracks')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='self')
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Appraisal Track - {self.employee} ({self.status})"
+
+
+class ReportingManagerAppraisalTrack(models.Model):
+    """
+    Tracks overall review progress of a Reporting Manager across supervisees.
+    """
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('submitted', 'All Reviews Submitted'),
+    ]
+    reporting_manager = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='manager_appraisal_tracks')
+    appraisal_cycle = models.ForeignKey(ReportingManagerAppraisalTimer, on_delete=models.CASCADE, related_name='manager_tracks')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_started')
+    progress_count = models.IntegerField(default=0)
+    total_count = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('reporting_manager', 'appraisal_cycle')
+        ordering = ['-updated_at']
+
+    def update_status(self):
+        if self.progress_count == 0:
+            self.status = 'not_started'
+        elif 0 < self.progress_count < self.total_count:
+            self.status = 'in_progress'
+        elif self.progress_count >= self.total_count:
+            self.status = 'submitted'
+        self.save()
+
+    def __str__(self):
+        return f"RM Track - {self.reporting_manager} ({self.status}, {self.progress_count}/{self.total_count})"

@@ -137,6 +137,7 @@ class EmployeeAdmin(UserAdmin):
             return []
         return super().get_inline_instances(request, obj)
     
+    #Employee Creation Email Notification
     def save_model(self, request, obj, form, change):
         """
         Auto-generate password for new employees and send it via email.
