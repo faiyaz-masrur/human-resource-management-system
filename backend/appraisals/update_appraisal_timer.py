@@ -1,51 +1,100 @@
 from django.core.management.base import BaseCommand
-from appraisals.models import AppraisalTimer
+from appraisals.models import (
+    EmployeeAppraisalTimer,
+    ReportingManagerAppraisalTimer,
+    ReviewerAppraisalTimer,
+)
 from datetime import date, timedelta
 import logging
 
 # Set up logging for the command
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
-    help = 'Updates the start, end, and remind dates of the AppraisalTimer for the current year.'
+    help = 'Updates the start, end, and remind dates of all Appraisal Timers for the current year.'
 
     def handle(self, *args, **options):
-        """
-        This is the main logic of the management command.
-        It finds the AppraisalTimer and updates its dates for the current year.
-        """
-        self.stdout.write("Starting yearly update for the AppraisalTimer...")
+        self.stdout.write("Starting yearly update for Employee, Manager & Reviewer Appraisal Timers...")
 
+        today = date.today()
+
+        # ---------------- Employee Appraisal Timer ----------------
         try:
-            # Assuming there is only one AppraisalTimer object
-            timer, created = AppraisalTimer.objects.get_or_create()
+            employee_timer, _ = EmployeeAppraisalTimer.objects.get_or_create()
 
-            today = date.today()
+            if employee_timer.employee_appraisal_start and employee_timer.employee_appraisal_end:
+                old_start = employee_timer.employee_appraisal_start
+                old_end = employee_timer.employee_appraisal_end
 
-            # Update the year for the start and end dates based on the current year
-            # This preserves the month and day from the original dates.
-            old_start_date = timer.review_period_start
-            old_end_date = timer.review_period_end
+                employee_timer.employee_appraisal_start = date(today.year, old_start.month, old_start.day)
+                employee_timer.employee_appraisal_end = date(today.year, old_end.month, old_end.day)
+                employee_timer.employee_appraisal_remind = employee_timer.employee_appraisal_end - timedelta(days=7)
 
-            timer.review_period_start = date(today.year, old_start_date.month, old_start_date.day)
-            timer.review_period_end = date(today.year, old_end_date.month, old_end_date.day)
+                employee_timer.save()
 
-            # Calculate the new remind date (7 days before the new end date)
-            timer.remind_date = timer.review_period_end - timedelta(days=7)
+                self.stdout.write(self.style.SUCCESS(
+                    f"✅ Employee Appraisal Timer updated: "
+                    f"{employee_timer.employee_appraisal_start} to {employee_timer.employee_appraisal_end}, "
+                    f"Reminder: {employee_timer.employee_appraisal_remind}"
+                ))
+            else:
+                self.stdout.write(self.style.WARNING("⚠ Employee Appraisal Timer has no start/end date set."))
 
-            # Save the changes to the database
-            timer.save()
-
-            self.stdout.write(self.style.SUCCESS(
-                f"Successfully updated AppraisalTimer. "
-                f"New Period: {timer.review_period_start} to {timer.review_period_end}. "
-                f"Reminder Date: {timer.remind_date}."
-            ))
-
-        except AppraisalTimer.DoesNotExist:
-            self.stdout.write(self.style.ERROR("AppraisalTimer object not found. Please create one in the admin panel."))
-            logger.error("AppraisalTimer object not found during yearly update.")
-            
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"An unexpected error occurred: {e}"))
-            logger.error(f"Failed to update AppraisalTimer: {e}", exc_info=True)
+            self.stdout.write(self.style.ERROR(f" Error updating Employee Appraisal Timer: {e}"))
+            logger.error(f"Error updating Employee Appraisal Timer: {e}", exc_info=True)
+
+        # ---------------- Reporting Manager Appraisal Timer ----------------
+        try:
+            manager_timer, _ = ReportingManagerAppraisalTimer.objects.get_or_create()
+
+            if manager_timer.reporting_manager_review_start and manager_timer.reporting_manager_review_end:
+                old_start = manager_timer.reporting_manager_review_start
+                old_end = manager_timer.reporting_manager_review_end
+
+                manager_timer.reporting_manager_review_start = date(today.year, old_start.month, old_start.day)
+                manager_timer.reporting_manager_review_end = date(today.year, old_end.month, old_end.day)
+                manager_timer.reporting_manager_review_remind = manager_timer.reporting_manager_review_end - timedelta(days=7)
+
+                manager_timer.save()
+
+                self.stdout.write(self.style.SUCCESS(
+                    f" Reporting Manager Timer updated: "
+                    f"{manager_timer.reporting_manager_review_start} to {manager_timer.reporting_manager_review_end}, "
+                    f"Reminder: {manager_timer.reporting_manager_review_remind}"
+                ))
+            else:
+                self.stdout.write(self.style.WARNING("⚠ Reporting Manager Timer has no start/end date set."))
+
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f" Error updating Reporting Manager Appraisal Timer: {e}"))
+            logger.error(f"Error updating Reporting Manager Appraisal Timer: {e}", exc_info=True)
+
+        # ---------------- Reviewer Appraisal Timer ----------------
+        try:
+            reviewer_timer, _ = ReviewerAppraisalTimer.objects.get_or_create()
+
+            if reviewer_timer.reviewer_period_start and reviewer_timer.reviewer_period_end:
+                old_start = reviewer_timer.reviewer_period_start
+                old_end = reviewer_timer.reviewer_period_end
+
+                reviewer_timer.reviewer_period_start = date(today.year, old_start.month, old_start.day)
+                reviewer_timer.reviewer_period_end = date(today.year, old_end.month, old_end.day)
+                reviewer_timer.reviewer_period_remind = reviewer_timer.reviewer_period_end - timedelta(days=7)
+
+                reviewer_timer.save()
+
+                self.stdout.write(self.style.SUCCESS(
+                    f" Reviewer Timer updated: "
+                    f"{reviewer_timer.reviewer_period_start} to {reviewer_timer.reviewer_period_end}, "
+                    f"Reminder: {reviewer_timer.reviewer_period_remind}"
+                ))
+            else:
+                self.stdout.write(self.style.WARNING("⚠ Reviewer Timer has no start/end date set."))
+
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f" Error updating Reviewer Appraisal Timer: {e}"))
+            logger.error(f"Error updating Reviewer Appraisal Timer: {e}", exc_info=True)
+
+        self.stdout.write(self.style.SUCCESS(" Yearly update completed for all timers."))

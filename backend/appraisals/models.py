@@ -3,44 +3,88 @@ from datetime import timedelta, date
 
 from employees.models import Employee
 
-class AppraisalTimer(models.Model):
+from django.db import models
+from datetime import date
+
+
+class EmployeeAppraisalTimer(models.Model):
     """
-    Model to define a specific review period for appraisals.
-    This allows a single period to be referenced by multiple employee appraisals.
+    Timer for Employee self-appraisal submission.
+    Defines the allowed period for employees to submit their appraisal.
     """
-    
-    class Meta:
-        verbose_name_plural = "Appraisal Timer"
-    
-    review_period_start = models.DateField()
-    review_period_end = models.DateField()
-    remind_date = models.DateField(null=True, blank=True) 
-    
-    def save(self, *args, **kwargs):
-        """
-        The dates are not automatically updated here to prevent them
-        from changing on every save. This will be handled by a scheduled task.
-        """
-        if self.review_period_end and not self.remind_date:
-            calculated_remind_date = self.review_period_end - timedelta(days=7)
-            self.remind_date = date(calculated_remind_date.year, calculated_remind_date.month, calculated_remind_date.day)
-        
-        print("Start Date: ", self.review_period_start)
-        print("End Date: ", self.review_period_end)
-        print("Reminder Time: ", self.remind_date)
-            
-        super().save(*args, **kwargs)
-    
+
+    employee_appraisal_start = models.DateField(null=True, blank=True)
+    employee_appraisal_end = models.DateField(null=True, blank=True)
+    employee_appraisal_remind = models.DateField(null=True, blank=True)
+
     def is_active_period(self):
-        """
-        Checks if today's date falls within the defined appraisal review period.
-        """
+        """Check if today's date falls within the employee appraisal period."""
         today = date.today()
-        return self.review_period_start <= today <= self.review_period_end
+        return (
+            self.employee_appraisal_start is not None
+            and self.employee_appraisal_end is not None
+            and self.employee_appraisal_start <= today <= self.employee_appraisal_end
+        )
 
     def __str__(self):
-        return f"Appraisal Period: {self.review_period_start} to {self.review_period_end}"
+        return f"Employee Appraisal Period: {self.employee_appraisal_start} to {self.employee_appraisal_end}"
 
+    class Meta:
+        verbose_name_plural = "Employee Appraisal Timer"
+        
+class ReportingManagerAppraisalTimer(models.Model):
+    """
+    Timer for Reporting Manager review period.
+    Defines the review timeframe for managers to evaluate employee appraisals.
+    """
+
+    reporting_manager_review_start = models.DateField(null=True, blank=True)
+    reporting_manager_review_end = models.DateField(null=True, blank=True)
+    reporting_manager_review_remind = models.DateField(null=True, blank=True)
+
+    def is_active_period(self):
+        """Check if today's date falls within the reporting manager review period."""
+        today = date.today()
+        return (
+            self.reporting_manager_review_start is not None
+            and self.reporting_manager_review_end is not None
+            and self.reporting_manager_review_remind <= today <= self.reporting_manager_review_end
+        )
+
+    def __str__(self):
+        return f"Manager Review Period: {self.reporting_manager_review_start} to {self.reporting_manager_review_end}"
+
+    class Meta:
+        verbose_name_plural = "Reporting Manager Appraisal Timer"
+        
+        
+
+class ReviewerAppraisalTimer(models.Model):
+    """
+    Timer for Reviewer (HR/HOD/COO/CEO) appraisal review period.
+    Defines the timeframe for higher-level reviewers to complete their evaluations.
+    """
+
+    reviewer_period_start = models.DateField(null=True, blank=True)
+    reviewer_period_end = models.DateField(null=True, blank=True)
+    reviewer_period_remind = models.DateField(null=True, blank=True)
+
+    def is_active_period(self):
+        """Check if today's date falls within the reviewer appraisal period."""
+        today = date.today()
+        return (
+            self.reviewer_period_start is not None
+            and self.reviewer_period_end is not None
+            and self.reviewer_period_start <= today <= self.reviewer_period_end
+        )
+
+    def __str__(self):
+        return f"Reviewer Appraisal Period: {self.reviewer_period_start} to {self.reviewer_period_end}"
+
+    class Meta:
+        verbose_name_plural = "Reviewer Appraisal Timer"
+
+        
 class EmployeeAppraisal(models.Model):
     """
     Appraisal form filled out by the employee.
