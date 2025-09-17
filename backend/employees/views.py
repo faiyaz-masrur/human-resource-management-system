@@ -1,9 +1,19 @@
 from rest_framework import generics
-from system.permissions import IsEmployee
+from system.permissions import IsEmployee, IsAdmin
 from .models import Employee
-from .serializers import EmployeeProfileSerializer
+from .serializers import EmployeeProfileSerializer, EmployeeListSerializer, EmployeeCreateUpdateDeleteSerializer
+from rest_framework import viewsets
 
 
+class EmployeeViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.all().order_by("employee_name")
+    permission_classes = [IsAdmin]
+    
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return EmployeeListSerializer
+        return EmployeeCreateUpdateDeleteSerializer
+    
 class EmployeeProfileView(generics.RetrieveUpdateAPIView):
     """
     API view for an employee to retrieve and update their own profile.
