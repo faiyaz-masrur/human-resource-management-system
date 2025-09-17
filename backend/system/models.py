@@ -19,22 +19,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
     date_joined = None
-    employee_name = None
-    employee_id = None
-    department = None
-    designation = None
-    joining_date = None
-    grade = None
-    basic_salary = None
-    reporting_manager = None
-    responsibilities = None
-    reviewed_by_rm = None
-    reviewed_by_hr = None
-    reviewed_by_hod = None
-    reviewed_by_coo = None
-    reviewed_by_ceo = None
-    signature = None
-    image = None
+
 
     # Roles
     is_rm = models.BooleanField(default=False)
@@ -42,6 +27,7 @@ class User(AbstractUser):
     is_hod = models.BooleanField(default=False)
     is_coo = models.BooleanField(default=False)
     is_ceo = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -67,11 +53,6 @@ class Department(models.Model):
 
 class Designation(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    department = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE,
-        related_name="designations"
-    )
     description = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -93,21 +74,4 @@ class Grade(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
-class SubGrade(models.Model):
-    name = models.CharField(max_length=50)
-    grade = models.ForeignKey(
-        Grade,
-        on_delete=models.CASCADE,
-        related_name="subgrades"
-    )
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Subgrade"
-        verbose_name_plural = "Subgrades"
-        unique_together = ("name", "grade")
-
-    def __str__(self):
-        return f"{self.grade.name} - {self.name}"
 

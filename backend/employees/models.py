@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
-from system.models import User, Department, Designation, Grade, SubGrade
+from system.models import User, Department, Designation, Grade
 
 # -----------------------------
 # Employee Model
@@ -22,7 +22,7 @@ class Employee(User):
     )
     joining_date = models.DateField()
     grade = models.ForeignKey(
-        SubGrade,
+        Grade,
         on_delete=models.SET_NULL,
         null=True, blank=True,
         related_name="subgrade"
