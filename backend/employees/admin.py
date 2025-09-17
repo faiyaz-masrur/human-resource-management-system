@@ -1,3 +1,4 @@
+'''
 from django.contrib import admin
 from .models import Employee, WorkExperience, Education, ProfessionalCertificate
 from django.contrib.auth.admin import UserAdmin
@@ -153,7 +154,7 @@ class EmployeeAdmin(UserAdmin):
                 send_mail(subject, message, from_email, recipient_list, fail_silently=True)  
         super().save_model(request, obj, form, change)
 
-'''
+
 @admin.register(WorkExperience)
 class WorkExperienceAdmin(admin.ModelAdmin):
     list_display = ('employee', 'organization', 'designation', 'start_date', 'end_date')
@@ -216,4 +217,6 @@ class ProfessionalCertificateAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return True
+
+
 '''
