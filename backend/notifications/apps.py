@@ -1,3 +1,4 @@
+# notifications/apps.py
 from django.apps import AppConfig
 
 class NotificationsConfig(AppConfig):
@@ -5,7 +6,5 @@ class NotificationsConfig(AppConfig):
     name = 'notifications'
 
     def ready(self):
-        """
-        Import signals here to ensure they are registered when the app loads.
-        """
-        import backend.notifications.update_appraisal_status_and_send_notification
+        from .scheduler import start_scheduler
+        start_scheduler()
