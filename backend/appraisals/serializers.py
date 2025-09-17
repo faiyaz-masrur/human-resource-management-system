@@ -19,19 +19,18 @@ from .models import (
 class EmployeeAppraisalTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAppraisalTimer
-        fields = ['employee_self_appraisal_start', 'employee_self_appraisal_end', 'employee_self_appraisal_remind']
-
+        fields = '__all__'
 
 class ReportingManagerAppraisalTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportingManagerAppraisalTimer
-        fields = ['reporting_manager_review_start', 'reporting_manager_review_end', 'reporting_manager_review_remind']
+        fields = '__all__'
 
 
 class FinalReviewerAppraisalTimerSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalReviewerAppraisalTimer
-        fields = ['final_review_start', 'final_review_end', 'final_review_remind']
+        fields = '__all__'
 
 
 # --- Main Appraisal / Review Serializers ---

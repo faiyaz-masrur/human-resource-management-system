@@ -105,7 +105,7 @@ class EmployeeAppraisal(models.Model):
     
         
     def __str__(self):
-        return f"Self-Appraisal for {self.employee.employee_name} ({self.appraisal_period.review_period_start} - {self.appraisal_period.review_period_end})"
+        return f"Self-Appraisal for {self.employee.employee_name}"
 
 class AttendanceSummary(models.Model):
     """
@@ -306,6 +306,45 @@ class EmployeeAppraisalTrack(models.Model):
     appraisal_cycle = models.ForeignKey(EmployeeAppraisalTimer, on_delete=models.CASCADE, related_name='employee_tracks')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='self')
     last_updated = models.DateTimeField(auto_now=True)
+    
+    # New boolean fields to track completion of each phase
+    # Set to null to represent 'not applicable' or 'not started'
+    review_done_rm = models.BooleanField(null=True, blank=True)
+    review_done_hr = models.BooleanField(null=True, blank=True)
+    review_done_hod = models.BooleanField(null=True, blank=True)
+    review_done_coo = models.BooleanField(null=True, blank=True)
+    review_done_ceo = models.BooleanField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Update boolean fields based on the inverse of the employee's review status
+        self.review_done_rm = False if self.employee.reviewed_by_rm else None
+        self.review_done_hr = False if self.employee.reviewed_by_hr else None
+        self.review_done_hod = False if self.employee.reviewed_by_hod else None
+        self.review_done_coo = False if self.employee.reviewed_by_coo else None
+        self.review_done_ceo = False if self.employee.reviewed_by_ceo else None
+
+        # Update the string status based on the most recently completed review
+        # The checks are from highest to lowest level.
+        if self.review_done_ceo is True:
+            self.status = 'ceo'
+        elif self.review_done_coo is True:
+            self.status = 'coo'
+        elif self.review_done_hod is True:
+            self.status = 'hod'
+        elif self.review_done_hr is True:
+            self.status = 'hr'
+        elif self.review_done_rm is True:
+            self.status = 'rm'
+        elif self.appraisal_cycle.employee_self_appraisal_start and self.appraisal_cycle.employee_self_appraisal_end:
+            # Assumes a self-appraisal is always the first step
+            self.status = 'self'
+
+        # Check for 'completed' status if all necessary reviews are done
+        # This assumes that a final review by any of HOD, COO, or CEO completes the process.
+        if self.review_done_rm is False and self.review_done_hr is False and (self.review_done_hod is False or self.review_done_coo is False or self.review_done_ceo is False):
+            self.status = 'completed'
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Appraisal Track - {self.employee} ({self.status})"
