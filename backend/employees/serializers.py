@@ -20,7 +20,7 @@ class ProfessionalCertificateSerializer(serializers.ModelSerializer):
         fields = ["id", "certificate_name", "credential_id", "institution", "issue_date", "certificate_file"]
 
 
-class EmployeeSerializer(serializers.ModelSerializer):
+class EmployeeProfileSerializer(serializers.ModelSerializer):
     work_experiences = WorkExperienceSerializer(many=True, required=False)
     education = EducationSerializer(many=True, required=False)
     professional_certificates = ProfessionalCertificateSerializer(many=True, required=False)
