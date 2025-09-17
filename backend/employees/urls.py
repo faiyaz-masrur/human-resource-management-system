@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import EmployeeRetrieveUpdateView, EmployeeViewSet
 
 router = DefaultRouter()
-router.register(r'employees', EmployeeViewSet, basename='employee')
+router.register(r'info', EmployeeViewSet, basename='employee')
 
 urlpatterns = [
     # CRUD endpoints for Employee model by admin users

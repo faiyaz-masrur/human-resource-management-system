@@ -1,7 +1,8 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import MyTokenObtainPairSerializer, ChangePasswordSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
-from rest_framework import generics, status
-from .permissions import IsEmployee
+from .serializers import MyTokenObtainPairSerializer, ChangePasswordSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, DepartmentSerializer, DesignationSerializer, GradeSerializer
+from .models import Department, Designation, Grade
+from rest_framework import generics, status, viewsets
+from .permissions import IsEmployee, IsAdmin
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -9,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 User = get_user_model()
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     """
@@ -80,3 +82,21 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         user.set_password(serializer.validated_data["new_password"])
         user.save()
         return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all().order_by("name")
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsAdmin]
+
+
+class DesignationViewSet(viewsets.ModelViewSet):
+    queryset = Designation.objects.all().order_by("name")
+    serializer_class = DesignationSerializer
+    permission_classes = [IsAdmin]
+
+
+class GradeViewSet(viewsets.ModelViewSet):
+    queryset = Grade.objects.all().order_by("name")
+    serializer_class = GradeSerializer
+    permission_classes = [IsAdmin]
