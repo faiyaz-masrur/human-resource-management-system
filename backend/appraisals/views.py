@@ -16,6 +16,8 @@ from .models import (
     EmployeeAppraisalTimer,
     ReportingManagerAppraisalTimer,
     FinalReviewerAppraisalTimer,
+    EmployeeAppraisalTrack
+    
 )
 from .serializers import (
     EmployeeAppraisalSerializer,
@@ -57,7 +59,15 @@ class EmployeeSelfAppraisalAPIView(APIView):
             with transaction.atomic():
                 serializer.save(
                     employee=request.user.employee_profile
+                    
                 )
+                 # --- Update EmployeeAppraisalTrack ---
+                track, _ = EmployeeAppraisalTrack.objects.get_or_create(
+                    employee=request.user.employee_profile
+                )
+                track.self_appraisal_done = True
+                track.save()
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,11 +111,18 @@ class ReportingManagerReviewAPIView(APIView):
             if serializer.is_valid():
                 with transaction.atomic():
                     serializer.save()
+
+                    # --- Update EmployeeAppraisalTrack ---
+                    track, _ = EmployeeAppraisalTrack.objects.get_or_create(employee=appraisal.employee)
+                    track.rm_review_done = True
+                    track.save()
+
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class HRReviewAPIView(APIView):
@@ -130,11 +147,18 @@ class HRReviewAPIView(APIView):
             if serializer.is_valid():
                 with transaction.atomic():
                     serializer.save()
+
+                    # --- Update EmployeeAppraisalTrack ---
+                    track, _ = EmployeeAppraisalTrack.objects.get_or_create(employee=appraisal.employee)
+                    track.hr_review_done = True
+                    track.save()
+
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class FinalReviewAPIView(APIView):
@@ -159,11 +183,26 @@ class FinalReviewAPIView(APIView):
             if serializer.is_valid():
                 with transaction.atomic():
                     serializer.save()
+
+                    # --- Update EmployeeAppraisalTrack ---
+                    track, _ = EmployeeAppraisalTrack.objects.get_or_create(employee=appraisal.employee)
+
+                    reviewer = request.user.employee_profile
+                    if reviewer.role == "HOD":
+                        track.hod_review_done = True
+                    elif reviewer.role == "COO":
+                        track.coo_review_done = True
+                    elif reviewer.role == "CEO":
+                        track.ceo_review_done = True
+
+                    track.save()
+
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # ------------------- Admin Timer Creation API Views -------------------
 

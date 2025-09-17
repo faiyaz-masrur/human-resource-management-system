@@ -82,6 +82,8 @@ class EmployeeAppraisalTrackSerializer(serializers.ModelSerializer):
         model = EmployeeAppraisalTrack
         fields = '__all__'
         read_only_fields = ['last_updated']
+        
+        
 
 
 class ReportingManagerAppraisalTrackSerializer(serializers.ModelSerializer):
