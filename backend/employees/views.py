@@ -1,7 +1,7 @@
 from rest_framework import generics
 from system.permissions import IsEmployee, IsAdmin
 from .models import Employee
-from .serializers import EmployeeProfileSerializer, EmployeeListSerializer, EmployeeCreateUpdateDeleteSerializer
+from .serializers import EmployeeRetrieveUpdateSerializer, EmployeeListSerializer, EmployeeCreateRetriveUpdateDeleteSerializer
 from rest_framework import viewsets
 
 
@@ -12,9 +12,9 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ['list']:
             return EmployeeListSerializer
-        return EmployeeCreateUpdateDeleteSerializer
+        return EmployeeCreateRetriveUpdateDeleteSerializer
     
-class EmployeeProfileView(generics.RetrieveUpdateAPIView):
+class EmployeeRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     """
     API view for an employee to retrieve and update their own profile.
     Employees can only update:
@@ -24,7 +24,7 @@ class EmployeeProfileView(generics.RetrieveUpdateAPIView):
     - Signature
     - Image
     """
-    serializer_class = EmployeeProfileSerializer
+    serializer_class = EmployeeRetrieveUpdateSerializer
     permission_classes = [IsEmployee]
 
     def get_object(self):

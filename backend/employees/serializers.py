@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Employee, WorkExperience, Education, ProfessionalCertificate
+from appraisals.models import EmployeeAppraisalTrack
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
@@ -38,7 +39,7 @@ class EmployeeListSerializer(serializers.ModelSerializer):
         ]
 
 
-class EmployeeCreateUpdateDeleteSerializer(serializers.ModelSerializer):
+class EmployeeCreateRetriveUpdateDeleteSerializer(serializers.ModelSerializer):
     # User fields
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, required=False)
@@ -97,20 +98,26 @@ class EmployeeCreateUpdateDeleteSerializer(serializers.ModelSerializer):
 
     # --- CREATE ---
     def create(self, validated_data):
-        email = validated_data.pop("email")
+        email = validated_data.get("email")
         raw_password = get_random_string(length=8)
+        reviewed_by_rm = validated_data.get("reviewed_by_rm", False)
+        reviewed_by_hr = validated_data.get("reviewed_by_hr", False)
+        reviewed_by_hod = validated_data.get("reviewed_by_hod", False)
+        reviewed_by_coo = validated_data.get("reviewed_by_coo", False)
+        reviewed_by_ceo = validated_data.get("reviewed_by_ceo", False)
+        data = {}
 
         # Nested
         work_experiences = validated_data.pop("work_experiences", [])
         educations = validated_data.pop("education", [])
         certificates = validated_data.pop("professional_certificates", [])
 
-        user = User.objects.create(
-            email=email,
-            password=make_password(raw_password)  # hash the password
-        )
+        user = User.objects.create
 
-        employee = Employee.objects.create(user_ptr=user, **validated_data)
+        employee = Employee.objects.create_user(
+            password=raw_password,
+            **validated_data
+        )
 
         # Children
         for exp in work_experiences:
@@ -119,6 +126,24 @@ class EmployeeCreateUpdateDeleteSerializer(serializers.ModelSerializer):
             Education.objects.create(employee=employee, **edu)
         for cert in certificates:
             ProfessionalCertificate.objects.create(employee=employee, **cert)
+
+        if reviewed_by_rm:
+            data["rm_review_done"] = False
+        if reviewed_by_hr:
+            data["hr_review_done"] = False
+        if reviewed_by_hod:
+            data["hod_review_done"] = False
+        if reviewed_by_coo:
+            data["coo_review_done"] = False
+        if reviewed_by_ceo:
+            data["ceo_review_done"] = False
+
+        # Create an EmployeeAppraisalTrack for the new employee
+        EmployeeAppraisalTrack.objects.create(
+            employee=employee,
+            self_appraisal_done=False,
+            **data
+        )
 
         # Email credentials
         send_mail(
@@ -137,15 +162,9 @@ class EmployeeCreateUpdateDeleteSerializer(serializers.ModelSerializer):
 
     # --- UPDATE ---
     def update(self, instance, validated_data):
-        email = validated_data.pop("email", None)
-
         work_experiences = validated_data.pop("work_experiences", None)
         educations = validated_data.pop("education", None)
         certificates = validated_data.pop("professional_certificates", None)
-
-        # Update User fields
-        if email:
-            instance.email = email
 
         # Update Employee fields
         for attr, value in validated_data.items():
@@ -171,7 +190,7 @@ class EmployeeCreateUpdateDeleteSerializer(serializers.ModelSerializer):
         return instance
 
 
-class EmployeeProfileSerializer(serializers.ModelSerializer):
+class EmployeeRetrieveUpdateSerializer(serializers.ModelSerializer):
     work_experiences = WorkExperienceSerializer(many=True, required=False)
     education = EducationSerializer(many=True, required=False)
     professional_certificates = ProfessionalCertificateSerializer(many=True, required=False)
