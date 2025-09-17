@@ -8,4 +8,4 @@ class NotificationsConfig(AppConfig):
         """
         Import signals here to ensure they are registered when the app loads.
         """
-        import backend.notifications.dashboard_notifications
+        import backend.notifications.update_appraisal_status_and_send_notification
