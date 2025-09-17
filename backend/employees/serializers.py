@@ -162,32 +162,102 @@ class EmployeeCreateRetriveUpdateDeleteSerializer(serializers.ModelSerializer):
 
     # --- UPDATE ---
     def update(self, instance, validated_data):
-        work_experiences = validated_data.pop("work_experiences", None)
-        educations = validated_data.pop("education", None)
-        certificates = validated_data.pop("professional_certificates", None)
+        # ----------------------------
+        # 1️⃣ Handle flags for appraisal track
+        # ----------------------------
+        flags = {
+            "reviewed_by_rm": validated_data.get("reviewed_by_rm", instance.reviewed_by_rm),
+            "reviewed_by_hr": validated_data.get("reviewed_by_hr", instance.reviewed_by_hr),
+            "reviewed_by_hod": validated_data.get("reviewed_by_hod", instance.reviewed_by_hod),
+            "reviewed_by_coo": validated_data.get("reviewed_by_coo", instance.reviewed_by_coo),
+            "reviewed_by_ceo": validated_data.get("reviewed_by_ceo", instance.reviewed_by_ceo),
+        }
 
-        # Update Employee fields
+        # ----------------------------
+        # 2️⃣ Extract nested child data
+        # ----------------------------
+        children_data = {
+            "work_experiences": validated_data.pop("work_experiences", None),
+            "education": validated_data.pop("education", None),
+            "professional_certificates": validated_data.pop("professional_certificates", None),
+        }
+
+        # ----------------------------
+        # 3️⃣ Update Employee fields
+        # ----------------------------
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
-        # Replace children if given
-        if work_experiences is not None:
-            instance.work_experiences.all().delete()
-            for exp in work_experiences:
-                WorkExperience.objects.create(employee=instance, **exp)
+        # ----------------------------
+        # 4️⃣ Helper function to update children
+        # ----------------------------
+        def update_children(model, related_name, new_data):
+            if new_data is None:
+                return
 
-        if educations is not None:
-            instance.education.all().delete()
-            for edu in educations:
-                Education.objects.create(employee=instance, **edu)
+            existing_objs = list(getattr(instance, related_name).all())
+            existing_ids = [obj.id for obj in existing_objs if obj.id is not None]
+            incoming_ids = [item.get("id") for item in new_data if item.get("id")]
 
-        if certificates is not None:
-            instance.professional_certificates.all().delete()
-            for cert in certificates:
-                ProfessionalCertificate.objects.create(employee=instance, **cert)
+            # Delete removed objects
+            for obj in existing_objs:
+                if obj.id not in incoming_ids:
+                    obj.delete()
+
+            # Update existing or create new
+            for item in new_data:
+                obj_id = item.get("id")
+                if obj_id and obj_id in existing_ids:
+                    obj_instance = model.objects.get(id=obj_id, **{related_name[:-1]: instance})
+                    for k, v in item.items():
+                        setattr(obj_instance, k, v)
+                    obj_instance.save()
+                else:
+                    model.objects.create(**{related_name[:-1]: instance}, **item)
+
+        # ----------------------------
+        # 5️⃣ Update all children
+        # ----------------------------
+        update_children(WorkExperience, "work_experiences", children_data["work_experiences"])
+        update_children(Education, "education", children_data["education"])
+        update_children(ProfessionalCertificate, "professional_certificates", children_data["professional_certificates"])
+
+        # ----------------------------
+        # 6️⃣ Update EmployeeAppraisalTrack if flags changed
+        # ----------------------------
+        def handle_flag(flag_value, old_value):
+            if flag_value != old_value:
+                return False if flag_value else None
+            return None
+
+        data = {}
+        mapping = {
+            "rm_review_done": flags["reviewed_by_rm"],
+            "hr_review_done": flags["reviewed_by_hr"],
+            "hod_review_done": flags["reviewed_by_hod"],
+            "coo_review_done": flags["reviewed_by_coo"],
+            "ceo_review_done": flags["reviewed_by_ceo"],
+        }
+
+        for field_name, flag_value in mapping.items():
+            old_value = getattr(instance, field_name.replace("_review_done", "reviewed_by"))
+            new_value = handle_flag(flag_value, old_value)
+            if new_value is not None:
+                data[field_name] = new_value
+
+        if data:
+            appraisal_track, created = EmployeeAppraisalTrack.objects.get_or_create(
+                employee=instance,
+                defaults={"self_appraisal_done": False, **data}
+            )
+            if not created:
+                for attr, value in data.items():
+                    setattr(appraisal_track, attr, value)
+                appraisal_track.save()
 
         return instance
+
 
 
 class EmployeeRetrieveUpdateSerializer(serializers.ModelSerializer):
