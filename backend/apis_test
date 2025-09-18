@@ -1,0 +1,61 @@
+1. Authentication Endpoints
+These endpoints are part of your system app and are used for handling user authentication and token management.
+
+Login and obtain token pair:
+
+Path: http://127.0.0.1:8000/api/auth/login/
+
+Method: POST
+
+Purpose: To get a new access and refresh token pair by sending user credentials.
+
+Refresh access token:
+
+Path: http://127.0.0.1:8000/api/auth/token/refresh/
+
+Method: POST
+
+Purpose: To get a new access token using a valid refresh token.
+
+Verify a token:
+
+Path: http://127.0.0.1:8000/api/auth/token/verify/
+
+Method: POST
+
+Purpose: To verify that a token is valid.
+
+2. Appraisal Endpoints
+These endpoints are for the core appraisal functionality in your appraisals app.
+
+Employee self-appraisal submission:
+
+Path: http://127.0.0.1:8000/api/appraisals/self-appraisal/
+
+Method: POST or PUT
+
+Purpose: To create or update an employee's self-appraisal form.
+
+Reporting manager review:
+
+Path: http://127.0.0.1:8000/api/appraisals/manager-review/<int:appraisal_id>/
+
+Method: POST or PUT
+
+Purpose: To submit or update a review from a reporting manager for a specific appraisal. You will need to replace <int:appraisal_id> with the actual numerical ID of the appraisal you are reviewing.
+
+HR review:
+
+Path: http://127.0.0.1:8000/api/appraisals/hr-review/<int:appraisal_id>/
+
+Method: POST or PUT
+
+Purpose: To submit or update a review from an HR representative for a specific appraisal. Again, you'll need the appraisal's ID.
+
+Final review:
+
+Path: http://127.0.0.1:8000/api/appraisals/final-review/<int:appraisal_id>/
+
+Method: POST or PUT
+
+Purpose: To complete the final review for an appraisal. You must provide the correct appraisal ID.

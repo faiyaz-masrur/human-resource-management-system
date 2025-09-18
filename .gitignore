@@ -1,0 +1,28 @@
+# General ignores
+.env
+.DS_Store
+Thumbs.db
+
+# Python / Django
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+myenv/
+venv/
+env/
+
+# Django-specific files
+db.sqlite3
+media/
+static/
+
+# Node.js / React
+/frontend/node_modules/
+/frontend/dist/
+/frontend/build/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
