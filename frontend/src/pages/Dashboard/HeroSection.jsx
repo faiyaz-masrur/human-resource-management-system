@@ -1,13 +1,9 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-
-import MainDashboard from './pages/Dashboard/MainDashboard'
-import Employees from './pages/Employee/Employees'
-import EmployeeDetails from './pages/Employee/EmployeeDetails'
-
+import MainDashboard from './MainDashboard'
+import Employees from '../Employee/Employees'
+import EmployeeDetails from '../Employee/EmployeeDetails'
+import AppraisalDetails from '../Appraisal/AppraisalDetails'
 
 function HeroSection() {
   const [count, setCount] = useState(0)
