@@ -9,7 +9,6 @@ import NotificationSidebar from './pages/Dashboard/NotificationSidebar';
 // Pages
 import MainDashboard from './pages/Dashboard/MainDashboard';
 
-import AdminLogin from './pages/Login/AdminLogin';
 import UserLogin from './pages/Login/UserLogin';
 import ChangePassword from './pages/Login/ChangePassword';
 import ForgetPassword from './pages/Login/ForgetPassword';

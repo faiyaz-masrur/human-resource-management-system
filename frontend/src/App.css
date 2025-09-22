@@ -10,46 +10,25 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevents horizontal scroll on small screens */
+  color: #1F2937; /* Changed font color to black */
 }
 
 /* ---------------------------------- */
 /* ===== Main App Layout (New) ===== */
 /* ---------------------------------- */
+/* This section sets up the main grid layout for the entire application. */
 .app-container {
   display: grid;
-  grid-template-areas:
-    "navbar navbar"
-    "sidebar main"
-    "sidebar main";
-  grid-template-columns: 250px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 200px 1fr 300px; /* Sidebar, Main Content, Notification Sidebar */
+  grid-template-rows: auto 1fr; /* Navbar, Main Section */
   height: 100vh;
   gap: 20px;
   padding: 20px;
 }
 
-/* Desktop Layout (Main, Sidebar, Navbar, NotificationSidebar) */
-@media (min-width: 1024px) {
-  .app-container {
-    grid-template-areas:
-      "sidebar navbar notification"
-      "sidebar main notification";
-    grid-template-columns: 250px 1fr 300px;
-  }
-}
-
-.main-content-area {
-  grid-area: main;
-  overflow-y: auto;
-  padding-right: 20px;
-}
-
 /* Mobile Layout adjustments */
 @media (max-width: 1023px) {
   .app-container {
-    grid-template-areas:
-      "navbar"
-      "main";
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     padding: 10px;
@@ -58,9 +37,12 @@ body {
   .notification-sidebar {
     display: none; /* Hide sidebars on small screens */
   }
-  .navbar-container {
-    margin: 0;
-  }
+}
+
+.main-content-area {
+  grid-area: main;
+  overflow-y: auto;
+  padding-right: 20px;
 }
 
 /*
@@ -155,7 +137,7 @@ body {
 
 .active-appraisal-tab {
   background-color: #3B82F6;
-  color: #ffffff;
+  color: #1F2937;
 }
 
 .active-appraisal-tab:hover {
@@ -338,9 +320,10 @@ body {
 /* ---------------------------------- */
 /* Sidebar Styles (Sidebar.jsx)       */
 /* ---------------------------------- */
+/* This section styles the left sidebar, based on your UI images. */
 .sidebar-container {
   grid-area: sidebar;
-  width: 250px;
+  width: 200px;
   background-color: #fff;
   height: calc(100vh - 40px);
   padding: 24px;
@@ -372,6 +355,7 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  color: #333;
 }
 
 .menu-item {
@@ -407,11 +391,12 @@ body {
 /* ---------------------------------- */
 /* Navbar Styles (Navbar.jsx)         */
 /* ---------------------------------- */
+/* This section styles the top navigation bar. */
 .navbar-container {
-  grid-area: navbar;
-  display: flex;
+  grid-column: 1 / -1; /* Make the navbar span all columns */
+  display: grid;
+  grid-template-columns: subgrid;
   align-items: center;
-  justify-content: space-between;
   padding: 20px 40px;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -419,7 +404,9 @@ body {
   margin: 0;
 }
 
+/* Align navbar children with the columns of the main grid */
 .navbar-left {
+  grid-column: 2; /* This will be the main content column */
   display: flex;
   align-items: center;
   font-size: 16px;
@@ -453,8 +440,10 @@ body {
 }
 
 .navbar-right {
+  grid-column: 3; /* This will be the notification sidebar column */
   display: flex;
   align-items: center;
+  justify-content: flex-end; /* Align to the right side of the column */
 }
 
 .navbar-right .current-time,
@@ -506,8 +495,79 @@ body {
 }
 
 /* ---------------------------------- */
+/* NotificationSidebar Styles (NotificationSidebar.jsx) */
+/* ---------------------------------- */
+/* This section styles the right notification bar. */
+.notification-sidebar {
+  grid-area: notification;
+  width: 300px;
+  background-color: #fff;
+  height: calc(100vh - 40px);
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.notification-header .header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.notification-header .header-link {
+  font-size: 14px;
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-item .notification-icon {
+  font-size: 24px;
+  color: #1890ff;
+  margin-right: 12px;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #999;
+}
+
+/* ---------------------------------- */
 /* MainDashboard Styles (MainDashboard.jsx) */
 /* ---------------------------------- */
+/* This section styles the content area with the various highlight cards and charts. */
 .main-dashboard-container {
   padding: 0;
   margin: 0;
@@ -632,70 +692,104 @@ body {
 .legend-dot.other { background-color: #9E9E9E; }
 
 /* ---------------------------------- */
-/* NotificationSidebar Styles (NotificationSidebar.jsx) */
+/* OtherAppraisals Styles             */
 /* ---------------------------------- */
-.notification-sidebar {
-  grid-area: notification;
-  width: 300px;
-  background-color: #fff;
-  height: calc(100vh - 40px);
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  border-radius: 12px;
+.appraisal-list-container {
+  padding: 20px;
 }
 
-.notification-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.appraisal-list-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
   margin-bottom: 20px;
 }
 
-.notification-header .header-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+.appraisal-table-responsive {
+  overflow-x: auto;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
-.notification-header .header-link {
+.appraisal-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.appraisal-table thead tr {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.appraisal-table th {
+  padding: 16px 20px;
   font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.appraisal-table th:hover {
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+
+.appraisal-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.appraisal-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.appraisal-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f0f2f5;
+  white-space: nowrap;
+}
+
+.appraisal-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.appraisal-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.appraisal-table tbody tr:first-child td:first-child {
+  border-top-left-radius: 12px;
+}
+
+.appraisal-table tbody tr:first-child td:last-child {
+  border-top-right-radius: 12px;
+}
+
+.appraisal-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.appraisal-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.action-button {
+  background-color: #e6f7ff;
   color: #1890ff;
-  text-decoration: none;
-}
-
-.notification-list {
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.notification-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.notification-item .notification-icon {
-  font-size: 24px;
-  color: #1890ff;
-  margin-right: 12px;
-}
-
-.notification-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.notification-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  margin: 0 0 4px 0;
-}
-
-.notification-time {
-  font-size: 12px;
-  color: #999;
+.action-button:hover {
+  background-color: #b3e0ff;
 }
