@@ -1,7 +1,8 @@
+'''
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from .models import User, Department, Designation, Grade, SubGrade
+from .models import User, Department, Designation, Grade
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -67,19 +68,6 @@ class GradeAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(SubGrade)
-class SubGradeAdmin(admin.ModelAdmin):
-    list_display = ("name", "grade")
-    list_filter = ("grade",)
-    search_fields = ("name", "grade__name")
-    ordering = ("grade", "name")
-
-    fieldsets = (
-        ("Subgrade Details", {
-            "fields": ("name", "grade", "description"),
-        }),
-    )
-
 # Register your models here.
 admin.site.site_header = "Performance Appraisal System Admin Portal"
 admin.site.site_title = "Performance Appraisal System Admin Portal"
@@ -87,3 +75,4 @@ admin.site.index_title = "Performance Appraisal System Admin Portal"
 
 admin.site.unregister(Group)
 
+'''

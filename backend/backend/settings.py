@@ -36,7 +36,11 @@ INSTALLED_APPS = [
     'appraisals',
     'employees',
     'notifications',
+    "django_apscheduler",
+    
 ]
+
+SCHEDULER_AUTOSTART = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
