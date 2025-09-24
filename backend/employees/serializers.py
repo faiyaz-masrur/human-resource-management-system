@@ -2,8 +2,8 @@ from rest_framework import serializers
 from .models import WorkExperience, Education, ProfessionalCertificate, PersonalDetail, Address, Attatchment
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from system.models import Employee, Department, Designation, Grade, Role, ReportingManager
-from system.serializers import DepartmentSerializer, DesignationSerializer, GradeSerializer, ReportingManagerSerializer, RoleSerializer
+from system.models import Employee, Department, Designation, Grade, ReportingManager
+from system.serializers import DepartmentSerializer, DesignationSerializer, GradeSerializer, ReportingManagerSerializer
 from django.conf import settings
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -41,8 +41,6 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
     designation = DesignationSerializer(read_only=True)
     grade = GradeSerializer(read_only=True)
     reporting_manager = ReportingManagerSerializer(read_only=True)
-    role1 = RoleSerializer(read_only=True)
-    role2 = RoleSerializer(read_only=True)
 
     # use ids for write operations
     department_id = serializers.PrimaryKeyRelatedField(
@@ -57,22 +55,16 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
     reporting_manager_id = serializers.PrimaryKeyRelatedField(
         queryset=ReportingManager.objects.all(), source="reporting_manager", write_only=True, required=False
     )
-    role1_id = serializers.PrimaryKeyRelatedField(
-        queryset=Role.objects.all(), source="role1", write_only=True, required=False
-    )
-    role2_id = serializers.PrimaryKeyRelatedField(
-        queryset=Role.objects.all(), source="role2", write_only=True, required=False
-    )
 
     class Meta:
         model = Employee
         fields = [
             "id", "employee_name", "employee_id", "email",
-            "joining_date", "basic_salary", "is_hr",
+            "joining_date", "basic_salary",
             "department", "designation", "grade",
-            "reporting_manager", "role1", "role2",
-            "department_id", "designation_id", "grade_id",
-            "reporting_manager_id", "role1_id", "role2_id",
+            "reporting_manager", "role1", "role2",  "is_hr",
+            "department_id", "designation_id", "grade_id", "reporting_manager_id",
+            "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
         read_only_fields = ["id"]
 
@@ -80,6 +72,7 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         email = validated_data.get("email")
         raw_password = get_random_string(length=8)
+        
 
         employee = Employee.objects.create_user(
             password=raw_password,

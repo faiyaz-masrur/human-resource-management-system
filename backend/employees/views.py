@@ -1,5 +1,5 @@
 from rest_framework import generics, mixins, viewsets
-from system.permissions import IsEmployee, IsAdmin
+from system.permissions import IsEmployee, IsHR
 from .models import PersonalDetail, Address, WorkExperience, Education, ProfessionalCertificate, Attatchment
 from system.models import Employee
 from .serializers import (
@@ -21,14 +21,14 @@ from django.shortcuts import get_object_or_404
 class EmployeeOfficialDetailViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeOfficialDetailSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
 
 
 class EmployeePersonalDetailView(generics.RetrieveUpdateAPIView):
     queryset = PersonalDetail.objects.all()
     serializer_class = EmployeePersonalDetailSerializer
     lookup_field = 'employee'  
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
 
 
 class EmployeeAddressView(
@@ -38,7 +38,7 @@ class EmployeeAddressView(
     generics.GenericAPIView
 ):
     serializer_class = AddressSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
     lookup_field = "employee"  # Matches the URL param <employee>
     queryset = Address.objects.all()
 
@@ -72,7 +72,7 @@ class EmployeeWorkExperienceView(
     generics.GenericAPIView
 ):
     serializer_class = WorkExperienceSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
     lookup_field = "work_experience" 
 
     def get_queryset(self):
@@ -103,7 +103,7 @@ class EmployeeEducationView(
     generics.GenericAPIView
 ):
     serializer_class = EducationSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
     lookup_field = "education" 
 
     def get_queryset(self):
@@ -134,7 +134,7 @@ class EmployeeProfessionalCertificateView(
     generics.GenericAPIView
 ):
     serializer_class = ProfessionalCertificateSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
     lookup_field = "professional_certificate" 
 
     def get_queryset(self):
@@ -162,7 +162,7 @@ class EmployeeAttatchmentView(generics.RetrieveUpdateAPIView):
     queryset = Attatchment.objects.all()
     serializer_class = AttatchmentSerializer
     lookup_field = 'employee'  
-    permission_classes = [IsAdmin]
+    permission_classes = [IsHR]
         
 
 #View for employees to get, update their own details

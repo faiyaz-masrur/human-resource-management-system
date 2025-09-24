@@ -298,15 +298,15 @@ class EmployeeAppraisalTrack(models.Model):
     
     # New boolean fields to track completion of each phase
     # Set to null to represent 'not applicable' or 'not started'
-    self_appraisal_done = models.BooleanField(null=True, blank=True)
-    rm_review_done = models.BooleanField(null=True, blank=True)
-    hr_review_done = models.BooleanField(null=True, blank=True)
-    hod_review_done = models.BooleanField(null=True, blank=True)
-    coo_review_done = models.BooleanField(null=True, blank=True)
-    ceo_review_done = models.BooleanField(null=True, blank=True)
+    self_appraisal_done = models.CharField(max_length=10, default="NA")
+    rm_review_done = models.CharField(max_length=10, default="NA")
+    hr_review_done = models.CharField(max_length=10, default="NA")
+    hod_review_done = models.CharField(max_length=10, default="NA")
+    coo_review_done = models.CharField(max_length=10, default="NA")
+    ceo_review_done = models.CharField(max_length=10, default="NA")
 
     def __str__(self):
-        return f"Appraisal Track - {self.employee} ({self.status})"
+        return f"Appraisal Track - {self.employee.employee_name})"
 
 
 class ReportingManagerAppraisalTrack(models.Model):

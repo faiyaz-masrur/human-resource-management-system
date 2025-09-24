@@ -6,7 +6,7 @@ from .models import Employee, Department, Designation, Grade, Role, ReportingMan
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['id', 'email', 'employee_name', 'role1', 'role2']
+        fields = ['id', 'email', 'employee_name', 'role1', 'role2', 'is_hr']
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -48,11 +48,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
         return attrs
     
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = "__all__"
-
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
