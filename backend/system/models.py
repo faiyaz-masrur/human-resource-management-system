@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 from django.core.validators import MinLengthValidator
+from .choices import ROLE_CHOICES
 
 
 class Department(models.Model):
@@ -16,19 +17,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Designation(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Designation"
-        verbose_name_plural = "Designations"
-
-    def __str__(self):
-        return self.name
-
+    
 
 class Grade(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -40,15 +29,21 @@ class Grade(models.Model):
 
     def __str__(self):
         return self.name
+    
 
-
-class Role(models.Model):
+class Designation(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    grade = models.ForeignKey(
+        Grade, 
+        on_delete=models.SET_NULL, 
+        null=True, blank=True,
+        related_name="designation",
+    )
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        verbose_name = "Role"
-        verbose_name_plural = "Roles"
+        verbose_name = "Designation"
+        verbose_name_plural = "Designations"
 
     def __str__(self):
         return self.name
@@ -125,21 +120,17 @@ class Employee(AbstractUser):
         related_name="manager"
     )
 
-    role1 = models.ForeignKey(
-        Role,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="primary_role_employees"
-    )
+    role1 = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)
 
-    role2 = models.ForeignKey(
-        Role,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="secondary_role_employees"
-    )
+    role2 = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)
 
     is_hr = models.BooleanField(default=False)
+
+    reviewed_by_rm = models.BooleanField(default=False)
+    reviewed_by_hr = models.BooleanField(default=False)
+    reviewed_by_hod = models.BooleanField(default=False)
+    reviewed_by_coo = models.BooleanField(default=False)
+    reviewed_by_ceo = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
