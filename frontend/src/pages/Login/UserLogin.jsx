@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
@@ -13,17 +13,15 @@ const UserLogin = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/', {
+      const response = await api.post('system/auth/login/', {
         email,
         password,
       });
-
-      console.log('Login successful:', response.data);
-
-      // Store tokens and user data in local storage
+      
+      // Store tokens and user info in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('user_info', JSON.stringify(response.data.user_info));
+      localStorage.setItem('user', JSON.stringify(response.data.user));
 
       // Redirect to the dashboard page after successful login
       navigate('/dashboard'); 

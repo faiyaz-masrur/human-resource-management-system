@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const ForgetPassword = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/reset-password/', { email });
+      const response = await api.post('system/auth/reset-password/', { email });
       setMessage(response.data.detail);
     } catch (err) {
       console.error('Password reset request failed:', err.response.data);
