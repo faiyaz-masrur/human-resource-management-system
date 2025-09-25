@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import password_validation
-from .models import Employee, Department, Designation, Grade, Role, ReportingManager
+from .models import Employee, Department, Designation, Grade, ReportingManager
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

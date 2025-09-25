@@ -1,4 +1,4 @@
-'''
+
 from django.contrib import admin
 from .models import EmployeeAppraisalTimer, ReportingManagerAppraisalTimer, FinalReviewerAppraisalTimer
 
@@ -53,5 +53,3 @@ class FinalReviewerAppraisalTimerAdmin(admin.ModelAdmin):
         Prevents deleting the last remaining instance.
         """
         return FinalReviewerAppraisalTimer.objects.count() > 1
-
-'''
