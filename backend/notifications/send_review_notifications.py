@@ -1,6 +1,7 @@
+from datetime import date, timedelta
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from appraisals.models import EmployeeAppraisalTrack
+from appraisals.models import EmployeeAppraisalTrack, EmployeeAppraisalTimer
 from notifications.models import Notification
 from employees.models import Employee
 
@@ -9,84 +10,93 @@ from employees.models import Employee
 def send_review_notification(sender, instance, created, **kwargs):
     """
     Sends notifications to the next reviewer in the hierarchy and to the submitter
-    whenever the status of an appraisal track changes.
+    only if the current date is within the global appraisal period.
     """
 
-    employee = instance.employee
-
     if created:
-        # Initial self-appraisal submission → notify Reporting Manager & employee
-        rm_instance = getattr(employee, 'reporting_manager', None)
-        if rm_instance:
-            Notification.objects.create(
-                employee=rm_instance.manager,
-                title="New Self-Appraisal Submitted",
-                message=f"{employee.employee_name} has submitted their self-appraisal. It is now awaiting your review."
-            )
-            print(f"Notification sent to RM {rm_instance.manager.employee_name}")
-
-        Notification.objects.create(
-            employee=employee,
-            title="Self-Appraisal Submitted",
-            message="You have successfully submitted your self-appraisal."
-        )
-        print(f"Notification sent to {employee.employee_name}")
+        return
+    
+    if instance.self_appraisal_done == "False":
         return
 
-    # --- Review Progress Notifications ---
-    next_reviewer = None
-    reviewer_message = ""
+    employee = instance.employee
+    
+
+    # --- Notification logic ---
+    list = []
     employee_message = ""
 
-    if instance.self_appraisal_done and not instance.rm_review_done:
+    if instance.self_appraisal_done == "True" and instance.rm_review_done == "False":
         rm = getattr(employee, 'reporting_manager', None)
         if rm:
-            next_reviewer = rm.manager
-            reviewer_message = f"{employee.employee_name} has completed self-appraisal. It is now awaiting your review."
-            employee_message = "Your self-appraisal has been submitted and is now under review by your Reporting Manager."
+            dict = {
+                "next_reviewer": rm.manager,
+                "reviewer_message": f"{employee.employee_name} has completed self-appraisal. It is now awaiting your review.",
+            }
+            list.append(dict)
+            employee_message = "Your self-appraisal has been submitted and is now under review by your Reporting Manager.",
+    elif instance.rm_review_done == "True" and instance.hr_review_done == "False":
+        next_reviewers = Employee.objects.filter(is_hr=True)
+        for next_reviewer in next_reviewers:
+            if next_reviewer:
+                dict = {
+                    "next_reviewer" : next_reviewer,
+                    "reviewer_message" : f"The Reporting Manager review for {employee.employee_name} has been submitted. It is now awaiting your HR review.",
+                }
+                list.append(dict)
+                employee_message = "Your appraisal has been reviewed by the Reporting Manager. HR will review it next."
+    elif instance.hr_review_done == "True" and instance.hod_review_done == "False":
+        next_reviewers = Employee.objects.filter(role="HOD")
+        for next_reviewer in next_reviewers:
+            if next_reviewer:
+                dict = {
+                    "next_reviewer" :   next_reviewer,
+                    "reviewer_message" : f"The HR review for {employee.employee_name} has been submitted. It is now awaiting your HOD review.",
+                }
+                list.append(dict)
+                employee_message = "Your appraisal has been reviewed by HR. HOD will review it next."
+    elif instance.hod_review_done == "True" and instance.coo_review_done == "False":
+        next_reviewers = Employee.objects.filter(role="COO")
+        for next_reviewer in next_reviewers:
+            if next_reviewer:
+                dict = {
+                    "next_reviewer" :   next_reviewer,
+                    "reviewer_message" : f"The HOD review for {employee.employee_name} has been submitted. It is now awaiting your COO review."
+                }
+                list.append(dict)
+                employee_message = "Your appraisal has been reviewed by HOD. COO will review it next."
+    elif instance.coo_review_done == "True" and instance.ceo_review_done == "False":
+        next_reviewer = Employee.objects.filter(role="CEO")
+        for next_reviewer in next_reviewers:
+            if next_reviewer:
+                dict = {
+                    "next_reviewer" :   next_reviewer,
+                    "reviewer_message" : f"The COO review for {employee.employee_name} has been submitted. It is now awaiting your CEO review.",
+                }
+                list.append(dict)
+                employee_message = "Your appraisal has been reviewed by COO. CEO will review it next."
+    elif (instance.self_appraisal_done == "True" and 
+          instance.rm_review_done == "True" and
+          instance.hr_review_done == "True" and
+          instance.hod_review_done == "True" and
+          instance.coo_review_done == "True" and
+          instance.ceo_review_done == "True"):
+        
+        employee_message = "Your appraisal process has been fully completed."
 
-    elif instance.rm_review_done and not instance.hr_review_done:
-        next_reviewer = Employee.objects.filter(role="HR").first()
-        if next_reviewer:
-            reviewer_message = f"The Reporting Manager review for {employee.employee_name} has been submitted. It is now awaiting your HR review."
-            employee_message = "Your appraisal has been reviewed by the Reporting Manager. HR will review it next."
-
-    elif instance.hr_review_done and not instance.hod_review_done:
-        next_reviewer = Employee.objects.filter(role="HOD").first()
-        if next_reviewer:
-            reviewer_message = f"The HR review for {employee.employee_name} has been submitted. It is now awaiting your HOD review."
-            employee_message = "Your appraisal has been reviewed by HR. HOD will review it next."
-
-    elif instance.hod_review_done and not instance.coo_review_done:
-        next_reviewer = Employee.objects.filter(role="COO").first()
-        if next_reviewer:
-            reviewer_message = f"The HOD review for {employee.employee_name} has been submitted. It is now awaiting your COO review."
-            employee_message = "Your appraisal has been reviewed by HOD. COO will review it next."
-
-    elif instance.coo_review_done and not instance.ceo_review_done:
-        next_reviewer = Employee.objects.filter(role="CEO").first()
-        if next_reviewer:
-            reviewer_message = f"The COO review for {employee.employee_name} has been submitted. It is now awaiting your CEO review."
-            employee_message = "Your appraisal has been reviewed by COO. CEO will review it next."
-
-    elif instance.ceo_review_done:
-        # Final stage completed
-        Notification.objects.create(
-            employee=employee,
-            title="Appraisal Completed",
-            message="Your appraisal process has been fully completed."
-        )
-        print(f"Notification sent to {employee.employee_name} for completion")
-        return
 
     # Send notification to the next reviewer
-    if next_reviewer and reviewer_message:
-        Notification.objects.create(
-            employee=next_reviewer,
-            title="Review Submitted",
-            message=reviewer_message
-        )
-        print(f"Notification sent to {next_reviewer.employee_name}")
+    for item in list:
+        if item:
+            next_reviewer = item["next_reviewer"]
+            reviewer_message = item["reviewer_message"]
+            if next_reviewer and reviewer_message:
+                Notification.objects.create(
+                    employee=next_reviewer,
+                    title="Review Submitted",
+                    message=reviewer_message
+                )
+
 
     # Send notification to the submitter
     if employee_message:
@@ -95,4 +105,3 @@ def send_review_notification(sender, instance, created, **kwargs):
             title="Appraisal Update",
             message=employee_message
         )
-        print(f"Notification sent to {employee.employee_name}")

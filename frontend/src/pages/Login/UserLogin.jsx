@@ -1,8 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const UserLogin= () => {
+const UserLogin = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/auth/login/', {
+        email,
+        password,
+      });
+
+      console.log('Login successful:', response.data);
+
+      // Store tokens and user data in local storage
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
+      localStorage.setItem('user_info', JSON.stringify(response.data.user_info));
+
+      // Redirect to the dashboard page after successful login
+      navigate('/dashboard'); 
+
+    } catch (err) {
+      console.error('Login failed:', err.response.data);
+      if (err.response && err.response.data) {
+        setError(err.response.data.detail || 'Login failed. Please check your credentials.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
+    }
+  };
+
   return (
-    <>UserLogin</>
+    <div className="login-container">
+      <div className="login-image-section">
+        <div className="overlay-circle"></div>
+        <div className="human-resource-text">
+          <h1>Human Resource Management System</h1>
+        </div>
+      </div>
+      <div className="login-form-section">
+        <div className="form-content">
+          <h2 className="form-header h2">USER SIGN IN</h2>
+          <form onSubmit={handleLogin}>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div className="form-group">
+              <label htmlFor="email">Your Email ID</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Example: abc@sonaliintellect.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group password-group">
+              <label htmlFor="password">Your Password</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span className="password-toggle">
+                <i className="fa fa-eye-slash"></i>
+              </span>
+            </div>
+            <div className="forgot-password">
+              <a href="/forget-password">Forgot username, Password?</a>
+              <span className="contact-admin">Contact System Admin</span>
+            </div>
+            <button type="submit" className="login-button">Sign In</button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 
