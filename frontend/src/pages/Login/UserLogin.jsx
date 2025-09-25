@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
@@ -13,11 +13,7 @@ const UserLogin = () => {
     setError('');
 
     try {
-<<<<<<< HEAD
-      const response = await api.post('api/auth/login/', {
-=======
       const response = await api.post('system/auth/login/', {
->>>>>>> c6d5f219c6eba5a9706568fd6aaa54fd13ed6811
         email,
         password,
       });

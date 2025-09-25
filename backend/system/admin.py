@@ -1,37 +1,8 @@
-
 from django.contrib import admin
 from django.contrib.auth.models import Group
-<<<<<<< HEAD
-from .models import User, Department, Designation, Grade
-
-'''
-@admin.register(User)
-class CustomUserAdmin(UserAdmin):
-    model = User
-    list_display = ('email', 'id', 'is_staff', 'is_superuser', 'is_active')
-    list_display_links = ('email', 'id')
-    list_filter = ('id', 'is_staff', 'is_superuser', 'is_active')
-    fieldsets = (
-        (None, {'fields': ('id', 'email', 'password')}),
-        ('Permissions', {
-            'fields': ('is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo', 'is_staff', 'is_superuser', 'is_active'),
-        }),
-        ('Dates', {'fields': ('last_login',)}),
-    )
-    search_fields = ('email', 'id')
-    ordering = ('email',)
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-'''
-=======
 from .models import Department, Designation, Grade
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
->>>>>>> c6d5f219c6eba5a9706568fd6aaa54fd13ed6811
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
@@ -81,10 +52,3 @@ admin.site.index_title = "Performance Appraisal System Admin Portal"
 admin.site.unregister(Group)
 admin.site.unregister(BlacklistedToken)
 admin.site.unregister(OutstandingToken)
-
-
-
-<<<<<<< HEAD
-
-=======
->>>>>>> c6d5f219c6eba5a9706568fd6aaa54fd13ed6811
