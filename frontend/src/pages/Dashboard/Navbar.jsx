@@ -1,11 +1,18 @@
+// Navbar.jsx
 import React from 'react';
 
-const Navbar = () => {
-  // Placeholder for the user's profile picture
+// Accept toggle handlers as props
+const Navbar = ({ onMenuClick, onRightPanelClick }) => {
   const userProfileImage = "path/to/profile-pic.jpg";
 
   return (
     <div className="navbar-container">
+      
+      {/* Menu Icon for Mobile/Sidebar Toggle */}
+      <span className="navbar-toggle-left" onClick={onMenuClick}>
+        ☰
+      </span>
+
       <div className="navbar-left">
         <span className="breadcrumb">Menu</span>
         <span className="breadcrumb">|</span>
@@ -22,6 +29,12 @@ const Navbar = () => {
       <div className="navbar-right">
         <span className="current-time">11:34 AM</span>
         <span className="current-date">/ 24 Mar 2025</span>
+        
+        {/* Notification Icon for Right Panel Toggle */}
+        <span className="notification-toggle" onClick={onRightPanelClick}>
+          🔔
+        </span>
+        
         <div className="user-profile">
           <div className="profile-image-container">
             <img src={userProfileImage} alt="User" className="profile-image" />

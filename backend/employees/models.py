@@ -24,7 +24,7 @@ class PersonalDetail(models.Model):
     mother_name = models.CharField(max_length=100, null=True, blank=True) 
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     personal_email = models.EmailField(max_length=254, null=True, blank=True)
-    date_of_birth = models.DateField(null=True, null=True, blank=True)  
+    date_of_birth = models.DateField(null=True, blank=True)  
     national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
     passport_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES, null=True, blank=True)

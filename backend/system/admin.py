@@ -1,9 +1,10 @@
-'''
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from .models import User, Department, Designation, Grade
 
+'''
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -25,7 +26,7 @@ class CustomUserAdmin(UserAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
-
+'''
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
@@ -75,4 +76,4 @@ admin.site.index_title = "Performance Appraisal System Admin Portal"
 
 admin.site.unregister(Group)
 
-'''
+

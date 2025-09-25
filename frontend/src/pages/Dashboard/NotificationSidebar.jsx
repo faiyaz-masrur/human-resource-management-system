@@ -1,3 +1,4 @@
+// NotificationSidebar.jsx
 import React from 'react';
 
 const notifications = [
@@ -8,12 +9,14 @@ const notifications = [
   { title: 'New office order', time: '14 Jan 2025, 11:59 AM' },
 ];
 
-const NotificationSidebar = () => {
+// Accept className and onClose
+const NotificationSidebar = ({ className, onClose }) => {
   return (
-    <div className="notification-sidebar">
+    <div className={className}>
       <div className="notification-header">
         <h2 className="header-title">Notifications</h2>
         <a href="#" className="header-link">See all</a>
+        {/* Optional: Add a close button for mobile/overlay view */}
       </div>
       <div className="notification-list">
         {notifications.map((notification, index) => (
