@@ -52,3 +52,6 @@ admin.site.index_title = "Performance Appraisal System Admin Portal"
 admin.site.unregister(Group)
 admin.site.unregister(BlacklistedToken)
 admin.site.unregister(OutstandingToken)
+
+
+
