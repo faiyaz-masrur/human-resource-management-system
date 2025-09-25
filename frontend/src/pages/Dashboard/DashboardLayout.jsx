@@ -1,3 +1,4 @@
+// DashboardLayout.jsx
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
@@ -9,6 +10,10 @@ import NotificationSidebar from './NotificationSidebar';
 const DashboardLayout = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showRightPanel, setShowRightPanel] = useState(false);
+
+  // Toggle handlers
+  const toggleSidebar = () => setShowSidebar(v => !v);
+  const toggleRightPanel = () => setShowRightPanel(v => !v);
 
   // Close panels when clicking on overlay
   const handleOverlayClick = () => {
@@ -31,14 +36,18 @@ const DashboardLayout = () => {
     };
   }, []);
 
-  // Prevent body scroll when panels are open on mobile
+  // Prevent body scroll when panels are open
   useEffect(() => {
     if (showSidebar || showRightPanel) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // Use a brief timeout to let CSS transitions finish before resetting overflow
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'unset';
+      }, 300);
+      return () => clearTimeout(timer);
     }
-
+    // Cleanup on component unmount
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -46,29 +55,29 @@ const DashboardLayout = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* Navbar with click handlers to toggle the sidebars */}
-      <Navbar
-        onMenuClick={() => setShowSidebar(v => !v)}
-        onRightPanelClick={() => setShowRightPanel(v => !v)}
-      />
-      {/* Left Sidebar, conditionally shown */}
+      
+      
+      {/* The className prop is crucial for applying the 'show' state to the sidebars */}
       <Sidebar
-        show={showSidebar}
+        className={`sidebar-container ${showSidebar ? 'show' : ''}`}
         onClose={() => setShowSidebar(false)}
       />
       
       <main className="main-content">
-        {/* The Outlet renders the current nested route's component */}
         <Outlet />
       </main>
       
-      {/* Right Notification Sidebar, conditionally shown */}
       <NotificationSidebar
-        show={showRightPanel}
+        className={`notification-sidebar ${showRightPanel ? 'show' : ''}`}
         onClose={() => setShowRightPanel(false)}
       />
 
-      {/* Panel overlay for mobile, to close panels when clicked outside */}
+      <Navbar
+        onMenuClick={toggleSidebar}
+        onRightPanelClick={toggleRightPanel}
+      />
+
+      {/* Panel overlay for mobile/overlay mode */}
       <div
         className={`panel-overlay${showSidebar || showRightPanel ? ' active' : ''}`}
         onClick={handleOverlayClick}

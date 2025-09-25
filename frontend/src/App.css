@@ -5,7 +5,7 @@
  */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #F3F4F6;
+  background-color: #fff;
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevents horizontal scroll on small screens */
@@ -1704,100 +1704,85 @@ body {
   background-color: #F3F4F6;
 }
 
-/* ---------------------------------- */
-/* Sidebar Styles (Sidebar.jsx)       */
-/* ---------------------------------- */
-/* This section styles the left sidebar, based on your UI images. */
-.sidebar-container {
-  grid-area: sidebar;
-  width: 200px;
-  background-color: #fff;
-  height: calc(100vh - 40px);
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  border-radius: 12px;
-}
+/* ================================================= */
+/* 1. DASHBOARD LAYOUT GRID (DashboardLayout.jsx) */
+/* This section defines the main 3-column, 2-row grid structure. */
+/* ================================================= */
 
-.sidebar-header {
-  margin-bottom: 40px;
-}
-
-.sidebar-header .logo {
-  max-width: 150px;
-  height: auto;
-}
-
-.sidebar-menu .menu-heading {
-  color: #999;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: #333;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-
-.menu-item:hover {
-  background-color: #e6f7ff;
-  color: #1890ff;
-}
-
-.menu-item .item-icon {
-  font-size: 18px;
-  margin-right: 12px;
-}
-
-.menu-item .item-name {
-  flex-grow: 1;
-  font-size: 16px;
-}
-
-.menu-item .item-arrow {
-  font-size: 12px;
-  color: #ccc;
-}
-
-/* ---------------------------------- */
-/* Navbar Styles (Navbar.jsx)         */
-/* ---------------------------------- */
-/* This section styles the top navigation bar. */
-.navbar-container {
-  grid-column: 1 / -1; /* Make the navbar span all columns */
+.dashboard-layout {
   display: grid;
-  grid-template-columns: subgrid;
-  align-items: center;
-  padding: 20px 40px;
+  
+  /* FIX: Reduced Notification Sidebar width to 250px (to match the left sidebar) */
+  grid-template-columns: 200px 1fr 250px; 
+  
+  /* Navbar height set to 60px as seen in the screenshot */
+  grid-template-rows: 60px 1fr; 
+  
+  /* Map the Grid Areas */
+  grid-template-areas:
+    "navbar navbar navbar"
+    "sidebar main notification";
+
+  min-height: 100vh;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border-radius: 12px;
-  margin: 0;
 }
 
-/* Align navbar children with the columns of the main grid */
+/* 2. MAIN CONTENT & HEROPANEL (Outlet) */
+.main-content {
+  grid-area: main;
+  padding: 30px 40px; 
+  overflow-y: auto; 
+}
+
+/* 3. PANEL OVERLAY (For Mobile/Tablet) */
+.panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999; 
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.panel-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+/* ================================================= */
+/* 4. NAVBAR STYLES (Navbar.jsx) */
+/* ================================================= */
+
+.navbar-container {
+  grid-area: navbar; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px; 
+  padding: 0 40px; 
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); 
+}
+
+.navbar-toggle-left, .notification-toggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 .navbar-left {
-  grid-column: 2; /* This will be the main content column */
   display: flex;
   align-items: center;
   font-size: 16px;
   color: #555;
+  /* Shift left to align logo/menu breadcrumb with the sidebar edge */
+  margin-left: -20px; 
+  padding-left: 20px;
 }
 
 .navbar-left .breadcrumb {
@@ -1810,12 +1795,19 @@ body {
   color: #333;
 }
 
+.navbar-center {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
 .navbar-center .search-bar {
   display: flex;
   align-items: center;
   background-color: #f5f5f5;
   border-radius: 20px;
   padding: 8px 16px;
+  width: 300px;
 }
 
 .navbar-center .search-bar input {
@@ -1827,10 +1819,12 @@ body {
 }
 
 .navbar-right {
-  grid-column: 3; /* This will be the notification sidebar column */
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Align to the right side of the column */
+  justify-content: flex-end;
+  /* Shift right to align content with the notification sidebar edge */
+  margin-right: -40px;
+  padding-right: 40px;
 }
 
 .navbar-right .current-time,
@@ -1840,6 +1834,7 @@ body {
   margin-right: 20px;
 }
 
+/* User Profile Styles */
 .user-profile {
   display: flex;
   align-items: center;
@@ -1847,11 +1842,12 @@ body {
 }
 
 .profile-image-container {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   overflow: hidden;
   margin-right: 10px;
+  border: 1px solid #eee;
 }
 
 .profile-image {
@@ -1866,12 +1862,12 @@ body {
 }
 
 .profile-welcome {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
 }
 
 .profile-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1881,20 +1877,98 @@ body {
   color: #aaa;
 }
 
-/* ---------------------------------- */
-/* NotificationSidebar Styles (NotificationSidebar.jsx) */
-/* ---------------------------------- */
-/* This section styles the right notification bar. */
-.notification-sidebar {
-  grid-area: notification;
-  width: 300px;
+
+/* ================================================= */
+/* 5. SIDEBAR STYLES (Sidebar.jsx) */
+/* ================================================= */
+
+.sidebar-container {
+  grid-area: sidebar; 
+  width: 200px; 
   background-color: #fff;
-  height: calc(100vh - 40px);
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%; 
+  padding: 0; 
+  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05); 
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
+  position: static; 
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 20px 10px 10px 15px; 
+  margin-bottom: 20px;
+}
+
+.sidebar-header .logo {
+    max-width: 100%; 
+    height: auto;
+}
+
+.sidebar-menu .menu-heading {
+  color: #999;
+  font-size: 13px; 
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 15px; 
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #333;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px; 
+  margin-bottom: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.menu-item:hover, .menu-item.active {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.menu-item .item-icon {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.menu-item .item-name {
+  flex-grow: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.menu-item .item-arrow {
+  font-size: 10px;
+  color: #ccc;
+}
+
+
+/* ================================================= */
+/* 6. NOTIFICATION SIDEBAR STYLES (NotificationSidebar.jsx) */
+/* ================================================= */
+
+.notification-sidebar {
+  grid-area: notification; 
+  width: 250px; /* FIX: Set to 250px to match the grid column and make it slimmer */
+  background-color: #fff;
+  height: 100%;
+  padding: 20px; /* FIX: Slightly reduced padding for a tighter fit */
+  box-shadow: -1px 0 4px rgba(0, 0, 0, 0.05); 
+  display: flex;
+  flex-direction: column;
+  position: static; 
+  z-index: 10;
 }
 
 .notification-header {
@@ -1913,25 +1987,36 @@ body {
 .notification-header .header-link {
   font-size: 14px;
   color: #1890ff;
+  text-align: left;
   text-decoration: none;
 }
 
 .notification-list {
   display: flex;
   flex-direction: column;
+  overflow-y: auto; 
 }
 
 .notification-item {
   display: flex;
   align-items: flex-start;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
+  padding-left: 10px; 
+  position: relative;
 }
 
-.notification-item .notification-icon {
-  font-size: 24px;
-  color: #1890ff;
-  margin-right: 12px;
+/* Marker for new/unread notifications */
+.notification-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px; 
+    height: 6px;
+    border-radius: 50%;
+    background-color: #d8b8e0; 
 }
 
 .notification-content {
@@ -1940,7 +2025,7 @@ body {
 }
 
 .notification-title {
-  font-size: 16px;
+  font-size: 14px; 
   font-weight: 500;
   color: #333;
   margin: 0 0 4px 0;
@@ -1951,10 +2036,11 @@ body {
   color: #999;
 }
 
-/* ---------------------------------- */
-/* MainDashboard Styles (MainDashboard.jsx) */
-/* ---------------------------------- */
-/* This section styles the content area with the various highlight cards and charts. */
+
+/* ================================================= */
+/* 7. MAIN DASHBOARD CONTENT (MainDashboard.jsx) */
+/* ================================================= */
+
 .main-dashboard-container {
   padding: 0;
   margin: 0;
@@ -1968,49 +2054,69 @@ body {
   font-size: 20px;
   font-weight: 600;
   color: #333;
+  padding-bottom: 5px; 
+  border-bottom: 1px solid #eee; 
 }
 
+/* --- HIGHLIGHTS GRID --- */
 .highlights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 10px;
   margin-bottom: 40px;
 }
 
 .highlight-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  background-color: #f5f5f5;
+  border-radius: 8px; 
+  padding: 15px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+  border-left: 4px solid #1890ff; 
+  transition: transform 0.2s;
+  height: 100px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+}
+
+.highlight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .highlight-card .card-title {
   font-size: 14px;
   color: #777;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .highlight-card .card-value {
-  font-size: 32px;
+  font-size: 32px; 
   font-weight: 700;
   color: #333;
+  display: block; 
+  line-height: 1.1;
 }
 
 .highlight-card .card-details {
   font-size: 12px;
   color: #1890ff;
   text-decoration: none;
-  float: right;
-  margin-top: 20px;
+  font-weight: 500;
+  display: block; 
+  text-align: right;
+  margin-top: 5px;
 }
 
 .highlight-card .card-trend-up,
 .highlight-card .card-trend-down {
   font-size: 12px;
+  font-weight: 600;
   float: right;
   margin-top: 10px;
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: 4px;
 }
 
 .highlight-card .card-trend-up {
@@ -2023,6 +2129,7 @@ body {
   background-color: #ffebee;
 }
 
+/* --- CHARTS GRID --- */
 .charts-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -2031,39 +2138,58 @@ body {
 }
 
 .chart-card {
-  background-color: #fff;
-  border-radius: 12px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .chart-title {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .chart-placeholder {
-  height: 200px;
-  background-color: #f5f5f5;
+  flex-grow: 1; 
+  min-height: 200px;
+  background-color: #fff;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ccc;
   font-size: 14px;
+  overflow: hidden; 
+}
+
+.chart-card-legend-parent .chart-and-legend {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
 }
 
 .legend-list {
   list-style: none;
   padding: 0;
+  margin: 0;
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  min-width: 130px; 
 }
 
 .legend-list li {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
 }
 
 .legend-dot {
@@ -2073,10 +2199,82 @@ body {
   margin-right: 8px;
 }
 
+.legend-percent {
+    font-weight: 600;
+    color: #333;
+}
+
 .legend-dot.casual { background-color: #4CAF50; }
 .legend-dot.sick { background-color: #F44336; }
-.legend-dot.earned { background-color: #2196F3; }
-.legend-dot.other { background-color: #9E9E9E; }
+.legend-dot.earned { background-color: #795548; } 
+.legend-dot.other { background-color: #FFC107; } 
+
+/* ================================================= */
+/* 8. RESPONSIVENESS (MOBILE/TABLET) */
+/* ================================================= */
+
+@media (max-width: 1200px) {
+  .dashboard-layout {
+      /* Keep slim 250px notification sidebar on slightly smaller desktops */
+      grid-template-columns: 200px 1fr 250px; 
+  }
+}
+
+@media (max-width: 992px) {
+    /* Tablet Layout: Collapse sidebars into slide-out/overlay mode */
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "navbar"
+            "main";
+    }
+
+    /* Show toggle buttons on Navbar */
+    .navbar-toggle-left, .notification-toggle {
+        display: block;
+    }
+    
+    /* Hide desktop elements on mobile */
+    .navbar-left, .navbar-center, .navbar-right .current-time, .navbar-right .current-date {
+        display: none;
+    }
+    .navbar-right {
+        gap: 15px;
+    }
+
+    /* Force sidebars to be fixed/overlay */
+    .sidebar-container, .notification-sidebar {
+        grid-area: unset;
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        border-radius: 0;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    .sidebar-container {
+        left: 0;
+        transform: translateX(-100%);
+    }
+    .sidebar-container.show {
+        transform: translateX(0);
+    }
+    .notification-sidebar {
+        right: 0;
+        transform: translateX(100%);
+        width: 300px; /* Keep wider for mobile usability */
+    }
+    .notification-sidebar.show {
+        transform: translateX(0);
+    }
+
+    /* Stack charts on tablet */
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 /* ---------------------------------- */
 /* OtherAppraisals Styles             */
