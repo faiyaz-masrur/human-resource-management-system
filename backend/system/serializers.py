@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import password_validation
-from .models import User, Department, Designation, Grade
+from .models import Employee, Department, Designation, Grade, Role, ReportingManager
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'email', 'is_rm', 'is_hr', 'is_hod', 'is_coo', 'is_ceo']
+        model = Employee
+        fields = ['id', 'email', 'employee_name', 'role1', 'role2']
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -48,18 +48,29 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
         return attrs
     
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = "__all__"
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ['id', 'name', 'description']
+        fields = "__all__"
 
 class DesignationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Designation
-        fields = ['id', 'name', 'description']
+        fields = "__all__"
 
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grade
-        fields = ['id', 'name', 'description']
+        fields = "__all__"
+
+class ReportingManagerSerializer(serializers.ModelSerializer):
+    manager_name = serializers.CharField(source="manager.employee_name", read_only=True)
+
+    class Meta:
+        model = ReportingManager
+        fields = ["id", "manager_name"]

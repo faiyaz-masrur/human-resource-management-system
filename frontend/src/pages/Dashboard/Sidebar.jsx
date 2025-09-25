@@ -11,6 +11,7 @@ const menuItems = [
   { name: 'Provident Fund', icon: '💰' },
   { name: 'Appraisal', icon: '👍' },
   { name: 'Reports', icon: '📈' },
+  { name: 'Configurations', icon: '📈' },
   { name: 'Settings', icon: '⚙️' },
 ];
 

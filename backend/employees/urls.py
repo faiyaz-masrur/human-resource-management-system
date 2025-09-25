@@ -1,14 +1,47 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import EmployeeRetrieveUpdateView, EmployeeViewSet
+from .views import (EmployeeOfficialDetailViewSet, 
+                    EmployeePersonalDetailView, 
+                    EmployeeAddressView,
+                    EmployeeWorkExperienceView,
+                    MyOfficialDetailView, 
+                    MyPersonalDetailView,
+                    MyAddressView,
+                    MyWorkExperienceView,
+                    EmployeeEducationView,
+                    MyEducationeView,
+                    EmployeeProfessionalCertificateView,
+                    MyProfessionalCertificateView,
+                    EmployeeAttatchmentView,
+                    MyAttatchmentView
+)
 
 router = DefaultRouter()
-router.register(r'info', EmployeeViewSet, basename='employee')
+router.register(r'empolyee-official-details', EmployeeOfficialDetailViewSet, basename='employee_official_detail')
 
 
 urlpatterns = [
-    # CRUD endpoints for Employee model by admin users
+    # endpoints for hr to view, create, update, delete Employee model
     path('', include(router.urls)),
-    # URL for an employee to view and edit their own profile
-    path('profile/', EmployeeRetrieveUpdateView.as_view(), name='employee_profile'),
+    path('employee-personal-details/<uuid:employee>/', EmployeePersonalDetailView.as_view(), name='employee-personal-detail'),
+    path('employee-address/<uuid:employee>/', EmployeeAddressView.as_view(), name='employee-address'),
+    path('employee-work-experience/<uuid:employee>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience-all'),
+    path('employee-work-experience/<uuid:employee>/<int:work_experience>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience'),
+    path('employee-education/<uuid:employee>/', EmployeeEducationView.as_view(), name='employee-education-all'),
+    path('employee-education/<uuid:employee>/<int:education>/', EmployeeEducationView.as_view(), name='employee-education'),
+    path('employee-professional-certificate/<uuid:employee>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate-all'),
+    path('employee-professional-certificate/<uuid:employee>/<int:professional_certificate>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate'),
+    path('employee-attatchment/<uuid:employee>/', EmployeeAttatchmentView.as_view(), name='employee-attatchment'),
+
+    # endpoints for employees to view and update their own details
+    path('my-official-details/', MyOfficialDetailView.as_view(), name='my-official-detail'),
+    path('my-personal-details/', MyPersonalDetailView.as_view(), name='my-personal-detail'),
+    path("my-address/", MyAddressView.as_view(), name="my-address"),
+    path("my-work-experience/", MyWorkExperienceView.as_view(), name="my-work-experience-all"),
+    path("my-work-experience/<int:work_experience>/", MyWorkExperienceView.as_view(), name="my-work-experience"),
+    path("my-education/", MyEducationeView.as_view(), name="my-education-all"),
+    path("my-education/<int:education>/", MyEducationeView.as_view(), name="my-education"),
+    path('my-professional-certificate/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate-all'),
+    path('my-professional-certificate/<int:professional_certificate>/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate'),
+    path("my-attatchment/", MyAttatchmentView.as_view(), name="my-attatchment"),
 ]
