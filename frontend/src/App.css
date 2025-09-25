@@ -1953,6 +1953,262 @@ body {
   color: #ccc;
 }
 
+/* ================================================= */
+/* 5. SIDEBAR STYLES (Sidebar.jsx) - UPDATES FOR DROPDOWNS */
+/* ================================================= */
+
+/* Re-defining .menu-item to handle the Link wrapper inside it */
+.menu-list .menu-item {
+    /* Remove padding from LI, as it will be applied to the inner A/Link */
+    padding: 0; 
+    /* Ensure existing styles are kept */
+    margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    display: block; /* Change from flex to block for proper child sizing */
+    align-items: unset; /* Remove alignment from LI */
+}
+
+/* New: Style for the Link wrapper inside the LI */
+.menu-item .menu-link-content {
+    display: flex; /* Re-establish flex layout inside the link */
+    align-items: center;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    padding: 10px 15px; /* Apply padding here for full clickable area */
+}
+
+/* Arrow styling for DROPDOWNS */
+.menu-dropdown-header .item-arrow-down {
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-dropdown-header .item-arrow-down.rotated {
+    transform: rotate(180deg);
+}
+
+/* --- SUBMENU COLLAPSE/EXPAND STYLES --- */
+
+/* Base style: MUST BE HIDDEN BY DEFAULT */
+.submenu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    /* Key for smooth animation and hidden state */
+    max-height: 0; 
+    overflow: hidden; 
+    transition: max-height 0.3s ease-in-out;
+}
+
+/* State when the menu is OPEN */
+.submenu-list.open {
+    /* Set max-height large enough to hold all sub-items */
+    max-height: 500px; 
+    padding-top: 5px; 
+    padding-bottom: 5px; 
+}
+
+.submenu-item {
+    padding: 0; 
+}
+
+.submenu-link-content {
+    display: flex;
+    width: 100%;
+    text-decoration: none;
+    color: #555;
+    font-size: 13px;
+    font-weight: 400;
+    
+    /* Indentation for sub-menu items */
+    padding: 8px 15px 8px 30px; /* Indent more than parent item */
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Submenu active/hover state */
+.submenu-item .submenu-link-content:hover,
+.submenu-item.active .submenu-link-content {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border-radius: 4px;
+    margin: 0 5px; /* Add margin to show the border-radius clearly */
+}
+
+
+/* ================================================= */
+/* APPRAISAL SETTINGS STYLES (Light Theme) */
+/* This section styles the timer forms to match the white application interface. */
+/* ================================================= */
+
+/* General container styling for light theme */
+.appraisal-settings-container {
+    /* Background should be the same as main-content background or white */
+    padding: 20px;
+    background-color: #f4f7f9; /* Assuming this is your dashboard background */
+    color: #333; /* Dark text for readability */
+    min-height: 100vh;
+}
+
+.appraisal-settings-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.appraisal-timers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; 
+}
+
+/* --- ADD TIMER BUTTON (Rounded, now light-colored but distinct) --- */
+.timer-add-header {
+    margin-bottom: 20px;
+}
+
+.add-timer-button {
+    /* Changed to white/light gray button with primary text color */
+    background-color: #fff; 
+    color: #1890ff; /* Primary blue for text */
+    border: 1px solid #d9d9d9;
+    border-radius: 25px; 
+    padding: 12px 25px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.add-timer-button:hover {
+    background-color: #f0f0f0;
+}
+
+.plus-icon {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: 700;
+}
+
+/* --- FORM SECTION STYLING --- */
+.appraisal-timer-section {
+    padding: 20px;
+    background-color: #fff; /* White background for the form box */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Soft shadow */
+}
+
+.form-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #333; /* Dark title */
+    margin-bottom: 20px;
+}
+
+.timer-settings-form {
+    padding: 10px 0;
+}
+
+.form-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.form-group label {
+    width: 200px; 
+    flex-shrink: 0;
+    padding-top: 5px;
+    color: #555; /* Darker label text */
+}
+
+.input-with-note {
+    flex-grow: 1;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+/* Styles for the date input fields */
+.timer-input-field {
+    /* Changed to standard light input field */
+    background-color: #fff; 
+    border: 1px solid #d9d9d9; /* Light border */
+    color: #333; /* Dark text */
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 150px; 
+    outline: none;
+    cursor: pointer; 
+}
+
+.today-date-icon {
+    color: #888;
+    font-size: 13px;
+}
+
+.calendar-icon {
+    font-size: 16px;
+    color: #888;
+}
+
+.note {
+    font-size: 12px;
+    color: #999; /* Lighter note text */
+    margin-top: 5px;
+}
+
+/* --- ACTION BUTTONS --- */
+.form-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0; /* Light border separator */
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-save {
+    background-color: #1890ff; /* Use primary blue for main Save button */
+    color: #fff;
+}
+
+.btn-save:hover {
+    background-color: #40a9ff;
+}
+
+.btn-save-add, .btn-save-continue {
+    background-color: #f0f0f0; /* Light secondary buttons */
+    color: #333;
+    border: 1px solid #d9d9d9;
+}
+
+.btn-save-add:hover, .btn-save-continue:hover {
+    background-color: #e6e6e6;
+}
+
 
 /* ================================================= */
 /* 6. NOTIFICATION SIDEBAR STYLES (NotificationSidebar.jsx) */
@@ -2377,6 +2633,264 @@ body {
 
 .action-button:hover {
   background-color: #b3e0ff;
+}
+
+/* AppraisalStatus.css */
+
+.appraisal-status-container {
+    padding: 20px 0;
+    /* Uses the light gray background of the main content area */
+    background-color: #f4f7f9; 
+    color: #333;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.status-table-wrapper {
+    /* Wraps the table in a white card, matching the highlights and charts */
+    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Soft shadow */
+}
+
+.appraisal-status-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.appraisal-status-table th,
+.appraisal-status-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee; /* Light row separator */
+}
+
+/* Table Header Styles */
+.appraisal-status-table th {
+    background-color: #fcfcfc; /* Very light background for the header row */
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+}
+
+/* --- Checkbox Column Styling (The crucial part) --- */
+.checkbox-cell {
+    /* Ensures RM, HR, HOD, etc. columns are narrow and center-aligned */
+    text-align: center;
+    width: 80px; 
+}
+
+.checkbox-cell input[type="checkbox"] {
+    /* Default browser checkbox size */
+    width: 16px;
+    height: 16px;
+    cursor: default;
+    /* Optional: Style for checked state if possible, though often handled by browser */
+    accent-color: #1890ff; /* Use your primary blue accent for checked state */
+}
+
+/* Table Body Row Hover effect */
+.appraisal-status-table tbody tr:hover {
+    background-color: #e6f7ff; /* Very light blue hover to match sidebar/card details hover */
+}
+
+/* Last row has no border */
+.appraisal-status-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Shared CSS for Departments, Designations, and Grades (Light Theme) */
+
+/* ------------------ Base Container Styles ------------------ */
+/* Used for .departments-container, .designations-container, .grades-container */
+.departments-container, .designations-container, .grades-container {
+    padding: 20px 40px; 
+    background-color: #f4f7f9; /* Main application light background */
+    color: #333; 
+    min-height: 100vh;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333; 
+}
+
+/* ------------------ Add Button Styles ------------------ */
+/* Used for .add-department-button, .add-designation-button, .add-grade-button */
+.add-department-header, .add-designation-header, .add-grade-header {
+    margin-bottom: 20px;
+}
+
+.add-department-button, .add-designation-button, .add-grade-button {
+    background-color: #1890ff; /* Primary blue button */
+    color: #fff;
+    border: none;
+    border-radius: 25px; 
+    padding: 12px 25px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(24, 144, 255, 0.2); 
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.add-department-button:hover, .add-designation-button:hover, .add-grade-button:hover {
+    background-color: #40a9ff;
+    box-shadow: 0 4px 8px rgba(24, 144, 255, 0.3);
+}
+
+.plus-icon {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: 700;
+}
+
+/* ------------------ Form Card Styles ------------------ */
+/* Used for .department-form-card, .designation-form-card, .grade-form-card */
+.department-form-card, .designation-form-card, .grade-form-card {
+    background-color: #fff; /* White card background */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+    overflow: hidden; 
+    border: 1px solid #e0e0e0;
+}
+
+/* Header Bar (Light blue accent) */
+.form-header-bar {
+    background-color: #e6f7ff; /* Light blue accent */
+    color: #1890ff; 
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #bae7ff;
+}
+
+.form-content {
+    padding: 20px;
+}
+
+.form-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    width: 150px; 
+    flex-shrink: 0;
+    padding-top: 5px;
+    color: #555; 
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ------------------ Input/Textarea Styles ------------------ */
+.light-input, .light-textarea, .light-select {
+    background-color: #fff; 
+    border: 1px solid #d9d9d9; 
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 300px; /* Standard width for Name/Grade input */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.light-select {
+    /* Custom select styling for Designations */
+    appearance: none; 
+    padding-right: 30px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23999999" d="M7.7 11.4l5.3-5.3c.4-.4.4-1 0-1.4l-1.4-1.4c-.4-.4-1-.4-1.4 0L8 8.6 4.8 5.4c-.4-.4-1-.4-1.4 0l-1.4 1.4c-.4.4-.4 1 0 1.4l5.3 5.3c.4.4 1 .4 1.4 0z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+.light-input:focus, .light-textarea:focus, .light-select:focus {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.description-group {
+    align-items: flex-start;
+}
+
+.light-textarea {
+    flex-grow: 1;
+    min-height: 150px;
+    width: 100%; /* Overrides the 300px width for textarea */
+    max-width: 600px;
+    resize: vertical;
+}
+
+/* Designations Grade Input Group (Specific) */
+.grade-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-icon {
+    font-size: 16px;
+    cursor: pointer;
+    color: #999; 
+    transition: color 0.2s;
+}
+
+.action-icon:hover {
+    color: #1890ff;
+}
+
+/* ------------------ Action Button Bar Styles ------------------ */
+.form-actions-light {
+    padding: 15px 20px;
+    background-color: #fcfcfc; 
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Primary SAVE button (Primary Blue) */
+.btn-save-light {
+    background-color: #1890ff; 
+    color: #fff;
+}
+
+.btn-save-light:hover {
+    background-color: #40a9ff;
+}
+
+/* Secondary Buttons (Light Gray) */
+.btn-save-add-light, .btn-save-continue-light {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #d9d9d9;
+}
+
+.btn-save-add-light:hover, .btn-save-continue-light:hover {
+    background-color: #e6e6e6;
 }
 
 
