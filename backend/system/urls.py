@@ -4,7 +4,6 @@ from .views import (
     ChangePasswordView, 
     PasswordResetRequestView, 
     PasswordResetConfirmView,
-    RoleViewSet,
     DepartmentViewSet,
     DesignationViewSet,
     GradeViewSet,
@@ -24,7 +23,6 @@ from rest_framework_simplejwt.views import (
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'roles', RoleViewSet, basename='role')
 router.register(r'departments', DepartmentViewSet, basename='department')
 router.register(r'designations', DesignationViewSet, basename='designation')
 router.register(r'grades', GradeViewSet, basename='grade')

@@ -7,18 +7,17 @@ from .serializers import (
     DepartmentSerializer, 
     DesignationSerializer, 
     GradeSerializer, 
-    RoleSerializer,
     ReportingManagerSerializer
 )
-from .models import Department, Designation, Grade, Role, ReportingManager
-from rest_framework import generics, status, viewsets
+from .models import Department, Designation, Grade, ReportingManager
+from rest_framework import generics, status, viewsets, views
 from .permissions import IsEmployee, IsHR
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from ..system.choices import (
+from .choices import (
     ROLE_CHOICES,
     DISTRICT_CHOICES, 
     POLICE_STATION_CHOICES, 
@@ -145,7 +144,7 @@ class ReportingManagerListView(generics.ListAPIView):
     permission_classes = [IsHR]
 
 
-class RoleListView(generics.APIView):
+class RoleListView(views.APIView):
     permission_classes = [IsHR]
 
     def get(self, request):
@@ -154,7 +153,7 @@ class RoleListView(generics.APIView):
         })
 
 
-class PersonalDetailChoicesView(generics.APIView):
+class PersonalDetailChoicesView(views.APIView):
     permission_classes = [IsEmployee]
 
     def get(self, request):
@@ -163,7 +162,7 @@ class PersonalDetailChoicesView(generics.APIView):
             "blood_group_choices": [{"key": choice[0], "value": choice} for key, choice in BLOOD_GROUP_CHOICES],
         })
 
-class AddressChoicesView(generics.APIView):
+class AddressChoicesView(views.APIView):
     permission_classes = [IsEmployee]
 
     def get(self, request):
@@ -172,7 +171,7 @@ class AddressChoicesView(generics.APIView):
             "police_station_choices": [{"key": choice[0], "value": choice[1]} for choice in POLICE_STATION_CHOICES],
         })
     
-class EducationChoicesView(generics.APIView):
+class EducationChoicesView(views.APIView):
     permission_classes = [IsEmployee]
 
     def get(self, request):

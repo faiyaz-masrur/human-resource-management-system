@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'system',
     'appraisals',
     'employees',
-    'notifications',
+    "notifications.apps.NotificationsConfig",
     "django_apscheduler",
     
 ]

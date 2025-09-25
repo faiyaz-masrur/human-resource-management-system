@@ -98,7 +98,7 @@ class Employee(AbstractUser):
         related_name="employees"
     )
 
-    joining_date = models.DateField()
+    joining_date = models.DateField(null=True, blank=True,)
 
     grade = models.ForeignKey(
         Grade,
@@ -117,7 +117,7 @@ class Employee(AbstractUser):
         ReportingManager,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        related_name="manager"
+        related_name="employee"
     )
 
     role1 = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)

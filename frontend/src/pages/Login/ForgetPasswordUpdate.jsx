@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const ForgetPasswordUpdate = () => {
@@ -21,7 +21,7 @@ const ForgetPasswordUpdate = () => {
     }
 
     try {
-      const response = await axios.post(`http://localhost:8000/api/auth/reset-password/${uid}/${token}/`, {
+      const response = await api.post(`system/auth/reset-password/${uid}/${token}/`, {
         new_password: newPassword,
         confirm_password: confirmPassword,
       });
