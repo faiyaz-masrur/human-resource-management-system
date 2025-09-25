@@ -1,4 +1,5 @@
 # notifications/apps.py
+import sys
 from django.apps import AppConfig
 
 class NotificationsConfig(AppConfig):
@@ -6,5 +7,6 @@ class NotificationsConfig(AppConfig):
     name = 'notifications'
 
     def ready(self):
-        from .scheduler import start_scheduler
-        start_scheduler()
+        if "runserver" in sys.argv:
+            from .scheduler import start_scheduler
+            start_scheduler()
