@@ -110,89 +110,1326 @@ body {
 }
 
 /* 2. EmployeeOfficialDetails.jsx*/
-.details-card {
+/* Official Details Specific Styles */
+.official-details .details-card {
   width: 100%;
 }
 
-.form-row {
+.official-details .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
-.form-group {
+.official-details .form-group {
   flex: 1;
-  min-width: 250px;
+  min-width: 200px;
 }
 
-.form-group label {
+.official-details .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 600;
-  color: #555;
-  font-size: 14px;
+  color: #333;
+  font-size: 13px;
 }
 
-.form-value {
-  padding: 10px 12px;
-  background: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  min-height: 40px;
+/* Readonly fields */
+.official-details .form-value {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: #f5f5f5;
   display: flex;
   align-items: center;
-  font-size: 15px;
+  color: #333;
+  box-sizing: border-box;
 }
 
-.form-actions {
+/* Select dropdown styling for ALL dropdown fields */
+.official-details .form-select {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  padding-right: 25px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.official-details .form-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Style for the placeholder option */
+.official-details .form-select option[value=""] {
+  color: #999;
+  font-style: italic;
+}
+
+/* Ensure all form groups have equal height and alignment */
+.official-details .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Button styles */
+.official-details .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-}
-
-.btn-primary, .btn-secondary {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px; /* Added more rounded corners to match UI */
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
 }
 
 .btn-primary {
-  background: #3B82F6; /* Solid blue color from UI */
+  background: #0066cc;
   color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
 }
 
 .btn-primary:hover {
-  background: #2563EB; /* Slightly darker blue on hover */
+  background: #0052a3;
 }
 
 .btn-secondary {
-  background: #e0e0e0; /* Gray color for the Back button */
-  color: #150600; /* Dark text color */
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
 }
 
 .btn-secondary:hover {
-  background: #c0c0c0; /* Slightly darker gray on hover */
+  background: #555;
 }
 
-/* Responsive adjustments for form */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .form-row {
+  .official-details .form-row {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
   }
   
-  .form-group {
+  .official-details .form-group {
+    min-width: 100%;
+  }
+
+  /* Add these styles for review by to your existing CSS */
+
+}
+/* 3. EmployeesPersonalDetails CSS */
+
+/* Form input and select styles */
+/* Personal Details Specific Styles - Matching Original Design */
+.personal-details .details-card {
+  width: 100%;
+}
+
+.personal-details .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.personal-details .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.personal-details .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Input and readonly fields with exact same height and styling */
+.personal-details .form-input, 
+.personal-details .form-select,
+.personal-details .form-value {
+  width: 100%;
+  height: 35px; /* Fixed height to match original */
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+/* Readonly field specific styling */
+.personal-details .form-value {
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Input focus states */
+.personal-details .form-input:focus, 
+.personal-details .form-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+.personal-details .form-input::placeholder {
+  color: #999;
+  font-size: 13px;
+}
+
+/* Select dropdown styling to match original */
+.personal-details .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  padding-right: 25px;
+}
+
+/* Date input specific styling */
+.personal-details .form-input[type="date"] {
+  position: relative;
+  color: #666;
+}
+
+/* Ensure all form groups have equal height and alignment */
+.personal-details .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Button styles matching original */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-primary:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .personal-details .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .personal-details .form-group {
     min-width: 100%;
   }
 }
-/*Next Day CSS*/
+
+/* Ensure consistent spacing and alignment */
+.personal-details .form-group {
+  margin-bottom: 0;
+}
+
+/* Specific adjustment for the readonly employee name field */
+.personal-details .form-group:first-child .form-value {
+  font-weight: 600;
+  color: #000;
+}
+
+
+
+/* 4. EmployeesAddressDetails CSS */
+/* Address Details Specific Styles */
+.address-details .details-card {
+  width: 100%;
+}
+
+.address-details .section-title {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 25px 0 15px 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #3498db;
+  width: 100%;
+}
+
+.address-details .section-title:first-child {
+  margin-top: 0;
+}
+
+.address-details .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+/* 2 fields per row */
+.address-details .form-group {
+  flex: 0 0 calc(50% - 10px);
+  min-width: 250px;
+}
+
+.address-details .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Input fields */
+.address-details .form-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.address-details .form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+.address-details .form-input::placeholder {
+  color: #999;
+}
+
+/* Select dropdown styling */
+.address-details .form-select {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  padding-right: 25px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.address-details .form-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Readonly fields */
+.address-details .form-value {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* Button styles */
+.address-details .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-primary:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .address-details .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .address-details .form-group {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+}
+
+/* WorkExperience Details Specific Styles */
+/* Experience Details Specific Styles */
+.experience-details .details-card {
+  width: 100%;
+}
+
+.experience-details .section-title {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #3498db;
+  width: 100%;
+}
+
+.experience-details .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.experience-details .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.experience-details .form-group.full-width {
+  flex: 0 0 100%;
+}
+
+.experience-details .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Readonly fields */
+.experience-details .form-value {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* Present text styling */
+.experience-details .present-text {
+  background-color: #e8f5e8;
+  color: #2d5016;
+  font-weight: 500;
+  border-color: #c3e6c3;
+}
+
+/* Date Input Styling - Working Calendar */
+.date-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Ensure calendar picker works */
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.date-input::-moz-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.date-input::-ms-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* Textarea for Job Responsibilities */
+.experience-details .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.experience-details .form-textarea:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+.experience-details .form-textarea::placeholder {
+  color: #999;
+}
+
+/* Add New Experience Button */
+.experience-details .btn-add-experience {
+  background: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.experience-details .btn-add-experience:hover {
+  background: #218838;
+}
+
+/* Button styles */
+.experience-details .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-primary:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .experience-details .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .experience-details .form-group {
+    min-width: 100%;
+  }
+  
+  .experience-details .btn-add-experience {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/*  5. EmployeeEducation CSS */
+
+/* src/components/EmployeeDetailsComponents/EmployeesEducation.css */
+.education-details .details-card {
+  width: 100%;
+}
+
+.education-details .section-title {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 30px 0 20px 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #3498db;
+  width: 100%;
+}
+
+.education-details .section-title:first-child {
+  margin-top: 0;
+}
+
+.education-details .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.education-details .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.education-details .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Input fields */
+.education-details .form-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.education-details .form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+.education-details .form-input::placeholder {
+  color: #999;
+}
+
+/* Select dropdown styling */
+.education-details .form-select {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  padding-right: 25px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.education-details .form-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* File Upload Styling */
+.file-upload-container {
+  position: relative;
+  width: 100%;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35px;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-display {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.file-placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.file-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.file-input:focus + .file-display {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Education Section */
+.education-section {
+  margin-bottom: 30px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 2px solid #e0e0e0;
+  margin: 30px 0;
+}
+
+/* Add New Education Button */
+.education-details .btn-add-education {
+  background: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.education-details .btn-add-education:hover {
+  background: #218838;
+}
+
+/* Remove Education Button */
+.btn-remove-education {
+  background: #dc3545;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+}
+
+.btn-remove-education:hover {
+  background: #c82333;
+}
+
+/* Button styles */
+.education-details .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-primary:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .education-details .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .education-details .form-group {
+    min-width: 100%;
+  }
+  
+  .education-details .btn-add-education {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .btn-remove-education {
+    width: 100%;
+  }
+}
+
+/* 6. EmployeesTrainingCertifications CSS*/
+/* src/components/EmployeeDetailsComponents/EmployeesTrainingCertifications.css */
+.training-details .details-card {
+  width: 100%;
+}
+
+.training-details .section-title {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 30px 0 20px 0;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #3498db;
+  width: 100%;
+}
+
+.training-details .section-title:first-child {
+  margin-top: 0;
+}
+
+.training-details .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.training-details .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.training-details .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Input fields */
+.training-details .form-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.training-details .form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+.training-details .form-input::placeholder {
+  color: #999;
+}
+
+/* Select dropdown styling */
+.training-details .form-select {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  padding-right: 25px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.training-details .form-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* File Upload Styling with Size Indicator */
+.file-upload-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - 40px);
+  height: 35px;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-display {
+  width: calc(100% - 40px);
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  color: #333;
+  flex: 1;
+}
+
+.file-placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.file-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.file-size {
+  width: 30px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+.file-input:focus + .file-display {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Training Section */
+.training-section {
+  margin-bottom: 30px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 2px solid #e0e0e0;
+  margin: 30px 0;
+}
+
+/* Add New Training Button */
+.training-details .btn-add-training {
+  background: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.training-details .btn-add-training:hover {
+  background: #218838;
+}
+
+/* Remove Training Button */
+.btn-remove-training {
+  background: #dc3545;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+}
+
+.btn-remove-training:hover {
+  background: #c82333;
+}
+
+/* Button styles */
+.training-details .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-primary:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .training-details .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .training-details .form-group {
+    min-width: 100%;
+  }
+  
+  .training-details .btn-add-training {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .btn-remove-training {
+    width: 100%;
+  }
+  
+  .file-upload-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .file-input,
+  .file-display {
+    width: 100%;
+  }
+  
+  .file-size {
+    align-self: flex-start;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 7. EmployeesAttachment part CSS*/
+/* EmployeeAttachments.css */
+
+.employee-attachments {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+}
+
+/* Row Layout */
+.row {
+  display: flex;
+  gap: 50px;
+  margin-bottom: 20px;
+}
+
+.first-row .attachment-box {
+  flex: 1; /* 3 equal columns */
+}
+
+.second-row .attachment-box.full-width {
+  flex: 0.3; /* full width single row */
+}
+
+/* Box Styling */
+.attachment-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.box-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* File input styling */
+.file-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.file-input {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-label {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  transition: 0.2s ease;
+}
+
+.file-label:hover {
+  background: #f9f9f9;
+}
+
+/* Button Section */
+.button-section {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-submit {
+  background: #0066cc;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-submit:hover {
+  background: #0052a3;
+}
+
+.btn-secondary {
+  background: #666;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}
+
+
+/*next part*/
+
+
 
 
 /*

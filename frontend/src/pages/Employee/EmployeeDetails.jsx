@@ -13,15 +13,55 @@ function EmployeeDetails() {
   const [activeTab, setActiveTab] = useState('official');
 
   const tabs = [
-    { id: 'official', label: 'Official Details', component: <EmployeesOfficialDetails /> },
-    { id: 'personal', label: 'Personal Details', component: <EmployeesPersonalDetails /> },
-    { id: 'addresses', label: 'Addresses', component: <EmployeesAddress /> },
-    { id: 'experience', label: 'Work Experiences', component: <EmployeesExperience /> },
-    { id: 'education', label: 'Education', component: <EmployeesEducation /> },
-    { id: 'training', label: 'Training & Certifications', component: <EmployeesTrainingCertifications /> },
-    { id: 'other', label: 'Other Info', component: <EmployeesOtherInfo /> },
-    { id: 'attachments', label: 'Attachments', component: <EmployeesAttchments /> },
+    { id: 'official', label: 'Official Details' },
+    { id: 'personal', label: 'Personal Details' },
+    { id: 'addresses', label: 'Addresses' },
+    { id: 'experience', label: 'Work Experiences' },
+    { id: 'education', label: 'Education' },
+    { id: 'training', label: 'Training & Certifications' },
+   /* { id: 'other', label: 'Other Info' },*/
+    { id: 'attachments', label: 'Attachments' },
   ];
+
+  // Function to handle Next button click
+  const handleNext = () => {
+    const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1].id);
+    }
+  };
+
+  // Function to handle Back button click
+  const handleBack = () => {
+    const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1].id);
+    }
+  };
+
+  // Render the current tab component
+  const renderTabContent = () => {
+    switch(activeTab) {
+      case 'official':
+        return <EmployeesOfficialDetails onNext={handleNext} onBack={handleBack} />;
+      case 'personal':
+        return <EmployeesPersonalDetails onNext={handleNext} onBack={handleBack} />;
+      case 'addresses':
+        return <EmployeesAddress onNext={handleNext} onBack={handleBack} />;
+      case 'experience':
+        return <EmployeesExperience onNext={handleNext} onBack={handleBack} />;
+      case 'education':
+        return <EmployeesEducation onNext={handleNext} onBack={handleBack} />;
+      case 'training':
+        return <EmployeesTrainingCertifications onNext={handleNext} onBack={handleBack} />;
+      case 'other':
+        return <EmployeesOtherInfo onNext={handleNext} onBack={handleBack} />;
+      case 'attachments':
+        return <EmployeesAttchments onNext={handleNext} onBack={handleBack} />;
+      default:
+        return <EmployeesOfficialDetails onNext={handleNext} onBack={handleBack} />;
+    }
+  };
 
   return (
     <div className="employee-details-container">
@@ -40,7 +80,7 @@ function EmployeeDetails() {
       </div>
       
       <div className="tab-content">
-        {tabs.find(tab => tab.id === activeTab)?.component}
+        {renderTabContent()}
       </div>
     </div>
   );
