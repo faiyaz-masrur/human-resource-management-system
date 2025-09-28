@@ -41,7 +41,7 @@ class PersonalDetail(models.Model):
         verbose_name_plural = "PersonalDetails"
 
     def __str__(self):
-        return f"{self.employee.employee_name} - Personal Details"
+        return f"{self.employee.name} - Personal Details"
     
 class Address(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True, related_name='address')
@@ -60,7 +60,7 @@ class Address(models.Model):
     permanent_postal_code = models.CharField(max_length=20, null=False, blank=False)
 
     def __str__(self):
-        return f"Address of {self.employee.employee_name}"      
+        return f"Address of {self.employee.name}"      
 
 # -----------------------------
 # Work Experience Model
@@ -117,4 +117,4 @@ class Attatchment(models.Model):
     employee_agreement = models.FileField(upload_to='employee_agreements/', null=True, blank=True)
 
     def __str__(self):
-        return f"Attachments for {self.employee.employee_name}"
+        return f"Attachments for {self.employee.name}"

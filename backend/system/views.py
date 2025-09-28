@@ -7,9 +7,10 @@ from .serializers import (
     DepartmentSerializer, 
     DesignationSerializer, 
     GradeSerializer, 
-    ReportingManagerSerializer
+    ReportingManagerSerializer,
+    RoleSerializer
 )
-from .models import Department, Designation, Grade, ReportingManager
+from .models import Department, Designation, Grade, ReportingManager, Role
 from rest_framework import generics, status, viewsets, views
 from .permissions import IsEmployee, IsHR
 from rest_framework.response import Response
@@ -18,7 +19,6 @@ from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from .choices import (
-    ROLE_CHOICES,
     DISTRICT_CHOICES, 
     POLICE_STATION_CHOICES, 
     DEGREE_CHOICES, 
@@ -71,7 +71,7 @@ class PasswordResetRequestView(generics.GenericAPIView):
             reset_url = f"http://yourfrontend.com/reset-password/{user.pk}/{token}/"
 
             subject = "Password Reset"
-            message = f"Hello {user.employee_name},\n\nUse this link to reset your password: {reset_url}",
+            message = f"Hello {user.name},\n\nUse this link to reset your password: {reset_url}",
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [email]
             
@@ -108,33 +108,26 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsHR]
 
 
-class DesignationViewSet(viewsets.ModelViewSet):
-    queryset = Designation.objects.all().order_by("name")
-    serializer_class = DesignationSerializer
-    permission_classes = [IsHR]
-
-
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
     permission_classes = [IsHR]
 
 
-class DepartmentListView(generics.ListAPIView):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentSerializer
-    permission_classes = [IsHR]
-
-
-class DesignationListView(generics.ListAPIView):
-    queryset = Designation.objects.all()
+class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
     permission_classes = [IsHR]
 
+    def get_queryset(self):
+        grade_id = self.kwargs["grade_id"]  # from URL
+        if grade_id:
+            return Designation.objects.filter(grade_id=grade_id).order_by("name")
+        return Designation.objects.all().order_by("name")
 
-class GradeListView(generics.ListAPIView):
-    queryset = Grade.objects.all()
-    serializer_class = GradeSerializer
+
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all().order_by("name")
+    serializer_class = RoleSerializer
     permission_classes = [IsHR]
 
 
@@ -142,15 +135,6 @@ class ReportingManagerListView(generics.ListAPIView):
     queryset = ReportingManager.objects.select_related("manager")
     serializer_class = ReportingManagerSerializer
     permission_classes = [IsHR]
-
-
-class RoleListView(views.APIView):
-    permission_classes = [IsHR]
-
-    def get(self, request):
-        return Response({
-            "marital_status_choices": [{"key": choice[0], "value": choice[1]} for choice in ROLE_CHOICES],
-        })
 
 
 class PersonalDetailChoicesView(views.APIView):

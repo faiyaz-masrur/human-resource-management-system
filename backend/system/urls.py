@@ -7,10 +7,7 @@ from .views import (
     DepartmentViewSet,
     DesignationViewSet,
     GradeViewSet,
-    DepartmentListView,
-    DesignationListView,
-    GradeListView,
-    RoleListView,
+    RoleViewSet,
     ReportingManagerListView,
     PersonalDetailChoicesView,
     AddressChoicesView,
@@ -26,6 +23,7 @@ router = DefaultRouter()
 router.register(r'departments', DepartmentViewSet, basename='department')
 router.register(r'designations', DesignationViewSet, basename='designation')
 router.register(r'grades', GradeViewSet, basename='grade')
+router.register(r'roles', RoleViewSet, basename='role')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -36,12 +34,8 @@ urlpatterns = [
     path("auth/reset-password/", PasswordResetRequestView.as_view(), name="password-reset-request"),
     path("auth/reset-password/<uuid:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
 
-    path("list/departments/", DepartmentListView.as_view(), name="department-list"),
-    path("list/designations/", DesignationListView.as_view(), name="designation-list"),
-    path("list/grades/", GradeListView.as_view(), name="grade-list"),
-    path("list/roles/", RoleListView.as_view(), name="role-list"),
-    path("list/reporting-managers/", ReportingManagerListView.as_view(), name="reporting-manager-list"),
-    path("choices/personal-detail/", PersonalDetailChoicesView.as_view(), name="personal-detail-choices"),
-    path("choices/address/", AddressChoicesView.as_view(), name="address-choices"),
-    path("choices/education/", EducationChoicesView.as_view(), name="education-choices"),
+    path("reporting-managers/list/", ReportingManagerListView.as_view(), name="reporting-manager-list"),
+    path("personal-detail/choices/", PersonalDetailChoicesView.as_view(), name="personal-detail-choices"),
+    path("address/choices/", AddressChoicesView.as_view(), name="address-choices"),
+    path("education/choices/", EducationChoicesView.as_view(), name="education-choices"),
 ]

@@ -1,12 +1,5 @@
 # choices.py
 
-ROLE_CHOICES = [
-    ("rm", "RM"),
-    ("hod", "HOD"),
-    ("coo", "COO"),
-    ("ceo", "CEO"),
-]
-
 BLOOD_GROUP_CHOICES = [
     ("A+", "A+"),
     ("A-", "A-"),

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const UserLogin = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -13,7 +15,7 @@ const UserLogin = () => {
     setError('');
 
     try {
-      const response = await api.post('system/auth/login/', {
+      const response = await api.post('/system/auth/login/', {
         email,
         password,
       });
@@ -21,10 +23,10 @@ const UserLogin = () => {
       // Store tokens and user info in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      login(response.data.user)
 
       // Redirect to the dashboard page after successful login
-      navigate('/dashboard'); 
+      navigate('/'); 
 
     } catch (err) {
       console.error('Login failed:', err.response.data);
@@ -46,11 +48,11 @@ const UserLogin = () => {
       </div>
       <div className="login-form-section">
         <div className="form-content">
-          <h2 className="form-header h2">USER SIGN IN</h2>
+          <h2 className="form-header h2">USER SIGN-IN</h2>
           <form onSubmit={handleLogin}>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <div className="form-group">
-              <label htmlFor="email">Your Email ID</label>
+              <label htmlFor="email">Username</label>
               <input
                 type="email"
                 id="email"
@@ -61,7 +63,7 @@ const UserLogin = () => {
               />
             </div>
             <div className="form-group password-group">
-              <label htmlFor="password">Your Password</label>
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 id="password"

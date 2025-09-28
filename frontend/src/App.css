@@ -50,8 +50,8 @@ body {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  margin-left: 250px; /* Adjust based on your sidebar width */
-  margin-top: 70px; /* Adjust based on your navbar height */
+  margin-left: 50px; /* Adjust based on your sidebar width */
+  margin-top: 20px; /* Adjust based on your navbar height */
 }
 
 .employee-details-container h2 {
@@ -1298,27 +1298,6 @@ body {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* 7. EmployeesAttachment part CSS*/
 /* EmployeeAttachments.css */
 
@@ -1713,7 +1692,7 @@ body {
   display: grid;
   
   /* FIX: Reduced Notification Sidebar width to 250px (to match the left sidebar) */
-  grid-template-columns: 250px 1fr 250px; 
+  grid-template-columns: 230px 1fr 250px; 
   
   /* Navbar height set to 60px as seen in the screenshot */
   grid-template-rows: 70px 1fr; 
@@ -1766,8 +1745,8 @@ body {
   height: 70px; 
   padding: 0 40px; 
   background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); 
-  margin-left: 200px;
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.05); 
+  
 }
 
 .navbar-toggle-left, .notification-toggle {
@@ -1781,9 +1760,6 @@ body {
   align-items: center;
   font-size: 16px;
   color: #555;
-  /* Shift left to align logo/menu breadcrumb with the sidebar edge */
-  /*margin-left: 20px; 
-  padding-left: 20px;*/
 }
 
 .navbar-left .breadcrumb {
@@ -1885,7 +1861,7 @@ body {
 
 .sidebar-container {
   grid-area: sidebar; 
-  width: 200px; 
+  width: 230px; 
   background-color: #ec1515;
   height: 100%; 
   padding: 0; 
@@ -2218,87 +2194,7 @@ body {
 }
 
 
-/* ================================================= */
-/* 6. NOTIFICATION SIDEBAR STYLES (NotificationSidebar.jsx) */
-/* ================================================= */
 
-.notification-sidebar {
-  grid-area: notification; 
-  width: 250px; /* FIX: Set to 250px to match the grid column and make it slimmer */
-  background-color: #fff;
-  height: 100%;
-  padding: 20px; /* FIX: Slightly reduced padding for a tighter fit */
-  box-shadow: -1px 0 4px rgba(0, 0, 0, 0.05); 
-  display: flex;
-  flex-direction: column;
-  position: static; 
-  z-index: 10;
-}
-
-.notification-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.notification-header .header-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-}
-
-.notification-header .header-link {
-  font-size: 14px;
-  color: #1890ff;
-  text-align: left;
-  text-decoration: none;
-}
-
-.notification-list {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-}
-
-.notification-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  padding-left: 10px; 
-  position: relative;
-}
-
-/* Marker for new/unread notifications */
-.notification-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 6px; 
-    height: 6px;
-    border-radius: 50%;
-    background-color: #d8b8e0; 
-}
-
-.notification-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.notification-title {
-  font-size: 14px; 
-  font-weight: 500;
-  color: #333;
-  margin: 0 0 4px 0;
-}
-
-.notification-time {
-  font-size: 12px;
-  color: #999;
-}
 
 
 /* ================================================= */

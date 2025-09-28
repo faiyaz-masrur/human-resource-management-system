@@ -17,4 +17,4 @@ class Notification(models.Model):
         ordering = ['-created_at']  
 
     def __str__(self):
-        return f"Notification for {self.employee.employee_name}: {self.message[:30]}..."
+        return f"Notification for {self.employee.name}: {self.message[:30]}..."

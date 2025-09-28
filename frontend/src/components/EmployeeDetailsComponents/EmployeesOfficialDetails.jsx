@@ -1,158 +1,257 @@
-// src/components/EmployeeDetailsComponents/EmployeesOfficialDetails.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import api from '../../services/api';
+import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesOfficialDetails = ({ onNext, onBack }) => {
-  const [joiningDate, setJoiningDate] = useState('2025-03-24');
+const EmployeesOfficialDetails = ({ employee_id, onNext, onBack }) => {
+  const { user } = useAuth();
+  const defaultDetails = {
+    id: "",
+    email: "",
+    name: "",
+    designation: "",
+    department: "",
+    joining_date: "",
+    grade: "",
+    reporting_manager: "",
+    basic_salary: "",
+    role1: "",
+    role2: "",
+    is_hr: false,
+    reviewed_by_rm: false,
+    reviewed_by_hr: false,
+    reviewed_by_hod: false,
+    reviewed_by_coo: false,
+    reviewed_by_ceo: false,
+  };
+
+  const [details, setDetails] = useState(defaultDetails);
+
+  // ✅ Fetch employee details if ID exists
+  useEffect(() => {
+    const fetchDetails = async () => {
+      if (!user) return; 
+      try {
+        let res;
+        if(user.is_hr){
+          res = await api.get(`employees/empolyee-official-details/${user.id}/`);
+        } else {
+          res = await api.get('employees/my-official-details/');
+        }
+        console.log(res.data)
+        setDetails(res.data || defaultDetails); 
+      } catch (error) {
+        console.warn("No employee details found, showing empty form.");
+        setDetails(defaultDetails);
+      }
+    };
+
+    fetchDetails();
+  }, [user]);
+
+  // ✅ Handle input changes
+  const handleChange = (field, value) => {
+    setDetails((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // ✅ Save (create if new, update if existing)
+  const handleSave = async () => {
+    try {
+      if (user) {
+        // Update existing employee
+        await api.patch(
+          `employees/empolyee-official-details/${user.id}/`,
+          details
+        );
+        alert("Employee details updated successfully!");
+      } else {
+        // Create new employee
+        const res = await api.post(
+          `/employees/empolyee-official-details/`,
+          details
+        );
+        alert("Employee created successfully!");
+        console.log("New Employee:", res.data);
+      }
+    } catch (error) {
+      console.error("Error saving employee:", error.response?.data || error);
+      alert("Failed to save employee.");
+    }
+  };
+
   return (
     <div className="official-details">
       <div className="details-card">
+        {/* First Row */}
         <div className="form-row">
           <div className="form-group">
             <label>Employee ID*</label>
-            <div className="form-value">1061</div>
+            <input
+              type="text"
+              className="form-input"
+              value={details.employee_id}
+              onChange={(e) => handleChange("employee_id", e.target.value)}
+            />
           </div>
           <div className="form-group">
-            <label>Employee Username*</label>
-            <div className="form-value">liton.das</div>
+            <label>Email*</label>
+            <input
+              type="email"
+              className="form-input"
+              value={details.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
           </div>
           <div className="form-group">
             <label>Employee Name*</label>
-            <div className="form-value">Liton Kumar Das</div>
-          </div>
-        </div>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label>Designation*</label>
-            <select className="form-select">
-              <option value="senior-manager">Senior Manager</option>
-              <option value="manager">Manager</option>
-              <option value="assistant-manager">Assistant Manager</option>
-              <option value="executive">Executive</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Department*</label>
-            <select className="form-select">
-              <option value="hr">Human Resource</option>
-              <option value="it">IT</option>
-              <option value="finance">Finance</option>
-              <option value="marketing">Marketing</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Joining Date*</label>
-            <input 
-              type="date" 
-              className="date-input"
-              value={joiningDate}
-              onChange={(e) => setJoiningDate(e.target.value)}
+            <input
+              type="text"
+              className="form-input"
+              value={details.employee_name}
+              onChange={(e) => handleChange("employee_name", e.target.value)}
             />
           </div>
         </div>
-        
+
+        {/* Second Row */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Designation*</label>
+            <select
+              className="form-select"
+              value={details.designation_id}
+              onChange={(e) => handleChange("designation_id", e.target.value)}
+            >
+              <option value="">-- Select --</option>
+              <option value="1">Senior Manager</option>
+              <option value="2">Manager</option>
+              <option value="3">Assistant Manager</option>
+              <option value="4">Executive</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Department*</label>
+            <select
+              className="form-select"
+              value={details.department_id}
+              onChange={(e) => handleChange("department_id", e.target.value)}
+            >
+              <option value="">-- Select --</option>
+              <option value="1">Human Resource</option>
+              <option value="2">IT</option>
+              <option value="3">Finance</option>
+              <option value="4">Marketing</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Joining Date*</label>
+            <input
+              type="date"
+              className="date-input"
+              value={details.joining_date || ""}
+              onChange={(e) => handleChange("joining_date", e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Third Row */}
         <div className="form-row">
           <div className="form-group">
             <label>Grade*</label>
-            <select className="form-select">
-              <option value="t-xxx">T-XXX</option>
-              <option value="t-yyy">T-YYY</option>
-              <option value="t-zzz">T-ZZZ</option>
+            <select
+              className="form-select"
+              value={details.grade_id}
+              onChange={(e) => handleChange("grade_id", e.target.value)}
+            >
+              <option value="">-- Select --</option>
+              <option value="1">T-XXX</option>
+              <option value="2">T-YYY</option>
+              <option value="3">T-ZZZ</option>
             </select>
           </div>
+
           <div className="form-group">
             <label>Reporting Manager*</label>
-            <select className="form-select">
-              <option value="jahangir">S M Jahangir Akhter</option>
-              <option value="manager2">Other Manager 1</option>
-              <option value="manager3">Other Manager 2</option>
+            <select
+              className="form-select"
+              value={details.reporting_manager_id}
+              onChange={(e) =>
+                handleChange("reporting_manager_id", e.target.value)
+              }
+            >
+              <option value="">-- Select --</option>
+              <option value="1">S M Jahangir Akhter</option>
+              <option value="2">Other Manager 1</option>
+              <option value="3">Other Manager 2</option>
             </select>
           </div>
+
           <div className="form-group">
             <label>Basic Salary*</label>
-            <div className="form-value">XXXXXXXXX</div>
-          </div>
-        </div>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label>Role 1*</label>
-            <select className="form-select">
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Role 2*</label>
-            <select className="form-select">
-              <option value="">-- Select --</option>
-              <option value="backup-manager">Backup Manager</option>
-              <option value="team-lead">Team Lead</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Is HR*</label>
-            <select className="form-select">
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
+            <input
+              type="number"
+              className="form-input"
+              value={details.basic_salary}
+              onChange={(e) => handleChange("basic_salary", e.target.value)}
+            />
           </div>
         </div>
 
-{/* ===== Review by part ===== */}
-<div style={{ gridColumn: '1 / -1', fontFamily: 'sans-serif' }}>
-  <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500', fontSize: '13px' }}>
-    Review By
-  </label>
-  <div style={{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      gap: '24px',
-      padding: '10px',
-      
-      border: '1px solid #ddd',
-      borderRadius: '4px'
-  }}>
+        {/* Review Checkboxes */}
+        <div style={{ gridColumn: "1 / -1", fontFamily: "sans-serif" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "8px",
+              color: "#333",
+              fontWeight: "500",
+              fontSize: "13px",
+            }}
+          >
+            Review By
+          </label>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "24px",
+              padding: "10px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+            }}
+          >
+            {["rm", "hr", "hod", "coo", "ceo"].map((role) => (
+              <div
+                key={role}
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={details[`reviewed_by_${role}`] || false}
+                  onChange={(e) =>
+                    handleChange(`reviewed_by_${role}`, e.target.checked)
+                  }
+                />
+                <label>{role.toUpperCase()}</label>
+              </div>
+            ))}
+          </div>
+        </div>
 
-    {/* Checkbox Item 1 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <input type="checkbox" id="reviewBy-rm" style={{ margin: 0 }} />
-      <label htmlFor="reviewBy-rm" style={{ margin: 0 }}>RM</label>
-    </div>
-
-    {/* Checkbox Item 2 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <input type="checkbox" id="reviewBy-hr" style={{ margin: 0 }} />
-      <label htmlFor="reviewBy-hr" style={{ margin: 0 }}>HR</label>
-    </div>
-
-    {/* Checkbox Item 3 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <input type="checkbox" id="reviewBy-hod" style={{ margin: 0 }} />
-      <label htmlFor="reviewBy-hod" style={{ margin: 0 }}>HOD</label>
-    </div>
-
-    {/* Checkbox Item 4 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <input type="checkbox" id="reviewBy-coo" style={{ margin: 0 }} />
-      <label htmlFor="reviewBy-coo" style={{ margin: 0 }}>COO</label>
-    </div>
-
-    {/* Checkbox Item 5 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <input type="checkbox" id="reviewBy-ceo" style={{ margin: 0 }} />
-      <label htmlFor="reviewBy-ceo" style={{ margin: 0 }}>CEO</label>
-    </div>
-
-  </div>
-</div>
-
-    <div className="form-actions">
-           <button className="btn-secondary" onClick={onBack}>Back</button>
-           <button className="btn-primary" onClick={onNext}>Next</button>
+        {/* Actions */}
+        <div className="form-actions">
+          <button className="btn-secondary" onClick={onBack}>
+            Back
+          </button>
+          <button className="btn-primary" onClick={handleSave}>
+            Save
+          </button>
+          <button className="btn-primary" onClick={onNext}>
+            Next
+          </button>
         </div>
       </div>
     </div>

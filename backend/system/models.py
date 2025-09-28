@@ -3,8 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
-from django.core.validators import MinLengthValidator
-from .choices import ROLE_CHOICES
+
 
 
 class Department(models.Model):
@@ -47,6 +46,18 @@ class Designation(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Role"
+        verbose_name_plural = "Roles"
+
+    def __str__(self):
+        return self.name
 
 
 class ReportingManager(models.Model):
@@ -59,7 +70,7 @@ class ReportingManager(models.Model):
     )
 
     def __str__(self):
-        return f"{self.manager.employee_name}"
+        return f"{self.manager.name}"
 
 
 class Employee(AbstractUser):
@@ -68,21 +79,15 @@ class Employee(AbstractUser):
     last_name = None
     date_joined = None
 
-    id = models.UUIDField(
+    id = models.CharField(
         primary_key=True,
-        default=uuid.uuid4,
-        editable=False
+        max_length=5, 
+        unique=True
     )
 
     email = models.EmailField(_('email address'), unique=True)
 
-    employee_name = models.CharField(max_length=255)
-
-    employee_id = models.CharField(
-        max_length=4,
-        validators=[MinLengthValidator(4)],
-        unique=True
-    )
+    name = models.CharField(max_length=255)
 
     department = models.ForeignKey(
         Department,
@@ -120,9 +125,19 @@ class Employee(AbstractUser):
         related_name="employee"
     )
 
-    role1 = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)
+    role1 = models.ForeignKey(
+        Role,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="employees_role1"
+    )
 
-    role2 = models.CharField(max_length=10, choices=ROLE_CHOICES, null=True, blank=True)
+    role2 = models.ForeignKey(
+        Role,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="employees_role2"
+    )
 
     is_hr = models.BooleanField(default=False)
 

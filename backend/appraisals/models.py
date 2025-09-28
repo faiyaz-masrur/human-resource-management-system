@@ -105,7 +105,7 @@ class EmployeeAppraisal(models.Model):
     
         
     def __str__(self):
-        return f"Self-Appraisal for {self.employee.employee_name}"
+        return f"Self-Appraisal for {self.employee.name}"
 
 class AttendanceSummary(models.Model):
     """
@@ -137,7 +137,7 @@ class AttendanceSummary(models.Model):
             self.attendance_rating = 'Below Average'
     
     def __str__(self):
-        return f"Attendance for {self.employee.employee_name}"
+        return f"Attendance for {self.employee.name}"
 
 class SalaryVariance(models.Model):
     """
@@ -183,7 +183,7 @@ class SalaryVariance(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"Salary Recommendation for {self.employee.employee_name}"
+        return f"Salary Recommendation for {self.employee.name}"
 
 class ReportingManagerReview(models.Model):
     """
@@ -223,7 +223,7 @@ class ReportingManagerReview(models.Model):
     decision_remarks = models.TextField(max_length=500, null=True, blank=True)
     
     def __str__(self):
-        return f"Manager Review for {self.appraisal.employee.employee_name}"
+        return f"Manager Review for {self.appraisal.employee.name}"
 
 class HRReview(models.Model):
     """
@@ -245,7 +245,7 @@ class HRReview(models.Model):
     decision_remarks = models.TextField(max_length=500, null=True, blank=True)
     
     def __str__(self):
-        return f"HR Review for {self.appraisal.employee.employee_name}"
+        return f"HR Review for {self.appraisal.employee.name}"
 
 class FinalReview(models.Model):
     """
@@ -282,7 +282,7 @@ class FinalReview(models.Model):
     decision = models.CharField(max_length=100, choices=RECOMMENDATION_CHOICES, blank=True)
     
     def __str__(self):
-        return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.employee_name}"
+        return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.name}"
 
 
 # -------------------------
@@ -306,7 +306,7 @@ class EmployeeAppraisalTrack(models.Model):
     ceo_review_done = models.CharField(max_length=10, default="NA")
 
     def __str__(self):
-        return f"Appraisal Track - {self.employee.employee_name})"
+        return f"Appraisal Track - {self.employee.name})"
 
 
 class ReportingManagerAppraisalTrack(models.Model):

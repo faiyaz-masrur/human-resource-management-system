@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import password_validation
-from .models import Employee, Department, Designation, Grade, ReportingManager
+from .models import Employee, Department, Designation, Grade, Role, ReportingManager
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['id', 'email', 'employee_name', 'role1', 'role2', 'is_hr']
+        fields = ['id', 'email', 'name', 'role1', 'role2', 'is_hr']
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -63,8 +63,13 @@ class GradeSerializer(serializers.ModelSerializer):
         model = Grade
         fields = "__all__"
 
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = "__all__"
+
 class ReportingManagerSerializer(serializers.ModelSerializer):
-    manager_name = serializers.CharField(source="manager.employee_name", read_only=True)
+    manager_name = serializers.CharField(source="manager.name", read_only=True)
 
     class Meta:
         model = ReportingManager

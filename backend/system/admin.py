@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Department, Designation, Grade
+from .models import Department, Designation, Grade, Employee, Role
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 
@@ -43,12 +43,25 @@ class DesignationAdmin(admin.ModelAdmin):
         }),
     )
 
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+
+    fieldsets = (
+        ("Role Details", {
+            "fields": ("name", "description"),
+        }),
+    )
+
 
 # Register your models here.
 admin.site.site_header = "Performance Appraisal System Admin Portal"
 admin.site.site_title = "Performance Appraisal System Admin Portal"
 admin.site.index_title = "Performance Appraisal System Admin Portal"
 
+admin.site.register(Employee)
 admin.site.unregister(Group)
 admin.site.unregister(BlacklistedToken)
 admin.site.unregister(OutstandingToken)
