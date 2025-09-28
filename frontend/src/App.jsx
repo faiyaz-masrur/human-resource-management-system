@@ -9,9 +9,18 @@ import ForgetPasswordUpdate from './pages/Login/ForgetPasswordUpdate';
 
 import AppraisalDetails from './pages/Appraisal/AppraisalDetails';
 import OtherAppraisals from './pages/Appraisal/OtherAppraisals';
+import AppraisalStatus from './pages/Appraisal/AppraisalStatus';
+import AppraisalSettings from './pages/Appraisal/AppraisalSettings';
+
 import EmployeeDetails from './pages/Employee/EmployeeDetails';
 import Employees from './pages/Employee/Employees';
+
 import MainDashboard from "./pages/Dashboard/MainDashboard";
+
+import Departments from "./components/Configurations/Departments";
+import Designations from "./components/Configurations/Designations";
+import Grades from "./components/Configurations/Grades";
+import Roles from "./components/Configurations/Roles";
 
 function App() {
   return (
@@ -28,7 +37,15 @@ function App() {
           {/* After login, the user will be redirected to "/" which will show the MainDashboard by default */}
           <Route index element={<MainDashboard />} />
           <Route path="appraisal" element={<AppraisalDetails />} />
-          <Route path="other-appraisals" element={<OtherAppraisals />} />
+          <Route path="/appraisal/others" element={<OtherAppraisals />} />
+          <Route path="/appraisal/status" element={<AppraisalStatus />} />
+          <Route path="/appraisal/settings" element={<AppraisalSettings />} />
+          
+          <Route path="/configurations/departments" element={<Departments />} />
+          <Route path="/configurations/designations" element={<Designations />} />
+          <Route path="/configurations/grades" element={<Grades />} />
+          <Route path="/configurations/roles" element={<Roles />} />
+
           <Route path="employee-details" element={<EmployeeDetails />} />
           <Route path="employees" element={<Employees />} />
         </Route>
