@@ -23,15 +23,15 @@ router.register(r'empolyee-official-details', EmployeeOfficialDetailViewSet, bas
 urlpatterns = [
     # endpoints for hr to view, create, update, delete Employee model
     path('', include(router.urls)),
-    path('employee-personal-details/<uuid:employee>/', EmployeePersonalDetailView.as_view(), name='employee-personal-detail'),
-    path('employee-address/<uuid:employee>/', EmployeeAddressView.as_view(), name='employee-address'),
-    path('employee-work-experience/<uuid:employee>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience-all'),
-    path('employee-work-experience/<uuid:employee>/<int:work_experience>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience'),
-    path('employee-education/<uuid:employee>/', EmployeeEducationView.as_view(), name='employee-education-all'),
-    path('employee-education/<uuid:employee>/<int:education>/', EmployeeEducationView.as_view(), name='employee-education'),
-    path('employee-professional-certificate/<uuid:employee>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate-all'),
-    path('employee-professional-certificate/<uuid:employee>/<int:professional_certificate>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate'),
-    path('employee-attatchment/<uuid:employee>/', EmployeeAttatchmentView.as_view(), name='employee-attatchment'),
+    path('employee-personal-details/<str:employee>/', EmployeePersonalDetailView.as_view(), name='employee-personal-detail'),
+    path('employee-address/<str:employee>/', EmployeeAddressView.as_view(), name='employee-address'),
+    path('employee-work-experience/<str:employee>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience-all'),
+    path('employee-work-experience/<str:employee>/<int:work_experience>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience'),
+    path('employee-education/<str:employee>/', EmployeeEducationView.as_view(), name='employee-education-all'),
+    path('employee-education/<str:employee>/<int:education>/', EmployeeEducationView.as_view(), name='employee-education'),
+    path('employee-professional-certificate/<str:employee>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate-all'),
+    path('employee-professional-certificate/<str:employee>/<int:professional_certificate>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate'),
+    path('employee-attatchment/<str:employee>/', EmployeeAttatchmentView.as_view(), name='employee-attatchment'),
 
     # endpoints for employees to view and update their own details
     path('my-official-details/', MyOfficialDetailView.as_view(), name='my-official-detail'),

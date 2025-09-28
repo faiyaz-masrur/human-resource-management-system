@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Department, Designation, Grade, Employee
+from .models import Department, Designation, Grade, Employee, Role
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 
@@ -40,6 +40,18 @@ class DesignationAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Designation Details", {
             "fields": ("name", "grade", "description"),
+        }),
+    )
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+    ordering = ("name",)
+
+    fieldsets = (
+        ("Role Details", {
+            "fields": ("name", "description"),
         }),
     )
 

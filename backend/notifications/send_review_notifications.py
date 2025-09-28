@@ -31,7 +31,7 @@ def send_review_notification(sender, instance, created, **kwargs):
         if rm:
             dict = {
                 "next_reviewer": rm.manager,
-                "reviewer_message": f"{employee.employee_name} has completed self-appraisal. It is now awaiting your review.",
+                "reviewer_message": f"{employee.name} has completed self-appraisal. It is now awaiting your review.",
             }
             list.append(dict)
             employee_message = "Your self-appraisal has been submitted and is now under review by your Reporting Manager.",
@@ -41,7 +41,7 @@ def send_review_notification(sender, instance, created, **kwargs):
             if next_reviewer:
                 dict = {
                     "next_reviewer" : next_reviewer,
-                    "reviewer_message" : f"The Reporting Manager review for {employee.employee_name} has been submitted. It is now awaiting your HR review.",
+                    "reviewer_message" : f"The Reporting Manager review for {employee.name} has been submitted. It is now awaiting your HR review.",
                 }
                 list.append(dict)
                 employee_message = "Your appraisal has been reviewed by the Reporting Manager. HR will review it next."
@@ -51,7 +51,7 @@ def send_review_notification(sender, instance, created, **kwargs):
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The HR review for {employee.employee_name} has been submitted. It is now awaiting your HOD review.",
+                    "reviewer_message" : f"The HR review for {employee.name} has been submitted. It is now awaiting your HOD review.",
                 }
                 list.append(dict)
                 employee_message = "Your appraisal has been reviewed by HR. HOD will review it next."
@@ -61,7 +61,7 @@ def send_review_notification(sender, instance, created, **kwargs):
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The HOD review for {employee.employee_name} has been submitted. It is now awaiting your COO review."
+                    "reviewer_message" : f"The HOD review for {employee.name} has been submitted. It is now awaiting your COO review."
                 }
                 list.append(dict)
                 employee_message = "Your appraisal has been reviewed by HOD. COO will review it next."
@@ -71,7 +71,7 @@ def send_review_notification(sender, instance, created, **kwargs):
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The COO review for {employee.employee_name} has been submitted. It is now awaiting your CEO review.",
+                    "reviewer_message" : f"The COO review for {employee.name} has been submitted. It is now awaiting your CEO review.",
                 }
                 list.append(dict)
                 employee_message = "Your appraisal has been reviewed by COO. CEO will review it next."

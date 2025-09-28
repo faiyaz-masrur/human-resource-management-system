@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesOfficialDetails = ({ onNext, onBack }) => {
+const EmployeesOfficialDetails = ({ employee_id, onNext, onBack }) => {
   const { user } = useAuth();
   const defaultDetails = {
-    employee_id: "",
+    id: "",
     email: "",
-    employee_name: "",
+    name: "",
     designation: "",
     department: "",
     joining_date: "",
-    grade_id: "",
-    reporting_manager_id: "",
+    grade: "",
+    reporting_manager: "",
     basic_salary: "",
     role1: "",
     role2: "",
@@ -31,9 +31,12 @@ const EmployeesOfficialDetails = ({ onNext, onBack }) => {
     const fetchDetails = async () => {
       if (!user) return; 
       try {
-        const res = await api.get(
-          `employees/empolyee-official-details/${user.id}/`
-        );
+        let res;
+        if(user.is_hr){
+          res = await api.get(`employees/empolyee-official-details/${user.id}/`);
+        } else {
+          res = await api.get('employees/my-official-details/');
+        }
         console.log(res.data)
         setDetails(res.data || defaultDetails); 
       } catch (error) {
