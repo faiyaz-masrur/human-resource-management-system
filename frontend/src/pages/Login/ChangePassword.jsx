@@ -19,9 +19,8 @@ const ChangePassword = () => {
     }
 
     try {
-      const accessToken = localStorage.getItem('access_token');
       await api.put(
-        'system/auth/change-password/',
+        '/system/auth/change-password/',
         {
           old_password: oldPassword,
           new_password: newPassword,

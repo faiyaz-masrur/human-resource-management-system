@@ -12,7 +12,7 @@ const ForgetPassword = () => {
     setError('');
 
     try {
-      const response = await api.post('system/auth/reset-password/', { email });
+      const response = await api.post('/system/auth/reset-password/', { email });
       setMessage(response.data.detail);
     } catch (err) {
       console.error('Password reset request failed:', err.response.data);

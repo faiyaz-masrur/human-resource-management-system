@@ -21,7 +21,7 @@ const ForgetPasswordUpdate = () => {
     }
 
     try {
-      const response = await api.post(`system/auth/reset-password/${uid}/${token}/`, {
+      const response = await api.post(`/system/auth/reset-password/${uid}/${token}/`, {
         new_password: newPassword,
         confirm_password: confirmPassword,
       });
