@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import api from '../../services/api';
+import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesOfficialDetails = ({ employeeSystemId, onNext, onBack }) => {
+const EmployeesOfficialDetails = ({ onNext, onBack }) => {
+  const { user } = useAuth();
   const defaultDetails = {
     employee_id: "",
     email: "",
@@ -27,10 +29,10 @@ const EmployeesOfficialDetails = ({ employeeSystemId, onNext, onBack }) => {
   // ✅ Fetch employee details if ID exists
   useEffect(() => {
     const fetchDetails = async () => {
-      if (!employeeSystemId) return; 
+      if (!user) return; 
       try {
         const res = await api.get(
-          `employees/empolyee-official-details/${employeeSystemId}/`
+          `employees/empolyee-official-details/${user.id}/`
         );
         console.log(res.data)
         setDetails(res.data || defaultDetails); 
@@ -41,7 +43,7 @@ const EmployeesOfficialDetails = ({ employeeSystemId, onNext, onBack }) => {
     };
 
     fetchDetails();
-  }, [employeeId]);
+  }, [user]);
 
   // ✅ Handle input changes
   const handleChange = (field, value) => {
@@ -51,10 +53,10 @@ const EmployeesOfficialDetails = ({ employeeSystemId, onNext, onBack }) => {
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if (employeeId) {
+      if (user) {
         // Update existing employee
         await api.patch(
-          `employees/empolyee-official-details/${employeeId}/`,
+          `employees/empolyee-official-details/${user.id}/`,
           details
         );
         alert("Employee details updated successfully!");

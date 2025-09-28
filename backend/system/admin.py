@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Department, Designation, Grade
+from .models import Department, Designation, Grade, Employee
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 
@@ -49,6 +49,7 @@ admin.site.site_header = "Performance Appraisal System Admin Portal"
 admin.site.site_title = "Performance Appraisal System Admin Portal"
 admin.site.index_title = "Performance Appraisal System Admin Portal"
 
+admin.site.register(Employee)
 admin.site.unregister(Group)
 admin.site.unregister(BlacklistedToken)
 admin.site.unregister(OutstandingToken)

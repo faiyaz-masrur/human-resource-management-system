@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
 
+import ProtectedRoute from "./utils/ProtectedRoute";
+
 import DashboardLayout from './pages/Dashboard/DashboardLayout'; 
 import UserLogin from './pages/Login/UserLogin';
 import ChangePassword from './pages/Login/ChangePassword';
@@ -27,24 +29,28 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes (e.g., Login pages) */}
-        <Route path="/login/user" element={<UserLogin />} />
+        <Route path="/login" element={<UserLogin />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/forget-password-update" element={<ForgetPasswordUpdate />} />
 
-        {/* This is the nested dashboard layout route */}
-        <Route path="/" element={<DashboardLayout />}>
-          {/* After login, the user will be redirected to "/" which will show the MainDashboard by default */}
+         {/* After login, the user will be redirected to "/" which will show the MainDashboard by default */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }>
+         
           <Route index element={<MainDashboard />} />
           <Route path="appraisal" element={<AppraisalDetails />} />
-          <Route path="/appraisal/others" element={<OtherAppraisals />} />
-          <Route path="/appraisal/status" element={<AppraisalStatus />} />
-          <Route path="/appraisal/settings" element={<AppraisalSettings />} />
+          <Route path="appraisal/others" element={<OtherAppraisals />} />
+          <Route path="appraisal/status" element={<AppraisalStatus />} />
+          <Route path="appraisal/settings" element={<AppraisalSettings />} />
           
-          <Route path="/configurations/departments" element={<Departments />} />
-          <Route path="/configurations/designations" element={<Designations />} />
-          <Route path="/configurations/grades" element={<Grades />} />
-          <Route path="/configurations/roles" element={<Roles />} />
+          <Route path="configurations/departments" element={<Departments />} />
+          <Route path="configurations/designations" element={<Designations />} />
+          <Route path="configurations/grades" element={<Grades />} />
+          <Route path="configurations/roles" element={<Roles />} />
 
           <Route path="employee-details" element={<EmployeeDetails />} />
           <Route path="employees" element={<Employees />} />

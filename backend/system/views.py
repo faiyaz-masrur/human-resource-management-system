@@ -126,10 +126,13 @@ class DepartmentListView(generics.ListAPIView):
     permission_classes = [IsHR]
 
 
+
 class DesignationListView(generics.ListAPIView):
-    queryset = Designation.objects.all()
     serializer_class = DesignationSerializer
-    permission_classes = [IsHR]
+
+    def get_queryset(self):
+        grade_id = self.kwargs["grade_id"]  # from URL
+        return Designation.objects.filter(grade_id=grade_id)
 
 
 class GradeListView(generics.ListAPIView):
