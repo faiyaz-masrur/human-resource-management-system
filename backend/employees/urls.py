@@ -13,7 +13,8 @@ from .views import (EmployeeOfficialDetailViewSet,
                     EmployeeProfessionalCertificateView,
                     MyProfessionalCertificateView,
                     EmployeeAttatchmentView,
-                    MyAttatchmentView
+                    MyAttatchmentView,
+                    EmployeeListView
 )
 
 router = DefaultRouter()
@@ -44,4 +45,6 @@ urlpatterns = [
     path('my-professional-certificate/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate-all'),
     path('my-professional-certificate/<int:professional_certificate>/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate'),
     path("my-attatchment/", MyAttatchmentView.as_view(), name="my-attatchment"),
+
+    path('employee-list/', EmployeeListView.as_view(), name='employee-list'),
 ]

@@ -69,8 +69,8 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ReportingManagerSerializer(serializers.ModelSerializer):
-    manager_name = serializers.CharField(source="manager.name", read_only=True)
+    name = serializers.CharField(source="manager.name", read_only=True)
 
     class Meta:
         model = ReportingManager
-        fields = ["id", "manager_name"]
+        fields = ["id", "name"]

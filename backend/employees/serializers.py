@@ -38,8 +38,18 @@ class ProfessionalCertificateSerializer(serializers.ModelSerializer):
 
 class AttatchmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model: Attatchment
+        model = Attatchment
         fields = "__all__"
+
+
+class EmployeeListSerializer(serializers.ModelSerializer):
+    department = serializers.CharField(source="department.name", read_only=True)
+    designation = serializers.CharField(source="designation.name", read_only=True)
+    
+    class Meta:
+        model = Employee
+        fields = ["id", "email", "name", "department", "designation", "is_active"]
+        read_only_fields = fields
 
 
 class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
@@ -76,7 +86,7 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
             "id", "name", "email",
             "joining_date", "basic_salary",
             "department", "designation", "grade",
-            "reporting_manager", "role1", "role2",  "is_hr",
+            "reporting_manager", "role1", "role2",  "is_hr", "is_active", "basic_salary",
             "department_id", "designation_id", "grade_id", "reporting_manager_id", "role1_id", "role2_id",
             "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
@@ -164,23 +174,7 @@ class EmployeePersonalDetailSerializer(serializers.ModelSerializer):
         return instance
 
 
-class MyOfficialDetailSerializer(serializers.ModelSerializer):
 
-    department = DepartmentSerializer(read_only=True)
-    designation = DesignationSerializer(read_only=True)
-    grade = GradeSerializer(read_only=True)
-    reporting_manager = ReportingManagerSerializer(read_only=True)
-    role1 = RoleSerializer(read_only=True)
-    role2 = RoleSerializer(read_only=True)
 
-    class Meta:
-        model = Employee
-        fields = [
-            "name", "id", "email", 
-            "designation", "department", "joining_date", 
-            "grade", "reporting_manager", "role1", "role2",
-            "is_hr"
-        ]
-        read_only_fields = fields  # everything is read-only
 
 

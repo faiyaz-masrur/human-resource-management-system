@@ -3,7 +3,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
+from django.utils.crypto import get_random_string
 
+def generate_employee_id():
+    return get_random_string(5).upper()  # Example: "A1B2C"
 
 
 class Department(models.Model):
@@ -82,7 +85,8 @@ class Employee(AbstractUser):
     id = models.CharField(
         primary_key=True,
         max_length=5, 
-        unique=True
+        unique=True,
+        default=generate_employee_id,
     )
 
     email = models.EmailField(_('email address'), unique=True)

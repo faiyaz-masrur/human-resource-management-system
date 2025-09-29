@@ -1,48 +1,29 @@
-import React from 'react';
+import { useState, useEffect, use } from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
-
-// Mock data to populate the table
-const DUMMY_EMPLOYEES = [
-  {
-    id: '2010',
-    name: 'Mamun Ur Rashid',
-    designation: 'Assistant Vice President',
-    status: 'Active',
-    dept: 'R&D',
-    experience: 2,
-  },
-  {
-    id: '1066',
-    name: 'Saim Bin Seilm',
-    designation: 'Associate Business Analyst',
-    status: 'Inactive',
-    dept: 'R&D',
-    experience: 5,
-  },
-];
-
-// Component for the status badge
-const StatusBadge = ({ status }) => {
-  let statusClass = 'status-badge';
-  switch (status) {
-    case 'Active':
-      statusClass += ' status-badge--active';
-      break;
-    case 'Inactive':
-      statusClass += ' status-badge--inactive';
-      break;
-    default:
-      statusClass += ' status-badge--default';
-  }
-
-  return (
-    <span className={statusClass}>
-      {status}
-    </span>
-  );
-};
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 const EmployeeTable = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [employeeList, setEmployeeList] = useState([])
+  
+  useEffect(() => {
+    const fetchEmployeeList = async () => {
+      try {
+        const res = await api.get(`employees/empolyee-list/`);
+        console.log(res.data)
+        setEmployeeList(res.data || []); 
+      } catch (error) {
+        console.warn("Error fatching employee list");
+        setEmployeeList([]); 
+      }
+    };
+
+    fetchEmployeeList();
+  }, []);
+
+
   return (
     <>
       {/* Custom CSS for the Employee Table Design */}
@@ -223,45 +204,47 @@ const EmployeeTable = () => {
             <thead>
               <tr>
                 <th scope="col" className="table-header">ID</th>
+                <th scope="col" className="table-header">Email</th>
                 <th scope="col" className="table-header">Name</th>
+                <th scope="col" className="table-header">Department</th>
                 <th scope="col" className="table-header">Designation</th>
-                <th scope="col" className="table-header">Status</th>
-                <th scope="col" className="table-header">Dept</th>
-                <th scope="col" className="table-header">Experience</th>
-                <th scope="col" className="table-header">Actions</th>
+                <th scope="col" className="table-header">Active</th>
+                {user.is_hr && 
+                  <th scope="col" className="table-header">Actions</th>
+                }
               </tr>
             </thead>
             <tbody>
-              {DUMMY_EMPLOYEES.map((employee) => (
+              {employeeList.map((employee) => (
                 <tr key={employee.id} className="table-row">
                   <td className="table-data">{employee.id}</td>
+                  <td className="table-data">{employee.email}</td>
                   <td className="table-data table-data--name">{employee.name}</td>
+                  <td className="table-data">{employee.department}</td>
                   <td className="table-data">{employee.designation}</td>
-                  <td className="table-data">
-                    <StatusBadge status={employee.status} />
-                  </td>
-                  <td className="table-data">{employee.dept}</td>
-                  <td className="table-data">{employee.experience}</td>
-                  <td className="table-data">
-                    <div className="action-buttons">
-                      {/* Edit Button */}
-                      <button
-                        title="Edit"
-                        className="action-button action-button--edit"
-                        onClick={() => console.log('Edit:', employee.id)}
-                      >
-                        <Pencil className="action-button__icon" />
-                      </button>
-                      {/* Delete Button */}
-                      <button
-                        title="Delete"
-                        className="action-button action-button--delete"
-                        onClick={() => console.log('Delete:', employee.id)}
-                      >
-                        <Trash2 className="action-button__icon" />
-                      </button>
-                    </div>
-                  </td>
+                  <td className="table-data">{employee.is_active ? "Active" : "Inactive"}</td>
+                  {user.is_hr && 
+                    <td className="table-data">
+                      <div className="action-buttons">
+                        {/* Edit Button */}
+                        <button
+                          title="Edit"
+                          className="action-button action-button--edit"
+                          onClick={() => navigate(`/employee-details/${employee.id}`)}
+                        >
+                          <Pencil className="action-button__icon" />
+                        </button>
+                        {/* Delete Button */}
+                        <button
+                          title="Delete"
+                          className="action-button action-button--delete"
+                          onClick={() => console.log('Delete:', employee.id)}
+                        >
+                          <Trash2 className="action-button__icon" />
+                        </button>
+                      </div>
+                    </td>
+                  }
                 </tr>
               ))}
             </tbody>

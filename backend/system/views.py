@@ -119,7 +119,7 @@ class DesignationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsHR]
 
     def get_queryset(self):
-        grade_id = self.kwargs["grade_id"]  # from URL
+        grade_id = self.kwargs.get("grade_id") # from URL
         if grade_id:
             return Designation.objects.filter(grade_id=grade_id).order_by("name")
         return Designation.objects.all().order_by("name")
