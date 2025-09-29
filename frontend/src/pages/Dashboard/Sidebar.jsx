@@ -1,17 +1,19 @@
 // Sidebar.jsx
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import SonaliLogo from "../../assets/sonali-logo.jpg";
+
 
 // --- Menu Items Definition ---
 const menuItems = [
   { name: 'Dashboard', icon: '🏠', path: '/' },
   { name: 'My Profile', icon: '👤', path: '/employee-details' },
   { name: 'Attendance', icon: '📅', path: '/attendance' },
-  { name: 'Chat', icon: '💬', path: '/chatbot' },
   { name: 'Payroll', icon: '💵', path: '/payroll' },
   { name: 'Employees', icon: '👥', path: '/employees' },
   { name: 'Taxes', icon: '🧾', path: '/taxes' },
   { name: 'Provident Fund', icon: '🏦', path: '/provident-fund' },
+  { name: 'Chat', icon: '💬', path: '/chatbot' },
   
   
   { 
@@ -72,7 +74,7 @@ const Sidebar = ({ className, onClose }) => {
     <div className={className}>
       <div className="sidebar-header">
         <Link to="/">
-          <img src=".../assets/sonali-logo.jpg" className="logo" alt="Sonali Intellect Logo" />
+          <img src={SonaliLogo} className="logo-img" alt="Sonali Intellect Logo" />
         </Link>
       </div>
       

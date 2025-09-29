@@ -5,44 +5,13 @@
  */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #fff;
+  background-color: #ffffff;
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevents horizontal scroll on small screens */
   color: #1F2937; /* Changed font color to black */
 }
 
-/* ---------------------------------- */
-/* ===== Main App Layout (New) ===== */
-/* ---------------------------------- */
-/* This section sets up the main grid layout for the entire application. */
-.app-container {
-  display: grid;
-  grid-template-columns: 200px 1fr 300px; /* Sidebar, Main Content, Notification Sidebar */
-  grid-template-rows: auto 1fr; /* Navbar, Main Section */
-  height: 100vh;
-  gap: 20px;
-  padding: 20px;
-}
-
-/* Mobile Layout adjustments */
-@media (max-width: 1023px) {
-  .app-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    padding: 10px;
-  }
-  .sidebar-container,
-  .notification-sidebar {
-    display: none; /* Hide sidebars on small screens */
-  }
-}
-
-.main-content-area {
-  grid-area: main;
-  overflow-y: auto;
-  padding-right: 20px;
-}
 /*###########################################################################*/
 /* src/pages/Employee/EmployeeDetails.css */
 
@@ -1298,27 +1267,6 @@ body {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* 7. EmployeesAttachment part CSS*/
 /* EmployeeAttachments.css */
 
@@ -1712,25 +1660,26 @@ body {
 .dashboard-layout {
   display: grid;
   
-  /* FIX: Reduced Notification Sidebar width to 250px (to match the left sidebar) */
-  grid-template-columns: 200px 1fr 250px; 
+  grid-template-columns: 230px 1fr 240px; 
   
-  /* Navbar height set to 60px as seen in the screenshot */
-  grid-template-rows: 60px 1fr; 
+  grid-template-rows: 70px 1fr; 
   
-  /* Map the Grid Areas */
   grid-template-areas:
-    "navbar navbar navbar"
+    "sidebar navbar navbar"
     "sidebar main notification";
 
   min-height: 100vh;
-  background-color: #fff;
+  max-width: 600vh;
+  background-color: #3698e7;
+  
+  position: relative; 
+
 }
 
 /* 2. MAIN CONTENT & HEROPANEL (Outlet) */
 .main-content {
   grid-area: main;
-  padding: 30px 40px; 
+  padding: 0px 35px 0px 10px; 
   overflow-y: auto; 
 }
 
@@ -1763,10 +1712,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px; 
+  height: 100%; 
   padding: 0 40px; 
   background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); 
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.05); 
+  
 }
 
 .navbar-toggle-left, .notification-toggle {
@@ -1780,14 +1730,10 @@ body {
   align-items: center;
   font-size: 16px;
   color: #555;
-  /* Shift left to align logo/menu breadcrumb with the sidebar edge */
-  margin-left: -20px; 
-  padding-left: 20px;
 }
 
 .navbar-left .breadcrumb {
-  margin-right: 8px;
-  color: #aaa;
+ color: #aaa;
 }
 
 .navbar-left .breadcrumb-active {
@@ -1883,21 +1829,29 @@ body {
 /* ================================================= */
 
 .sidebar-container {
-  grid-area: sidebar; 
-  width: 200px; 
-  background-color: #fff;
-  height: 100%; 
-  padding: 0; 
-  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05); 
-  display: flex;
-  flex-direction: column;
-  position: static; 
-  z-index: 10;
+    grid-area: sidebar; 
+    width: 200px; 
+    background-color: #fff;
+    height: 100%; 
+    padding: 0; 
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05); 
+    display: flex;
+    flex-direction: column;
+    position: static; 
+    z-index: 10;
+}
+
+.logo-img {
+    /* ADJUSTED: Use auto for height to maintain aspect ratio */
+    width: 150px;
+    height: auto; 
+    object-fit: contain; 
 }
 
 .sidebar-header {
-  padding: 20px 10px 10px 15px; 
-  margin-bottom: 20px;
+    /* ADJUSTED: Padding to match the desired look */
+    padding: 15px 10px 10px 20px; 
+    margin-top: 20px;
 }
 
 .sidebar-header .logo {
@@ -1906,78 +1860,76 @@ body {
 }
 
 .sidebar-menu .menu-heading {
-  color: #999;
-  font-size: 13px; 
-  font-weight: 500;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0 15px; 
+    color: #999;
+    font-size: 13px; 
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 15px; 
 }
 
 .menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: #333;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #333;
 }
 
 .menu-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 15px; 
-  margin-bottom: 2px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-
-.menu-item:hover, .menu-item.active {
-  background-color: #e6f7ff;
-  color: #1890ff;
-}
-
-.menu-item .item-icon {
-  font-size: 16px;
-  margin-right: 10px;
-}
-
-.menu-item .item-name {
-  flex-grow: 1;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.menu-item .item-arrow {
-  font-size: 10px;
-  color: #ccc;
-}
-
-/* ================================================= */
-/* 5. SIDEBAR STYLES (Sidebar.jsx) - UPDATES FOR DROPDOWNS */
-/* ================================================= */
-
-/* Re-defining .menu-item to handle the Link wrapper inside it */
-.menu-list .menu-item {
-    /* Remove padding from LI, as it will be applied to the inner A/Link */
-    padding: 0; 
-    /* Ensure existing styles are kept */
+    display: flex;
+    align-items: center;
+    padding: 10px 15px; 
     margin-bottom: 2px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-    display: block; /* Change from flex to block for proper child sizing */
-    align-items: unset; /* Remove alignment from LI */
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: #e6f7ff;
+    color: #1890ff;
+}
+
+.menu-item .item-icon {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.menu-item .item-name {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.menu-item .item-arrow {
+    font-size: 10px;
+    color: #ccc;
+}
+
+/* ================================================= */
+/* 5. SIDEBAR DROPDOWN STYLES */
+/* ================================================= */
+
+/* Re-defining .menu-item to handle the Link wrapper inside it */
+.menu-list .menu-item {
+    padding: 0; 
+    margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    display: block; 
+    align-items: unset; 
 }
 
 /* New: Style for the Link wrapper inside the LI */
 .menu-item .menu-link-content {
-    display: flex; /* Re-establish flex layout inside the link */
+    display: flex; 
     align-items: center;
     width: 100%;
     text-decoration: none;
     color: inherit;
-    padding: 10px 15px; /* Apply padding here for full clickable area */
+    padding: 10px 15px; 
 }
 
 /* Arrow styling for DROPDOWNS */
@@ -1996,8 +1948,6 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-    
-    /* Key for smooth animation and hidden state */
     max-height: 0; 
     overflow: hidden; 
     transition: max-height 0.3s ease-in-out;
@@ -2005,7 +1955,6 @@ body {
 
 /* State when the menu is OPEN */
 .submenu-list.open {
-    /* Set max-height large enough to hold all sub-items */
     max-height: 500px; 
     padding-top: 5px; 
     padding-bottom: 5px; 
@@ -2024,7 +1973,7 @@ body {
     font-weight: 400;
     
     /* Indentation for sub-menu items */
-    padding: 8px 15px 8px 30px; /* Indent more than parent item */
+    padding: 8px 15px 8px 30px; 
     transition: background-color 0.2s, color 0.2s;
 }
 
@@ -2034,9 +1983,91 @@ body {
     background-color: #e6f7ff;
     color: #1890ff;
     border-radius: 4px;
-    margin: 0 5px; /* Add margin to show the border-radius clearly */
+    margin: 0 5px; 
 }
 
+
+/* Notification Sidebar */
+
+.notification-sidebar {
+    width: 250px;
+    background-color: #fff;
+    height: 100%;
+    padding: 20px;
+    box-shadow: -1px 0 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: static; 
+    z-index: 10;
+
+}
+
+/* Corresponds to styles.header */
+.notification-header {
+    display: flex;
+    justify-content: flex-start; /* Aligns items to the start */
+    gap: 45px; /* Adds gap between title and link */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Corresponds to styles.headerTitle */
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0; /* Ensures no default margin */
+}
+
+/* Corresponds to styles.headerLink */
+.header-link {
+    font-size: 14px;
+    color: #1890ff;
+    text-decoration: none;
+}
+
+/* Corresponds to styles.notificationList */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Corresponds to styles.notificationItem */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    padding-left: 10px; 
+    position: relative;
+    /* The purple marker is not implemented here, matching the original request */
+}
+
+/* Corresponds to styles.notificationIcon */
+.notification-icon {
+    margin-right: 10px; /* Creating space between the icon and content */
+}
+
+/* Corresponds to styles.notificationContent */
+.notification-content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Corresponds to styles.notificationTitle */
+.notification-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 4px 0; /* Resets <p> tag's default top margin */
+}
+
+/* Corresponds to styles.notificationTime */
+.notification-time {
+    font-size: 12px;
+    color: #999;
+}
 
 /* ================================================= */
 /* APPRAISAL SETTINGS STYLES (Light Theme) */
