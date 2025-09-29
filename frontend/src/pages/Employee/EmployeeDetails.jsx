@@ -9,7 +9,7 @@ import EmployeesTrainingCertifications from "../../components/EmployeeDetailsCom
 import EmployeesOtherInfo from "../../components/EmployeeDetailsComponents/EmployeesOtherInfo";
 import EmployeesAttchments from "../../components/EmployeeDetailsComponents/EmployeesAttchments";
 
-function EmployeeDetails() {
+function EmployeeDetails({ employee_id }) {
   const [activeTab, setActiveTab] = useState('official');
 
   const tabs = [
@@ -43,23 +43,23 @@ function EmployeeDetails() {
   const renderTabContent = () => {
     switch(activeTab) {
       case 'official':
-        return <EmployeesOfficialDetails onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesOfficialDetails employee_id={employee_id} onNext={handleNext} />;
       case 'personal':
-        return <EmployeesPersonalDetails onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesPersonalDetails employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'addresses':
-        return <EmployeesAddress onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesAddress employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'experience':
-        return <EmployeesExperience onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesExperience employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'education':
-        return <EmployeesEducation onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesEducation employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'training':
-        return <EmployeesTrainingCertifications onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesTrainingCertifications employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'other':
-        return <EmployeesOtherInfo onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesOtherInfo employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       case 'attachments':
-        return <EmployeesAttchments onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesAttchments employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
       default:
-        return <EmployeesOfficialDetails onNext={handleNext} onBack={handleBack} />;
+        return <EmployeesOfficialDetails employee_id={employee_id} onNext={handleNext} onBack={handleBack} />;
     }
   };
 
