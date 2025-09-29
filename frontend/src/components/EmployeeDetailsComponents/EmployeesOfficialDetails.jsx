@@ -221,12 +221,13 @@ const EmployeesOfficialDetails = ({ employee_id, onNext, onBack }) => {
               padding: "10px",
               border: "1px solid #ddd",
               borderRadius: "4px",
+              
             }}
           >
             {["rm", "hr", "hod", "coo", "ceo"].map((role) => (
               <div
                 key={role}
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                style={{ display: "flex", alignItems: "center", gap: "8px", }}
               >
                 <input
                   type="checkbox"
