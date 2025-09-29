@@ -3,10 +3,10 @@ from system.permissions import IsEmployee, IsHR
 from .models import PersonalDetail, Address, WorkExperience, Education, ProfessionalCertificate, Attatchment
 from system.models import Employee
 from .serializers import (
+    EmployeeListSerializer,
     EmployeeOfficialDetailSerializer, 
     EmployeePersonalDetailSerializer, 
     AddressSerializer, 
-    MyOfficialDetailSerializer,
     WorkExperienceSerializer,
     EducationSerializer,
     ProfessionalCertificateSerializer,
@@ -168,7 +168,7 @@ class EmployeeAttatchmentView(generics.RetrieveUpdateAPIView):
 #View for employees to get, update their own details
 
 class MyOfficialDetailView(generics.RetrieveAPIView):
-    serializer_class = MyOfficialDetailSerializer
+    serializer_class = EmployeeOfficialDetailSerializer
     permission_classes = [IsEmployee]
 
     def get_object(self):
@@ -296,3 +296,9 @@ class MyAttatchmentView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(Attatchment, employee=self.request.user)
+
+
+class EmployeeListView(generics.ListAPIView):
+    queryset = Employee.objects.all().order_by("name")
+    serializer_class = EmployeeListSerializer
+    permission_classes = [IsEmployee]

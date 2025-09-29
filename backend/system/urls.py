@@ -27,6 +27,7 @@ router.register(r'roles', RoleViewSet, basename='role')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path("designations/<int:grade_id>/", DesignationViewSet.as_view({"get": "list"})),
     path('auth/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),

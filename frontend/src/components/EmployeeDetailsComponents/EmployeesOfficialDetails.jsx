@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -95,7 +95,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
         if(!user?.is_hr && !employee_id) return;
         let res;
         if(gradeId){
-          res = await api.get(`system/designations/{gradeId}/`);
+          res = await api.get(`system/designations/${gradeId}/`);
         } else {
           res = await api.get(`system/designations/`);
         }
@@ -150,21 +150,30 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if (user) {
+      if (toUpdate) {
         // Update existing employee
-        await api.patch(
-          `employees/empolyee-official-details/${user.id}/`,
+        const res = await api.patch(
+          `employees/empolyee-official-details/${officialdetails.id}/`,
           officialdetails
         );
-        alert("Employee details updated successfully!");
+        console.log("Updateed Employee:", res.data);
+        if(res.data){
+          alert("Employee details updated successfully!");
+        } else {
+          alert("Something went wrong!")
+        }
       } else {
         // Create new employee
         const res = await api.post(
           `/employees/empolyee-official-details/`,
           officialdetails
         );
-        alert("Employee created successfully!");
         console.log("New Employee:", res.data);
+        if(res.data){
+          alert("Employee created successfully!");
+        } else {
+          alert("Something went wrong!")
+        }
       }
     } catch (error) {
       console.error("Error saving employee:", error.response?.data || error);
@@ -184,7 +193,8 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             />
           </div>
           <div className="form-group">
@@ -194,7 +204,8 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             />
           </div>
           <div className="form-group">
@@ -204,7 +215,8 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             />
           </div>
         </div>
@@ -217,12 +229,13 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-select"
               value={officialdetails.department?.id || ""}
               onChange={(e) => handleChange("department_id", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             >
               <option value="">-- Select --</option>
-              {departmentList.map((department)=>{
+              {departmentList.map((department)=>(
                 <option key={department.id} value={department.id}>{department.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -235,12 +248,13 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
                 setGradeId(e.target.value)
                 handleChange("grade_id", e.target.value)
               }}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             >
               <option value="">-- Select --</option>
-              {gradeList.map((grade)=>{
+              {gradeList.map((grade)=>(
                 <option key={grade.id} value={grade.id}>{grade.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -251,7 +265,8 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             />
           </div>
         </div>
@@ -264,12 +279,13 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-select"
               value={officialdetails.designation?.id || ""}
               onChange={(e) => handleChange("designation_id", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             >
               <option value="">-- Select --</option>
-              {designationList.map((designation)=>{
+              {designationList.map((designation)=>(
                 <option key={designation.id} value={designation.id}>{designation.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -281,12 +297,13 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               onChange={(e) =>
                 handleChange("reporting_manager_id", e.target.value)
               }
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             >
               <option value="">-- Select --</option>
-              {reportingManagerList.map((reporting_manager)=>{
+              {reportingManagerList.map((reporting_manager)=>(
                 <option key={reporting_manager.id} value={reporting_manager.id}>{reporting_manager.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -297,7 +314,8 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
+              required
             />
           </div>
         </div>
@@ -309,12 +327,12 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-select"
               value={officialdetails.role1?.id || ""}
               onChange={(e) => handleChange("role1_id", e.target.value)}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
             >
               <option value="">-- Select --</option>
-              {roleList.map((role)=>{
+              {roleList.map((role)=>(
                 <option key={role.id} value={role.id}>{role.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -322,16 +340,16 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Role 2*</label>
             <select
               className="form-select"
-              value={officialdetails.role1?.id || ""}
+              value={officialdetails.role2?.id || ""}
               onChange={(e) =>
                 handleChange("role2_id", e.target.value)
               }
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
             >
               <option value="">-- Select --</option>
-              {roleList.map((role)=>{
+              {roleList.map((role)=>(
                 <option key={role.id} value={role.id}>{role.name}</option>
-              })}
+              ))}
             </select>
           </div>
 
@@ -341,7 +359,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-select"
               value={officialdetails.is_hr === true ? "true" : officialdetails.is_hr === false ? "false" : ""}
               onChange={(e) => handleChange("is_hr", e.target.value === "true")}
-              disabled={!user?.is_hr && !employee_id}
+              disabled={!employee_id}
             >
               <option value="">-- Select --</option>
               <option value="true">True</option>
@@ -386,7 +404,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={!user?.is_hr && !employee_id}
+                  disabled={!employee_id}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>

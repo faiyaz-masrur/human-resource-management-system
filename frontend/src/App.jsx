@@ -53,6 +53,7 @@ function App() {
           <Route path="configurations/roles" element={<Roles />} />
 
           <Route path="employee-details" element={<EmployeeDetails />} />
+          <Route path="employee-details/:employee_id" element={<EmployeeDetails />} />
           <Route path="employees" element={<Employees />} />
         </Route>
 

@@ -1,5 +1,6 @@
-// src/pages/Employee/EmployeeDetails.jsx
+
 import { useState } from 'react'
+import { useParams } from "react-router-dom";
 import EmployeesOfficialDetails from "../../components/EmployeeDetailsComponents/EmployeesOfficialDetails";
 import EmployeesPersonalDetails from "../../components/EmployeeDetailsComponents/EmployeesPersonalDetails";
 import EmployeesAddress from "../../components/EmployeeDetailsComponents/EmployeesAddress";
@@ -9,8 +10,9 @@ import EmployeesTrainingCertifications from "../../components/EmployeeDetailsCom
 import EmployeesOtherInfo from "../../components/EmployeeDetailsComponents/EmployeesOtherInfo";
 import EmployeesAttchments from "../../components/EmployeeDetailsComponents/EmployeesAttchments";
 
-function EmployeeDetails({ employee_id }) {
+function EmployeeDetails() {
   const [activeTab, setActiveTab] = useState('official');
+  const { employee_id } = useParams();
 
   const tabs = [
     { id: 'official', label: 'Official Details' },
