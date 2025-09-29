@@ -8,6 +8,7 @@ import HodAppraisal from '../../components/AppraisalDetailsComponents/HodApprais
 import CooAppraisal from '../../components/AppraisalDetailsComponents/CooAppraisal';
 import CeoAppraisal from '../../components/AppraisalDetailsComponents/CeoAppraisal';
 
+
 const AppraisalDetails = () => {
   const [activeTab, setActiveTab] = useState('Employee');
 
