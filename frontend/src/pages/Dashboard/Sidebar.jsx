@@ -13,9 +13,7 @@ const menuItems = [
   { name: 'Employees', icon: '👥', path: '/employees' },
   { name: 'Taxes', icon: '🧾', path: '/taxes' },
   { name: 'Provident Fund', icon: '🏦', path: '/provident-fund' },
-  { name: 'Chat', icon: '💬', path: '/chatbot' },
-  
-  
+
   { 
     name: 'Appraisal', 
     icon: '⭐', 
@@ -43,6 +41,7 @@ const menuItems = [
     ]
   },
   
+  { name: 'Chat', icon: '💬', path: '/chat' },
   { name: 'Job Posting', icon: '💼', path: '/jobpost' },
   { name: 'Settings', icon: '⚙️', path: '/settings' },
 ];
