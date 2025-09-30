@@ -25,6 +25,12 @@ import Grades from "./components/Configurations/Grades";
 import Roles from "./components/Configurations/Roles";
 
 function App() {
+  const view = {
+    isOwnProfileView: false,
+    isEmployeeProfileView: false,
+    isAddNewEmployeeProfileView: false,
+  }
+
   return (
     <Router>
       <Routes>
@@ -52,9 +58,10 @@ function App() {
           <Route path="configurations/grades" element={<Grades />} />
           <Route path="configurations/roles" element={<Roles />} />
 
-          <Route path="employee-details" element={<EmployeeDetails />} />
-          <Route path="employee-details/:employee_id" element={<EmployeeDetails />} />
-          <Route path="employees" element={<Employees />} />
+          <Route path="employee-details/my-profile/" element={<EmployeeDetails view={{...view, isOwnProfileView: true}}/>} />
+          <Route path="employee-details/add-new-employee/" element={<EmployeeDetails view={{...view, isAddNewEmployeeProfileView: true}}/>} />
+          <Route path="employee-details/employee-profile/:employee_id" element={<EmployeeDetails view={{...view, isEmployeeProfileView: true}}/>} />
+          <Route path="employees/" element={<Employees />} />
         </Route>
 
 

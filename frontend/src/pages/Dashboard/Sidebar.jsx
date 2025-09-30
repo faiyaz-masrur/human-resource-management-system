@@ -7,7 +7,7 @@ import SonaliLogo from "../../assets/sonali-logo.jpg";
 // --- Menu Items Definition ---
 const menuItems = [
   { name: 'Dashboard', icon: '🏠', path: '/' },
-  { name: 'My Profile', icon: '👤', path: '/employee-details' },
+  { name: 'My Profile', icon: '👤', path: '/employee-details/my-profile/' },
   { name: 'Attendance', icon: '📅', path: '/attendance' },
   { name: 'Payroll', icon: '💵', path: '/payroll' },
   { name: 'Employees', icon: '👥', path: '/employees' },

@@ -1,15 +1,22 @@
-import React from 'react';
+import { useState } from 'react';
 import { Search, Bell, Menu } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Accept toggle handlers as props
 const Navbar = ({ onMenuClick, onRightPanelClick }) => {
-    // Mock image path and user data to match the screenshot style
-    const userProfileImage = "https://placehold.co/40x40/007bff/ffffff?text=U"; 
-    const userName = "MSH Pulak";
+    const { user, logout } = useAuth();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const currentTime = "11:34 AM";
     const currentDate = "24 Mar 2025";
     const activePage = "Dashboard";
     const menuTitle = "Menu";
+
+
+    const handleLogout = () => {
+        logout();
+        setDropdownOpen(false);
+        navigate('/login');
+    };
 
     return (
         <>
@@ -239,15 +246,25 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
                         <Bell size={20} />
                     </span>
                     
-                    <div className="user-profile">
+                    <div className="user-profile" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setDropdownOpen(v => !v)}>
                         <div className="profile-image-container">
-                            <img src={userProfileImage} alt="User" className="profile-image" />
+                            <img src="/avatar.png" alt="User" className="profile-image" />
                         </div>
-                        <div className="profile-info">
+                        <div className="profile-info" >
                             <span className="profile-welcome">Welcome</span>
-                            <span className="profile-name">{userName}</span>
+                            <span className="profile-name">{user?.name}</span>
                         </div>
                         <span className="profile-dropdown-arrow">▼</span>
+                        {dropdownOpen && (
+                            <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', borderRadius: 6, minWidth: 150, zIndex: 10 }}>
+                            <button onClick={() => navigate('/change-password')} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
+                                Change Password
+                            </button>
+                            <button onClick={handleLogout} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
+                                Logout
+                            </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

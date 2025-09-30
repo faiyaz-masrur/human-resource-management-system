@@ -2,6 +2,7 @@ import { useState, useEffect, use } from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
+import api from '../../services/api';
 
 const EmployeeTable = () => {
   const { user } = useAuth();
@@ -11,7 +12,7 @@ const EmployeeTable = () => {
   useEffect(() => {
     const fetchEmployeeList = async () => {
       try {
-        const res = await api.get(`employees/empolyee-list/`);
+        const res = await api.get(`employees/employee-list/`);
         console.log(res.data)
         setEmployeeList(res.data || []); 
       } catch (error) {
@@ -192,7 +193,7 @@ const EmployeeTable = () => {
         {/* Section Header (All Employees & Add New Button) */}
         <div className="content-header">
           <h1 className="section-title">All Employees</h1>
-          <button className="add-new-button" onClick={() => console.log('Add New clicked')}>
+          <button className="add-new-button" onClick={() => navigate('/employee-details/add-new-employee/')}>
             <Plus className="add-new-button__icon" />
             <span>Add New</span>
           </button>
@@ -230,7 +231,7 @@ const EmployeeTable = () => {
                         <button
                           title="Edit"
                           className="action-button action-button--edit"
-                          onClick={() => navigate(`/employee-details/${employee.id}`)}
+                          onClick={() => navigate(`/employee-details/employee-profile/${employee.id}`)}
                         >
                           <Pencil className="action-button__icon" />
                         </button>

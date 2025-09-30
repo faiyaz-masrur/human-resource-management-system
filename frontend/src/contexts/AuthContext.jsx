@@ -31,11 +31,16 @@ export const AuthProvider = ({ children }) => {
 
   // Fake login (replace with API call)
   const login = (userData) => {
-    setUser(userData);
+    localStorage.setItem('access_token', userData.access);
+    localStorage.setItem('refresh_token', userData.refresh);
+    setUser(userData.user);
   };
 
   // Logout
   const logout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

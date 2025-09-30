@@ -19,13 +19,9 @@ const UserLogin = () => {
         email,
         password,
       });
-      
-      // Store tokens and user info in localStorage
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      login(response.data.user)
 
-      // Redirect to the dashboard page after successful login
+      login(response.data)
+
       navigate('/'); 
 
     } catch (err) {

@@ -2,22 +2,23 @@ import { useState, useEffect } from "react";
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
+const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
   const { user } = useAuth();
   const [toUpdate, setToUpdate] = useState(false)
   const [gradeId, setGradeId] = useState(null)
+
   const defaultOfficialDetails = {
     id: "",
     email: "",
     name: "",
-    designation: {},
-    department: {},
+    designation: "",
+    department: "",
     joining_date: "",
-    grade: {},
-    reporting_manager: {},
+    grade: "",
+    reporting_manager: "",
     basic_salary: "",
-    role1: {},
-    role2: {},
+    role1: "",
+    role2: "",
     is_hr: false,
     reviewed_by_rm: false,
     reviewed_by_hr: false,
@@ -38,16 +39,20 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
     const fetchOfficialDetails = async () => {
       try {
         let res;
-        if(user?.is_hr && employee_id){
+        if(user?.is_hr && view.isAddNewEmployeeProfileView){
+          return;
+        } else if(user?.is_hr && employee_id && view.isEmployeeProfileView){
           res = await api.get(`employees/empolyee-official-details/${employee_id}/`);
-        } else {
+        } else if(view.isOwnProfileView){
           res = await api.get('employees/my-official-details/');
+        } else {
+          return;
         }
-        console.log(res.data)
+        console.log(res?.data)
         if(res?.data?.id){
           setToUpdate(true)
         }
-        setOfficialDetails(res.data || defaultOfficialDetails); 
+        setOfficialDetails(res?.data || defaultOfficialDetails); 
       } catch (error) {
         console.warn("No employee details found, showing empty form.");
         setOfficialDetails(defaultOfficialDetails);
@@ -60,7 +65,6 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   useEffect(() => {
     const fetchDepartmentList = async () => {
       try {
-        if(!user?.is_hr && !employee_id) return;
         const res = await api.get(`system/departments/`);
         console.log(res.data)
         setDepartmentList(res.data || []); 
@@ -76,7 +80,6 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   useEffect(() => {
     const fetchGradeList = async () => {
       try {
-        if(!user?.is_hr && !employee_id) return;
         const res = await api.get(`system/grades/`);
         console.log(res.data)
         setGradeList(res.data || []); 
@@ -92,10 +95,9 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   useEffect(() => {
     const fetchDesignationList = async () => {
       try {
-        if(!user?.is_hr && !employee_id) return;
         let res;
         if(gradeId){
-          res = await api.get(`system/designations/${gradeId}/`);
+          res = await api.get(`system/designations/grade/${gradeId}/`);
         } else {
           res = await api.get(`system/designations/`);
         }
@@ -113,7 +115,6 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   useEffect(() => {
     const fetchRoleList = async () => {
       try {
-        if(!user?.is_hr && !employee_id) return;
         const res = await api.get(`system/roles/`);
         console.log(res.data)
         setRoleList(res.data || []); 
@@ -129,7 +130,6 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   useEffect(() => {
     const fetchReportingManagerList = async () => {
       try {
-        if(!user?.is_hr && !employee_id) return;
         const res = await api.get(`system/reporting-managers/list/`);
         console.log(res.data)
         setReportingManagerList(res.data || []); 
@@ -150,29 +150,31 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if (toUpdate) {
-        // Update existing employee
-        const res = await api.patch(
-          `employees/empolyee-official-details/${officialdetails.id}/`,
-          officialdetails
-        );
-        console.log("Updateed Employee:", res.data);
-        if(res.data){
-          alert("Employee details updated successfully!");
+      if(user?.is_hr){
+        if (toUpdate) {
+          // Update existing employee
+          const res = await api.patch(
+            `employees/empolyee-official-details/${officialdetails.id}/`,
+            officialdetails
+          );
+          console.log("Updateed Employee:", res.data);
+          if(res.data){
+            alert("Employee details updated successfully!");
+          } else {
+            alert("Something went wrong!")
+          }
         } else {
+          // Create new employee
+          const res = await api.post(
+            `/employees/empolyee-official-details/`,
+            officialdetails
+          );
+          console.log("New Employee:", res.data);
+          if(res.data){
+            alert("Employee created successfully!");
+          } else {
           alert("Something went wrong!")
-        }
-      } else {
-        // Create new employee
-        const res = await api.post(
-          `/employees/empolyee-official-details/`,
-          officialdetails
-        );
-        console.log("New Employee:", res.data);
-        if(res.data){
-          alert("Employee created successfully!");
-        } else {
-          alert("Something went wrong!")
+          }
         }
       }
     } catch (error) {
@@ -193,7 +195,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             />
           </div>
@@ -204,7 +206,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             />
           </div>
@@ -215,7 +217,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             />
           </div>
@@ -227,9 +229,9 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Department*</label>
             <select
               className="form-select"
-              value={officialdetails.department?.id || ""}
-              onChange={(e) => handleChange("department_id", e.target.value)}
-              disabled={!employee_id}
+              value={officialdetails.department || ""}
+              onChange={(e) => handleChange("department", e.target.value)}
+              disabled={view.isOwnProfileView}
               required
             >
               <option value="">-- Select --</option>
@@ -243,12 +245,12 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Grade*</label>
             <select
               className="form-select"
-              value={officialdetails.grade?.id || ""}
+              value={officialdetails.grade || ""}
               onChange={(e) => {
-                setGradeId(e.target.value)
-                handleChange("grade_id", e.target.value)
+                setGradeId(parseInt(e.target.value))
+                handleChange("grade", e.target.value)
               }}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             >
               <option value="">-- Select --</option>
@@ -265,7 +267,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             />
           </div>
@@ -277,9 +279,9 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Designation*</label>
             <select
               className="form-select"
-              value={officialdetails.designation?.id || ""}
-              onChange={(e) => handleChange("designation_id", e.target.value)}
-              disabled={!employee_id}
+              value={officialdetails.designation || ""}
+              onChange={(e) => handleChange("designation", e.target.value)}
+              disabled={view.isOwnProfileView}
               required
             >
               <option value="">-- Select --</option>
@@ -293,11 +295,11 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Reporting Manager*</label>
             <select
               className="form-select"
-              value={officialdetails.reporting_manager?.id || ""}
+              value={officialdetails.reporting_manager || ""}
               onChange={(e) =>
-                handleChange("reporting_manager_id", e.target.value)
+                handleChange("reporting_manager", e.target.value)
               }
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             >
               <option value="">-- Select --</option>
@@ -314,7 +316,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
               required
             />
           </div>
@@ -325,9 +327,9 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Role 1*</label>
             <select
               className="form-select"
-              value={officialdetails.role1?.id || ""}
-              onChange={(e) => handleChange("role1_id", e.target.value)}
-              disabled={!employee_id}
+              value={officialdetails.role1 || ""}
+              onChange={(e) => handleChange("role1", e.target.value)}
+              disabled={view.isOwnProfileView}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -340,11 +342,11 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
             <label>Role 2*</label>
             <select
               className="form-select"
-              value={officialdetails.role2?.id || ""}
+              value={officialdetails.role2 || ""}
               onChange={(e) =>
-                handleChange("role2_id", e.target.value)
+                handleChange("role2", e.target.value)
               }
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -359,7 +361,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
               className="form-select"
               value={officialdetails.is_hr === true ? "true" : officialdetails.is_hr === false ? "false" : ""}
               onChange={(e) => handleChange("is_hr", e.target.value === "true")}
-              disabled={!employee_id}
+              disabled={view.isOwnProfileView}
             >
               <option value="">-- Select --</option>
               <option value="true">True</option>
@@ -404,7 +406,7 @@ const EmployeesOfficialDetails = ({ employee_id, onNext }) => {
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={!employee_id}
+                  disabled={view.isOwnProfileView}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>

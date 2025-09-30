@@ -53,32 +53,26 @@ class EmployeeListSerializer(serializers.ModelSerializer):
 
 
 class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer(read_only=True)
-    designation = DesignationSerializer(read_only=True)
-    grade = GradeSerializer(read_only=True)
-    role1 = RoleSerializer(read_only=True)
-    role2 = RoleSerializer(read_only=True)
-    reporting_manager = ReportingManagerSerializer(read_only=True)
 
     # use ids for write operations
-    department_id = serializers.PrimaryKeyRelatedField(
-        queryset=Department.objects.all(), source="department", write_only=True, required=False
-    )
-    designation_id = serializers.PrimaryKeyRelatedField(
-        queryset=Designation.objects.all(), source="designation", write_only=True, required=False
-    )
-    grade_id = serializers.PrimaryKeyRelatedField(
-        queryset=Grade.objects.all(), source="grade", write_only=True, required=False
-    )
-    role1_id = serializers.PrimaryKeyRelatedField(
-        queryset=Role.objects.all(), source="role1", write_only=True, required=False
-    )
-    role2_id = serializers.PrimaryKeyRelatedField(
-        queryset=Role.objects.all(), source="role2", write_only=True, required=False
-    )
-    reporting_manager_id = serializers.PrimaryKeyRelatedField(
-        queryset=ReportingManager.objects.all(), source="reporting_manager", write_only=True, required=False
-    )
+    # department_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Department.objects.all(), source="department", write_only=True, required=False
+    # )
+    # designation_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Designation.objects.all(), source="designation", write_only=True, required=False
+    # )
+    # grade_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Grade.objects.all(), source="grade", write_only=True, required=False
+    # )
+    # role1_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Role.objects.all(), source="role1", write_only=True, required=False
+    # )
+    # role2_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Role.objects.all(), source="role2", write_only=True, required=False
+    # )
+    # reporting_manager_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=ReportingManager.objects.all(), source="reporting_manager", write_only=True, required=False
+    # )
 
     class Meta:
         model = Employee
@@ -87,7 +81,6 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
             "joining_date", "basic_salary",
             "department", "designation", "grade",
             "reporting_manager", "role1", "role2",  "is_hr", "is_active", "basic_salary",
-            "department_id", "designation_id", "grade_id", "reporting_manager_id", "role1_id", "role2_id",
             "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
 

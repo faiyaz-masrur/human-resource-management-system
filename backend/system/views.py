@@ -105,36 +105,68 @@ class PasswordResetConfirmView(generics.GenericAPIView):
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by("name")
     serializer_class = DepartmentSerializer
-    permission_classes = [IsHR]
+
+    def get_permissions(self):
+        if self.action == "list":
+            # Employee can access list
+            permission_classes = [IsEmployee]
+        else:
+            # HR can create, update, delete, retrieve
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
 
 
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
-    permission_classes = [IsHR]
+    
+    def get_permissions(self):
+        if self.action == "list":
+            # Employee can access list
+            permission_classes = [IsEmployee]
+        else:
+            # HR can create, update, delete, retrieve
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
 
 
 class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
-    permission_classes = [IsHR]
 
     def get_queryset(self):
         grade_id = self.kwargs.get("grade_id") # from URL
         if grade_id:
             return Designation.objects.filter(grade_id=grade_id).order_by("name")
         return Designation.objects.all().order_by("name")
+    
+    def get_permissions(self):
+        if self.action == "list":
+            # Employee can access list
+            permission_classes = [IsEmployee]
+        else:
+            # HR can create, update, delete, retrieve
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
 
 
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("name")
     serializer_class = RoleSerializer
-    permission_classes = [IsHR]
+    
+    def get_permissions(self):
+        if self.action == "list":
+            # Employee can access list
+            permission_classes = [IsEmployee]
+        else:
+            # HR can create, update, delete, retrieve
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
 
 
 class ReportingManagerListView(generics.ListAPIView):
     queryset = ReportingManager.objects.select_related("manager")
     serializer_class = ReportingManagerSerializer
-    permission_classes = [IsHR]
+    permission_classes = [IsEmployee]
 
 
 class PersonalDetailChoicesView(views.APIView):
