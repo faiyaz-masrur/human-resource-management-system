@@ -168,6 +168,23 @@ body {
   border-top: 1px solid #e0e0e0;
 }
 
+.btn-success {
+  background: #28a745;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
 .btn-primary {
   background: #0066cc;
   color: white;

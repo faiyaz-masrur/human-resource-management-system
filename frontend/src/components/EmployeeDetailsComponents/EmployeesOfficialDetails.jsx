@@ -60,7 +60,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
     };
 
     fetchOfficialDetails();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const fetchDepartmentList = async () => {
@@ -153,12 +153,12 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
       if(user?.is_hr){
         if (toUpdate) {
           // Update existing employee
-          const res = await api.patch(
+          const res = await api.put(
             `employees/empolyee-official-details/${officialdetails.id}/`,
             officialdetails
           );
-          console.log("Updateed Employee:", res.data);
-          if(res.data){
+          console.log("Updateed Employee:", res.status);
+          if(res.status === 200){
             alert("Employee details updated successfully!");
           } else {
             alert("Something went wrong!")
@@ -169,13 +169,16 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
             `/employees/empolyee-official-details/`,
             officialdetails
           );
-          console.log("New Employee:", res.data);
-          if(res.data){
+          console.log("New Employee:", res.status);
+          if(res.status === 201){
             alert("Employee created successfully!");
           } else {
           alert("Something went wrong!")
           }
         }
+      } else {
+        alert("You don't have permission to perform this action.");
+        return;
       }
     } catch (error) {
       console.error("Error saving employee:", error.response?.data || error);
@@ -417,14 +420,14 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
 
         {/* Actions */}
         <div className="form-actions">
+          <button className="btn-primary" onClick={onNext}>
+            Next
+          </button>
           {(user?.is_hr && employee_id) && (
             <button className="btn-primary" onClick={handleSave}>
               Save
             </button>
           )}
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
         </div>
       </div>
     </div>

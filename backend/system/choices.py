@@ -1,21 +1,31 @@
 # choices.py
 
 BLOOD_GROUP_CHOICES = [
-    ("A+", "A+"),
-    ("A-", "A-"),
-    ("B+", "B+"),
-    ("B-", "B-"),
-    ("AB+", "AB+"),
-    ("AB-", "AB-"),
-    ("O+", "O+"),
-    ("O-", "O-"),
+    ("a+", "A+"),
+    ("a-", "A-"),
+    ("b+", "B+"),
+    ("b-", "B-"),
+    ("ab+", "AB+"),
+    ("ab-", "AB-"),
+    ("o+", "O+"),
+    ("o-", "O-"),
 ]
 
 MARITAL_STATUS_CHOICES = [
-    ("Single", "Single"),
-    ("Married", "Married"),
-    ("Divorced", "Divorced"),
-    ("Widowed", "Widowed"),
+    ("single", "Single"),
+    ("married", "Married"),
+    ("divorced", "Divorced"),
+    ("widowed", "Widowed"),
+]
+
+EMERGENCY_CONTACT_RELATIONSHIP_CHOICES = [
+    ("parent", "Parent"),
+    ("sibling", "Sibling"),
+    ("spouse", "Spouse"),
+    ("cousin", "Cousin"),
+    ("friend", "Friend"),
+    ("uncle/aunt", "Uncle/Aunt"),
+    ("other", "Other"),
 ]
 
 DEGREE_CHOICES = [

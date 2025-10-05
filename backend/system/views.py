@@ -25,6 +25,7 @@ from .choices import (
     SPECIALIZATION_CHOICES,
     MARITAL_STATUS_CHOICES,
     BLOOD_GROUP_CHOICES,
+    EMERGENCY_CONTACT_RELATIONSHIP_CHOICES,
 )
 
 User = get_user_model()
@@ -175,7 +176,8 @@ class PersonalDetailChoicesView(views.APIView):
     def get(self, request):
         return Response({
             "marital_status_choices": [{"key": choice[0], "value": choice[1]} for choice in MARITAL_STATUS_CHOICES],
-            "blood_group_choices": [{"key": choice[0], "value": choice} for key, choice in BLOOD_GROUP_CHOICES],
+            "blood_group_choices": [{"key": choice[0], "value": choice[1]} for choice in BLOOD_GROUP_CHOICES],
+            "emergency_contact_relationship_choices": [{"key": choice[0], "value": choice[1]} for choice in EMERGENCY_CONTACT_RELATIONSHIP_CHOICES],
         })
 
 class AddressChoicesView(views.APIView):
