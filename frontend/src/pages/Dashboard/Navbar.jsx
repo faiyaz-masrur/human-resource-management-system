@@ -68,7 +68,7 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
                         <span className="profile-dropdown-arrow">▼</span>
                         {dropdownOpen && (
                             <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', borderRadius: 6, minWidth: 150, zIndex: 10 }}>
-                            <button onClick={() => navigate('/change-password')} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
+                            <button onClick={() => navigate('/change-password')}  style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
                                 Change Password
                             </button>
                             <button onClick={handleLogout} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>

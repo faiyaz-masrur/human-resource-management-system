@@ -36,7 +36,6 @@ function App() {
       <Routes>
         {/* Public Routes (e.g., Login pages) */}
         <Route path="/login" element={<UserLogin />} />
-        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/forget-password-update" element={<ForgetPasswordUpdate />} />
 
@@ -48,6 +47,8 @@ function App() {
         }>
          
           <Route index element={<MainDashboard />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          
           <Route path="appraisal" element={<AppraisalDetails />} />
           <Route path="appraisal/others" element={<OtherAppraisals />} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
