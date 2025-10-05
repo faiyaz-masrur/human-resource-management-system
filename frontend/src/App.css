@@ -320,7 +320,7 @@
 }
 
 /* ================================================= */
-/* 5. SIDEBAR DROPDOWN STYLES */
+/*  SIDEBAR DROPDOWN STYLES */
 /* ================================================= */
 
 /* Re-defining .menu-item to handle the Link wrapper inside it */
@@ -399,7 +399,9 @@
 }
 
 
+/* ================================================= */
 /* Notification Sidebar */
+/* ================================================= */
 
 .notification-sidebar {
     width: 230px;
@@ -723,8 +725,12 @@
 }
 
 
+
+
 /* ================================================= */
-/* Login pages design*/
+
+          /* Login pages design*/
+
 /* ================================================= */
 
 
@@ -733,8 +739,6 @@
   display: flex;
   width: 100%;
   height: 100vh;
-  border-radius: 10px;
-  overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   justify-content: center;
   position: relative;
@@ -754,70 +758,53 @@
 
 /* Left side with the image and text */
 .login-image-section, .recovery-image-section, .update-image-section{
-  flex: 1;
-  width: 30%;
+  width: 35%;
+  height: 100vh;
   background: linear-gradient(135deg, #1e3a5f, #3a6a9b); 
   position: relative;
   color: white;
-  padding: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
 }
 
-.logo {
+.login-page-img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
+
+.logo-img-login {
   position: absolute;
-  top: 20px;
-  left: 30px;
   font-size: 1.5em;
   font-weight: bold;
-}
+  width: 150px;
+  margin: 50px 250px 100px 0;
 
-.overlay-image {
-  position: relative;
-  width: 60%;
-  height: auto;
-  margin-top: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.overlay-image .circle {
-  width: 100%;
-  padding-bottom: 100%;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-}
-
-.overlay-image .person {
-  position: absolute;
-  width: 80%;
-  height: 80%;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'); /* Placeholder for person silhouette */
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.7;
 }
 
 .human-resource-text {
   text-align: left;
+  position: absolute;
+  margin: 300px 250px 500px 100px;
+  padding: 100px 0 500px 0;
 }
 
 .human-resource-text h1 {
   font-size: 2.5em;
   font-weight: 300;
-  margin: 0;
+  color: #fff;
+  font: bold;
 }
 
 /* Right side with the form */
 .login-form-section, .recovery-form-section, .update-form-section, .change-form-section{
   flex: none; 
-  width: 100%;
+  width: 60vh;
   background-color: white;
   display: flex;
   flex-direction: column;

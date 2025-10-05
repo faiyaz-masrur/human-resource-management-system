@@ -9,8 +9,9 @@ import ChangePassword from './pages/Login/ChangePassword';
 import ForgetPassword from './pages/Login/ForgetPassword';
 import ForgetPasswordUpdate from './pages/Login/ForgetPasswordUpdate';
 
-import AppraisalDetails from './pages/Appraisal/AppraisalDetails';
+import MyAppraisal from './pages/Appraisal/MyAppraisal';
 import OtherAppraisals from './pages/Appraisal/OtherAppraisals';
+import AppraisalDetailsEmployee from './pages/Appraisal/AppraisalDetailsEmployee';
 import AppraisalStatus from './pages/Appraisal/AppraisalStatus';
 import AppraisalSettings from './pages/Appraisal/AppraisalSettings';
 
@@ -49,8 +50,9 @@ function App() {
           <Route index element={<MainDashboard />} />
           <Route path="/change-password" element={<ChangePassword />} />
           
-          <Route path="appraisal" element={<AppraisalDetails />} />
+          <Route path="appraisal/my" element={<MyAppraisal />} />
           <Route path="appraisal/others" element={<OtherAppraisals />} />
+          <Route path="appraisal/employee" element={<AppraisalDetailsEmployee />} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
           <Route path="appraisal/settings" element={<AppraisalSettings />} />
           
