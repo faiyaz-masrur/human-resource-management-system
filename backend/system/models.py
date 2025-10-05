@@ -158,3 +158,86 @@ class Employee(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+
+class BdDistrict(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = "BD District"
+        verbose_name_plural = "BD Districts"
+
+    def __str__(self):
+        return self.name
+    
+class BdThana(models.Model):
+    name = models.CharField(max_length=100)
+
+    district = models.ForeignKey(
+        BdDistrict,
+        on_delete=models.CASCADE,
+        related_name="thanas"
+    )
+
+    class Meta:
+        verbose_name = "BD Thana"
+        verbose_name_plural = "BD Thanas"
+        unique_together = ('name', 'district')
+
+    def __str__(self):
+        return f"{self.name}, {self.district.name}"
+    
+class BloodGroup(models.Model):
+    key = models.CharField(max_length=3, unique=True)  # e.g., "A+", "O-"
+    value = models.CharField(max_length=10)  # e.g., "A Positive", "O Negative"
+
+    class Meta:
+        verbose_name = "Blood Group"
+        verbose_name_plural = "Blood Groups"
+
+    def __str__(self):
+        return self.value
+    
+class MaritalStatus(models.Model):
+    key = models.CharField(max_length=10, unique=True)  # e.g., "single", "married"
+    value = models.CharField(max_length=20)  # e.g., "Single", "Married"
+
+    class Meta:
+        verbose_name = "Marital Status"
+        verbose_name_plural = "Marital Statuses"
+
+    def __str__(self):
+        return self.value
+    
+class EmergencyContactRelationship(models.Model):
+    key = models.CharField(max_length=15, unique=True)  # e.g., "parent", "sibling"
+    value = models.CharField(max_length=30)  # e.g., "Parent", "Sibling"
+
+    class Meta:
+        verbose_name = "Emergency Contact Relationship"
+        verbose_name_plural = "Emergency Contact Relationships"
+
+    def __str__(self):
+        return self.value
+    
+class Degree(models.Model):
+    key = models.CharField(max_length=10, unique=True)  # e.g., "BSC", "MBA"
+    value = models.CharField(max_length=100)  # e.g., "Bachelor of Science (B.Sc)", "Master of Business Administration (MBA)"
+
+    class Meta:
+        verbose_name = "Degree"
+        verbose_name_plural = "Degrees"
+
+    def __str__(self):
+        return self.value
+    
+class Specialization(models.Model):
+    key = models.CharField(max_length=10, unique=True)  # e.g., "CSE", "EEE"
+    value = models.CharField(max_length=100)  # e.g., "Computer Science & Engineering", "Electrical & Electronic Engineering"
+
+    class Meta:
+        verbose_name = "Specialization"
+        verbose_name_plural = "Specializations"
+
+    def __str__(self):
+        return self.value

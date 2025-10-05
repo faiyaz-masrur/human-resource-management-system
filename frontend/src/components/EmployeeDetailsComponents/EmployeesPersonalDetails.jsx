@@ -1,5 +1,7 @@
 // src/components/EmployeeDetailsComponents/EmployeesPersonalDetails.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();

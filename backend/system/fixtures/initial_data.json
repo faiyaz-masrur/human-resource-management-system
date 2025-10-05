@@ -1,0 +1,66 @@
+{
+  "departments": [
+    {"name": "IT", "description": "Information Technology"},
+    {"name": "HR", "description": "Human Resources"},
+    {"name": "Finance", "description": "Finance Department"},
+    {"name": "Marketing", "description": "Marketing Department"}
+  ],
+  "grades": [
+    {"name": "G1", "description": "Grade 1"},
+    {"name": "G2", "description": "Grade 2"},
+    {"name": "G3", "description": "Grade 3"}
+  ],
+  "designations": [
+    {"name": "Software Engineer", "grade": "G1", "description": "Software Engineer"},
+    {"name": "Senior Software Engineer", "grade": "G2", "description": "Senior Software Engineer"},
+    {"name": "Lead Developer", "grade": "G3", "description": "Lead Developer"}
+  ],
+  "roles": [
+    {"name": "Admin", "description": "Administrator"},
+    {"name": "User", "description": "Regular User"}
+  ],
+  "districts": [
+    {
+      "name": "Dhaka",
+      "thanas": ["Adabor", "Badda", "Banshkhali", "Bashtola", "Cantonment", "Chakbazar",
+        "Darus Salam", "Demra", "Dhanmondi", "Gendaria", "Gulshan", "Hazaribagh",
+        "Jatrabari", "Kadamtali", "Kafrul", "Kalabagan", "Kamrangirchar",
+        "Khilgaon", "Khilkhet", "Kotwali", "Lalbagh", "Mirpur", "Mohammadpur",
+        "Motijheel", "Paltan", "Ramna", "Savar", "Tejgaon", "Uttara", "Vatara"]
+    },
+    {
+      "name": "Chattogram",
+      "thanas": ["Kotwali", "Pahartali", "Chawkbazar"]
+    },
+    {
+      "name": "Rajshahi",
+      "thanas": ["Godagari", "Tanor", "Mohanpur"]
+    }
+  ],
+  "blood_groups": [
+    {"key": "A+", "value": "A Positive"},
+    {"key": "O-", "value": "O Negative"},
+    {"key": "B+", "value": "B Positive"},
+    {"key": "AB-", "value": "AB Negative"}
+  ],
+  "marital_statuses": [
+    {"key": "single", "value": "Single"},
+    {"key": "married", "value": "Married"},
+    {"key": "divorced", "value": "Divorced"}
+  ],
+  "emergency_contact_relationships": [
+    {"key": "parent", "value": "Parent"},
+    {"key": "sibling", "value": "Sibling"},
+    {"key": "spouse", "value": "Spouse"}
+  ],
+  "degrees": [
+    {"key": "BSC", "value": "Bachelor of Science (B.Sc)"},
+    {"key": "MSC", "value": "Master of Science (M.Sc)"},
+    {"key": "MBA", "value": "Master of Business Administration (MBA)"}
+  ],
+  "specializations": [
+    {"key": "CSE", "value": "Computer Science & Engineering"},
+    {"key": "EEE", "value": "Electrical & Electronic Engineering"},
+    {"key": "BBA", "value": "Bachelor of Business Administration"}
+  ]
+}
