@@ -19,7 +19,7 @@
         "sidebar main notification";
 
     min-height: 100vh;
-    background-color: #e60b0b; /* Background color of the grid container */
+    background-color: #fff; /* Background color of the grid container */
     
     position: relative; 
 }
@@ -65,7 +65,7 @@
     background-color: white; 
     border-bottom: 1px solid #e0e0e0; 
     color: #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.0.5);
 }
 
 .navbar-spacer {
@@ -816,6 +816,19 @@
   border-radius: 8px;
   }
 
+.change-form-section{
+  flex: none; 
+  width: 60vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 40px; 
+  position: relative;
+  max-width: 450px; 
+  border-radius: 8px;
+}
 
 .form-content {
   width: 100%;
@@ -2708,12 +2721,14 @@
   background-color: #b3e0ff;
 }
 
-/* AppraisalStatus.css */
+
+/* ---------------------------------- */
+/* AppraisalStatus */
+/* ---------------------------------- */
 
 .appraisal-status-container {
+    margin: 40px 0 0 0;
     padding: 20px 0;
-    /* Uses the light gray background of the main content area */
-    background-color: #f4f7f9; 
     color: #333;
 }
 
@@ -2959,186 +2974,959 @@
 /* ================================================= */
 
 
-.departments-container, .designations-container, .grades-container {
-    padding: 50px 40px 0 0; 
-    margin: 20px 0 0 0;
-    background-color: #fff; 
-    color: #333; 
-    min-height: 100vh;
+/* === Global Light Theme Variables === */
+:root {
+  --color-background-light: #f4f7f9;
+  --color-card-background-light: white;
+  --color-text-primary-dark: #1f2937;
+  --color-text-secondary-gray: #6b7280;
+  --color-accent-blue: #007bff;
+  --color-header-blue-dark: #3b82f6;
+  --color-border-light: #e5e7eb;
+  --color-input-bg-light: white;
+  --color-button-primary: #007bff;
+  --color-button-primary-hover: #0056b3;
+  --color-action-bar-bg: #f9fafb;
+  --color-edit-bg: #eff6ff;
+  --color-edit-icon: #2563eb;
+  --color-delete-bg: #fee2e2;
+  --color-delete-icon: #dc2626;
 }
 
-.page-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 30px;
-    color: #333; 
+/* === Container === */
+.departments-container-wrapper {
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding: 2rem;
 }
 
-/* ------------------ Add Button Styles ------------------ */
-/* Used for .add-department-button, .add-designation-button, .add-grade-button */
-.add-department-header, .add-designation-header, .add-grade-header {
-    margin-bottom: 20px;
+/* === Shared Card and Title === */
+.page-title-light {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--color-text-primary-dark);
+  display: flex;
+  align-items: center;
 }
 
-.add-department-button, .add-designation-button, .add-grade-button {
-    background-color: #1890ff; /* Primary blue button */
-    color: #fff;
-    border: none;
-    border-radius: 25px; 
-    padding: 12px 25px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(24, 144, 255, 0.2); 
-    display: inline-flex;
-    align-items: center;
-    transition: background-color 0.2s, box-shadow 0.2s;
+.card-light {
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.add-department-button:hover, .add-designation-button:hover, .add-grade-button:hover {
-    background-color: #40a9ff;
-    box-shadow: 0 4px 8px rgba(24, 144, 255, 0.3);
+/* === List View === */
+.department-list-card {
+  padding: 1.5rem;
 }
 
-.plus-icon {
-    font-size: 20px;
-    margin-left: 10px;
-    font-weight: 700;
+.content-header-light {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-/* ------------------ Form Card Styles ------------------ */
-/* Used for .department-form-card, .designation-form-card, .grade-form-card */
-.department-form-card, .designation-form-card, .grade-form-card {
-    background-color: #fff; /* White card background */
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
-    overflow: hidden; 
-    border: 1px solid #e0e0e0;
+.section-title-light {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary-dark);
 }
 
-/* Header Bar (Light blue accent) */
-.form-header-bar {
-    background-color: #e6f7ff; /* Light blue accent */
-    color: #1890ff; 
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: 600;
-    border-bottom: 1px solid #bae7ff;
+.btn-add-new {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--color-button-primary);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-add-new:hover {
+  background-color: var(--color-button-primary-hover);
 }
 
-.form-content {
-    padding: 20px;
+/* Search Bar */
+.search-bar-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary-gray);
+}
+.search-input-light {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  transition: border-color 0.2s;
+}
+.search-input-light:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
 }
 
-.form-group {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 20px;
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+}
+.data-table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+.table-header-light {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary-gray);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.table-row-light {
+  border-bottom: 1px solid var(--color-border-light);
+}
+.table-row-light:last-child {
+  border-bottom: none;
+}
+.table-row-light:hover {
+  background-color: #f0f4f7;
+}
+.table-data-light {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary-dark);
+}
+.table-data--name-light {
+  font-weight: 500;
+}
+.no-data-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-secondary-gray);
 }
 
-.form-group label {
-    width: 150px; 
-    flex-shrink: 0;
-    padding-top: 5px;
-    color: #555; 
-    font-size: 14px;
-    font-weight: 500;
+/* Action Buttons */
+.action-buttons-light {
+  display: flex;
+  gap: 0.5rem;
+}
+.action-button-light {
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.action-button--edit-light {
+  background-color: var(--color-edit-bg);
+  color: var(--color-edit-icon);
+}
+.action-button--edit-light:hover {
+  background-color: #dbeafe;
+}
+.action-button--delete-light {
+  background-color: var(--color-delete-bg);
+  color: var(--color-delete-icon);
+}
+.action-button--delete-light:hover {
+  background-color: #fecaca;
 }
 
-/* ------------------ Input/Textarea Styles ------------------ */
-.light-input, .light-textarea, .light-select {
-    background-color: #fff; 
-    border: 1px solid #d9d9d9; 
-    color: #333;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    width: 300px; /* Standard width for Name/Grade input */
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+/* === Form View === */
+.form-container-light {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--color-text-primary-dark);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.btn-back:hover {
+  background-color: var(--color-border-light);
+}
+.form-header-bar-light {
+  background-color: var(--color-header-blue-dark);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.form-content-light {
+  padding: 1.5rem;
+}
+.form-group-light {
+  margin-bottom: 1.5rem;
+}
+.form-group-light label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary-dark);
+  font-size: 0.9375rem;
+}
+.input-field-light {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field-light:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
+}
+.textarea-field-light {
+  min-height: 8rem;
+  resize: vertical;
 }
 
-.light-select {
-    /* Custom select styling for Designations */
-    appearance: none; 
-    padding-right: 30px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23999999" d="M7.7 11.4l5.3-5.3c.4-.4.4-1 0-1.4l-1.4-1.4c-.4-.4-1-.4-1.4 0L8 8.6 4.8 5.4c-.4-.4-1-.4-1.4 0l-1.4 1.4c-.4.4-.4 1 0 1.4l5.3 5.3c.4.4 1 .4 1.4 0z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-}
-
-.light-input:focus, .light-textarea:focus, .light-select:focus {
-    border-color: #1890ff;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-}
-
-.description-group {
-    align-items: flex-start;
-}
-
-.light-textarea {
-    flex-grow: 1;
-    min-height: 150px;
-    width: 100%; 
-    max-width: 600px;
-    resize: vertical;
-}
-
-/* Designations Grade Input Group (Specific) */
-.grade-input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.action-icon {
-    font-size: 16px;
-    cursor: pointer;
-    color: #999; 
-    transition: color 0.2s;
-}
-
-.action-icon:hover {
-    color: #1890ff;
-}
-
-/* ------------------ Action Button Bar Styles ------------------ */
+/* Form Actions */
 .form-actions-light {
-    padding: 15px 20px;
-    background-color: #fcfcfc; 
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    gap: 10px;
+  background-color: var(--color-action-bar-bg);
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+}
+.btn-save-primary, .btn-save-secondary {
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-save-primary {
+  background-color: var(--color-button-primary);
+  color: white;
+  font-weight: 700;
+}
+.btn-save-primary:hover {
+  background-color: var(--color-button-primary-hover);
+}
+.btn-save-secondary {
+  background-color: #e9ecef;
+  color: var(--color-text-primary-dark);
+}
+.btn-save-secondary:hover {
+  background-color: #d8dee3;
 }
 
-.btn {
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
+/* Responsive */
+@media (max-width: 768px) {
+  .departments-container-wrapper {
+    padding: 1rem;
+  }
+  .content-header-light {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-add-new {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .form-actions-light {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-actions-light button {
+    width: 100%;
+  }
+}
+/**/
+
+/* Designation*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* === Global Light Theme Variables (reuse same) === */
+:root {
+  --color-background-light: #f4f7f9;
+  --color-card-background-light: white;
+  --color-text-primary-dark: #1f2937;
+  --color-text-secondary-gray: #6b7280;
+  --color-accent-blue: #007bff;
+  --color-header-blue-dark: #3b82f6;
+  --color-border-light: #e5e7eb;
+  --color-input-bg-light: white;
+  --color-button-primary: #007bff;
+  --color-button-primary-hover: #0056b3;
+  --color-action-bar-bg: #f9fafb;
+  --color-edit-bg: #eff6ff;
+  --color-edit-icon: #2563eb;
+  --color-delete-bg: #fee2e2;
+  --color-delete-icon: #dc2626;
 }
 
-/* Primary SAVE button (Primary Blue) */
+/* === Container === */
+.designations-container-wrapper {
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding: 2rem;
+}
+
+/* === Shared Card and Title === */
+.page-title-light {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--color-text-primary-dark);
+  display: flex;
+  align-items: center;
+}
+
+.card-light {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: var(--color-card-background-light);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* === List View === */
+.designation-list-card {
+  padding: 1.5rem;
+}
+
+.content-header-light {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-title-light {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary-dark);
+}
+
+.btn-add-new {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--color-button-primary);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-add-new:hover {
+  background-color: var(--color-button-primary-hover);
+}
+
+/* Search Bar */
+.search-bar-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary-gray);
+}
+.search-input-light {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  transition: border-color 0.2s;
+}
+.search-input-light:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+}
+.data-table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+.table-header-light {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary-gray);
+  text-transform: uppercase;
+  background-color: var(--color-action-bar-bg);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.table-row-light {
+  border-bottom: 1px solid var(--color-border-light);
+}
+.table-row-light:hover {
+  background-color: #f0f4f7;
+}
+.table-data-light {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary-dark);
+}
+.table-data--name-light {
+  font-weight: 500;
+}
+.no-data-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-secondary-gray);
+}
+
+/* Action Buttons */
+.action-buttons-light {
+  display: flex;
+  gap: 0.5rem;
+}
+.action-button-light {
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.action-button--edit-light {
+  background-color: var(--color-edit-bg);
+  color: var(--color-edit-icon);
+}
+.action-button--edit-light:hover {
+  background-color: #dbeafe;
+}
+.action-button--delete-light {
+  background-color: var(--color-delete-bg);
+  color: var(--color-delete-icon);
+}
+.action-button--delete-light:hover {
+  background-color: #fecaca;
+}
+
+/* === Form View === */
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--color-text-primary-dark);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.btn-back:hover {
+  background-color: var(--color-border-light);
+}
+
+.form-header-bar-light {
+  background-color: var(--color-header-blue-dark);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.form-content-light {
+  padding: 1.5rem;
+}
+.form-group-light {
+  margin-bottom: 1.5rem;
+}
+.form-group-light label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary-dark);
+  font-size: 0.9375rem;
+}
+.input-field-light {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field-light:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
+}
+.textarea-field-light {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+/* Grade action icons */
+.grade-input-group-light {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.grade-action-icon {
+  background: #f9fafb;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  padding: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.grade-action-icon:hover {
+  background-color: #e5e7eb;
+}
+
+/* Form Actions */
+.form-actions-light {
+  background-color: var(--color-action-bar-bg);
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+}
+.btn-save-primary,
+.btn-save-secondary {
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-save-primary {
+  background-color: var(--color-button-primary);
+  color: white;
+  font-weight: 700;
+}
+.btn-save-primary:hover {
+  background-color: var(--color-button-primary-hover);
+}
+.btn-save-secondary {
+  background-color: #e9ecef;
+  color: var(--color-text-primary-dark);
+}
+.btn-save-secondary:hover {
+  background-color: #d8dee3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .designations-container-wrapper {
+    padding: 1rem;
+  }
+  .content-header-light {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-add-new {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .form-actions-light {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-actions-light button {
+    width: 100%;
+  }
+}
+
+/* === Global Light Theme Variables === */
+:root {
+  --color-background-light: #f4f7f9;
+  --color-card-background-light: white;
+  --color-text-primary-dark: #1f2937;
+  --color-text-secondary-gray: #6b7280;
+  --color-accent-blue: #007bff;
+  --color-header-blue-light: #3b82f6;
+  --color-border-light: #e5e7eb;
+  --color-input-bg-light: white;
+  --color-search-bg-light: #f9fafb;
+  --color-button-primary: #007bff;
+  --color-button-primary-hover: #0056b3;
+  --color-action-bar-bg: #f9fafb;
+  --color-edit-bg: #eff6ff;
+  --color-edit-icon: #2563eb;
+  --color-delete-bg: #fee2e2;
+  --color-delete-icon: #dc2626;
+}
+
+/* === Container === */
+.grades-container-light {
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text-primary-dark);
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+/* === Titles === */
+.page-title-light {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--color-text-primary-dark);
+  display: flex;
+  align-items: center;
+}
+
+/* === List Header === */
+.list-header-light {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* === Search Bar === */
+.search-bar-container-light {
+  flex-grow: 1;
+  display: flex;
+  background-color: var(--color-input-bg-light);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+  position: relative;
+  max-width: 600px;
+}
+
+.search-icon-light {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary-gray);
+}
+
+.search-input-light {
+  flex-grow: 1;
+  padding: 0.65rem 1rem 0.65rem 2.5rem;
+  background-color: transparent;
+  color: var(--color-text-primary-dark);
+  border: none;
+  font-size: 0.9375rem;
+}
+
+.search-input-light:focus {
+  outline: none;
+}
+
+.search-button-light {
+  padding: 0.65rem 1rem;
+  background-color: var(--color-search-bg-light);
+  color: var(--color-text-secondary-gray);
+  border: none;
+  cursor: pointer;
+  border-left: 1px solid var(--color-border-light);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.search-button-light:hover {
+  color: var(--color-text-primary-dark);
+  background-color: #eef2f5;
+}
+
+/* === Add Button === */
+.btn-add-new-light {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background-color: var(--color-header-blue-light);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: 1.5rem;
+}
+
+.btn-add-new-light:hover {
+  background-color: #2563eb;
+}
+
+/* === Table === */
+.table-wrapper-light {
+  overflow-x: auto;
+  background-color: var(--color-card-background-light);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.data-table-light {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header-light {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary-gray);
+  text-transform: uppercase;
+  background-color: var(--color-action-bar-bg);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.table-row-light {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.table-row-light:hover {
+  background-color: #f0f4f7;
+}
+
+.table-data-light {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary-dark);
+}
+
+.table-data--name-light {
+  font-weight: 500;
+}
+
+.table-data--description-light {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === Action Buttons === */
+.action-buttons-light {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button-light {
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-button--edit-light {
+  background-color: var(--color-edit-bg);
+  color: var(--color-edit-icon);
+}
+
+.action-button--edit-light:hover {
+  background-color: #dbeafe;
+}
+
+.action-button--delete-light {
+  background-color: var(--color-delete-bg);
+  color: var(--color-delete-icon);
+}
+
+.action-button--delete-light:hover {
+  background-color: #fecaca;
+}
+
+/* === Form === */
+.form-title-light {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.btn-back-light {
+  background: none;
+  border: none;
+  color: var(--color-text-primary-dark);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-back-light:hover {
+  background-color: var(--color-border-light);
+}
+
+.form-card-light {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-header-bar-light {
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.form-content-light {
+  padding: 1.5rem;
+}
+
+.form-group-light {
+  margin-bottom: 1.5rem;
+}
+
+.form-group-light label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary-dark);
+  font-size: 0.9375rem;
+}
+
+.input-field-light,
+.select-field-light {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-field-light:focus,
+.select-field-light:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
+}
+
+.textarea-field-light {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+/* === Form Buttons === */
+.form-actions-light {
+  background-color: var(--color-action-bar-bg);
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
 .btn-save-light {
-    background-color: #1890ff; 
-    color: #fff;
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.btn-save-light:hover {
-    background-color: #40a9ff;
+.btn-save-light--primary {
+  background-color: var(--color-button-primary);
+  color: white;
+  font-weight: 700;
 }
 
-/* Secondary Buttons (Light Gray) */
-.btn-save-add-light, .btn-save-continue-light {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #d9d9d9;
+.btn-save-light--primary:hover {
+  background-color: var(--color-button-primary-hover);
 }
 
-.btn-save-add-light:hover, .btn-save-continue-light:hover {
-    background-color: #e6e6e6;
+.btn-save-light--secondary {
+  background-color: #e9ecef;
+  color: var(--color-text-primary-dark);
+}
+
+.btn-save-light--secondary:hover {
+  background-color: #d8dee3;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .grades-container-light {
+    padding: 1rem;
+  }
+  .list-header-light {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-bar-container-light {
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  .btn-add-new-light {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+  .form-actions-light {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .form-actions-light button {
+    width: 100%;
+  }
 }
