@@ -727,239 +727,249 @@
 
 
 
-/* ================================================= */
-
-          /* Login pages design*/
-
-/* ================================================= */
+/* ================================================= */ 
+/* Login pages design*/ 
+/* ================================================= */ 
 
 
-/* Base container for all login-related pages */
-.login-container, .password-recovery-container, .update-password-container{
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  justify-content: center;
-  position: relative;
-}
-
-.change-password-container{
-  display: flex;
-  width: 100%;
+/* Base container for all login-related pages */ 
+.login-container, .password-recovery-container, .update-password-container{ 
+  display: flex; 
+  width: 100%; 
   height: 100vh; 
-  overflow: hidden;
-  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  justify-content: center; 
+  position: relative; 
+} 
+
+
+/* Left side with the image and text */ 
+.login-image-section, .recovery-image-section, .update-image-section{ 
+  width: 35%; 
+  height: 100vh; 
+  background: linear-gradient(135deg, #1e3a5f, #3a6a9b);  
+  position: relative; 
+  color: white; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
   align-items: center; 
-  margin: 0 auto;
-  position: relative;
-  background-color: #fff; 
-}
+} 
 
-/* Left side with the image and text */
-.login-image-section, .recovery-image-section, .update-image-section{
-  width: 35%;
-  height: 100vh;
-  background: linear-gradient(135deg, #1e3a5f, #3a6a9b); 
-  position: relative;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
+.login-page-img { 
+  position: relative; 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  justify-content: left; 
+  align-items: left; 
+} 
 
-.login-page-img {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: left;
-  align-items: left;
-}
+.logo-img-login { 
+  position: absolute; 
+  font-size: 1.5em; 
+  font-weight: bold; 
+  width: 150px; 
+  margin: 50px 250px 100px 0; 
+} 
 
-.logo-img-login {
-  position: absolute;
-  font-size: 1.5em;
-  font-weight: bold;
-  width: 150px;
-  margin: 50px 250px 100px 0;
-
-}
-
-.human-resource-text {
-  text-align: left;
-  position: absolute;
-  margin: 300px 250px 500px 100px;
-  padding: 100px 0 500px 0;
-}
-
-.human-resource-text h1 {
-  font-size: 2.5em;
-  font-weight: 300;
-  color: #fff;
-  font: bold;
-}
-
-/* Right side with the form */
-.login-form-section, .recovery-form-section, .update-form-section, .change-form-section{
-  flex: none; 
-  width: 60vh;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 40px; 
-  position: relative;
-  max-width: 450px; 
-  border-radius: 8px;
-  }
-
-.change-form-section{
-  flex: none; 
-  width: 60vh;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 40px; 
-  position: relative;
-  max-width: 450px; 
-  border-radius: 8px;
-}
-
-.form-content {
-  width: 100%;
-  max-width: 350px; 
-  text-align: center; 
-}
-
-
-.form-header h2 {
-  font-size: 1.4em; 
-  font-weight: 700;
-  margin-bottom: 40px;
-  color: #333;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.change-form-section h2 {
-  font-size: 1.4em; 
-  font-weight: 700;
-  margin-bottom: 60px;
-  color: #333;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-
-.form-group {
-  margin-bottom: 25px;
+.human-resource-text { 
   text-align: left; 
-}
+  position: absolute; 
+  margin: 300px 250px 500px 100px; 
+  padding: 100px 0 500px 0; 
+} 
+
+.human-resource-text h1 { 
+  font-size: 2.5em; 
+  font-weight: 300; 
+  color: #fff; 
+  font: bold; 
+} 
+
+/* Right side with the form */ 
+.login-form-section, .recovery-form-section, .update-form-section{ 
+  flex: none;  
+  width: 60vh; 
+  background-color: white; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 50px 40px;  
+  position: relative; 
+  max-width: 450px;  
+  border-radius: 8px; 
+} 
+
+.form-content { 
+  width: 100%; 
+  max-width: 350px;  
+  text-align: center;  
+} 
 
 
-.form-group label {
+.form-header h2 { 
+  font-size: 1.4em;  
+  font-weight: 700; 
+  margin-bottom: 40px; 
+  color: #333; 
+  text-align: center; 
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+} 
+
+
+.form-group { 
+  margin-bottom: 25px; 
+  text-align: left;  
+} 
+
+
+.form-group label { 
+  display: block;  
+  margin-bottom: 5px;  
+  font-weight: normal;  
+  color: #333; 
+  font-size: 1em; 
+} 
+
+.form-group label::after { 
+  content: " \24D8"; /* Unicode for circled 'i' (info) */ 
+  font-size: 0.8em; 
+  margin-left: 5px; 
+  color: #888; 
+} 
+
+
+.form-group input { 
+  width: 100%; 
+  padding: 12px 15px; 
+  border: 1px solid #ddd; /* Light gray border */ 
+  border-radius: 5px; 
+  font-size: 1em; 
+  box-sizing: border-box; 
+  padding-right: 45px;  
+  background-color: #fff; 
+  color: #383737; 
+} 
+
+.form-group input::placeholder { 
+  color: #383737; 
+} 
+
+.password-group { 
+  position: relative; 
+  color: initial;  
+} 
+
+
+.password-toggle { 
+  position: absolute; 
+  right: 15px; 
+  top: 50%; 
+  transform: translateY(-50%);  
+  cursor: pointer; 
+  color: #999; 
+  font-size: 1.2em; 
+} 
+
+
+.password-toggle .fa-eye-slash { 
+/* SVG for a crossed-out eye, to match the screenshot better than just text */ 
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.88 9.88a3 3 0 1 0 4.24 4.24'/%3E%3Cpath d='M10.73 5.08A10.43 10.43 0 0 1 12 5c5.17 0 9.25 4.07 10 7-1.13 3.6-4.5 5-8 5-2.03 0-3.95-.5-5.59-1.44'/%3E%3Cpath d='M2 12s2.54-3.5 6-3.5c1.17 0 2.3.26 3.33.72'/%3E%3Cline x1='2' y1='2' x2='22' y2='22'/%3E%3C/svg%3E"); 
   display: block; 
-  margin-bottom: 5px; 
-  font-weight: normal; 
-  color: #333;
-  font-size: 1em;
+  width: 20px; 
+  height: 20px; 
+} 
+
+
+.forgot-password-links { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 0.9em; 
+  margin-top: -10px; 
+  margin-bottom: 20px; 
+} 
+
+.forgot-password-links a, .forgot-password-links span { 
+  color: #007bff; 
+  text-decoration: none; 
+} 
+
+
+.login-button, .submit-button, .update-button { 
+  width: 30%;  
+  padding: 15px 0 15px 0;  
+  margin: 40px 0 0 40px;  
+  background-color: #1b88fc;  
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  font-size: 1em; 
+  font-weight: bold; 
+  transition: background-color 0.3s; 
+} 
+
+.login-button:hover, .submit-button:hover, .update-button:hover { 
+  background-color: #0056b3; 
+} 
+
+/* * MODIFIED: Updated .change-password-container for internal dashboard usage. 
+* It no longer takes full viewport height (100vh) or position: relative, 
+* ensuring it flows correctly below a fixed/sticky navbar and does not overlap its border. 
+*/
+.change-password-container{ 
+  display: flex; 
+  width: 100%; 
+  min-height: 80vh; /* Ensures content area has vertical space, but allows normal flow */
+  overflow: auto; 
+  justify-content: center; 
+  align-items: flex-start; /* Aligns content to the top within its flow */
+  padding: 60px 0; /* Add vertical padding for spacing below the navbar and above the bottom */
+  margin: 0 auto; 
+  position: static; /* Ensures it respects normal document flow */
+  background-color: transparent; /* Assuming main layout sets the background */
+}   
+
+/* * MODIFIED: Added box-shadow and border to .change-form-section 
+* to give it a distinct card appearance, similar to what might be on a dashboard. 
+*/
+.change-form-section{ 
+  flex: none;  
+  width: 60vh; 
+  background-color: white; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 50px 40px;  
+  position: relative; 
+  max-width: 450px;  
+  border-radius: 8px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Added card shadow */
+  border: 1px solid #ddd; /* Added border for clear separation, like the dashboard navbar border */
+} 
+
+.change-form-section h2 { 
+  font-size: 1.4em;  
+  font-weight: 700; 
+  margin-bottom: 60px; 
+  color: #333; 
+  text-align: center; 
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+} 
+
+.copyright { 
+  position: absolute; 
+  bottom: 20px; 
+  right: 30px; 
+  font-size: 0.8em; 
+  color: #aaa; 
 }
 
-.form-group label::after {
-  content: " \24D8"; /* Unicode for circled 'i' (info) */
-  font-size: 0.8em;
-  margin-left: 5px;
-  color: #888;
-}
-
-
-.form-group input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd; /* Light gray border */
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-  padding-right: 45px; 
-  background-color: #fff;
-  color: #383737;
-}
-
-.form-group input::placeholder {
-  color: #383737;
-}
-
-.password-group {
-  position: relative;
-  color: initial; 
-}
-
-
-.password-toggle {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%); 
-  cursor: pointer;
-  color: #999;
-  font-size: 1.2em;
-}
-
-
-.password-toggle .fa-eye-slash {
-/* SVG for a crossed-out eye, to match the screenshot better than just text */
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.88 9.88a3 3 0 1 0 4.24 4.24'/%3E%3Cpath d='M10.73 5.08A10.43 10.43 0 0 1 12 5c5.17 0 9.25 4.07 10 7-1.13 3.6-4.5 5-8 5-2.03 0-3.95-.5-5.59-1.44'/%3E%3Cpath d='M2 12s2.54-3.5 6-3.5c1.17 0 2.3.26 3.33.72'/%3E%3Cline x1='2' y1='2' x2='22' y2='22'/%3E%3C/svg%3E");
-  display: block;
-  width: 20px;
-  height: 20px;
-}
-
-.forgot-password-links {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9em;
-  margin-top: -10px;
-  margin-bottom: 20px;
-}
-
-.forgot-password-links a, .forgot-password-links span {
-  color: #007bff;
-  text-decoration: none;
-}
-
-
-.login-button, .submit-button, .update-button {
-  width: 30%; 
-  padding: 15px 0 15px 0; 
-  margin: 40px 0 0 40px; 
-  background-color: #1b88fc; 
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.login-button:hover, .submit-button:hover, .update-button:hover {
-  background-color: #0056b3;
-}
-
-.copyright {
-  position: absolute;
-  bottom: 20px;
-  right: 30px;
-  font-size: 0.8em;
-  color: #aaa;
-}
 
 
 /* ================================================= */

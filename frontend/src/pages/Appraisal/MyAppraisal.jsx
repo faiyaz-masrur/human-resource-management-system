@@ -9,7 +9,7 @@ const MyAppraisal = () => {
     <div className="appraisal-page-container">
       {/* Employee Details Section */}
       <div className="employee-details-card">
-        <h2 className="employee-details-title">Employee Details</h2>
+        <h2 className="employee-details-title">My Appraisal</h2>
         <div className="employee-details-grid">
           <div className="employee-detail-item">
             <label className="employee-detail-label">Employee ID</label>
