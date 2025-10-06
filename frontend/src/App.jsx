@@ -54,7 +54,7 @@ function App() {
           <Route path="appraisal/others" element={<OtherAppraisals />} />
           <Route path="appraisal/employee" element={<AppraisalDetailsEmployee />} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
-          <Route path="appraisal/settings" element={<AppraisalSettings />} />
+          {/* <Route path="appraisal/settings" element={<AppraisalSettings />} /> */}
           
           <Route path="configurations/departments" element={<Departments />} />
           <Route path="configurations/designations" element={<Designations />} />

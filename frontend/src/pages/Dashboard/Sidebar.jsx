@@ -22,7 +22,7 @@ const menuItems = [
       { name: 'My Appraisal', path: '/appraisal/my' },
       { name: 'Other Appraisals', path: '/appraisal/others' },
       { name: 'Appraisal Status', path: '/appraisal/status' },
-      { name: 'Appraisal Settings', path: '/appraisal/settings' },
+      //{ name: 'Appraisal Settings', path: '/appraisal/settings' },
     ]
   },
   

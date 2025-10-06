@@ -1,11 +1,7 @@
 // AppraisalSettings.jsx
 
 import React from 'react';
-//import DatePicker from 'react-datepicker';
-// NOTE: For production, you would typically import a DatePicker library here
-// e.g., import DatePicker from 'react-datepicker';
 
-// A reusable component for each timer section
 const AppraisalTimerSection = ({ title, fields, addText }) => {
   return (
     <div className="appraisal-timer-section">
