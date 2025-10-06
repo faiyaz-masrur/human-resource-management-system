@@ -422,6 +422,7 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
             >
               Cancel
             </button>
+            <button> Download Appraisal</button>
           </div>
         </form>
       </div>

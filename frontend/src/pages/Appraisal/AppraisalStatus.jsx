@@ -52,6 +52,7 @@ const AppraisalStatus = () => {
               {reviewerColumns.map(col => (
                 <th key={col}>{col}</th>
               ))}
+              <th>Download</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +72,9 @@ const AppraisalStatus = () => {
                     />
                   </td>
                 ))}
+                <td>
+                  ⬇️
+                </td>
               </tr>
             ))}
           </tbody>
