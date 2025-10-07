@@ -9,9 +9,13 @@ from .views import (
     GradeViewSet,
     RoleViewSet,
     ReportingManagerListView,
-    PersonalDetailChoicesView,
-    AddressChoicesView,
-    EducationChoicesView,
+    BloodGroupViewSet,
+    MaritalStatusViewSet,
+    EmergencyContactRelationshipViewSet,
+    DegreeViewSet,
+    SpecializationViewSet,
+    BdDistrictViewSet,
+    BdThanaViewSet,
 )
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -24,10 +28,20 @@ router.register(r'departments', DepartmentViewSet, basename='department')
 router.register(r'designations', DesignationViewSet, basename='designation')
 router.register(r'grades', GradeViewSet, basename='grade')
 router.register(r'roles', RoleViewSet, basename='role')
+router.register(r'blood-groups', BloodGroupViewSet, basename='bloodgroup')
+router.register(r'marital-statuses', MaritalStatusViewSet, basename='maritalstatus')
+router.register(r'emergency-contact-relationships', EmergencyContactRelationshipViewSet, basename='emergencycontactrelationship')
+router.register(r'degrees', DegreeViewSet, basename='degree')
+router.register(r'specializations', SpecializationViewSet, basename='specialization')
+router.register(r'bd-districts', BdDistrictViewSet, basename='bddistrict')
+router.register(r'bd-thanas', BdThanaViewSet, basename='bdthana')
+
 
 urlpatterns = [
     path('', include(router.urls)),
     path("designations/grade/<int:grade_id>/", DesignationViewSet.as_view({"get": "list"})),
+    path("bd-thanas/district/<int:district_id>/", BdThanaViewSet.as_view({"get": "list"})),
+
     path('auth/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
@@ -36,7 +50,4 @@ urlpatterns = [
     path("auth/reset-password/<uuid:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
 
     path("reporting-managers/list/", ReportingManagerListView.as_view(), name="reporting-manager-list"),
-    path("personal-detail/choices/", PersonalDetailChoicesView.as_view(), name="personal-detail-choices"),
-    path("address/choices/", AddressChoicesView.as_view(), name="address-choices"),
-    path("education/choices/", EducationChoicesView.as_view(), name="education-choices"),
 ]

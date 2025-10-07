@@ -1,7 +1,21 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import password_validation
-from .models import Employee, Department, Designation, Grade, Role, ReportingManager
+from .models import (
+    Employee, 
+    Department, 
+    Designation, 
+    Grade, 
+    Role, 
+    ReportingManager,
+    BloodGroup,
+    MaritalStatus,
+    EmergencyContactRelationship,
+    Degree,
+    Specialization,
+    BdDistrict,
+    BdThana,
+)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,3 +88,40 @@ class ReportingManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportingManager
         fields = ["id", "name"]
+
+class BloodGroupSerializer(serializers.Serializer):
+    class Meta:
+        model: BloodGroup
+        fields = "__all__"
+
+class MaritalStatusSerializer(serializers.Serializer):
+    class Meta:
+        model: MaritalStatus
+        fields = "__all__"
+
+class EmergencyContactRelationshipSerializer(serializers.Serializer):
+    class Meta:
+        model: EmergencyContactRelationship
+        fields = "__all__"
+
+class DegreeSerializer(serializers.Serializer):
+    class Meta:
+        model: Degree
+        fields = "__all__"
+
+class SpecializationSerializer(serializers.Serializer):
+    class Meta:
+        model: Specialization
+        fields = "__all__"
+
+class BdDistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BdDistrict
+        fields = "__all__"
+
+class BdThanaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BdThana
+        fields = "__all__"  
+
+

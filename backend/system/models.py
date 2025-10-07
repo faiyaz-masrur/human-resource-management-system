@@ -11,7 +11,7 @@ def generate_employee_id():
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Department"
@@ -23,7 +23,7 @@ class Department(models.Model):
 
 class Grade(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Grade"
@@ -41,7 +41,7 @@ class Designation(models.Model):
         null=True, blank=True,
         related_name="designation",
     )
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Designation"
@@ -53,7 +53,7 @@ class Designation(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Role"
@@ -162,6 +162,7 @@ class Employee(AbstractUser):
 
 class BdDistrict(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name = "BD District"
@@ -170,8 +171,10 @@ class BdDistrict(models.Model):
     def __str__(self):
         return self.name
     
+
 class BdThana(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
     district = models.ForeignKey(
         BdDistrict,
@@ -187,9 +190,10 @@ class BdThana(models.Model):
     def __str__(self):
         return f"{self.name}, {self.district.name}"
     
+
 class BloodGroup(models.Model):
-    key = models.CharField(max_length=3, unique=True)  # e.g., "A+", "O-"
-    value = models.CharField(max_length=10)  # e.g., "A Positive", "O Negative"
+    name = models.CharField(max_length=3, unique=True)  # e.g., "A+", "O-"
+    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "A Positive", "O Negative"
 
     class Meta:
         verbose_name = "Blood Group"
@@ -199,8 +203,8 @@ class BloodGroup(models.Model):
         return self.value
     
 class MaritalStatus(models.Model):
-    key = models.CharField(max_length=10, unique=True)  # e.g., "single", "married"
-    value = models.CharField(max_length=20)  # e.g., "Single", "Married"
+    name = models.CharField(max_length=10, unique=True)  # e.g., "single", "married"
+    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "Single", "Married"
 
     class Meta:
         verbose_name = "Marital Status"
@@ -210,8 +214,8 @@ class MaritalStatus(models.Model):
         return self.value
     
 class EmergencyContactRelationship(models.Model):
-    key = models.CharField(max_length=15, unique=True)  # e.g., "parent", "sibling"
-    value = models.CharField(max_length=30)  # e.g., "Parent", "Sibling"
+    name = models.CharField(max_length=15, unique=True)  # e.g., "parent", "sibling"
+    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "Parent", "Sibling"
 
     class Meta:
         verbose_name = "Emergency Contact Relationship"
@@ -221,8 +225,8 @@ class EmergencyContactRelationship(models.Model):
         return self.value
     
 class Degree(models.Model):
-    key = models.CharField(max_length=10, unique=True)  # e.g., "BSC", "MBA"
-    value = models.CharField(max_length=100)  # e.g., "Bachelor of Science (B.Sc)", "Master of Business Administration (MBA)"
+    name = models.CharField(max_length=10, unique=True)  # e.g., "BSC", "MBA"
+    description = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Bachelor of Science", "Master of Business Administration"
 
     class Meta:
         verbose_name = "Degree"
@@ -232,8 +236,8 @@ class Degree(models.Model):
         return self.value
     
 class Specialization(models.Model):
-    key = models.CharField(max_length=10, unique=True)  # e.g., "CSE", "EEE"
-    value = models.CharField(max_length=100)  # e.g., "Computer Science & Engineering", "Electrical & Electronic Engineering"
+    name = models.CharField(max_length=10, unique=True)  # e.g., "CSE", "EEE"
+    description = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Computer Science & Engineering", "Electrical & Electronic Engineering"
 
     class Meta:
         verbose_name = "Specialization"

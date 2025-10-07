@@ -7,13 +7,21 @@ class Command(BaseCommand):
     help = "Populate BD districts and thanas from JSON files in fixtures folder"
 
     def handle(self, *args, **kwargs):
-        # Path to the fixtures folder inside the system app
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # system/management/commands/
-        fixtures_dir = os.path.join(base_dir, "../../fixtures")  # system/fixtures/
-        fixtures_dir = os.path.abspath(fixtures_dir)
+
+        base_dir = os.path.dirname(os.path.abspath(__file__)) 
+        fixtures_dir = os.path.join(base_dir, "../../fixtures") 
 
         districts_file = os.path.join(fixtures_dir, "districts.json")
         upazilas_file = os.path.join(fixtures_dir, "upazilas.json")
+        blood_groups_file = os.path.join(fixtures_dir, "bloodgroups.json")
+        marital_status_file = os.path.join(fixtures_dir, "maritalstatus.json")
+        emergency_contact_relationships_file = os.path.join(fixtures_dir, "emergencyContactRelationships.json")
+        degrees_file = os.path.join(fixtures_dir, "degrees.json")
+        specializations_file = os.path.join(fixtures_dir, "specializations.json")
+        departments_file = os.path.join(fixtures_dir, "departments.json")
+        grades_file = os.path.join(fixtures_dir, "grades.json")
+        designations_file = os.path.join(fixtures_dir, "designations.json")
+        roles_file = os.path.join(fixtures_dir, "roles.json")
 
         # Load districts
         with open(districts_file, encoding="utf-8") as f:

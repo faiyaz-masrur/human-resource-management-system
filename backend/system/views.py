@@ -8,9 +8,29 @@ from .serializers import (
     DesignationSerializer, 
     GradeSerializer, 
     ReportingManagerSerializer,
-    RoleSerializer
+    RoleSerializer,
+    BloodGroupSerializer,
+    MaritalStatusSerializer,
+    EmergencyContactRelationshipSerializer,
+    DegreeSerializer,
+    SpecializationSerializer,
+    BdDistrictSerializer,
+    BdThanaSerializer
 )
-from .models import Department, Designation, Grade, ReportingManager, Role
+from .models import (
+    Department, 
+    Designation, 
+    Grade, 
+    ReportingManager, 
+    Role,
+    BloodGroup,
+    MaritalStatus,
+    EmergencyContactRelationship,
+    Degree,
+    Specialization,
+    BdDistrict,
+    BdThana
+)
 from rest_framework import generics, status, viewsets, views
 from .permissions import IsEmployee, IsHR
 from rest_framework.response import Response
@@ -18,15 +38,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from .choices import (
-    DISTRICT_CHOICES, 
-    POLICE_STATION_CHOICES, 
-    DEGREE_CHOICES, 
-    SPECIALIZATION_CHOICES,
-    MARITAL_STATUS_CHOICES,
-    BLOOD_GROUP_CHOICES,
-    EMERGENCY_CONTACT_RELATIONSHIP_CHOICES,
-)
 
 User = get_user_model()
 
@@ -170,31 +181,92 @@ class ReportingManagerListView(generics.ListAPIView):
     permission_classes = [IsEmployee]
 
 
-class PersonalDetailChoicesView(views.APIView):
-    permission_classes = [IsEmployee]
+class BloodGroupViewSet(viewsets.ModelViewSet):
+    queryset = BloodGroup.objects.all().order_by("name")
+    serializer_class = BloodGroupSerializer
 
-    def get(self, request):
-        return Response({
-            "marital_status_choices": [{"key": choice[0], "value": choice[1]} for choice in MARITAL_STATUS_CHOICES],
-            "blood_group_choices": [{"key": choice[0], "value": choice[1]} for choice in BLOOD_GROUP_CHOICES],
-            "emergency_contact_relationship_choices": [{"key": choice[0], "value": choice[1]} for choice in EMERGENCY_CONTACT_RELATIONSHIP_CHOICES],
-        })
-
-class AddressChoicesView(views.APIView):
-    permission_classes = [IsEmployee]
-
-    def get(self, request):
-        return Response({
-            "district_choices": [{"key": choice[0], "value": choice[1]} for choice in DISTRICT_CHOICES],
-            "police_station_choices": [{"key": choice[0], "value": choice[1]} for choice in POLICE_STATION_CHOICES],
-        })
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
     
-class EducationChoicesView(views.APIView):
-    permission_classes = [IsEmployee]
 
-    def get(self, request):
-        return Response({
-            "degree_choices": [{"key": choice[0], "value": choice[1]} for choice in DEGREE_CHOICES],
-            "specialization_choices": [{"key": choice[0], "value": choice[1]} for choice in SPECIALIZATION_CHOICES],
-        })
+class MaritalStatusViewSet(viewsets.ModelViewSet):
+    queryset = MaritalStatus.objects.all().order_by("name")
+    serializer_class = MaritalStatusSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+    
+
+class EmergencyContactRelationshipViewSet(viewsets.ModelViewSet):
+    queryset = EmergencyContactRelationship.objects.all().order_by("name")
+    serializer_class = EmergencyContactRelationshipSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+    
+
+class DegreeViewSet(viewsets.ModelViewSet):
+    queryset = Degree.objects.all().order_by("name")
+    serializer_class = DegreeSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+    
+
+class SpecializationViewSet(viewsets.ModelViewSet):
+    queryset = Specialization.objects.all().order_by("name")
+    serializer_class = SpecializationSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+    
+
+class BdDistrictViewSet(viewsets.ModelViewSet):
+    queryset = BdDistrict.objects.all().order_by("name")
+    serializer_class = BdDistrictSerializer
+    
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+    
+
+class BdThanaViewSet(viewsets.ModelViewSet):
+    serializer_class = BdThanaSerializer
+
+    def get_queryset(self):
+        district_id = self.kwargs.get("district_id") # from URL
+        if district_id:
+            return BdThana.objects.filter(district_id=district_id).order_by("name")
+        return BdThana.objects.all().order_by("name")
+    
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsEmployee]
+        else:
+            permission_classes = [IsHR]
+        return [permission() for permission in permission_classes]
+
     
