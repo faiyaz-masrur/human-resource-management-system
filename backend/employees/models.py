@@ -1,12 +1,13 @@
 from django.db import models
-from system.models import Employee
-from system.choices import (
-    BLOOD_GROUP_CHOICES, 
-    MARITAL_STATUS_CHOICES, 
-    DEGREE_CHOICES,
-    SPECIALIZATION_CHOICES,
-    DISTRICT_CHOICES, 
-    POLICE_STATION_CHOICES,
+from system.models import (
+    Employee,
+    BloodGroup,
+    MaritalStatus,
+    EmergencyContactRelationship,
+    Degree,
+    Specialization,
+    BdDistrict,
+    BdThana,
 )
 
 # -----------------------------
@@ -27,12 +28,12 @@ class PersonalDetail(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)  
     national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
     passport_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES, null=True, blank=True)
-    marital_status = models.CharField(max_length=10, choices=MARITAL_STATUS_CHOICES, null=True, blank=True) 
+    blood_group = models.ForeignKey(BloodGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_personal_details')
+    marital_status = models.ForeignKey(MaritalStatus, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_personal_details')
     spouse_name = models.CharField(max_length=100, null=True, blank=True)
     spouse_nid = models.CharField(max_length=20, unique=True, null=True, blank=True)
     emergency_contact_name = models.CharField(max_length=100, null=True, blank=True)
-    emergency_contact_relationship = models.CharField(max_length=50, null=True, blank=True)
+    emergency_contact_relationship = models.ForeignKey(EmergencyContactRelationship, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_personal_details')
     emergency_contact_number = models.CharField(max_length=15, null=True, blank=True)
     
 
@@ -48,15 +49,15 @@ class Address(models.Model):
     present_house = models.CharField(max_length=225, null=False, blank=False)
     present_road_block_sector = models.CharField(max_length=50, null=True, blank=True)
     present_city_village = models.CharField(max_length=100, null=False, blank=False)
-    present_police_station = models.CharField(max_length=100, choices=POLICE_STATION_CHOICES, null=False, blank=False)
-    present_district = models.CharField(max_length=100, choices=DISTRICT_CHOICES, null=False, blank=False)
+    present_police_station = models.ForeignKey(BdThana, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_present_address')
+    present_district = models.ForeignKey(BdDistrict, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_present_address')
     present_postal_code = models.CharField(max_length=20, null=False, blank=False)
 
     permanent_house = models.CharField(max_length=225, null=False, blank=False)
     permanent_road_block_sector = models.CharField(max_length=50, null=True, blank=True)
     permanent_city_village = models.CharField(max_length=100, null=False, blank=False)
-    permanent_police_station = models.CharField(max_length=100, choices=POLICE_STATION_CHOICES, null=False, blank=False)
-    permanent_district = models.CharField(max_length=100, choices=DISTRICT_CHOICES, null=False, blank=False)
+    permanent_police_station = models.ForeignKey(BdThana, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_permanent_address')
+    permanent_district = models.ForeignKey(BdDistrict, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_permanent_address')
     permanent_postal_code = models.CharField(max_length=20, null=False, blank=False)
 
     def __str__(self):
@@ -82,10 +83,10 @@ class WorkExperience(models.Model):
 # -----------------------------
 class Education(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='educations')
-    degree = models.CharField(max_length=100, choices=DEGREE_CHOICES, null=False, blank=False)
+    degree = models.ForeignKey(Degree, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
     institution = models.CharField(max_length=255, null=False, blank=False)
     passing_year = models.IntegerField(null=False, blank=False)
-    specialization = models.CharField(max_length=100, choices=SPECIALIZATION_CHOICES, null=False, blank=False)
+    specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
     results = models.CharField(max_length=50, null=False, blank=False)
     certificate_file = models.FileField(upload_to='educational_certificates/', null=True, blank=True)
 
