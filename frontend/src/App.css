@@ -602,34 +602,39 @@
   color: #333;
 }
 
-.chart-placeholder {
-  flex-grow: 1; 
-  min-height: 200px;
-  background-color: #fff;
+/* Chart container styles - Both should have same alignment */
+.chart-container, .pie-chart-container {
+  background: white;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-  font-size: 14px;
-  overflow: hidden; 
+  padding: 10px;
+  flex-grow: 1;
+  min-height: 200px;
+  margin-top: 0; /* Ensure both start from same position */
 }
 
+/* Updated side-by-side layout for pie chart and legend */
 .chart-card-legend-parent .chart-and-legend {
-    display: flex;
-    flex-grow: 1;
-    gap: 8px;
+  display: flex;
+  flex-grow: 1;
+  gap: 15px;
+  align-items: flex-start; /* Changed to flex-start for better alignment */
+}
+
+.pie-chart-container {
+  flex: 1;
+  min-height: 200px;
 }
 
 .legend-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  min-width: 130px; 
+  justify-content: center;
+  min-width: 140px;
+  gap: 8px;
+  margin-top: 10px; /* Add some top margin to align with chart */
 }
 
 .legend-list li {
@@ -638,7 +643,7 @@
   justify-content: space-between;
   font-size: 13px;
   color: #555;
-  margin-bottom: 6px;
+  padding: 4px 0;
 }
 
 .legend-dot {
@@ -649,14 +654,40 @@
 }
 
 .legend-percent {
-    font-weight: 600;
-    color: #333;
+  font-weight: 600;
+  color: #333;
+  margin-left: auto;
 }
 
-.legend-dot.casual { background-color: #4CAF50; }
-.legend-dot.sick { background-color: #F44336; }
-.legend-dot.earned { background-color: #795548; } 
-.legend-dot.other { background-color: #FFC107; } 
+/* Responsive layout */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-card-legend-parent .chart-and-legend {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .legend-list {
+    min-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 0;
+  }
+  
+  .legend-list li {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  
+  .legend-dot {
+    margin-right: 0;
+  }
+}
 
 /* ================================================= */
 /* 8. RESPONSIVENESS (MOBILE/TABLET) */
@@ -723,6 +754,7 @@
         grid-template-columns: 1fr;
     }
 }
+
 
 
 

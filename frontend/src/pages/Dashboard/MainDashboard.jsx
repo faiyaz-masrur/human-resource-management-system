@@ -1,5 +1,6 @@
-// MainDashboard.jsx - (No changes made)
+// MainDashboard.jsx - Updated version
 import React from 'react';
+import LeaveCharts from './LeaveCharts'; // Import the chart component
 
 const MainDashboard = () => {
   return (
@@ -31,30 +32,9 @@ const MainDashboard = () => {
         </div>
       </div>
       
-      {/* Leave Charts section */}
-      <div className="charts-grid">
-        <div className="chart-card">
-          <p className="chart-title">Leave Taken</p>
-          <div className="chart-placeholder bar-chart-placeholder">
-            {/* A bar chart component would go here */}
-          </div>
-        </div>
-        <div className="chart-card chart-card-legend-parent"> {/* Added class for potential mobile fix */}
-          <p className="chart-title">Leave by Type</p>
-          <div className="chart-and-legend"> {/* New wrapper for flex layout */}
-            <div className="chart-placeholder pie-chart-placeholder">
-              {/* A pie chart component would go here */}
-            </div>
-            <ul className="legend-list">
-              <li><span className="legend-dot casual"></span>Casual <span className="legend-percent">52.1%</span></li>
-              <li><span className="legend-dot sick"></span>Sick <span className="legend-percent">22.8%</span></li>
-              <li><span className="legend-dot earned"></span>Earned <span className="legend-percent">13.9%</span></li>
-              <li><span className="legend-dot other"></span>Other <span className="legend-percent">11.2%</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
+      {/* Use the new LeaveCharts component */}
+      <LeaveCharts />
+      
       {/* Attendance Highlights section */}
       <div className="section-header">
         <h2>Attendance Highlights</h2>
