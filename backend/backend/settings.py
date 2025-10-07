@@ -190,3 +190,39 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Company Information for Email Templates
 COMPANY_NAME = 'Sonali Intellect Limited'
+
+# ... (Keep all your existing settings above this line)
+
+# =========================================================
+# DJANGO-APSCHEDULER SETTINGS (Append to settings.py)
+# =========================================================
+
+# Ensure your TIME_ZONE is correct for the desired 9 AM execution time. 
+# If your server time is UTC, 9 AM UTC will run at 9 AM UTC.
+# TIME_ZONE = 'UTC' # Existing setting
+
+SCHEDULER_AUTOSTART = True 
+
+# Use the default database job store
+SCHEDULER_JOBSTORES = {
+    'default': {
+        'type': 'django'
+    }
+}
+
+# Define the format for datetimes when displayed in the Django Admin interface
+# Note: Use a format appropriate for your region if you change TIME_ZONE
+DJANGO_APSCHEDULER_DATETIME_FORMAT = "N j, Y, g:i a"
+
+# Configure the scheduler's executor to allow concurrent jobs
+SCHEDULER_EXECUTORS = {
+    'default': {
+        'class': 'apscheduler.executors.pool.ThreadPoolExecutor', 
+        'max_workers': 10
+    }
+}
+
+# Optional: Configuration for clearing old scheduler jobs (recommended)
+# This keeps your database clean by removing jobs older than a week.
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # seconds
+SCHEDULER_AUTOSTART = True

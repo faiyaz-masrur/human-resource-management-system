@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-from employees.models import Employee
+from system.models import Employee
 
 
 # -------------------------
@@ -11,6 +11,7 @@ class EmployeeAppraisalTimer(models.Model):
     """
     Defines the period for Employee self-appraisal submission.
     """
+    employee_id = models.ForeignKey(Employee, on_delete=models.PROTECT)
     employee_self_appraisal_start = models.DateField(null=True, blank=True)
     employee_self_appraisal_end = models.DateField(null=True, blank=True)
     employee_self_appraisal_remind = models.DateField(null=True, blank=True)
