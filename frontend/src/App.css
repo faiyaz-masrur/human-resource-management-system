@@ -1840,6 +1840,7 @@ body {
     gap: 10px;
     cursor: pointer;
     padding: 5px 0;
+    position: relative;
 }
 .profile-image-container {
     width: 35px;
@@ -1860,7 +1861,62 @@ body {
 }
 .profile-welcome { font-size: 0.75rem; color: #888; font-weight: 400; }
 .profile-name { font-size: 0.9rem; color: #333; font-weight: 500; }
-.profile-dropdown-arrow { font-size: 0.6rem; color: #666; }
+.profile-dropdown-arrow { 
+    font-size: 16px; 
+    color: #666; 
+    margin-left: 8px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    transform: rotate(0deg);
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+/* Optional: Add rotation when dropdown is open */
+.user-profile:hover .profile-dropdown-arrow {
+    transform: rotate(90deg);
+}
+
+/* Dropdown Menu Styles */
+.user-profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    border-radius: 6px;
+    min-width: 150px;
+    z-index: 10;
+    margin-top: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+.user-profile-dropdown button {
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-weight: 500;
+    color: #222;
+    border-radius: 0;
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.user-profile-dropdown button:hover {
+    background-color: #f5f5f5;
+}
+
+.user-profile-dropdown button:first-child {
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 6px 6px 0 0;
+}
+
+.user-profile-dropdown button:last-child {
+    border-radius: 0 0 6px 6px;
+}
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 1024px) {
@@ -1884,6 +1940,14 @@ body {
     }
     .breadcrumb-separator, .breadcrumb {
         display: none; 
+    }
+    
+    .profile-info {
+        display: none;
+    }
+    
+    .user-profile {
+        gap: 5px;
     }
 }
 
@@ -1966,11 +2030,6 @@ body {
     font-weight: 500;
 }
 
-.menu-item .item-arrow {
-    font-size: 10px;
-    color: #ccc;
-}
-
 /* ================================================= */
 /* 5. SIDEBAR DROPDOWN STYLES */
 /* ================================================= */
@@ -1996,13 +2055,25 @@ body {
     padding: 10px 15px; 
 }
 
-/* Arrow styling for DROPDOWNS */
-.menu-dropdown-header .item-arrow-down {
-    transition: transform 0.3s ease-in-out;
+/* Arrow styling for DROPDOWNS only - IMPROVED COLOR */
+.menu-item .item-arrow-down {
+    font-size: 14px;
+    color: #666; /* Changed from #ccc to #666 for better visibility */
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    margin-left: 8px;
+    transition: transform 0.3s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Hover and active states for dropdown arrows */
+.menu-item:hover .item-arrow-down,
+.menu-item.active .item-arrow-down {
+    color: #1890ff; /* Match the active/hover text color */
 }
 
 .menu-dropdown-header .item-arrow-down.rotated {
-    transform: rotate(180deg);
+    transform: rotate(90deg); /* Rotate > 90deg to point upward */
+    color: #1890ff; /* Blue color when rotated/open */
 }
 
 /* --- SUBMENU COLLAPSE/EXPAND STYLES --- */
@@ -2049,7 +2120,6 @@ body {
     border-radius: 4px;
     margin: 0 5px; 
 }
-
 
 /* Notification Sidebar */
 
@@ -2252,34 +2322,39 @@ body {
   color: #333;
 }
 
-.chart-placeholder {
-  flex-grow: 1; 
-  min-height: 200px;
-  background-color: #fff;
+/* Chart container styles - Both should have same alignment */
+.chart-container, .pie-chart-container {
+  background: white;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-  font-size: 14px;
-  overflow: hidden; 
+  padding: 10px;
+  flex-grow: 1;
+  min-height: 200px;
+  margin-top: 0; /* Ensure both start from same position */
 }
 
+/* Updated side-by-side layout for pie chart and legend */
 .chart-card-legend-parent .chart-and-legend {
-    display: flex;
-    flex-grow: 1;
-    gap: 8px;
+  display: flex;
+  flex-grow: 1;
+  gap: 15px;
+  align-items: flex-start; /* Changed to flex-start for better alignment */
+}
+
+.pie-chart-container {
+  flex: 1;
+  min-height: 200px;
 }
 
 .legend-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  min-width: 130px; 
+  justify-content: center;
+  min-width: 140px;
+  gap: 8px;
+  margin-top: 10px; /* Add some top margin to align with chart */
 }
 
 .legend-list li {
@@ -2288,7 +2363,7 @@ body {
   justify-content: space-between;
   font-size: 13px;
   color: #555;
-  margin-bottom: 6px;
+  padding: 4px 0;
 }
 
 .legend-dot {
@@ -2299,14 +2374,40 @@ body {
 }
 
 .legend-percent {
-    font-weight: 600;
-    color: #333;
+  font-weight: 600;
+  color: #333;
+  margin-left: auto;
 }
 
-.legend-dot.casual { background-color: #4CAF50; }
-.legend-dot.sick { background-color: #F44336; }
-.legend-dot.earned { background-color: #795548; } 
-.legend-dot.other { background-color: #FFC107; } 
+/* Responsive layout */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-card-legend-parent .chart-and-legend {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .legend-list {
+    min-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 0;
+  }
+  
+  .legend-list li {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  
+  .legend-dot {
+    margin-right: 0;
+  }
+}
 
 /* ================================================= */
 /* 8. RESPONSIVENESS (MOBILE/TABLET) */

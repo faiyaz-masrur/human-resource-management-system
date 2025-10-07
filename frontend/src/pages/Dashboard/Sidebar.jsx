@@ -101,9 +101,7 @@ const Sidebar = ({ className, onClose }) => {
                     <span className="item-icon">{item.icon}</span> 
                     <span className="item-name">{item.name}</span>
                     {
-                      hasSubMenu 
-                        ? <span className={`item-arrow-down ${isOpen ? 'rotated' : ''}`}>▼</span> // Down Arrow for dropdown
-                        : item.name !== 'Dashboard' && <span className="item-arrow">▶</span> // Side Arrow for single link
+                      hasSubMenu && <span className={`item-arrow-down ${isOpen ? 'rotated' : ''}`}>{'>'}</span> // Only show > for dropdown items
                     }
                   </Link>
                 </li>
