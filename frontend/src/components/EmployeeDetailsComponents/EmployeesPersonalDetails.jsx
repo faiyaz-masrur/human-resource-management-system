@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
+
+
 const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
+
 
   const defaultPersonalDetails = {
     employee_name: "",
@@ -24,10 +27,12 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     emergency_contact_number: "",
   };
 
+
   const [personalDetails, setPersonalDetails] = useState(defaultPersonalDetails);
-  const [bloodGroupChoices, setBloodGroupChoices] = useState([]);
-  const [maritalStatusChoices, setMaritalStatusChoices] = useState([]);
-  const [emergencyContactRelationshipChoices, setEmergencyContactRelationshipChoices] = useState([]);
+  const [bloodGroupList, setBloodGroupList] = useState([]);
+  const [maritalStatusList, setMaritalStatusList] = useState([]);
+  const [emergencyContactRelationshipList, setEmergencyContactRelationshipList] = useState([]);
+
 
   useEffect(() => {
     const fetchPersonalDetails = async () => {
@@ -51,28 +56,59 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     fetchPersonalDetails();
   }, []);
 
+
   useEffect(() => {
-    const fetchPersonalDetailsChoices = async () => {
+    const fetchBloodGroupList = async () => {
       try {
-        const res = await api.get(`personal-detail/choices/`);
+        const res = await api.get(`system/blood-groups/`);
         console.log(res?.data)
-        setBloodGroupChoices(res?.data?.blood_group_choices || []); 
-        setMaritalStatusChoices(res?.data?.marital_status_choices || []);
-        setEmergencyContactRelationshipChoices(res?.data?.emergency_contact_relationship_choices || []);
+        setBloodGroupList(res?.data || []); 
       } catch (error) {
-        console.warn("Error Fetching Choices");
-        setBloodGroupChoices([]); 
-        setMaritalStatusChoices([]);
-        setEmergencyContactRelationshipChoices([]);
+        console.warn("Error Fetching Blood Group List");
+        setBloodGroupList([]); 
       }
     };
 
-    fetchPersonalDetailsChoices();
+    fetchBloodGroupList();
   }, []);
+
+
+  useEffect(() => {
+    const fetchMaritalStatusList = async () => {
+      try {
+        const res = await api.get(`system/marital-statuses/`);
+        console.log(res?.data)
+        setMaritalStatusList(res?.data || []);
+      } catch (error) {
+        console.warn("Error Fetching Marital Status List");
+        setMaritalStatusList([]);
+      }
+    };
+
+    fetchMaritalStatusList();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchEmergencyContactRelationshipList = async () => {
+      try {
+        const res = await api.get(`system/emergency-contact-relationships/`);
+        console.log(res?.data)
+        setEmergencyContactRelationshipList(res?.data || []);
+      } catch (error) {
+        console.warn("Error Fetching Emergency Contact Relationship List");
+        setEmergencyContactRelationshipList([]);
+      }
+    };
+
+    fetchEmergencyContactRelationshipList();
+  }, []);
+
 
   const handleChange = (field, value) => {
     setPersonalDetails((prev) => ({ ...prev, [field]: value }));
   };
+
 
   const handleSave = async () => {
     try {
@@ -109,6 +145,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     }
   };
   
+
   return (
     <div className="personal-details">
       <div className="details-card">
@@ -230,8 +267,8 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               onChange={(e) => handleChange("blood_group", e.target.value)}
             >
               <option value="">-- Select --</option>
-              {bloodGroupChoices.map((bloodGroup)=>(
-                <option key={bloodGroup.key} value={bloodGroup.key}>{bloodGroup.value}</option>
+              {bloodGroupList.map((bloodGroup)=>(
+                <option key={bloodGroup.id} value={bloodGroup.id}>{bloodGroup.name}</option>
               ))}
             </select>
           </div>
@@ -247,8 +284,8 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               onChange={(e) => handleChange("marital_status", e.target.value)}
             >
               <option value="">-- Select --</option>
-              {maritalStatusChoices.map((maritalStatus)=>(
-                <option key={maritalStatus.key} value={maritalStatus.key}>{maritalStatus.value}</option>
+              {maritalStatusList.map((maritalStatus)=>(
+                <option key={maritalStatus.id} value={maritalStatus.id}>{maritalStatus.name}</option>
               ))}
             </select>
           </div>
@@ -291,8 +328,8 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               onChange={(e) => handleChange("emergency_contact_relationship", e.target.value)}
             >
               <option value="">-- Select --</option>
-              {emergencyContactRelationshipChoices.map((relationship)=>(
-                <option key={relationship.key} value={relationship.key}>{relationship.value}</option>
+              {emergencyContactRelationshipList.map((relationship)=>(
+                <option key={relationship.id} value={relationship.id}>{relationship.name}</option>
               ))}
             </select>
           </div>
