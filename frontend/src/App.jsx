@@ -9,8 +9,9 @@ import ChangePassword from './pages/Login/ChangePassword';
 import ForgetPassword from './pages/Login/ForgetPassword';
 import ForgetPasswordUpdate from './pages/Login/ForgetPasswordUpdate';
 
-import AppraisalDetails from './pages/Appraisal/AppraisalDetails';
+import MyAppraisal from './pages/Appraisal/MyAppraisal';
 import OtherAppraisals from './pages/Appraisal/OtherAppraisals';
+import AppraisalDetailsEmployee from './pages/Appraisal/AppraisalDetailsEmployee';
 import AppraisalStatus from './pages/Appraisal/AppraisalStatus';
 import AppraisalSettings from './pages/Appraisal/AppraisalSettings';
 
@@ -36,7 +37,6 @@ function App() {
       <Routes>
         {/* Public Routes (e.g., Login pages) */}
         <Route path="/login" element={<UserLogin />} />
-        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/forget-password-update" element={<ForgetPasswordUpdate />} />
 
@@ -48,10 +48,13 @@ function App() {
         }>
          
           <Route index element={<MainDashboard />} />
-          <Route path="appraisal" element={<AppraisalDetails />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          
+          <Route path="appraisal/my" element={<MyAppraisal />} />
           <Route path="appraisal/others" element={<OtherAppraisals />} />
+          <Route path="appraisal/employee" element={<AppraisalDetailsEmployee />} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
-          <Route path="appraisal/settings" element={<AppraisalSettings />} />
+          {/* <Route path="appraisal/settings" element={<AppraisalSettings />} /> */}
           
           <Route path="configurations/departments" element={<Departments />} />
           <Route path="configurations/designations" element={<Designations />} />

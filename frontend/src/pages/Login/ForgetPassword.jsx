@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
+import SonaliLogo from "../../assets/sonali-logo.jpg";
+import LoginImage from "../../assets/login_page_image.png";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +29,9 @@ const ForgetPassword = () => {
   return (
     <div className="password-recovery-container">
       <div className="recovery-image-section">
-        <div className="overlay-circle"></div>
+        <img src={LoginImage} className="login-page-img" />
+        <img src={SonaliLogo} className="logo-img-login" />
+        
         <div className="human-resource-text">
           <h1>Human Resource Management System</h1>
         </div>

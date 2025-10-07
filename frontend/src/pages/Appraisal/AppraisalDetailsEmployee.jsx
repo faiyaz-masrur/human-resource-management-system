@@ -9,7 +9,7 @@ import CooAppraisal from '../../components/AppraisalDetailsComponents/CooApprais
 import CeoAppraisal from '../../components/AppraisalDetailsComponents/CeoAppraisal';
 
 
-const AppraisalDetails = () => {
+const AppraisalDetailsEmployee = () => {
   const [activeTab, setActiveTab] = useState('Employee');
 
   const renderActiveAppraisal = () => {
@@ -103,4 +103,4 @@ const AppraisalDetails = () => {
   );
 };
 
-export default AppraisalDetails;
+export default AppraisalDetailsEmployee;
