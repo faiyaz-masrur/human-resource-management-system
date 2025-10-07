@@ -2,41 +2,36 @@ from rest_framework import serializers
 from .models import WorkExperience, Education, ProfessionalCertificate, PersonalDetail, Address, Attatchment
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from system.models import Employee, Department, Designation, Grade, ReportingManager, Role
-from system.serializers import (
-    DepartmentSerializer, 
-    DesignationSerializer, 
-    GradeSerializer, 
-    RoleSerializer,
-    ReportingManagerSerializer,
-)
 from django.conf import settings
+from .models import Employee
+from system.utils.serializers import SmartUpdateSerializer
 
-class AddressSerializer(serializers.ModelSerializer):
+
+class AddressSerializer(SmartUpdateSerializer):
     class Meta:
         model = Address
         fields = "__all__"
 
 
-class WorkExperienceSerializer(serializers.ModelSerializer):
+class WorkExperienceSerializer(SmartUpdateSerializer):
     class Meta:
         model = WorkExperience
         fields = "__all__"
 
 
-class EducationSerializer(serializers.ModelSerializer):
+class EducationSerializer(SmartUpdateSerializer):
     class Meta:
         model = Education
         fields = "__all__"
 
     
-class ProfessionalCertificateSerializer(serializers.ModelSerializer):
+class ProfessionalCertificateSerializer(SmartUpdateSerializer):
     class Meta:
         model = ProfessionalCertificate
         fields = "__all__"
 
 
-class AttatchmentSerializer(serializers.ModelSerializer):
+class AttatchmentSerializer(SmartUpdateSerializer):
     class Meta:
         model = Attatchment
         fields = "__all__"
@@ -52,27 +47,7 @@ class EmployeeListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
-
-    # use ids for write operations
-    # department_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Department.objects.all(), source="department", write_only=True, required=False
-    # )
-    # designation_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Designation.objects.all(), source="designation", write_only=True, required=False
-    # )
-    # grade_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Grade.objects.all(), source="grade", write_only=True, required=False
-    # )
-    # role1_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Role.objects.all(), source="role1", write_only=True, required=False
-    # )
-    # role2_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Role.objects.all(), source="role2", write_only=True, required=False
-    # )
-    # reporting_manager_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=ReportingManager.objects.all(), source="reporting_manager", write_only=True, required=False
-    # )
+class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
 
     class Meta:
         model = Employee
@@ -96,10 +71,6 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
         )
 
         PersonalDetail.objects.create(
-            employee=employee,
-        )
-
-        Attatchment.objects.create(
             employee=employee,
         )
 
@@ -128,7 +99,7 @@ class EmployeeOfficialDetailSerializer(serializers.ModelSerializer):
         return employee
 
 
-class EmployeePersonalDetailSerializer(serializers.ModelSerializer):
+class EmployeePersonalDetailSerializer(SmartUpdateSerializer):
     # Include employee name
     employee_name = serializers.CharField(source='employee.name', read_only=True)
 
@@ -145,26 +116,19 @@ class EmployeePersonalDetailSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         user = self.context['request'].user  # logged-in user
 
-        # HR can always update
+        # Handle special rules for phone_number and national_id first
         if user.is_hr:
-            if 'phone_number' in validated_data:
-                instance.phone_number = validated_data['phone_number']
-            if 'national_id' in validated_data:
-                instance.national_id = validated_data['national_id']
+            # HR can always update these
+            pass  # no restriction, SmartUpdateSerializer will handle changed fields
         else:
-            # Employee can update phone_number and national_id only if currently null
-            if 'phone_number' in validated_data and not instance.phone_number:
-                instance.phone_number = validated_data['phone_number']
-            if 'national_id' in validated_data and not instance.national_id:
-                instance.national_id = validated_data['national_id']
+            # Employee can only set these if they are currently null
+            if 'phone_number' in validated_data and instance.phone_number:
+                validated_data.pop('phone_number')
+            if 'national_id' in validated_data and instance.national_id:
+                validated_data.pop('national_id')
 
-        # Update other fields normally
-        for attr, value in validated_data.items():
-            if attr not in ['phone_number', 'national_id']:
-                setattr(instance, attr, value)
-
-        instance.save()
-        return instance
+        # Now let SmartUpdateSerializer handle actual update (only changed fields)
+        return super().update(instance, validated_data)
 
 
 
