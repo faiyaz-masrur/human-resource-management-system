@@ -1,0 +1,7 @@
+[
+    {"name": "IT", "description": "Information Technology"},
+    {"name": "HR&Admin", "description": "Human Resources and Administration"},
+    {"name": "F&A", "description": "Finance and Accounts"},
+    {"name": "R&D", "description": "Research and Development"},
+    {"name": "BD", "description": "Buisness Development"}
+]

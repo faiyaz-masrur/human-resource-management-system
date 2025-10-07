@@ -3,6 +3,7 @@ import { Search, Bell, Menu } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+
 // Accept toggle handlers as props
 const Navbar = ({ onMenuClick, onRightPanelClick }) => {
     const { user, logout } = useAuth();
@@ -17,6 +18,10 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
         logout();
         setDropdownOpen(false);
         navigate('/login');
+    };
+
+    const handleChangePass = () => {
+        navigate('/change-password'); 
     };
 
     return (

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import SonaliLogo from "../../assets/sonali-logo.jpg";
+import LoginImage from "../../assets/login_page_image.png";
 
 const UserLogin = () => {
   const { login } = useAuth();
@@ -37,11 +39,14 @@ const UserLogin = () => {
   return (
     <div className="login-container">
       <div className="login-image-section">
-        <div className="overlay-circle"></div>
+        <img src={LoginImage} className="login-page-img" />
+        <img src={SonaliLogo} className="logo-img-login" />
+        
         <div className="human-resource-text">
           <h1>Human Resource Management System</h1>
         </div>
       </div>
+
       <div className="login-form-section">
         <div className="form-content">
           <h2 className="form-header h2">USER SIGN-IN</h2>

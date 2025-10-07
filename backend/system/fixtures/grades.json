@@ -1,0 +1,15 @@
+[
+    {"name": "T100", "description": "Trainee Level"},
+    {"name": "T110", "description": "Junior Level"},
+    {"name": "T120", "description": "Associate Level"},
+    {"name": "T130", "description": "Senior Level"},
+    {"name": "T210", "description": "Mid-Level"},
+    {"name": "T220", "description": "Senior Mid-Level"},
+    {"name": "T230", "description": "Manager Level"},
+    {"name": "T310", "description": "Senior Manager Level"},
+    {"name": "T320", "description": "Executive Manager Level"},
+    {"name": "T330", "description": "Assistant Vice President Level"},
+    {"name": "T410", "description": "Vice President Level"},
+    {"name": "T420", "description": "Senior Vice President Level"},
+    {"name": "T430", "description": "Executive Vice President Level"}
+]
