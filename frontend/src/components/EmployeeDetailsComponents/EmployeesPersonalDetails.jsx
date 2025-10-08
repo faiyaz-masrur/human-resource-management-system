@@ -45,11 +45,11 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("Employee Personal Details:", res?.data)
         setPersonalDetails(res?.data || defaultPersonalDetails); 
       } catch (error) {
-        console.warn("No employee details found, showing empty form.");
-        setPersonalDetails(defaultOfficialDetails);
+        console.warn("No personal details found, showing empty form.");
+        setPersonalDetails(defaultPersonalDetails);
       }
     };
 
@@ -61,7 +61,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     const fetchBloodGroupList = async () => {
       try {
         const res = await api.get(`system/blood-groups/`);
-        console.log(res?.data)
+        console.log("Blood Group list: ",res?.data)
         setBloodGroupList(res?.data || []); 
       } catch (error) {
         console.warn("Error Fetching Blood Group List");
@@ -77,7 +77,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     const fetchMaritalStatusList = async () => {
       try {
         const res = await api.get(`system/marital-statuses/`);
-        console.log(res?.data)
+        console.log("Marital Status List: ", res?.data)
         setMaritalStatusList(res?.data || []);
       } catch (error) {
         console.warn("Error Fetching Marital Status List");
@@ -93,7 +93,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     const fetchEmergencyContactRelationshipList = async () => {
       try {
         const res = await api.get(`system/emergency-contact-relationships/`);
-        console.log(res?.data)
+        console.log("Emergency Contact Relationship List: ", res?.data)
         setEmergencyContactRelationshipList(res?.data || []);
       } catch (error) {
         console.warn("Error Fetching Emergency Contact Relationship List");

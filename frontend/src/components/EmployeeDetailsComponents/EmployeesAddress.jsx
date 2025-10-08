@@ -180,7 +180,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             <select
               className="form-select"
               value={addressDetails.present_district || ""}
-              onChange={(e) => handleChange("present_district", e.target.value)}
+              onChange={(e) => {
+                setDistrictId(parseInt(e.target.value))
+                handleChange("present_district", e.target.value)}
+              }
               required
             >
               <option value="">-- Select --</option>
@@ -260,7 +263,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             <select
               className="form-select"
               value={addressDetails.permanent_district || ""}
-              onChange={(e) => handleChange("permanent_district", e.target.value)}
+              onChange={(e) => {
+                setDistrictId(parseInt(e.target.value))
+                handleChange("permanent_district", e.target.value)
+              }}
               required
             >
               <option value="">-- Select --</option>
