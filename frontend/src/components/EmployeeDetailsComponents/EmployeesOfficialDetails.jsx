@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
+const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }) => {
   const { user } = useAuth();
   const [toUpdate, setToUpdate] = useState(false)
   const [gradeId, setGradeId] = useState(null)
@@ -39,9 +39,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
     const fetchOfficialDetails = async () => {
       try {
         let res;
-        if(user?.is_hr && view.isAddNewEmployeeProfileView){
-          return;
-        } else if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+        if(user?.is_hr && employee_id && view.isEmployeeProfileView){
           res = await api.get(`employees/empolyee-official-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-official-details/');
@@ -150,7 +148,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if(user?.is_hr){
+      if(user?.is_hr && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if (toUpdate) {
           // Update existing employee
           const res = await api.put(
@@ -172,6 +170,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
           console.log("New Employee:", res.status);
           if(res.status === 201){
             alert("Employee created successfully!");
+            set_employee_id(res.data.id)
           } else {
           alert("Something went wrong!")
           }
@@ -424,7 +423,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, onNext }) => {
             Next
           </button>
           {(user?.is_hr && employee_id) && (
-            <button className="btn-primary" onClick={handleSave}>
+            <button className="btn-success" onClick={handleSave}>
               Save
             </button>
           )}

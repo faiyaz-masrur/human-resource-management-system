@@ -89,29 +89,29 @@ class ReportingManagerSerializer(serializers.ModelSerializer):
         model = ReportingManager
         fields = ["id", "name"]
 
-class BloodGroupSerializer(serializers.Serializer):
+class BloodGroupSerializer(serializers.ModelSerializer):
     class Meta:
-        model: BloodGroup
+        model = BloodGroup
         fields = "__all__"
 
-class MaritalStatusSerializer(serializers.Serializer):
+class MaritalStatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model: MaritalStatus
+        model = MaritalStatus
         fields = "__all__"
 
-class EmergencyContactRelationshipSerializer(serializers.Serializer):
+class EmergencyContactRelationshipSerializer(serializers.ModelSerializer):
     class Meta:
-        model: EmergencyContactRelationship
+        model = EmergencyContactRelationship
         fields = "__all__"
 
-class DegreeSerializer(serializers.Serializer):
+class DegreeSerializer(serializers.ModelSerializer):
     class Meta:
-        model: Degree
+        model = Degree
         fields = "__all__"
 
-class SpecializationSerializer(serializers.Serializer):
+class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
-        model: Specialization
+        model = Specialization
         fields = "__all__"
 
 class BdDistrictSerializer(serializers.ModelSerializer):

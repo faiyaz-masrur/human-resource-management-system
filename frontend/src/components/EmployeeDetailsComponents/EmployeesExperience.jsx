@@ -1,34 +1,52 @@
 // src/components/EmployeeDetailsComponents/EmployeesExperience.jsx
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
+import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeesExperience = ({ onNext, onBack }) => {
-  const [currentStartDate, setCurrentStartDate] = useState('2023-06-11');
-  const [previousExperiences, setPreviousExperiences] = useState([
-    {
-      id: 1,
-      organization: '',
-      designation: '',
-      department: '',
-      startDate: '',
-      endDate: '',
-      responsibilities: ''
-    }
-  ]);
+const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
+  const { user } = useAuth();
+  const [experiences, setExperiences] = useState([]);
+
+
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        let res;
+        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+          res = await api.get(`employees/employee-work-experience/${employee_id}/`);
+        } else if(view.isOwnProfileView){
+          res = await api.get('employees/my-work-experience/');
+        } else {
+          return;
+        }
+        console.log("Experiences List: ", res?.data)
+        setExperiences(res?.data || []); 
+      } catch (error) {
+        console.warn("No work experiences found, showing empty form.");
+        setExperiences([]);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
+
 
   const addNewExperience = () => {
-    setPreviousExperiences([
-      ...previousExperiences,
+    setExperiences([
+      ...experiences,
       {
-        id: previousExperiences.length + 1,
+        id: Date.now(), // Temporary ID for new entries
+        isTempId: true,
         organization: '',
         designation: '',
         department: '',
-        startDate: '',
-        endDate: '',
+        start_date: '',
+        end_date: '',
         responsibilities: ''
       }
     ]);
   };
+
 
   const removeExperience = (id) => {
     if (previousExperiences.length > 1) {
@@ -36,67 +54,97 @@ const EmployeesExperience = ({ onNext, onBack }) => {
     }
   };
 
+
   const updateExperience = (id, field, value) => {
-    setPreviousExperiences(previousExperiences.map(exp => 
+    setExperiences(experiences.map(exp => 
       exp.id === id ? { ...exp, [field]: value } : exp
     ));
   };
 
+
+  const handleSave = async (id) => {
+    const experienceToSave = experiences.find(exp => exp.id === id);
+    if (!experienceToSave) return;
+    try {
+      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
+        if (experienceToSave.isTempId) {
+          delete experienceToSave.id;
+          delete experienceToSave.isTempId;
+          const res = await api.post(`employees/employee-work-experience/${employee_id}/`, experienceToSave);
+          console.log("Created Experience:", res.data);
+          if(res.status === 201){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
+            alert("Employee Work Experience added successfully.");
+          } else {
+            alert("Failed to add employee Work Experience.");
+          }
+        } else {
+          const res = await api.put(`employees/employee-work-experience/${employee_id}/${experienceToSave.id}/`, experienceToSave);
+          console.log("Updated Experience:", res.data);
+          if(res.status === 200){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
+            alert("Employee Work Experience updated successfully.");
+          } else {
+            alert("Failed to update employee Work Experience.");
+          }
+        }
+      } else if(view.isOwnProfileView) {
+        if (experienceToSave.isTempId) {
+          delete experienceToSave.id;
+          delete experienceToSave.isTempId;
+          const res = await api.post(`employees/my-work-experience/`, experienceToSave);
+          console.log("Created Experience:", res.data);
+          if(res.status === 201){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
+            alert("Your Work Experience added successfully.");
+          } else {
+            alert("Failed to add your Work Experience.");
+          }
+        } else {
+          const res = await api.put(`employees/my-work-experience/${experienceToSave.id}/`, experienceToSave);
+          console.log("Updated Experience:", res.data);
+          if(res.status === 200){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
+            alert("Your Work Experience updated successfully.");
+          } else {
+            alert("Failed to update your Work Experience.");
+          }
+        }
+      } else {
+        alert("You don't have permission to perform this action.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error saving experience:", error);
+      alert("Error saving experience." );
+    }
+  };
+  
+
+
   return (
     <div className="experience-details">
       <div className="details-card">
-        {/* Current Experience Section */}
-        <h3 className="section-title">Current Experience</h3>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label>Organization Name*</label>
-            <div className="form-value">Sonali Intellect Limited</div>
-          </div>
-          <div className="form-group">
-            <label>Designation*</label>
-            <div className="form-value">Senior Manager</div>
-          </div>
-          <div className="form-group">
-            <label>Department/Division*</label>
-            <div className="form-value">Human Resource</div>
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Start Date*</label>
-            <input 
-              type="date" 
-              className="date-input"
-              value={currentStartDate}
-              onChange={(e) => setCurrentStartDate(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>End Date*</label>
-            <div className="form-value present-text">Present</div>
-          </div>
-          <div className="form-group">
-            {/* Empty for spacing */}
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group full-width">
-            <label>Job Responsibilities</label>
-            <textarea 
-              className="form-textarea"
-              placeholder="Write the job context here"
-              rows="4"
-            ></textarea>
-          </div>
-        </div>
-
         {/* Previous Experiences Section */}
-        {previousExperiences.map((experience, index) => (
-          <div key={experience.id} className="previous-experience-section">
-            <h3 className="section-title">Previous Experience {experience.id}</h3>
+        {experiences.map((experience) => (
+          <div key={experience.id} className="experience-section">
+            <h3 className="section-title">
+              {
+              experience.organization === "Sonali Intellect Limited"
+              ?
+                "Current Experience"
+              :
+                "Previous Experience"
+              }
+            </h3>
             
             {/* Organization, Designation Row */}
             <div className="form-row">
@@ -108,6 +156,7 @@ const EmployeesExperience = ({ onNext, onBack }) => {
                   placeholder="Enter Organization Name"
                   value={experience.organization}
                   onChange={(e) => updateExperience(experience.id, 'organization', e.target.value)}
+                  required
                 />
               </div>
               <div className="form-group">
@@ -118,6 +167,7 @@ const EmployeesExperience = ({ onNext, onBack }) => {
                   placeholder="Enter Designation"
                   value={experience.designation}
                   onChange={(e) => updateExperience(experience.id, 'designation', e.target.value)}
+                  required
                 />
               </div>
               <div className="form-group">
@@ -128,6 +178,7 @@ const EmployeesExperience = ({ onNext, onBack }) => {
                   placeholder="Enter Department Name"
                   value={experience.department}
                   onChange={(e) => updateExperience(experience.id, 'department', e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -139,29 +190,19 @@ const EmployeesExperience = ({ onNext, onBack }) => {
                 <input 
                   type="date" 
                   className="date-input"
-                  value={experience.startDate}
-                  onChange={(e) => updateExperience(experience.id, 'startDate', e.target.value)}
+                  value={experience.start_date}
+                  onChange={(e) => updateExperience(experience.id, 'start_date', e.target.value)}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>End Date*</label>
+                <label>End Date*</label> 
                 <input 
                   type="date" 
                   className="date-input"
-                  value={experience.endDate}
-                  onChange={(e) => updateExperience(experience.id, 'endDate', e.target.value)}
+                  value={experience.end_date}
+                  onChange={(e) => updateExperience(experience.id, 'end_date', e.target.value)}
                 />
-              </div>
-              <div className="form-group">
-                {previousExperiences.length > 1 && (
-                  <button 
-                    className="btn-remove-experience"
-                    onClick={() => removeExperience(experience.id)}
-                    type="button"
-                  >
-                    Remove
-                  </button>
-                )}
               </div>
             </div>
 
@@ -179,22 +220,30 @@ const EmployeesExperience = ({ onNext, onBack }) => {
               </div>
             </div>
 
-            {index < previousExperiences.length - 1 && <hr className="section-divider" />}
+            <div className="form-row">
+              <div className="form-group">
+                  <button className="btn-success" onClick={() => handleSave(experience.id)}>
+                    Save
+                  </button>
+              </div>
+
+            </div>
+
           </div>
         ))}
 
         {/* Add New Experience Button */}
         <div className="form-row">
           <div className="form-group">
-            <button type="button" className="btn-add-experience" onClick={addNewExperience}>
+            <button type="button" className="btn-primary" onClick={addNewExperience}>
               + Add New Experience
             </button>
           </div>
         </div>
         
         <div className="form-actions">
-          <button className="btn-secondary" onClick={onBack}>Back</button>
           <button className="btn-primary" onClick={onNext}>Next</button>
+          <button className="btn-secondary" onClick={onBack}>Back</button>
         </div>
       </div>
     </div>

@@ -170,7 +170,7 @@ const EmployeesEducation = ({ onNext, onBack }) => {
         {/* Add New Education Button */}
         <div className="form-row">
           <div className="form-group">
-            <button type="button" className="btn-add-education" onClick={addNewEducation}>
+            <button type="button" className="btn-secondary" onClick={addNewEducation}>
               + Add New Education
             </button>
           </div>

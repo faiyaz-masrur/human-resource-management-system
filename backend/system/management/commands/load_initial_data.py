@@ -11,6 +11,7 @@ from system.models import (
 class Command(BaseCommand):
     help = "Populate BD districts and thanas from JSON files in fixtures folder"
 
+    @transaction.atomic
     def handle(self, *args, **kwargs):
 
         base_dir = os.path.dirname(os.path.abspath(__file__)) 

@@ -39,7 +39,7 @@ class SystemWorkspace(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Department"
@@ -51,7 +51,7 @@ class Department(models.Model):
 
 class Grade(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Grade"
@@ -69,7 +69,7 @@ class Designation(models.Model):
         null=True, blank=True,
         related_name="designation",
     )
-    description = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Designation"
@@ -81,7 +81,7 @@ class Designation(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Role"
@@ -190,7 +190,7 @@ class Employee(AbstractUser):
 
 class BdDistrict(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "BD District"
@@ -202,7 +202,7 @@ class BdDistrict(models.Model):
 
 class BdThana(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
 
     district = models.ForeignKey(
         BdDistrict,
@@ -221,55 +221,55 @@ class BdThana(models.Model):
 
 class BloodGroup(models.Model):
     name = models.CharField(max_length=3, unique=True)  # e.g., "A+", "O-"
-    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "A Positive", "O Negative"
+    description = models.TextField(max_length=50, blank=True, null=True)  # e.g., "A Positive", "O Negative"
 
     class Meta:
         verbose_name = "Blood Group"
         verbose_name_plural = "Blood Groups"
 
     def __str__(self):
-        return self.value
+        return self.name
     
 class MaritalStatus(models.Model):
     name = models.CharField(max_length=10, unique=True)  # e.g., "single", "married"
-    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "Single", "Married"
+    description = models.TextField(max_length=50, blank=True, null=True)  # e.g., "Single", "Married"
 
     class Meta:
         verbose_name = "Marital Status"
         verbose_name_plural = "Marital Statuses"
 
     def __str__(self):
-        return self.value
+        return self.name
     
 class EmergencyContactRelationship(models.Model):
     name = models.CharField(max_length=15, unique=True)  # e.g., "parent", "sibling"
-    description = models.CharField(max_length=50, blank=True, null=True)  # e.g., "Parent", "Sibling"
+    description = models.TextField(max_length=50, blank=True, null=True)  # e.g., "Parent", "Sibling"
 
     class Meta:
         verbose_name = "Emergency Contact Relationship"
         verbose_name_plural = "Emergency Contact Relationships"
 
     def __str__(self):
-        return self.value
+        return self.name
     
 class Degree(models.Model):
     name = models.CharField(max_length=10, unique=True)  # e.g., "BSC", "MBA"
-    description = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Bachelor of Science", "Master of Business Administration"
+    description = models.TextField(max_length=100, blank=True, null=True)  # e.g., "Bachelor of Science", "Master of Business Administration"
 
     class Meta:
         verbose_name = "Degree"
         verbose_name_plural = "Degrees"
 
     def __str__(self):
-        return self.value
+        return self.name
     
 class Specialization(models.Model):
     name = models.CharField(max_length=10, unique=True)  # e.g., "CSE", "EEE"
-    description = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Computer Science & Engineering", "Electrical & Electronic Engineering"
+    description = models.TextField(max_length=100, blank=True, null=True)  # e.g., "Computer Science & Engineering", "Electrical & Electronic Engineering"
 
     class Meta:
         verbose_name = "Specialization"
         verbose_name_plural = "Specializations"
 
     def __str__(self):
-        return self.value
+        return self.name
