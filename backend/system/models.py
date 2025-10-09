@@ -9,6 +9,34 @@ def generate_employee_id():
     return get_random_string(5).upper()  # Example: "A1B2C"
 
 
+class SystemRolePermission(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
+    create_permission = models.BooleanField(default=False)
+    read_permission = models.BooleanField(default=False)
+    update_permission = models.BooleanField(default=False)
+    delete_permission = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "System Role Permission"
+        verbose_name_plural = "System Role Permissions"
+
+class SystemWorkspace(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "System Workspace"
+        verbose_name_plural = "System Workspaces"
+
+    def __str__(self):
+        return self.name   
+
+
+    def __str__(self):
+        return self.name   
+
+
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=100, blank=True, null=True)
@@ -49,7 +77,7 @@ class Designation(models.Model):
 
     def __str__(self):
         return self.name
-    
+     
 
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)

@@ -7,11 +7,22 @@ from system.models import Employee
 # Timer Models
 # -------------------------
 
+from django.db import models
+from datetime import date # Assuming date is imported from datetime
+# Assuming Employee is imported from system.models or similar
+
 class EmployeeAppraisalTimer(models.Model):
     """
     Defines the period for Employee self-appraisal submission.
     """
-    employee_id = models.ForeignKey(Employee, on_delete=models.PROTECT)
+    # <<< TEMPORARILY ADDED: null=True, blank=True >>>
+    employee_id = models.ForeignKey(
+        Employee, 
+        on_delete=models.PROTECT,
+        null=True,  
+        blank=True  
+    )
+    
     employee_self_appraisal_start = models.DateField(null=True, blank=True)
     employee_self_appraisal_end = models.DateField(null=True, blank=True)
     employee_self_appraisal_remind = models.DateField(null=True, blank=True)
@@ -29,7 +40,6 @@ class EmployeeAppraisalTimer(models.Model):
 
     def __str__(self):
         return f"Employee Appraisal Timer ({self.employee_self_appraisal_start} - {self.employee_self_appraisal_end})"
-
 
 class ReportingManagerAppraisalTimer(models.Model):
     """
