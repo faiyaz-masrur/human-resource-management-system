@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 
-const OtherAppraisals = () => {
+const ReviewAppraisals = () => {
   // 2. Call useNavigate hook to get the navigation function
   const navigate = useNavigate(); 
     
@@ -86,4 +86,4 @@ const OtherAppraisals = () => {
   );
 };
 
-export default OtherAppraisals;
+export default ReviewAppraisals;

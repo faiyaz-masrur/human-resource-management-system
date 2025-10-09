@@ -10,8 +10,9 @@ import ForgetPassword from './pages/Login/ForgetPassword';
 import ForgetPasswordUpdate from './pages/Login/ForgetPasswordUpdate';
 
 import MyAppraisal from './pages/Appraisal/MyAppraisal';
-import OtherAppraisals from './pages/Appraisal/OtherAppraisals';
+import ReviewAppraisals from './pages/Appraisal/ReviewAppraisals';
 import AppraisalDetailsEmployee from './pages/Appraisal/AppraisalDetailsEmployee';
+import AllAppraisals from './pages/Appraisal/AllAppraisals';
 import AppraisalStatus from './pages/Appraisal/AppraisalStatus';
 import AppraisalSettings from './pages/Appraisal/AppraisalSettings';
 
@@ -23,6 +24,7 @@ import MainDashboard from "./pages/Dashboard/MainDashboard";
 import Departments from "./components/Configurations/Departments";
 import Designations from "./components/Configurations/Designations";
 import Grades from "./components/Configurations/Grades";
+import Workspaces from "./components/Configurations/Workspaces";
 import Roles from "./components/Configurations/Roles";
 
 function App() {
@@ -51,14 +53,16 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />} />
           
           <Route path="appraisal/my" element={<MyAppraisal />} />
-          <Route path="appraisal/others" element={<OtherAppraisals />} />
+          <Route path="appraisal/review" element={<ReviewAppraisals />} />
           <Route path="appraisal/employee" element={<AppraisalDetailsEmployee />} />
+          <Route path="appraisal/all" element={<AllAppraisals />} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
-          {/* <Route path="appraisal/settings" element={<AppraisalSettings />} /> */}
+          <Route path="appraisal/settings" element={<AppraisalSettings />} />
           
           <Route path="configurations/departments" element={<Departments />} />
           <Route path="configurations/designations" element={<Designations />} />
           <Route path="configurations/grades" element={<Grades />} />
+          <Route path="configurations/workspaces" element={<Workspaces />} />
           <Route path="configurations/roles" element={<Roles />} />
 
           <Route path="employee-details/my-profile/" element={<EmployeeDetails view={{...view, isOwnProfileView: true}}/>} />

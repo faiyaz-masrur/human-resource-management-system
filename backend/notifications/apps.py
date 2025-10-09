@@ -1,34 +1,25 @@
 # notifications/apps.py
-import sys
-import logging
-from django.apps import AppConfig
-from django.contrib import admin
-from django.conf import settings
 
-logger = logging.getLogger(__name__)
+from django.apps import AppConfig
+# import logging  # You can keep this if you're using it, but not mandatory here
+
+# logger = logging.getLogger(__name__) # Same here
 
 class NotificationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'notifications'
+    
+    # <<< THIS LINE WAS MISSING OR INCORRECT >>>
+    name = 'notifications' 
+    # <<< ----------------------------------- >>>
 
+    # If you included the scheduler logic, it might look like this:
     def ready(self):
-        # Start the scheduler safely
-        if "runserver" in sys.argv:
-            try:
-                from .scheduler import start_scheduler
-                start_scheduler()
-                logger.info("Scheduler started successfully.")
-            except Exception as e:
-                logger.error(f"Failed to start scheduler: {e}")
-
-        # Hide Django APScheduler models from admin
+        # Your scheduler startup code here (make sure it's correct)
         try:
-            from django_apscheduler.models import DjangoJob, DjangoJobExecution
-            for model in [DjangoJob, DjangoJobExecution]:
-                try:
-                    admin.site.unregister(model)
-                    logger.info(f"Unregistered {model.__name__} from admin.")
-                except admin.sites.NotRegistered:
-                    pass  # Already unregistered or never registered
+            from . import scheduler
+            scheduler.start_scheduler()
         except ImportError:
-            logger.warning("django-apscheduler is not installed; skipping admin unregister.")
+            pass # Or handle the import error better
+        except Exception as e:
+            # You might want to log this error instead of printing
+            print(f"Error starting scheduler: {e}")

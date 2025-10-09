@@ -20,9 +20,10 @@ const menuItems = [
     path: '/appraisal', 
     subMenu: [
       { name: 'My Appraisal', path: '/appraisal/my' },
-      { name: 'Other Appraisals', path: '/appraisal/others' },
-      { name: 'Appraisal Status', path: '/appraisal/status' },
-      //{ name: 'Appraisal Settings', path: '/appraisal/settings' },
+      { name: 'Review Appraisals', path: '/appraisal/review' },
+      { name: 'All Appraisals', path: '/appraisal/all' },
+      { name: 'Active Appraisal Status', path: '/appraisal/status' },
+      { name: 'Appraisal Settings', path: '/appraisal/settings' },
     ]
   },
   
@@ -37,6 +38,7 @@ const menuItems = [
       { name: 'Departments', path: '/configurations/departments' },
       { name: 'Designations', path: '/configurations/designations' },
       { name: 'Grades', path: '/configurations/grades' },
+      { name: 'Workspaces', path: '/configurations/workspaces' },
       { name: 'Roles', path: '/configurations/roles' },
     ]
   },
