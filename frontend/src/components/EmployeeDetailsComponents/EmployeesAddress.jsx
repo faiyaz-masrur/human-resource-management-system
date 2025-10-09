@@ -29,7 +29,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     const fetchAddressDetails = async () => {
       try {
         let res;
-        if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-address/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-address/');
@@ -90,7 +90,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
   const handleSave = async () => {
     try {
-      if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(!addressDetails.id){
           const res = await api.post(`employees/employee-address/${employee_id}/`, addressDetails);
           console.log("Created Employee Address:", res.data);
@@ -127,7 +127,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
           }
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        alert("You don't have permission to perform this action. First save employee official details.");
         return;
       }
     } catch (error) {

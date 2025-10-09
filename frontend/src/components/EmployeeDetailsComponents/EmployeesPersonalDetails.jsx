@@ -38,7 +38,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     const fetchPersonalDetails = async () => {
       try {
         let res;
-        if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-personal-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-personal-details/');
@@ -113,7 +113,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const handleSave = async () => {
     try {
       let res;
-      if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         res = await api.put(
           `employees/employee-personal-details/${employee_id}/`,
           personalDetails
@@ -136,7 +136,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           alert("Something went wrong!")
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        alert("You don't have permission to perform this action. First save employee official details.");
         return;
       }
     } catch (error) {
