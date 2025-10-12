@@ -9,6 +9,7 @@ from .serializers import (
     GradeSerializer, 
     ReportingManagerSerializer,
     RoleSerializer,
+    RolePermissionSerializer,
     BloodGroupSerializer,
     MaritalStatusSerializer,
     EmergencyContactRelationshipSerializer,
@@ -23,6 +24,7 @@ from .models import (
     Grade, 
     ReportingManager, 
     Role,
+    RolePermission,
     BloodGroup,
     MaritalStatus,
     EmergencyContactRelationship,
@@ -33,6 +35,8 @@ from .models import (
 )
 from rest_framework import generics, status, viewsets, views
 from .permissions import IsEmployee, IsHR
+from rest_framework import mixins
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -268,5 +272,36 @@ class BdThanaViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsHR]
         return [permission() for permission in permission_classes]
+    
+
+class RolePermissionAPIView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
+    serializer_class = RolePermissionSerializer
+    queryset = RolePermission.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    # Filter by role_id & workspace from URL
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        role = self.kwargs.get("role")
+        workspace = self.kwargs.get("workspace")
+
+        if role_id and workspace:
+            queryset = queryset.filter(role=role, workspace=workspace)
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
 
     

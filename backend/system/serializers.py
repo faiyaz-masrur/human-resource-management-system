@@ -7,6 +7,7 @@ from .models import (
     Designation, 
     Grade, 
     Role, 
+    RolePermission,
     ReportingManager,
     BloodGroup,
     MaritalStatus,
@@ -81,6 +82,13 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = "__all__"
+
+class RolePermissionSerializer(serializers.ModelSerializer):
+    role_name = serializers.CharField(source="role.name", read_only=True)
+
+    class Meta:
+        model = RolePermission  # Accessing the through model
+        fields = ["id", "role_name", "workspace", "sub_workspace", "view", "create", "edit", "delete"]
 
 class ReportingManagerSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="manager.name", read_only=True)
