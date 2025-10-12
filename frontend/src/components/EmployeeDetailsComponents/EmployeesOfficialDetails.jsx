@@ -339,7 +339,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               ))}
             </select>
           </div>
-
+          {/*
           <div className="form-group">
             <label>Role 2*</label>
             <select
@@ -370,6 +370,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               <option value="false">False</option>
             </select>
           </div>
+          */}
         </div>
 
         {/* Review Checkboxes */}
