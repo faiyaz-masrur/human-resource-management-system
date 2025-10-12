@@ -4,37 +4,24 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 from django.utils.crypto import get_random_string
+from .choices import WORKSPACE_CHOICES
 
 def generate_employee_id():
     return get_random_string(5).upper()  # Example: "A1B2C"
 
 
-class SystemRolePermission(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-    create_permission = models.BooleanField(default=False)
-    read_permission = models.BooleanField(default=False)
-    update_permission = models.BooleanField(default=False)
-    delete_permission = models.BooleanField(default=False)
+class RolePermission(models.Model):
+    role = models.ForeignKey("Role", on_delete=models.CASCADE, related_name="permissions")
+    workspace = models.CharField(max_length=50, choices=WORKSPACE_CHOICES) 
+    sub_workspace = models.CharField(max_length=50)
+    view = models.BooleanField(default=False)
+    create = models.BooleanField(default=False)
+    edit = models.BooleanField(default=False)
+    delete = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "System Role Permission"
         verbose_name_plural = "System Role Permissions"
-
-class SystemWorkspace(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "System Workspace"
-        verbose_name_plural = "System Workspaces"
-
-    def __str__(self):
-        return self.name   
-
-
-    def __str__(self):
-        return self.name   
 
 
 class Department(models.Model):
