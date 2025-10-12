@@ -26,7 +26,7 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
       if (!appraisalId) {
         setLoading(false);
         setIsError(true);
-        setMessage("No appraisal ID provided.");
+        //setMessage("No appraisal ID provided.");
         return;
       }
 

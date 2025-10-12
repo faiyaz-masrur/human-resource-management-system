@@ -38,8 +38,8 @@ const menuItems = [
       { name: 'Departments', path: '/configurations/departments' },
       { name: 'Designations', path: '/configurations/designations' },
       { name: 'Grades', path: '/configurations/grades' },
-      { name: 'Workspaces', path: '/configurations/workspaces' },
-      { name: 'Roles', path: '/configurations/roles' },
+      //{ name: 'Workspaces', path: '/configurations/workspaces' },
+      { name: 'Roles & Permissions', path: '/configurations/roles' },
     ]
   },
   

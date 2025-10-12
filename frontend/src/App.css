@@ -4353,3 +4353,44 @@
     color: #495057;
     border-color: #ced4da;
 }
+
+
+  /*=========================================================================
+                    CSS FOR SINGLE ARROW FIX 
+  ========================================================================= */
+
+
+.urd-status-dropdown-wrapper {
+    position: relative;
+}
+
+.urd-status-select {
+    
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    padding-right: 30px !important; 
+    
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%234A4A4A" d="M6 8.5L2.5 5h7z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+}
+
+.urd-status-select::-ms-expand {
+    display: none;
+}
+
+/* Specific styling for the Download button */
+.action-button--download-light {
+    
+    background-color: #e0f0ff; 
+    border-color: #8bb4e8;
+}
+
+.action-button--download-light:hover {
+    background-color: #e0f0ff; 
+    border-color: #8bb4e8;
+    color: #0056b3; 
+}

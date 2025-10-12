@@ -51,10 +51,6 @@ const AppraisalDetailsEmployee = () => {
             <div className="employee-detail-value"></div>
           </div>
           <div className="employee-detail-item">
-            <label className="employee-detail-label">Appraisal Period</label>
-            <div className="employee-detail-value"></div>
-          </div>
-          <div className="employee-detail-item">
             <label className="employee-detail-label">Designation</label>
             <div className="employee-detail-value"></div>
           </div>
@@ -68,6 +64,14 @@ const AppraisalDetailsEmployee = () => {
           </div>
           <div className="employee-detail-item">
             <label className="employee-detail-label">Grade</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Appraisal Period Start</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Appraisal Period End</label>
             <div className="employee-detail-value"></div>
           </div>
         </div>
