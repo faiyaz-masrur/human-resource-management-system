@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 from django.utils.crypto import get_random_string
-from .choices import WORKSPACE_CHOICES
+from .choices import WORKSPACE_CHOICES, SUB_WORKSPACE_CHOICES
 
 def generate_employee_id():
     return get_random_string(5).upper()  # Example: "A1B2C"
@@ -13,7 +13,7 @@ def generate_employee_id():
 class RolePermission(models.Model):
     role = models.ForeignKey("Role", on_delete=models.CASCADE, related_name="permissions")
     workspace = models.CharField(max_length=50, choices=WORKSPACE_CHOICES) 
-    sub_workspace = models.CharField(max_length=50)
+    sub_workspace = models.CharField(max_length=50, choices=SUB_WORKSPACE_CHOICES)
     view = models.BooleanField(default=False)
     create = models.BooleanField(default=False)
     edit = models.BooleanField(default=False)

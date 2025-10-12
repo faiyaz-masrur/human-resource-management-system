@@ -7,14 +7,34 @@ import api from '../../services/api';
 const EmployeeTable = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [employeeList, setEmployeeList] = useState([])
+  const [employeeList, setEmployeeList] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        const res = await api.get(`system/role-permissions/${"Employee"}/${"EmployeeList"}/`);
+        console.log(res.data)
+        setRolePermissions(res.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions");
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
   
   useEffect(() => {
     const fetchEmployeeList = async () => {
       try {
-        const res = await api.get(`employees/employee-list/`);
-        console.log(res.data)
-        setEmployeeList(res.data || []); 
+        if (rolePermissions.view) {
+          const res = await api.get(`employees/employee-list/`);
+          console.log(res.data)
+          setEmployeeList(res.data || []);
+        } else {
+          setEmployeeList([]); 
+        } 
       } catch (error) {
         console.warn("Error fatching employee list");
         setEmployeeList([]); 
@@ -22,7 +42,7 @@ const EmployeeTable = () => {
     };
 
     fetchEmployeeList();
-  }, []);
+  }, [rolePermissions]);
 
 
   return (
@@ -193,10 +213,13 @@ const EmployeeTable = () => {
         {/* Section Header (All Employees & Add New Button) */}
         <div className="content-header">
           <h1 className="section-title">All Employees</h1>
-          <button className="add-new-button" onClick={() => navigate('/employee-details/add-new-employee/')}>
-            <Plus className="add-new-button__icon" />
-            <span>Add New</span>
-          </button>
+          {rolePermissions?.create &&
+            <button className="add-new-button" onClick={() => navigate('/employee-details/add-new-employee/')}>
+              <Plus className="add-new-button__icon" />
+              <span>Add New</span>
+            </button>
+          }
+          
         </div>
 
         {/* Employee Data Table */}
@@ -210,7 +233,7 @@ const EmployeeTable = () => {
                 <th scope="col" className="table-header">Department</th>
                 <th scope="col" className="table-header">Designation</th>
                 <th scope="col" className="table-header">Active</th>
-                {user.is_hr && 
+                {rolePermissions.edit && 
                   <th scope="col" className="table-header">Actions</th>
                 }
               </tr>
@@ -224,7 +247,7 @@ const EmployeeTable = () => {
                   <td className="table-data">{employee.department}</td>
                   <td className="table-data">{employee.designation}</td>
                   <td className="table-data">{employee.is_active ? "Active" : "Inactive"}</td>
-                  {user.is_hr && 
+                  {rolePermissions?.edit && 
                     <td className="table-data">
                       <div className="action-buttons">
                         {/* Edit Button */}

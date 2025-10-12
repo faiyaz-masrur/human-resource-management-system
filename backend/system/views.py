@@ -122,23 +122,23 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by("name")
     serializer_class = DepartmentSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "employee"
-    sub_workspace = "employee_list"
+    workspace = "Configuration"
+    sub_workspace = "Department"
 
 
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "employee"
-    sub_workspace = "employee_list"
+    workspace = "Configuration"
+    sub_workspace = "Grade"
 
 
 class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "employee"
-    sub_workspace = "employee_list"
+    workspace = "Configuration"
+    sub_workspace = "Designation"
 
     def get_queryset(self):
         grade_id = self.kwargs.get("grade_id") # from URL
@@ -152,8 +152,8 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("name")
     serializer_class = RoleSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "employee"
-    sub_workspace = "employee_list"
+    workspace = "Configuration"
+    sub_workspace = "Role"
 
 
 class ReportingManagerListView(generics.ListAPIView):
@@ -224,10 +224,13 @@ class RolePermissionAPIView(
     # Filter by role_id & workspace from URL
     def get_queryset(self):
         queryset = super().get_queryset()
-        role = self.kwargs.get("role")
+        role = self.request.user.role
         workspace = self.kwargs.get("workspace")
+        sub_workspace = self.kwargs.get("sub_workspace")
 
-        if role_id and workspace:
+        if role and workspace and sub_workspace:
+            queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
+        elif role and workspace:
             queryset = queryset.filter(role=role, workspace=workspace)
         return queryset
 

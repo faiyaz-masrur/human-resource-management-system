@@ -52,7 +52,8 @@ urlpatterns = [
 
     path("reporting-managers/list/", ReportingManagerListView.as_view(), name="reporting-manager-list"),
 
-    path("role-permissions/<int:role>/<str:workspace>/", RolePermissionAPIView.as_view(), name="role-permission-list"),
+    path("role-permissions/<str:workspace>/", RolePermissionAPIView.as_view(), name="role-permission-list"),
+    path("role-permissions/<str:workspace>/<str:sub_workspace>/", RolePermissionAPIView.as_view(), name="role-permission-list"),
     path("role-permissions/", RolePermissionAPIView.as_view(), name="role-permission-create"),
     path("role-permissions/<int:pk>/", RolePermissionAPIView.as_view(), name="role-permission-update"),
 ]

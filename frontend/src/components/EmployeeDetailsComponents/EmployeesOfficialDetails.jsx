@@ -33,6 +33,31 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   const [designationList, setDesignationList] = useState([]);
   const [roleList, setRoleList] = useState([]);
   const [reportingManagerList, setReportingManagerList] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
+          res = await api.get(`system/role-permissions/${"Employee"}/${"EmployeeOfficialDetail"}/`);
+        } else if(view.isOwnProfileView){
+          res = await api.get(`system/role-permissions/${"MyProfile"}/${"MyOfficialDetail"}/`);
+        } else {
+          return;
+        }
+        console.log(res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions");
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
 
   // ✅ Fetch employee details if ID exists
   useEffect(() => {
