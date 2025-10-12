@@ -144,21 +144,12 @@ class Employee(AbstractUser):
         related_name="employee"
     )
 
-    role1 = models.ForeignKey(
+    role = models.ForeignKey(
         Role,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        related_name="employees_role1"
+        related_name="employees"
     )
-
-    role2 = models.ForeignKey(
-        Role,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="employees_role2"
-    )
-
-    is_hr = models.BooleanField(default=False)
 
     reviewed_by_rm = models.BooleanField(default=False)
     reviewed_by_hr = models.BooleanField(default=False)
