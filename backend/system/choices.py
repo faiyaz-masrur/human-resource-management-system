@@ -4,7 +4,7 @@ WORKSPACE_CHOICES = [
     ("ReviewAppraisal", "ReviewAppraisal"),
     ("AllAppraisal", "AllAppraisal"),
     ("Employee", "Employee"),
-    ("Configuration", "Configuration"),
+    ("Configurations", "Configurations"),
 ]
 
 SUB_WORKSPACE_CHOICES = [

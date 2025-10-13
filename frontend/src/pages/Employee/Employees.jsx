@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from "react-router-dom";
 import api from '../../services/api';
 
-const EmployeeTable = () => {
+const Employees = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [employeeList, setEmployeeList] = useState([]);
@@ -279,4 +279,4 @@ const EmployeeTable = () => {
   );
 };
 
-export default EmployeeTable;
+export default Employees;

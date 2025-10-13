@@ -21,7 +21,7 @@ from .models import (
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['id', 'email', 'name', 'role1', 'role2', 'is_hr']
+        fields = ['id', 'email', 'name', 'role']
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

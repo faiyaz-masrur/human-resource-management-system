@@ -1,14 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; 
 import { Search, Bell, Menu } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-// Accept toggle handlers as props
+
 const Navbar = ({ onMenuClick, onRightPanelClick }) => {
     const { user, logout } = useAuth();
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const currentTime = "11:34 AM";
-    const currentDate = "24 Mar 2025";
+    
+    
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+    
+    useEffect(() => {
+        const timerId = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 1000); 
+
+        
+        return () => clearInterval(timerId);
+    }, []);
+
+    
+    const timeOptions = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+    };
+    const dateOptions = { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric' 
+    };
+
+    
+    const currentTime = currentDateTime.toLocaleTimeString('en-US', timeOptions);
+    const currentDate = currentDateTime.toLocaleDateString('en-GB', dateOptions).replace(/ /g, ' '); 
+    
     const activePage = "Dashboard";
     const menuTitle = "Menu";
     const navigate = useNavigate();
@@ -53,6 +81,7 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
                     <input type="text" placeholder="Search" />
                 </div>
 
+                    {/* DYNAMIC TIME AND DATE DISPLAY */}
                     <div className="datetime-group">
                         <span className="current-time">{currentTime}</span>
                         <span className="current-date">/ {currentDate}</span>

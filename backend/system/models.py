@@ -10,6 +10,18 @@ def generate_employee_id():
     return get_random_string(5).upper()  # Example: "A1B2C"
 
 
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Role"
+        verbose_name_plural = "Roles"
+
+    def __str__(self):
+        return self.name
+
+
 class RolePermission(models.Model):
     role = models.ForeignKey("Role", on_delete=models.CASCADE, related_name="permissions")
     workspace = models.CharField(max_length=50, choices=WORKSPACE_CHOICES) 
@@ -65,18 +77,6 @@ class Designation(models.Model):
     def __str__(self):
         return self.name
      
-
-class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Role"
-        verbose_name_plural = "Roles"
-
-    def __str__(self):
-        return self.name
-
 
 class ReportingManager(models.Model):
     # Will be linked to Employee later
