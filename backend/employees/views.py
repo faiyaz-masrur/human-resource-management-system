@@ -1,5 +1,5 @@
 from rest_framework import generics, mixins, viewsets
-from system.permissions import IsEmployee, IsHR
+from system.permissions import HasRoleWorkspacePermission
 from .models import PersonalDetail, Address, WorkExperience, Education, ProfessionalCertificate, Attatchment
 from system.models import Employee
 from .serializers import (
@@ -21,14 +21,18 @@ from django.shortcuts import get_object_or_404
 class EmployeeOfficialDetailViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeOfficialDetailSerializer
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeOfficialDetail"
 
 
 class EmployeePersonalDetailView(generics.RetrieveUpdateAPIView):
     queryset = PersonalDetail.objects.all()
     serializer_class = EmployeePersonalDetailSerializer
     lookup_field = 'employee'  
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeePersonalDetail"
 
 
 class EmployeeAddressView(
@@ -38,7 +42,9 @@ class EmployeeAddressView(
     generics.GenericAPIView
 ):
     serializer_class = AddressSerializer
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeAddress"
     lookup_field = "employee"  # Matches the URL param <employee>
     queryset = Address.objects.all()
 
@@ -72,7 +78,9 @@ class EmployeeWorkExperienceView(
     generics.GenericAPIView
 ):
     serializer_class = WorkExperienceSerializer
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeWorkExperience"
     lookup_field = "work_experience" 
 
     def get_queryset(self):
@@ -103,7 +111,9 @@ class EmployeeEducationView(
     generics.GenericAPIView
 ):
     serializer_class = EducationSerializer
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeEducation"
     lookup_field = "education" 
 
     def get_queryset(self):
@@ -134,7 +144,9 @@ class EmployeeProfessionalCertificateView(
     generics.GenericAPIView
 ):
     serializer_class = ProfessionalCertificateSerializer
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeProfessionalCertificate"
     lookup_field = "professional_certificate" 
 
     def get_queryset(self):
@@ -162,14 +174,18 @@ class EmployeeAttatchmentView(generics.RetrieveUpdateAPIView):
     queryset = Attatchment.objects.all()
     serializer_class = AttatchmentSerializer
     lookup_field = 'employee'  
-    permission_classes = [IsHR]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeAttachment"
         
 
 #View for employees to get, update their own details
 
 class MyOfficialDetailView(generics.RetrieveAPIView):
     serializer_class = EmployeeOfficialDetailSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyOfficialDetail"
 
     def get_object(self):
         return self.request.user
@@ -177,7 +193,9 @@ class MyOfficialDetailView(generics.RetrieveAPIView):
 
 class MyPersonalDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = EmployeePersonalDetailSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyPersonalDetail"
 
     def get_object(self):
         return get_object_or_404(PersonalDetail, employee=self.request.user)
@@ -190,7 +208,9 @@ class MyAddressView(
     generics.GenericAPIView
 ):
     serializer_class = AddressSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyAddress"
 
 
     def get_object(self):
@@ -219,7 +239,9 @@ class MyWorkExperienceView(
     generics.GenericAPIView
 ):
     serializer_class = WorkExperienceSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyWorkExperience"
     lookup_field = "work_experience" 
 
     def get_queryset(self):
@@ -245,7 +267,9 @@ class MyEducationeView(
     generics.GenericAPIView
 ):
     serializer_class = EducationSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyEducation"
     lookup_field = "education" 
 
     def get_queryset(self):
@@ -271,7 +295,9 @@ class MyProfessionalCertificateView(
     generics.GenericAPIView
 ):
     serializer_class = ProfessionalCertificateSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyProfessionalCertificate"
     lookup_field = "professional_certificate" 
 
     def get_queryset(self):
@@ -292,7 +318,9 @@ class MyProfessionalCertificateView(
 
 class MyAttatchmentView(generics.RetrieveUpdateAPIView):
     serializer_class = AttatchmentSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "MyProfile"
+    sub_workspace = "MyAttachment"
 
     def get_object(self):
         return get_object_or_404(Attatchment, employee=self.request.user)
@@ -301,4 +329,6 @@ class MyAttatchmentView(generics.RetrieveUpdateAPIView):
 class EmployeeListView(generics.ListAPIView):
     queryset = Employee.objects.all().order_by("name")
     serializer_class = EmployeeListSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Employee"
+    sub_workspace = "EmployeeList"

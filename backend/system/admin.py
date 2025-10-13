@@ -13,6 +13,7 @@ from .models import (
     Specialization,
     BdDistrict,
     BdThana,
+    RolePermission,
 )
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
@@ -78,6 +79,22 @@ class RoleAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = ('id',)
+    
+@admin.register(RolePermission)
+class RolePermissionAdmin(admin.ModelAdmin):
+    list_display = ("workspace", "sub_workspace",)
+    search_fields = ("worksapce",)
+    ordering = ("workspace",)
+
+    fieldsets = (
+        ("Role Permission Details", {
+            "fields": ("role", "workspace", "sub_workspace", "view", "create", "edit", "delete"),
+        }),
+    )
+
+    readonly_fields = ('id',)
+    
+
 
 
 @admin.register(BloodGroup)

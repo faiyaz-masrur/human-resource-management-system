@@ -4,16 +4,28 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 from django.utils.crypto import get_random_string
-from .choices import WORKSPACE_CHOICES
+from .choices import WORKSPACE_CHOICES, SUB_WORKSPACE_CHOICES
 
 def generate_employee_id():
     return get_random_string(5).upper()  # Example: "A1B2C"
 
 
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Role"
+        verbose_name_plural = "Roles"
+
+    def __str__(self):
+        return self.name
+
+
 class RolePermission(models.Model):
     role = models.ForeignKey("Role", on_delete=models.CASCADE, related_name="permissions")
     workspace = models.CharField(max_length=50, choices=WORKSPACE_CHOICES) 
-    sub_workspace = models.CharField(max_length=50)
+    sub_workspace = models.CharField(max_length=50, choices=SUB_WORKSPACE_CHOICES)
     view = models.BooleanField(default=False)
     create = models.BooleanField(default=False)
     edit = models.BooleanField(default=False)
@@ -65,18 +77,6 @@ class Designation(models.Model):
     def __str__(self):
         return self.name
      
-
-class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Role"
-        verbose_name_plural = "Roles"
-
-    def __str__(self):
-        return self.name
-
 
 class ReportingManager(models.Model):
     # Will be linked to Employee later
@@ -144,21 +144,12 @@ class Employee(AbstractUser):
         related_name="employee"
     )
 
-    role1 = models.ForeignKey(
+    role = models.ForeignKey(
         Role,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        related_name="employees_role1"
+        related_name="employees"
     )
-
-    role2 = models.ForeignKey(
-        Role,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="employees_role2"
-    )
-
-    is_hr = models.BooleanField(default=False)
 
     reviewed_by_rm = models.BooleanField(default=False)
     reviewed_by_hr = models.BooleanField(default=False)

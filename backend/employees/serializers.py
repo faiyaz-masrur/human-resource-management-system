@@ -55,7 +55,7 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             "id", "name", "email",
             "joining_date", "basic_salary",
             "department", "designation", "grade",
-            "reporting_manager", "role1", "role2",  "is_hr", "is_active", "basic_salary",
+            "reporting_manager", "role", "is_active", "basic_salary",
             "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
 

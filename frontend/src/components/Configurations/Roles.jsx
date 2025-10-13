@@ -234,13 +234,13 @@ const UserRoleDetailsView = ({ goToListView, roleId, roleData, updateRole }) => 
                 {activeTab === 'My Profile' && (
                     <div className="urd-agreement-permissions">
                         
-                        <PermissionRow title="Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
+                        <LimitedPermissionRow title="My Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
                     </div>
                 )}
 
@@ -263,12 +263,12 @@ const UserRoleDetailsView = ({ goToListView, roleId, roleData, updateRole }) => 
                 {activeTab === 'My Appraisal' && (
                     <div className="urd-appraisal-permissions">
                         
-                        <PermissionRow title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                        <PermissionRow title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
+                        <PermissionRow title="My CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
                     </div>
                 )}
 

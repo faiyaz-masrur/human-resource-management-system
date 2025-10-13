@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import BasePermission
+from rest_framework.mixins import UpdateModelMixin 
+from rest_framework.generics import GenericAPIView 
 
-from system.permissions import IsEmployee, IsRM, IsHR, IsHOD, IsCOO, IsCEO
+from system.models import RolePermission 
 
 from .models import (
     EmployeeAppraisal,
@@ -17,7 +19,6 @@ from .models import (
     ReportingManagerAppraisalTimer,
     FinalReviewerAppraisalTimer,
     EmployeeAppraisalTrack
-    
 )
 from .serializers import (
     EmployeeAppraisalSerializer,
@@ -29,23 +30,61 @@ from .serializers import (
     FinalReviewerAppraisalTimerSerializer,
 )
 
-# ------------------- Custom Permissions -------------------
-class IsHODCOOCEO(BasePermission):
+# ------------------- Custom Dynamic Permissions -------------------
+
+class HasAppraisalPermission(BasePermission):
     """
-    Custom permission to allow HOD, COO, or CEO access.
+    Custom permission that checks the RolePermission model for access 
+    based on the provided WORKSPACE_CHOICES and SUB_WORKSPACE_CHOICES.
+    
+    The view must define:
+    - view.permission_workspace (e.g., 'MyAppraisal')
+    - view.permission_sub_workspace (e.g., 'MyEmployeeAppraisal')
+    - view.permission_type ('view', 'create', 'edit', 'delete')
     """
+
     def has_permission(self, request, view):
-        return request.user.is_authenticated and (
-            IsHOD().has_permission(request, view) or
-            IsCOO().has_permission(request, view) or
-            IsCEO().has_permission(request, view)
-        )
+        user = request.user
+        # 1. Basic checks
+        if not user.is_authenticated or not hasattr(user, 'role') or not user.role:
+            return False
+
+        # 2. Get the workspace, sub_workspace, and permission_type defined on the view
+        workspace = getattr(view, 'permission_workspace', None)
+        sub_workspace = getattr(view, 'permission_sub_workspace', None)
+        permission_type = getattr(view, 'permission_type', None)
+
+        if not workspace or not sub_workspace or not permission_type:
+            # Fatal error: view is not correctly configured
+            return False
+
+        try:
+            # 3. Query the RolePermission model
+            permission = RolePermission.objects.get(
+                role=user.role,
+                workspace=workspace,
+                sub_workspace=sub_workspace
+            )
+            
+            # 4. Check if the specific permission type is True
+            # For example, if permission_type is 'create', it checks permission.create
+            return getattr(permission, permission_type, False)
+
+        except RolePermission.DoesNotExist:
+            return False
+        except Exception:
+             # Catches other potential DB/Attribute errors
+            return False
 
 # ------------------- API Views -------------------
 
 class EmployeeSelfAppraisalAPIView(APIView):
-    permission_classes = [IsEmployee]
-
+    # Employee submitting their own appraisal (POST)
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'MyAppraisal'
+    permission_sub_workspace = 'MyEmployeeAppraisal'
+    permission_type = 'create' # Employee creating their self-appraisal
+    
     def post(self, request):
         appraisal_timer = EmployeeAppraisalTimer.objects.first()
         if not appraisal_timer or not appraisal_timer.is_active_period():
@@ -59,9 +98,8 @@ class EmployeeSelfAppraisalAPIView(APIView):
             with transaction.atomic():
                 serializer.save(
                     employee=request.user.employee_profile
-                    
                 )
-                 # --- Update EmployeeAppraisalTrack ---
+                # --- Update EmployeeAppraisalTrack ---
                 track, _ = EmployeeAppraisalTrack.objects.get_or_create(
                     employee=request.user.employee_profile
                 )
@@ -71,9 +109,15 @@ class EmployeeSelfAppraisalAPIView(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# --- RM List View ---
 
 class ManagerAppraisalListAPIView(ListAPIView):
-    permission_classes = [IsRM]
+    # RM viewing the list of appraisals they need to review
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'ReviewAppraisal'
+    permission_sub_workspace = 'ReviewAppraisalList'
+    permission_type = 'view' 
+    serializer_class = EmployeeAppraisalSerializer # Assuming this lists all appraisals needing RM review
 
     def get_queryset(self):
         try:
@@ -82,15 +126,24 @@ class ManagerAppraisalListAPIView(ListAPIView):
                 return EmployeeAppraisal.objects.none()
 
             manager_profile = self.request.user.employee_profile
+            # Only list appraisals for employees reporting to this manager
             return EmployeeAppraisal.objects.filter(
-                employee__reporting_manager=manager_profile
+                employee__reporting_manager=manager_profile,
+                # Filter for those that have completed self-appraisal but not RM review
+                employeeappraisaltrack__self_appraisal_done=True,
+                employeeappraisaltrack__rm_review_done=False,
             )
         except AttributeError:
             return EmployeeAppraisal.objects.none()
 
+# --- RM Review View ---
 
 class ReportingManagerReviewAPIView(APIView):
-    permission_classes = [IsRM]
+    # RM submitting or updating their review
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'ReviewAppraisal'
+    permission_sub_workspace = 'EmployeeRmReview'
+    permission_type = 'edit' # Since it's a POST used for both create/update
 
     def post(self, request, appraisal_id):
         timer = ReportingManagerAppraisalTimer.objects.first()
@@ -102,11 +155,19 @@ class ReportingManagerReviewAPIView(APIView):
 
         try:
             appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
+            
+            # Additional Check: Ensure the user is the correct Reporting Manager
+            if appraisal.employee.reporting_manager != request.user.employee_profile:
+                 return Response(
+                    {'error': 'You are not the designated Reporting Manager for this appraisal.'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
             rm_review, created = ReportingManagerReview.objects.get_or_create(
                 appraisal=appraisal,
                 reviewer=request.user.employee_profile
             )
-            serializer = ReportingManagerReviewSerializer(instance=rm_review, data=request.data)
+            serializer = ReportingManagerReviewSerializer(instance=rm_review, data=request.data, partial=True)
 
             if serializer.is_valid():
                 with transaction.atomic():
@@ -123,13 +184,18 @@ class ReportingManagerReviewAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+# --- HR Review View ---
 
 class HRReviewAPIView(APIView):
-    permission_classes = [IsHR]
+    # HR submitting or updating their review
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'ReviewAppraisal'
+    permission_sub_workspace = 'EmployeeHrReview'
+    permission_type = 'edit'
 
     def post(self, request, appraisal_id):
-        timer = FinalReviewerAppraisalTimer.objects.first()
+        # NOTE: Keeping your original timer logic, which uses FinalReviewerAppraisalTimer
+        timer = FinalReviewerAppraisalTimer.objects.first() 
         if not timer or not timer.is_active_period():
             return Response(
                 {'error': 'The HR review period is not currently active.'},
@@ -140,9 +206,10 @@ class HRReviewAPIView(APIView):
             appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
             hr_review, created = HRReview.objects.get_or_create(
                 appraisal=appraisal,
+                # NOTE: Assuming the HR user's profile is used as the reviewer
                 reviewer=request.user.employee_profile
             )
-            serializer = HRReviewSerializer(instance=hr_review, data=request.data)
+            serializer = HRReviewSerializer(instance=hr_review, data=request.data, partial=True)
 
             if serializer.is_valid():
                 with transaction.atomic():
@@ -159,10 +226,16 @@ class HRReviewAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+# --- Final Review View (HOD/COO/CEO) ---
 
 class FinalReviewAPIView(APIView):
-    permission_classes = [IsHODCOOCEO]
+    # Final Reviewers submitting or updating the final review
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'ReviewAppraisal'
+    # We will use EmployeeHodReview as the common sub_workspace for all final reviewers.
+    # The individual tracking (hod_review_done, coo_review_done) is handled internally.
+    permission_sub_workspace = 'EmployeeHodReview' 
+    permission_type = 'edit'
 
     def post(self, request, appraisal_id):
         timer = FinalReviewerAppraisalTimer.objects.first()
@@ -178,7 +251,7 @@ class FinalReviewAPIView(APIView):
                 appraisal=appraisal,
                 reviewer=request.user.employee_profile
             )
-            serializer = FinalReviewSerializer(instance=final_review_instance, data=request.data)
+            serializer = FinalReviewSerializer(instance=final_review_instance, data=request.data, partial=True)
 
             if serializer.is_valid():
                 with transaction.atomic():
@@ -187,14 +260,17 @@ class FinalReviewAPIView(APIView):
                     # --- Update EmployeeAppraisalTrack ---
                     track, _ = EmployeeAppraisalTrack.objects.get_or_create(employee=appraisal.employee)
 
-                    reviewer = request.user.employee_profile
-                    if reviewer.role == "HOD":
+                    # Update tracking based on the reviewer's specific role name
+                    # Assuming request.user.employee_profile.role links to the Role model
+                    reviewer_role_name = request.user.employee_profile.role.name
+                    
+                    if reviewer_role_name == "HOD":
                         track.hod_review_done = True
-                    elif reviewer.role == "COO":
+                    elif reviewer_role_name == "COO":
                         track.coo_review_done = True
-                    elif reviewer.role == "CEO":
+                    elif reviewer_role_name == "CEO":
                         track.ceo_review_done = True
-
+                    
                     track.save()
 
                     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -207,7 +283,11 @@ class FinalReviewAPIView(APIView):
 # ------------------- Admin Timer Creation API Views -------------------
 
 class EmployeeAppraisalTimerCreationAPIView(APIView):
-    permission_classes = [IsHR]
+    # Permission for HR/Admin to create timers
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'Configurations'
+    permission_sub_workspace = 'Role' # Using a configuration-related sub-workspace
+    permission_type = 'create'
 
     def post(self, request):
         if EmployeeAppraisalTimer.objects.exists():
@@ -225,7 +305,11 @@ class EmployeeAppraisalTimerCreationAPIView(APIView):
 
 
 class ReportingManagerAppraisalTimerCreationAPIView(APIView):
-    permission_classes = [IsHR]
+    # Permission for HR/Admin to create timers
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'Configurations'
+    permission_sub_workspace = 'Role' 
+    permission_type = 'create'
 
     def post(self, request):
         if ReportingManagerAppraisalTimer.objects.exists():
@@ -243,7 +327,11 @@ class ReportingManagerAppraisalTimerCreationAPIView(APIView):
 
 
 class FinalReviewerAppraisalTimerCreationAPIView(APIView):
-    permission_classes = [IsHR]
+    # Permission for HR/Admin to create timers
+    permission_classes = [HasAppraisalPermission]
+    permission_workspace = 'Configurations'
+    permission_sub_workspace = 'Role' 
+    permission_type = 'create'
 
     def post(self, request):
         if FinalReviewerAppraisalTimer.objects.exists():
@@ -263,8 +351,21 @@ class FinalReviewerAppraisalTimerCreationAPIView(APIView):
 # ------------------- Previous Appraisal History API View -------------------
 
 class AppraisalHistoryAPIView(APIView):
+    # This view allows different roles to 'view' the history, using custom checks.
+    # The primary workspace for all historical viewing is AllAppraisal.
+    
     def get(self, request, appraisal_id):
-        # Using a single get_object_or_404 to check for appraisal existence
+        user = request.user
+        if not user.is_authenticated or not hasattr(user, 'role') or not user.role:
+             return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Check if user has ANY view permission on the primary appraisal history sub_workspace
+        try:
+             RolePermission.objects.get(role=user.role, workspace='AllAppraisal', sub_workspace='AllEmployeeAppraisal', view=True)
+        except RolePermission.DoesNotExist:
+             return Response({'detail': 'You do not have permission to view appraisal history.'}, status=status.HTTP_403_FORBIDDEN)
+             
+        
         appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
         
         response_data = {}
@@ -272,47 +373,41 @@ class AppraisalHistoryAPIView(APIView):
         # Always include the employee's self-appraisal
         response_data['employee_appraisal'] = EmployeeAppraisalSerializer(appraisal).data
         
+        # Helper to check permission for a specific sub-workspace
+        def user_can_view(sub_workspace):
+            try:
+                permission = RolePermission.objects.get(
+                    role=user.role,
+                    workspace='AllAppraisal',
+                    sub_workspace=sub_workspace
+                )
+                return permission.view
+            except RolePermission.DoesNotExist:
+                return False
+            
         # Try to fetch RM Review, if it exists
-        try:
-            rm_review = ReportingManagerReview.objects.get(appraisal=appraisal)
-            rm_review_data = ReportingManagerReviewSerializer(rm_review).data
-        except ReportingManagerReview.DoesNotExist:
-            rm_review_data = None
+        if user_can_view('AllRmReview'):
+            try:
+                rm_review = ReportingManagerReview.objects.get(appraisal=appraisal)
+                response_data['reporting_manager_review'] = ReportingManagerReviewSerializer(rm_review).data
+            except ReportingManagerReview.DoesNotExist:
+                pass
             
         # Try to fetch HR Review, if it exists
-        try:
-            hr_review = HRReview.objects.get(appraisal=appraisal)
-            hr_review_data = HRReviewSerializer(hr_review).data
-        except HRReview.DoesNotExist:
-            hr_review_data = None
+        if user_can_view('AllHrReview'):
+            try:
+                hr_review = HRReview.objects.get(appraisal=appraisal)
+                response_data['hr_review'] = HRReviewSerializer(hr_review).data
+            except HRReview.DoesNotExist:
+                pass
             
-        # Try to fetch Final Review, if it exists
-        try:
-            final_review = FinalReview.objects.get(appraisal=appraisal)
-            final_review_data = FinalReviewSerializer(final_review).data
-        except FinalReview.DoesNotExist:
-            final_review_data = None
+        # Try to fetch Final Reviews
+        if user_can_view('AllHodReview') or user_can_view('AllCooReview') or user_can_view('AllCeoReview'):
+            try:
+                # Assuming FinalReview is a single instance per appraisal
+                final_review = FinalReview.objects.get(appraisal=appraisal)
+                response_data['final_review'] = FinalReviewSerializer(final_review).data
+            except FinalReview.DoesNotExist:
+                pass
             
-        # Add data to the response based on the user's role
-        # RM can see their own review and the self-appraisal
-        if IsRM().has_permission(request, self):
-            if rm_review_data:
-                response_data['reporting_manager_review'] = rm_review_data
-
-        # HR can see their own review, RM review, and self-appraisal
-        if IsHR().has_permission(request, self):
-            if rm_review_data:
-                response_data['reporting_manager_review'] = rm_review_data
-            if hr_review_data:
-                response_data['hr_review'] = hr_review_data
-        
-        # HOD, COO, CEO can see all parts
-        if IsHODCOOCEO().has_permission(request, self):
-            if rm_review_data:
-                response_data['reporting_manager_review'] = rm_review_data
-            if hr_review_data:
-                response_data['hr_review'] = hr_review_data
-            if final_review_data:
-                response_data['final_review'] = final_review_data
-        
         return Response(response_data, status=status.HTTP_200_OK)

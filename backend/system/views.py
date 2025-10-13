@@ -34,7 +34,7 @@ from .models import (
     BdThana
 )
 from rest_framework import generics, status, viewsets, views
-from .permissions import IsEmployee, IsHR
+from .permissions import HasRoleWorkspacePermission
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -55,7 +55,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user  
@@ -121,33 +121,24 @@ class PasswordResetConfirmView(generics.GenericAPIView):
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by("name")
     serializer_class = DepartmentSerializer
-
-    def get_permissions(self):
-        if self.action == "list":
-            # Employee can access list
-            permission_classes = [IsEmployee]
-        else:
-            # HR can create, update, delete, retrieve
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Department"
 
 
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
-    
-    def get_permissions(self):
-        if self.action == "list":
-            # Employee can access list
-            permission_classes = [IsEmployee]
-        else:
-            # HR can create, update, delete, retrieve
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Grade"
 
 
 class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Designation"
 
     def get_queryset(self):
         grade_id = self.kwargs.get("grade_id") # from URL
@@ -155,123 +146,69 @@ class DesignationViewSet(viewsets.ModelViewSet):
             return Designation.objects.filter(grade_id=grade_id).order_by("name")
         return Designation.objects.all().order_by("name")
     
-    def get_permissions(self):
-        if self.action == "list":
-            # Employee can access list
-            permission_classes = [IsEmployee]
-        else:
-            # HR can create, update, delete, retrieve
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
 
 
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("name")
     serializer_class = RoleSerializer
-    
-    def get_permissions(self):
-        if self.action == "list":
-            # Employee can access list
-            permission_classes = [IsEmployee]
-        else:
-            # HR can create, update, delete, retrieve
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Role"
 
 
 class ReportingManagerListView(generics.ListAPIView):
     queryset = ReportingManager.objects.select_related("manager")
     serializer_class = ReportingManagerSerializer
-    permission_classes = [IsEmployee]
+    permission_classes = [IsAuthenticated]
 
 
 class BloodGroupViewSet(viewsets.ModelViewSet):
     queryset = BloodGroup.objects.all().order_by("name")
     serializer_class = BloodGroupSerializer
+    permission_classes = [IsAuthenticated]
 
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
     
 
 class MaritalStatusViewSet(viewsets.ModelViewSet):
     queryset = MaritalStatus.objects.all().order_by("name")
     serializer_class = MaritalStatusSerializer
-
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
     
 
 class EmergencyContactRelationshipViewSet(viewsets.ModelViewSet):
     queryset = EmergencyContactRelationship.objects.all().order_by("name")
     serializer_class = EmergencyContactRelationshipSerializer
-
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
     
 
 class DegreeViewSet(viewsets.ModelViewSet):
     queryset = Degree.objects.all().order_by("name")
     serializer_class = DegreeSerializer
-
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
     
 
 class SpecializationViewSet(viewsets.ModelViewSet):
     queryset = Specialization.objects.all().order_by("name")
     serializer_class = SpecializationSerializer
-
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
     
 
 class BdDistrictViewSet(viewsets.ModelViewSet):
     queryset = BdDistrict.objects.all().order_by("name")
     serializer_class = BdDistrictSerializer
-    
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAuthenticated]
     
 
 class BdThanaViewSet(viewsets.ModelViewSet):
     serializer_class = BdThanaSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         district_id = self.kwargs.get("district_id") # from URL
         if district_id:
             return BdThana.objects.filter(district_id=district_id).order_by("name")
         return BdThana.objects.all().order_by("name")
-    
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = [IsEmployee]
-        else:
-            permission_classes = [IsHR]
-        return [permission() for permission in permission_classes]
+
     
 
 class RolePermissionAPIView(
@@ -287,10 +224,13 @@ class RolePermissionAPIView(
     # Filter by role_id & workspace from URL
     def get_queryset(self):
         queryset = super().get_queryset()
-        role = self.kwargs.get("role")
+        role = self.request.user.role
         workspace = self.kwargs.get("workspace")
+        sub_workspace = self.kwargs.get("sub_workspace")
 
-        if role_id and workspace:
+        if role and workspace and sub_workspace:
+            queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
+        elif role and workspace:
             queryset = queryset.filter(role=role, workspace=workspace)
         return queryset
 

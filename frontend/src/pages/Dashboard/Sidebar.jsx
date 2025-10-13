@@ -44,7 +44,7 @@ const menuItems = [
   },
   
   { name: 'Chat', icon: '💬', path: '/chat' },
-  { name: 'Job Posting', icon: '💼', path: '/jobpost' },
+  { name: 'Recruitment', icon: '💼', path: '/recruitment' },
   { name: 'Settings', icon: '⚙️', path: '/settings' },
 ];
 
