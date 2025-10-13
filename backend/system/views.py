@@ -122,7 +122,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by("name")
     serializer_class = DepartmentSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configuration"
+    workspace = "Configurations"
     sub_workspace = "Department"
 
 
@@ -130,18 +130,18 @@ class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configuration"
+    workspace = "Configurations"
     sub_workspace = "Grade"
 
 
 class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configuration"
+    workspace = "Configurations"
     sub_workspace = "Designation"
 
     def get_queryset(self):
-        grade_id = self.kwargs.get("grade_id") # from URL
+        grade_id = self.kwargs.get("grade_id") 
         if grade_id:
             return Designation.objects.filter(grade_id=grade_id).order_by("name")
         return Designation.objects.all().order_by("name")
@@ -152,8 +152,42 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("name")
     serializer_class = RoleSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configuration"
+    workspace = "Configurations"
     sub_workspace = "Role"
+
+
+class RolePermissionAPIView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
+    serializer_class = RolePermissionSerializer
+    queryset = RolePermission.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    # Filter by role_id & workspace from URL
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        role = self.request.user.role
+        workspace = self.kwargs.get("workspace")
+        sub_workspace = self.kwargs.get("sub_workspace")
+
+        if role and workspace and sub_workspace:
+            queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
+        elif role and workspace:
+            queryset = queryset.filter(role=role, workspace=workspace)
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
 
 
 class ReportingManagerListView(generics.ListAPIView):
@@ -208,40 +242,5 @@ class BdThanaViewSet(viewsets.ModelViewSet):
         if district_id:
             return BdThana.objects.filter(district_id=district_id).order_by("name")
         return BdThana.objects.all().order_by("name")
-
-    
-
-class RolePermissionAPIView(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
-    generics.GenericAPIView
-):
-    serializer_class = RolePermissionSerializer
-    queryset = RolePermission.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    # Filter by role_id & workspace from URL
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        role = self.request.user.role
-        workspace = self.kwargs.get("workspace")
-        sub_workspace = self.kwargs.get("sub_workspace")
-
-        if role and workspace and sub_workspace:
-            queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
-        elif role and workspace:
-            queryset = queryset.filter(role=role, workspace=workspace)
-        return queryset
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
 
     
