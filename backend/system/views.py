@@ -215,13 +215,20 @@ class RolePermissionAPIView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = RolePermissionSerializer
     queryset = RolePermission.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Role"
 
-    # Filter by role_id & workspace from URL
+    def get_permissions(self):
+        if self.kwargs.get("workspace") and self.kwargs.get("sub_workspace"):
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
+
     def get_queryset(self):
         queryset = super().get_queryset()
         role = self.request.user.role
@@ -235,6 +242,8 @@ class RolePermissionAPIView(
         return queryset
 
     def get(self, request, *args, **kwargs):
+        if self.kwargs.get("sub_workspace"):
+            return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -242,6 +251,7 @@ class RolePermissionAPIView(
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
 
 
     
