@@ -17,9 +17,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     grade: "",
     reporting_manager: "",
     basic_salary: "",
-    role1: "",
-    role2: "",
-    is_hr: false,
+    role: "",
     reviewed_by_rm: false,
     reviewed_by_hr: false,
     reviewed_by_hod: false,
@@ -63,8 +61,11 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   useEffect(() => {
     const fetchOfficialDetails = async () => {
       try {
+        if (!rolePermissions.view) {
+          return;
+        }
         let res;
-        if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+        if(employee_id && view.isEmployeeProfileView){
           res = await api.get(`employees/empolyee-official-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-official-details/');
@@ -173,9 +174,13 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if(user?.is_hr && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+      if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
         if (toUpdate) {
           // Update existing employee
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(
             `employees/empolyee-official-details/${officialdetails.id}/`,
             officialdetails
@@ -188,6 +193,10 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           }
         } else {
           // Create new employee
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           const res = await api.post(
             `/employees/empolyee-official-details/`,
             officialdetails
@@ -200,6 +209,24 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           alert("Something went wrong!")
           }
         }
+      } else if(view.isOwnProfileView){ 
+        if (toUpdate) {
+          // Update existing employee
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
+          const res = await api.put(
+            `employees/my-official-details/${officialdetails.id}/`,
+            officialdetails
+          );
+          console.log("Updateed Official Details:", res.status);
+          if(res.status === 200){
+            alert("Your official details updated successfully!");
+          } else {
+            alert("Something went wrong!")
+          }
+        } 
       } else {
         alert("You don't have permission to perform this action.");
         return;
@@ -222,7 +249,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.id ? !rolePermissions.edit : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
               required
             />
           </div>
@@ -233,7 +260,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.email ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -244,7 +271,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.name ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -258,7 +285,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.department || ""}
               onChange={(e) => handleChange("department", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.department ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -277,7 +304,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                 setGradeId(parseInt(e.target.value))
                 handleChange("grade", e.target.value)
               }}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.grade ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -294,7 +321,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.joining_date ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -308,7 +335,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.designation || ""}
               onChange={(e) => handleChange("designation", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.designation ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -326,7 +353,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               onChange={(e) =>
                 handleChange("reporting_manager", e.target.value)
               }
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.reporting_manager ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -343,7 +370,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={officialdetails.basic_salary ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -351,12 +378,12 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
          <div className="form-row">
           <div className="form-group">
-            <label>Role 1*</label>
+            <label>Role*</label>
             <select
               className="form-select"
-              value={officialdetails.role1 || ""}
-              onChange={(e) => handleChange("role1", e.target.value)}
-              disabled={view.isOwnProfileView}
+              value={officialdetails.role || ""}
+              onChange={(e) => handleChange("role", e.target.value)}
+              disabled={officialdetails.role ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -435,7 +462,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={view.isOwnProfileView}
+                  disabled={officialdetails[`reviewed_by_${role}`] ? !rolePermissions.edit : !rolePermissions.create}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>

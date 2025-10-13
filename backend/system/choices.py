@@ -3,7 +3,6 @@ WORKSPACE_CHOICES = [
     ("MyAppraisal", "MyAppraisal"),
     ("ReviewAppraisal", "ReviewAppraisal"),
     ("AllAppraisal", "AllAppraisal"),
-    ("AppraisalStatus", "AppraisalStatus"),
     ("Employee", "Employee"),
     ("Configuration", "Configuration"),
 ]
