@@ -13,11 +13,11 @@ const Employees = () => {
   useEffect(() => {
     const fetchRolePermissions = async () => {
       try {
-        const res = await api.get(`system/role-permissions/${"Employee"}/${"EmployeeList"}/`);
-        console.log(res.data)
+        const res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeeList"}/`);
+        console.log("User role permissions:", res.data)
         setRolePermissions(res.data || {}); 
       } catch (error) {
-        console.warn("Error fatching role permissions");
+        console.warn("Error fatching role permissions", error);
         setRolePermissions({}); 
       }
     };
@@ -30,13 +30,13 @@ const Employees = () => {
       try {
         if (rolePermissions.view) {
           const res = await api.get(`employees/employee-list/`);
-          console.log(res.data)
-          setEmployeeList(res.data || []);
+          console.log("Employee List:", res.data)
+          setEmployeeList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
         } else {
           setEmployeeList([]); 
         } 
       } catch (error) {
-        console.warn("Error fatching employee list");
+        console.warn("Error fatching employee list", error);
         setEmployeeList([]); 
       }
     };

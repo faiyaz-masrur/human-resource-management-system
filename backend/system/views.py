@@ -122,23 +122,38 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by("name")
     serializer_class = DepartmentSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configurations"
+    workspace = "Configuration"
     sub_workspace = "Department"
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
 
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all().order_by("name")
     serializer_class = GradeSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configurations"
+    workspace = "Configuration"
     sub_workspace = "Grade"
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
 
 class DesignationViewSet(viewsets.ModelViewSet):
     serializer_class = DesignationSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configurations"
+    workspace = "Configuration"
     sub_workspace = "Designation"
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
         grade_id = self.kwargs.get("grade_id") 
@@ -152,24 +167,36 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all().order_by("name")
     serializer_class = RoleSerializer
     permission_classes = [HasRoleWorkspacePermission]
-    workspace = "Configurations"
+    workspace = "Configuration"
     sub_workspace = "Role"
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
 
 class RolePermissionAPIView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = RolePermissionSerializer
     queryset = RolePermission.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = "Configuration"
+    sub_workspace = "Role"
 
-    # Filter by role_id & workspace from URL
+    def get_permissions(self):
+        if self.kwargs.get("workspace") and self.kwargs.get("sub_workspace"):
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
+
     def get_queryset(self):
         queryset = super().get_queryset()
-        role = self.request.user.role
+        role = self.kwargs.get("role")
         workspace = self.kwargs.get("workspace")
         sub_workspace = self.kwargs.get("sub_workspace")
 
@@ -177,15 +204,27 @@ class RolePermissionAPIView(
             queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
         elif role and workspace:
             queryset = queryset.filter(role=role, workspace=workspace)
+        elif role:
+            queryset = queryset.filter(role=role)
         return queryset
 
     def get(self, request, *args, **kwargs):
+        role = self.kwargs.get("role")
+        workspace = self.kwargs.get("workspace")
+        sub_workspace = self.kwargs.get("sub_workspace")
+
+        if role and workspace and sub_workspace:
+            instance = self.get_queryset().first()
+            if not instance:
+                return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    def patch(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
 
@@ -196,44 +235,44 @@ class ReportingManagerListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class BloodGroupViewSet(viewsets.ModelViewSet):
+class BloodGroupListView(generics.ListAPIView):
     queryset = BloodGroup.objects.all().order_by("name")
     serializer_class = BloodGroupSerializer
     permission_classes = [IsAuthenticated]
 
     
 
-class MaritalStatusViewSet(viewsets.ModelViewSet):
+class MaritalStatusListView(generics.ListAPIView):
     queryset = MaritalStatus.objects.all().order_by("name")
     serializer_class = MaritalStatusSerializer
     permission_classes = [IsAuthenticated]
     
 
-class EmergencyContactRelationshipViewSet(viewsets.ModelViewSet):
+class EmergencyContactRelationshipListView(generics.ListAPIView):
     queryset = EmergencyContactRelationship.objects.all().order_by("name")
     serializer_class = EmergencyContactRelationshipSerializer
     permission_classes = [IsAuthenticated]
     
 
-class DegreeViewSet(viewsets.ModelViewSet):
+class DegreeListView(generics.ListAPIView):
     queryset = Degree.objects.all().order_by("name")
     serializer_class = DegreeSerializer
     permission_classes = [IsAuthenticated]
     
 
-class SpecializationViewSet(viewsets.ModelViewSet):
+class SpecializationListView(generics.ListAPIView):
     queryset = Specialization.objects.all().order_by("name")
     serializer_class = SpecializationSerializer
     permission_classes = [IsAuthenticated]
     
 
-class BdDistrictViewSet(viewsets.ModelViewSet):
+class BdDistrictListView(generics.ListAPIView):
     queryset = BdDistrict.objects.all().order_by("name")
     serializer_class = BdDistrictSerializer
     permission_classes = [IsAuthenticated]
     
 
-class BdThanaViewSet(viewsets.ModelViewSet):
+class BdThanaListView(generics.ListAPIView):
     serializer_class = BdThanaSerializer
     permission_classes = [IsAuthenticated]
 
@@ -242,5 +281,9 @@ class BdThanaViewSet(viewsets.ModelViewSet):
         if district_id:
             return BdThana.objects.filter(district_id=district_id).order_by("name")
         return BdThana.objects.all().order_by("name")
+
+    
+
+
 
     

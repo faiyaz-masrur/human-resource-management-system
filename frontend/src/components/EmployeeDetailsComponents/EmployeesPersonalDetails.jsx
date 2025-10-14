@@ -60,7 +60,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   useEffect(() => {
     const fetchBloodGroupList = async () => {
       try {
-        const res = await api.get(`system/blood-groups/`);
+        const res = await api.get(`system/configurations/blood-group-list/`);
         console.log("Blood Group list: ",res?.data)
         setBloodGroupList(res?.data || []); 
       } catch (error) {
@@ -76,7 +76,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   useEffect(() => {
     const fetchMaritalStatusList = async () => {
       try {
-        const res = await api.get(`system/marital-statuses/`);
+        const res = await api.get(`system/configurations/marital-status-list/`);
         console.log("Marital Status List: ", res?.data)
         setMaritalStatusList(res?.data || []);
       } catch (error) {
@@ -92,7 +92,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   useEffect(() => {
     const fetchEmergencyContactRelationshipList = async () => {
       try {
-        const res = await api.get(`system/emergency-contact-relationships/`);
+        const res = await api.get(`system/configurations/emergency-contact-relationship-list/`);
         console.log("Emergency Contact Relationship List: ", res?.data)
         setEmergencyContactRelationshipList(res?.data || []);
       } catch (error) {

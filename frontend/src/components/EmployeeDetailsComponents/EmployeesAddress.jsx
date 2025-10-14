@@ -50,7 +50,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   useEffect(() => {
     const fetchDistrictList = async () => {
       try {
-        const res = await api.get(`system/bd-districts/`);
+        const res = await api.get(`system/configurations/bd-district-list/`);
         console.log(res?.data)
         setDistrictList(res?.data || []);
       } catch (error) {
@@ -68,9 +68,9 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
       try {
         let res;
         if (districtId){
-          res = await api.get(`system/bd-thanas/district/${districtId}`);
+          res = await api.get(`system/configurations/bd-thana-list/${districtId}`);
         } else {
-          res = await api.get(`system/bd-thanas/`);
+          res = await api.get(`system/configurations/bd-thana-list/`);
         }
         console.log(res?.data)
         setPoliceStationList(res?.data || []);

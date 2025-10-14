@@ -12,6 +12,7 @@ def generate_employee_id():
 
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=True)
     description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
