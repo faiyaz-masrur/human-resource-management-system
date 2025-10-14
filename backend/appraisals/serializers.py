@@ -65,52 +65,176 @@ class FinalReviewerAppraisalTimerSerializer(serializers.ModelSerializer):
 # --- Review/Appraisal Serializers (Write/Update Focused) ---
 
 class EmployeeAppraisalSerializer(serializers.ModelSerializer):
-    """Serializer for the initial Employee Appraisal form submission."""
     class Meta:
         model = EmployeeAppraisal
         fields = '__all__'
         # Explicitly setting all auto-fields as read-only for security
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal_month_year']
+        
+def create(self, validated_data):
+
+    # 1. First, call the parent class's create method to save the new appraisal instance.
+    appraisal_instance = super().create(validated_data)
+    employee = appraisal_instance.employee
+
+    try:
+        # 2. Get the corresponding status track instance for the employee.
+        # get_or_create is used to ensure the track exists for this employee.
+        track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+        
+        track.self_appraisal_done = True
+        
+        track.save()
+        
+    except Exception as e:
+
+        print(f"Error updating self_appraisal_done status track after creation: {e}") 
+
+    return appraisal_instance
+
 
 
 class ReportingManagerReviewSerializer(serializers.ModelSerializer):
-    """Serializer for the Reporting Manager's review."""
     class Meta:
         model = ReportingManagerReview
         fields = '__all__'
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal', 'reviewer']
+
+    def create(self, validated_data):
+
+        review_instance = super().create(validated_data)
+        
+        try:
+
+            employee = review_instance.appraisal.employee
+
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+
+            track.rm_review_done = True 
+            track.save()
+            
+        except AttributeError:
+
+            print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on ReportingManagerReview.")
+        except Exception as e:
+           
+            print(f"Error updating rm_review_done status track after creation: {e}") 
+
+        return review_instance
 
 
 class HRReviewSerializer(serializers.ModelSerializer):
-    """Serializer for the HR Review stage."""
     class Meta:
         model = HrReview
         fields = '__all__'
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal', 'reviewer']
+    
+    def create(self, validated_data):
 
+        review_instance = super().create(validated_data)
+        
+        try:
 
-# --- Granular Final Review Serializers ---
+            employee = review_instance.appraisal.employee
+
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+
+            track.hr_review_done = True 
+            track.save()
+            
+        except AttributeError:
+
+            print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on HRReview.")
+        except Exception as e:
+           
+            print(f"Error updating rm_review_done status track after creation: {e}") 
+
+        return review_instance
+
 
 class HODReviewSerializer(serializers.ModelSerializer):
-    """Serializer for the Head of Department (HOD) Review stage."""
     class Meta:
         model = HodReview
         fields = '__all__'
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal', 'reviewer']
+    
+    def create(self, validated_data):
+
+        review_instance = super().create(validated_data)
+        
+        try:
+
+            employee = review_instance.appraisal.employee
+
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+
+            track.hod_review_done = True 
+            track.save()
+            
+        except AttributeError:
+
+            print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on HODReview.")
+        except Exception as e:
+           
+            print(f"Error updating rm_review_done status track after creation: {e}") 
+
+        return review_instance
 
 class COOReviewSerializer(serializers.ModelSerializer):
-    """Serializer for the Chief Operating Officer (COO) Review stage."""
     class Meta:
         model = CooReview
         fields = '__all__'
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal', 'reviewer']
+        
+    def create(self, validated_data):
+
+        review_instance = super().create(validated_data)
+        
+        try:
+
+            employee = review_instance.appraisal.employee
+
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+
+            track.coo_review_done = True 
+            track.save()
+            
+        except AttributeError:
+
+            print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on CooReview.")
+        except Exception as e:
+           
+            print(f"Error updating rm_review_done status track after creation: {e}") 
+
+        return review_instance
 
 class CEOReviewSerializer(serializers.ModelSerializer):
-    """Serializer for the Chief Executive Officer (CEO) Review stage."""
     class Meta:
         model = CeoReview
         fields = '__all__'
-        read_only_fields = ['id', 'submission_date', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'appraisal', 'reviewer']
+    
+    def create(self, validated_data):
+
+        review_instance = super().create(validated_data)
+        
+        try:
+
+            employee = review_instance.appraisal.employee
+
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+
+            track.ceo_review_done = True
+            track.save()
+            
+        except AttributeError:
+
+            print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on CeoReview.")
+        except Exception as e:
+           
+            print(f"Error updating rm_review_done status track after creation: {e}") 
+
+        return review_instance
 
 
 # --- Tracking Serializers ---
@@ -120,8 +244,7 @@ class EmployeeAppraisalStatusTrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAppraisalStatusTrack
         fields = '__all__'
-        read_only_fields = ['id', 'last_updated', 'created_at']
-
+        read_only_fields = ['id']
 
 class ReportingManagerAppraisalTrackSerializer(serializers.ModelSerializer):
     """Tracks the status and history of the reporting manager's review phase."""
@@ -134,10 +257,7 @@ class ReportingManagerAppraisalTrackSerializer(serializers.ModelSerializer):
 # --- Comprehensive Detail/Read Serializer (Nesting Example) ---
 
 class EmployeeAppraisalDetailSerializer(EmployeeAppraisalSerializer):
-    """
-    A detailed read-only serializer for a complete appraisal view,
-    nesting all related review and data objects for easy fetching on detail pages.
-    """
+
     attendance_summary = AttendanceSummarySerializer(read_only=True) 
     salary_variance = SalaryRecommendationSerializer(read_only=True)       
     rm_review = ReportingManagerReviewSerializer(read_only=True) 

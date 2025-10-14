@@ -339,10 +339,7 @@ def _validate_review_decisions(instance, prefix):
 
 
 class HrReview(models.Model):
-    """
-    Review form for HR, linking to Salary and Attendance models and storing final decisions.
-    Enforces a mandatory Yes or No decision for each recommendation, using 'hr_' prefixes.
-    """
+
     appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.PROTECT, related_name='hr_review')
     reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='hr_appraisals')
     
