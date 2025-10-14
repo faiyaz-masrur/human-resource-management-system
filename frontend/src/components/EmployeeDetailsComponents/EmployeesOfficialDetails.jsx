@@ -39,16 +39,16 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       try {
         let res;
         if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
-          res = await api.get(`system/role-permissions/${"Employee"}/${"EmployeeOfficialDetail"}/`);
+          res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeeOfficialDetail"}/`);
         } else if(view.isOwnProfileView){
-          res = await api.get(`system/role-permissions/${"MyProfile"}/${"MyOfficialDetail"}/`);
+          res = await api.get(`system/role-permissions/${user.role}/${"MyProfile"}/${"MyOfficialDetail"}/`);
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("User role permission:", res?.data)
         setRolePermissions(res?.data || {}); 
       } catch (error) {
-        console.warn("Error fatching role permissions");
+        console.warn("Error fatching role permissions", error);
         setRolePermissions({}); 
       }
     };
@@ -72,28 +72,29 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("Employee official details:", res?.data)
         if(res?.data?.id){
           setToUpdate(true)
         }
         setOfficialDetails(res?.data || defaultOfficialDetails); 
       } catch (error) {
-        console.warn("No employee details found, showing empty form.");
+        console.warn("No employee details found, showing empty form.", error);
         setOfficialDetails(defaultOfficialDetails);
       }
     };
 
     fetchOfficialDetails();
-  }, []);
+  }, [rolePermissions]);
+
 
   useEffect(() => {
     const fetchDepartmentList = async () => {
       try {
-        const res = await api.get(`system/departments/`);
-        console.log(res.data)
-        setDepartmentList(res.data || []); 
+        const res = await api.get(`system/configurations/departments/`);
+        console.log("Department list:", res.data)
+        setDepartmentList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Department List");
+        console.warn("Error Fetching Department List", error);
         setDepartmentList([]); 
       }
     };
@@ -101,14 +102,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchDepartmentList();
   }, []);
 
+
   useEffect(() => {
     const fetchGradeList = async () => {
       try {
-        const res = await api.get(`system/grades/`);
-        console.log(res.data)
-        setGradeList(res.data || []); 
+        const res = await api.get(`system/configurations/grades/`);
+        console.log("Grade list:", res.data)
+        setGradeList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Grade List");
+        console.warn("Error Fetching Grade List", error);
         setGradeList([]); 
       }
     };
@@ -116,19 +118,20 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchGradeList();
   }, []);
 
+
   useEffect(() => {
     const fetchDesignationList = async () => {
       try {
         let res;
         if(gradeId){
-          res = await api.get(`system/designations/grade/${gradeId}/`);
+          res = await api.get(`system/configurations/grade-specific-designations/${gradeId}/`);
         } else {
-          res = await api.get(`system/designations/`);
+          res = await api.get(`system/configurations/designations/`);
         }
-        console.log(res.data)
-        setDesignationList(res.data || []); 
+        console.log("Designation list:", res.data)
+        setDesignationList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Designation List");
+        console.warn("Error Fetching Designation List", error);
         setDesignationList([]);
       }
     };
@@ -136,14 +139,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchDesignationList();
   }, [gradeId]);
 
+
   useEffect(() => {
     const fetchRoleList = async () => {
       try {
-        const res = await api.get(`system/roles/`);
-        console.log(res.data)
-        setRoleList(res.data || []); 
+        const res = await api.get(`system/configurations/roles/`);
+        console.log("Role list:", res.data)
+        setRoleList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Designation List");
+        console.warn("Error Fetching Designation List", error);
         setRoleList([]);
       }
     };
@@ -151,14 +155,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchRoleList();
   }, []);
 
+
   useEffect(() => {
     const fetchReportingManagerList = async () => {
       try {
-        const res = await api.get(`system/reporting-managers/list/`);
-        console.log(res.data)
-        setReportingManagerList(res.data || []); 
+        const res = await api.get(`system/configurations/reporting-managers-list/`);
+        console.log("Reporting manager list:", res.data)
+        setReportingManagerList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Reporting Managers List");
+        console.warn("Error Fetching Reporting Managers List", error);
         setReportingManagerList([]);
       }
     };
@@ -166,10 +171,12 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchReportingManagerList();
   }, []);
 
+
   // ✅ Handle input changes
   const handleChange = (field, value) => {
     setOfficialDetails((prev) => ({ ...prev, [field]: value }));
   };
+
 
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
@@ -236,6 +243,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       alert("Failed to save employee.");
     }
   };
+
 
   return (
     <div className="official-details">

@@ -5,7 +5,7 @@ from django.db import transaction
 from system.models import (
     Department, Grade, Designation, Role,
     BdDistrict, BdThana, BloodGroup, MaritalStatus,
-    EmergencyContactRelationship, Degree, Specialization
+    EmergencyContactRelationship, Degree, Specialization, RolePermission
 )
 
 class Command(BaseCommand):
@@ -28,6 +28,7 @@ class Command(BaseCommand):
         grades_file = os.path.join(fixtures_dir, "grades.json")
         designations_file = os.path.join(fixtures_dir, "designations.json")
         roles_file = os.path.join(fixtures_dir, "roles.json")
+        role_permissions_file = os.path.join(fixtures_dir, "rolePermissions.json")
 
 
         # Load districts
@@ -152,10 +153,28 @@ class Command(BaseCommand):
         with open(roles_file, encoding="utf-8") as f:
             roles_data = json.load(f)
 
+        obj_mapping = {}
         for role in roles_data:
             role_obj, created = Role.objects.get_or_create(name=role["name"], description=role["description"])
+            obj_mapping[role["name"]] = role_obj
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created role: {role_obj.name}"))
+
+        
+        # Role Permissions
+        with open(role_permissions_file, encoding="utf-8") as f:
+            role_permissions_data = json.load(f)
+
+        for role_permission in role_permissions_data:
+            role_name = role_permission.get("role")
+            role_obj = obj_mapping.get(role_name)
+            if not role_obj:
+                raise ValueError(f"Role '{role_name}' not found for role permission '{role_permission['workspace']}'")
+
+            role_permission_obj, created = RolePermission.objects.get_or_create(role=role_obj, workspace=role_permission['workspace'], sub_workspace=role_permission['sub_workspace'], view=role_permission['view'], create=role_permission['create'], edit=role_permission['edit'], delete=role_permission['delete'])
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Created role permission: {role_permission_obj.role} - {role_permission_obj.sub_workspace}"))
+        obj_mapping.clear()
 
 
         self.stdout.write(self.style.SUCCESS("Population complete!"))

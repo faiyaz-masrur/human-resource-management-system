@@ -82,9 +82,9 @@ class RoleAdmin(admin.ModelAdmin):
     
 @admin.register(RolePermission)
 class RolePermissionAdmin(admin.ModelAdmin):
-    list_display = ("workspace", "sub_workspace",)
-    search_fields = ("worksapce",)
-    ordering = ("workspace",)
+    list_display = ("role__name", "workspace", "sub_workspace",)
+    search_fields = ("role__name", "worksapce", "sub_workspace")
+    ordering = ("role__name",)
 
     fieldsets = (
         ("Role Permission Details", {
