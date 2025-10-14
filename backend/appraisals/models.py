@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from system.models import Employee
+from django.core.exceptions import ValidationError
 
 
 # -------------------------
@@ -87,10 +88,6 @@ class FinalReviewerAppraisalTimer(models.Model):
         return f"Reviewer Appraisal Timer ({self.final_review_start} - {self.final_review_end})"
 
 
-# -------------------------
-# Self Appraisal & Supporting Models
-# -------------------------
-
 class EmployeeAppraisal(models.Model):
     """
     Appraisal form filled out by the employee.
@@ -100,105 +97,25 @@ class EmployeeAppraisal(models.Model):
     appraisal_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='self_appraisals')
     
-    appraisal_submitted_date = models.DateField(auto_now_add=True)
+    appraisal_month_year = models.DateField(auto_now_add=True)
     
-    achievements = models.TextField(max_length=1000)
-    strengths = models.TextField(max_length=1000)
-    improvements = models.TextField(max_length=1000)
+    achievements_goal_completion = models.TextField(max_length=1000)
+    training_development_plan = models.TextField(max_length=1000)
     training_needs = models.TextField(max_length=500)
     
     # Fields to handle the multiple choice options
     soft_skills_training = models.BooleanField(default=False)
     business_training = models.BooleanField(default=False)
-    technical_training = models.BooleanField(default=False)
-    
-    is_review_period_active = models.BooleanField(default=True)
-    
+    technical_training = models.BooleanField(default=False)   
         
     def __str__(self):
         return f"Self-Appraisal for {self.employee.name}"
-
-class AttendanceSummary(models.Model):
-    """
-    Model to store attendance summary for an employee, used in the HR review.
-    """
-    summary_id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='attendance_summaries')
-    casual_leave_taken = models.IntegerField(default=0)
-    sick_leave_taken = models.IntegerField(default=0)
-    earned_leave_taken = models.IntegerField(default=0)
-    total_leave_taken = models.IntegerField(default=0)
-    attendance_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    attendance_rating = models.CharField(max_length=50, blank=True)
     
-    def calculate_and_rate_attendance(self):
-        """
-        Calculates total leave, percentage, and rating based on total working days.
-        """
-        self.total_leave_taken = self.casual_leave_taken + self.sick_leave_taken + self.earned_leave_taken
-        
-        # Determine the rating based on the percentage
-        if 91 <= self.attendance_percentage <= 100:
-            self.attendance_rating = 'Very Good'
-        elif 81 <= self.attendance_percentage <= 90:
-            self.attendance_rating = 'Good'
-        elif 70 <= self.attendance_percentage <= 80:
-            self.attendance_rating = 'Average'
-        else:
-            self.attendance_rating = 'Below Average'
-    
-    def __str__(self):
-        return f"Attendance for {self.employee.name}"
-
-class SalaryVariance(models.Model):
-    """
-    Model for salary and promotion recommendations, used in the HR review.
-    """
-    recommendation_id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='salary_recommendations')
-    
-    # Use DecimalField for financial calculations to avoid floating point inaccuracies
-    current_basic = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    current_gross = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
-    # Recommendation status
-    PROMOTION_INCREMENT = 'Promotion with Increment'
-    PROMOTION_PP_ONLY = 'Promotion with PP only'
-    INCREMENT_NO_PROMO = 'Increment without Promotion'
-    PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
-    DEFERRED = 'Promotion/Increment/PP Deferred'
-    RECOMMENDATION_CHOICES = [
-        (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
-        (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
-        (INCREMENT_NO_PROMO, 'Increment Recommended without Promotion'),
-        (PAY_PROGRESSION_ONLY, 'Only Pay Progression (PP) Recommended'),
-        (DEFERRED, 'Promotion/Increment/PP Deferred'),
-    ]
-    
-    recommendation = models.CharField(max_length=100, choices=RECOMMENDATION_CHOICES, blank=True)
-    
-    def save(self, *args, **kwargs):
-        # Calculation should be done here before saving the model instance
-        if self.current_basic is not None:
-            self.current_gross = self.current_basic / 0.55
-        
-        if self.proposed_basic is not None:
-            self.proposed_gross = self.proposed_basic / 0.55
-            
-        if self.proposed_gross is not None and self.current_gross is not None:
-            self.gross_difference = self.proposed_gross - self.current_gross
-            
-        super().save(*args, **kwargs)
-    
-    def __str__(self):
-        return f"Salary Recommendation for {self.employee.name}"
 
 class ReportingManagerReview(models.Model):
     """
-    Review form for the Reporting Manager.
+    Review form for the Reporting Manager (RM). Uses 'rm_' prefix for all fields 
+    for clarity and uses OneToOneField to ensure only one review per appraisal.
     """
     OVERALL_PERFORMANCE_RATING_CHOICES = [
         ('does_not_meet', 'Does not meet expectation'),
@@ -214,86 +131,464 @@ class ReportingManagerReview(models.Model):
         ('high_potential', 'High potential'),
     ]
 
-    appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.PROTECT, related_name='manager_review')
-    reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='manager_appraisals')
-    achievements_remarks = models.TextField(max_length=1000, null=True, blank=True)
-    training_remarks = models.TextField(max_length=1000, null=True, blank=True)
-    justify_overall_rating = models.TextField(max_length=1000, null=True, blank=True)
-    overall_performance_rating = models.CharField(
+    appraisal = models.OneToOneField(
+        EmployeeAppraisal, 
+        on_delete=models.PROTECT, 
+        related_name='manager_review',
+        verbose_name='Employee Appraisal'
+    )
+    reviewer = models.ForeignKey(
+        Employee, 
+        on_delete=models.PROTECT, 
+        related_name='manager_appraisals',
+        verbose_name='Reporting Manager'
+    )
+    
+    # --- Remarks Fields (Max 500 words for sections 1-3) ---
+    rm_achievements_remarks = models.TextField(
+        max_length=500, 
+        null=True, 
+        blank=True, 
+        verbose_name='Achievements/Goal Completion Remarks'
+    )
+    rm_training_remarks = models.TextField(
+        max_length=500, 
+        null=True, 
+        blank=True, 
+        verbose_name='Training and Development Plan Remarks'
+    )
+    
+    # --- Overall Performance Rating ---
+    rm_overall_performance_rating = models.CharField(
         max_length=50, 
         choices=OVERALL_PERFORMANCE_RATING_CHOICES, 
         null=True, 
-        blank=True
+        blank=True,
+        verbose_name='Overall Performance Rating'
     )
-    potential_rating = models.CharField(
+    rm_justify_overall_rating = models.TextField(
+        max_length=500, 
+        null=True, 
+        blank=True,
+        verbose_name='Justification for Overall Rating' 
+    )
+    
+    # --- Potential Rating ---
+    rm_potential_rating = models.CharField(
         max_length=50, 
         choices=POTENTIAL_RATING_CHOICES,
         null=True, 
-        blank=True
+        blank=True,
+        verbose_name='Potential Rating'
     )
-    decision_remarks = models.TextField(max_length=500, null=True, blank=True)
+    
+    # --- Final Remarks (Max 1000 words) ---
+    rm_final_remarks = models.TextField(
+        max_length=1000, 
+        null=True, 
+        blank=True,
+        verbose_name='Final Remarks on Decision/Potential' 
+    )
     
     def __str__(self):
         return f"Manager Review for {self.appraisal.employee.name}"
 
+
+class AttendanceSummary(models.Model):
+
+    summary_id = models.AutoField(primary_key=True)
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='attendance_summaries')
+    
+    # --- Leave Details ---
+       
+    casual_leave_taken = models.IntegerField(default=0, verbose_name='Casual Leave Taken')
+    sick_leave_taken = models.IntegerField(default=0, verbose_name='Sick Leave Taken')
+    annual_leave_taken = models.IntegerField(default=0, verbose_name='Annual Leave Taken')
+    
+    total_leave_taken =  casual_leave_taken + sick_leave_taken + annual_leave_taken
+    
+    
+    # --- Attendance Details ---
+    on_time_count = models.IntegerField(default=0, verbose_name='On Time Count')
+    delay_count = models.IntegerField(default=0, verbose_name='Delay Count')
+    early_exit_count = models.IntegerField(default=0, verbose_name='Early Exit Count')
+    
+       
+    def save(self, *args, **kwargs):
+        
+        self.total_leave_taken = self.annual_leave_taken + self.sick_leave_taken
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Attendance Summary for {self.employee.name}"
+
+class SalaryRecommendation(models.Model):
+
+    recommendation_id = models.AutoField(primary_key=True)
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='salary_recommendations')
+    
+    current_basic = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    current_gross = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    #current_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # --- Promotion with Increment ---
+    promo_with_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_with_increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_with_increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    # --- Promotion without Increment ---
+    promo_without_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_without_increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_without_increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # --- Increment (without promotion) ---
+    increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # --- Pay Progression (Input Section) ---
+    pp_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pp_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pp_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def calculate_variance(self):
+
+        FACTOR = 0.55
+        
+        # Current salary
+        if self.current_basic is not None:
+            self.current_gross = self.current_basic / FACTOR
+        
+        # Promotion with Increment
+        if self.promo_with_increment_proposed_basic is not None:
+            self.promo_with_increment_proposed_gross = self.promo_with_increment_proposed_basic / FACTOR
+            self.promo_with_increment_proposed_gross_difference = self.promo_with_increment_proposed_gross - self.current_gross
+        
+        # Promotion without Increment
+        if self.promo_without_increment_proposed_basic is not None:
+            self.promo_without_increment_proposed_gross = self.promo_without_increment_proposed_basic / FACTOR
+            self.promo_without_increment_proposed_gross_difference = self.promo_without_increment_proposed_gross - self.current_gross
+             
+        # Increment (without promotion)
+        if self.increment_proposed_basic is not None:
+            self.increment_proposed_gross = self.increment_proposed_basic / FACTOR
+            self.increment_gross_difference = self.increment_proposed_gross - self.current_gross
+
+        # Pay Progression
+        if self.pp_proposed_basic is not None:
+            self.pp_proposed_gross = self.pp_proposed_basic * FACTOR
+            self.pp_gross_difference = self.pp_proposed_gross - self.current_gross
+
+    def save(self, *args, **kwargs):
+        self.calculate_variance() # Calculate differences before saving
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Salary Recommendation for {self.employee.name}"
+
+
 class HRReview(models.Model):
     """
-    Review form for HR, linking to Salary and Attendance models.
+    Review form for HR, linking to Salary and Attendance models and storing final decisions.
+    Enforces a mandatory Yes or No decision for each recommendation, using 'hr_' prefixes.
     """
     appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.PROTECT, related_name='hr_review')
     reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='hr_appraisals')
-    remarks = models.TextField(max_length=1000, null=True, blank=True)
+    
+    # --- Remarks ---
+    remarks_hr = models.TextField(max_length=1000, null=True, blank=True, verbose_name='Remarks from Human Resource')
+    
+    # --- Linked Data ---
     attendance_summary = models.ForeignKey(AttendanceSummary, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
-    salary_recommendation = models.OneToOneField(SalaryVariance, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
+    salary_recommendation = models.OneToOneField(SalaryRecommendation, on_delete=models.SET_NULL, null=True, blank=True, related_name='hr_reviews')
     
-    # Decisions as per data field document
-    promotion_recommended_with_increment = models.BooleanField(default=False)
-    promotion_recommended_with_pp = models.BooleanField(default=False)
-    increment_recommended = models.BooleanField(default=False)
-    pay_progression_recommended = models.BooleanField(default=False)
-    promotion_increment_pp_deferred = models.BooleanField(default=False)
+    # --- Decisions (Checkboxes) ---
     
-    decision_remarks = models.TextField(max_length=500, null=True, blank=True)
+    # 1. Promotion Recommended with Increment
+    hr_promo_w_increment_yes = models.BooleanField(default=False, verbose_name='Promo w/ Increment (Yes)')
+    hr_promo_w_increment_no = models.BooleanField(default=False, verbose_name='Promo w/ Increment (No)')
+    hr_promo_w_increment_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 2. Promotion Recommended with PP only
+    hr_promo_w_pp_yes = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only (Yes)')
+    hr_promo_w_pp_no = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only (No)')
+    hr_promo_w_pp_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 3. Increment Recommended without Promotion
+    hr_increment_w_no_promo_yes = models.BooleanField(default=False, verbose_name='Increment w/o Promo (Yes)')
+    hr_increment_w_no_promo_no = models.BooleanField(default=False, verbose_name='Increment w/o Promo (No)')
+    hr_increment_w_no_promo_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 4. Only Pay Progression (PP) Recommended
+    hr_pp_only_yes = models.BooleanField(default=False, verbose_name='PP Only (Yes)')
+    hr_pp_only_no = models.BooleanField(default=False, verbose_name='PP Only (No)')
+    hr_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 5. Promotion/Increment/PP Deferred
+    hr_deferred_yes = models.BooleanField(default=False, verbose_name='Deferred (Yes)')
+    hr_deferred_no = models.BooleanField(default=False, verbose_name='Deferred (No)')
+    hr_deferred_remarks = models.TextField(max_length=500, null=True, blank=True)
     
+    # --- Final Decision Remarks ---
+    remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True)
+    
+    def clean(self):
+        """
+        Custom validation to ensure exactly one of Yes or No is True for each decision.
+        """
+        # Note: Using the actual field attribute names here for easy use with getattr (or direct check)
+        decision_fields = [
+            ('Promotion with Increment', self.hr_promo_w_increment_yes, self.hr_promo_w_increment_no, 'hr_promo_w_increment_yes', 'hr_promo_w_increment_no'),
+            ('Promotion with PP only', self.hr_promo_w_pp_yes, self.hr_promo_w_pp_no, 'hr_promo_w_pp_yes', 'hr_promo_w_pp_no'),
+            ('Increment without Promotion', self.hr_increment_w_no_promo_yes, self.hr_increment_w_no_promo_no, 'hr_increment_w_no_promo_yes', 'hr_increment_w_no_promo_no'),
+            ('Only Pay Progression (PP)', self.hr_pp_only_yes, self.hr_pp_only_no, 'hr_pp_only_yes', 'hr_pp_only_no'),
+            ('Promotion/Increment/PP Deferred', self.hr_deferred_yes, self.hr_deferred_no, 'hr_deferred_yes', 'hr_deferred_no'),
+        ]
+        
+        errors = {}
+        # name is for display, yes/no are values, yes_field/no_field are attribute names
+        for name, yes, no, yes_field, no_field in decision_fields:
+            # Enforces that (yes XOR no) is True, preventing (True AND True) and (False AND False)
+            if yes == no:
+                error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
+                errors[yes_field] = error_message
+                errors[no_field] = error_message
+
+        if errors:
+            # Raise the ValidationError using the field names
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        # Always run full validation before saving
+        self.full_clean() 
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"HR Review for {self.appraisal.employee.name}"
 
-class FinalReview(models.Model):
-    """
-    A single model for HOD, COO, and CEO reviews, as the form is the same.
-    """
-    REVIEWER_ROLES = [
-        ('hod', 'HOD'),
-        ('coo', 'COO'),
-        ('ceo', 'CEO'),
-    ]
-    
-    
-    PROMOTION_INCREMENT = 'Promotion with Increment'
-    PROMOTION_PP_ONLY = 'Promotion with PP only'
-    INCREMENT_NO_PROMO = 'Increment without Promotion'
-    PAY_PROGRESSION_ONLY = 'Only Pay Progression (PP) Recommended'
-    DEFERRED = 'Promotion/Increment/PP Deferred'
-    
-    RECOMMENDATION_CHOICES = [
-    (PROMOTION_INCREMENT, 'Promotion Recommended with Increment'),
-    (PROMOTION_PP_ONLY, 'Promotion Recommended with PP only'),
-    (INCREMENT_NO_PROMO, 'Increment Recommended without Promotion'),
-    (PAY_PROGRESSION_ONLY, 'Only Pay Progression (PP) Recommended'),
-    (DEFERRED, 'Promotion/Increment/PP Deferred'),
+
+DECISION_SUFFIXES = [
+    ('Promotion with Increment', 'promo_w_increment_yes', 'promo_w_increment_no'),
+    ('Promotion with PP only', 'promo_w_pp_only_yes', 'promo_w_pp_only_no'),
+    ('Increment without Promotion', 'increment_w_no_promo_yes', 'increment_w_no_promo_no'),
+    ('Only Pay Progression (PP)', 'pp_only_yes', 'pp_only_no'),
+    ('Promotion/Increment/PP Deferred', 'deferred_yes', 'deferred_no'),
 ]
 
-    appraisal = models.ForeignKey(EmployeeAppraisal, on_delete=models.PROTECT, related_name='final_reviews')
-    reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='final_review_appraisals')
-    reviewer_role = models.CharField(max_length=10, choices=REVIEWER_ROLES)
-    agreement_remarks = models.TextField(max_length=1000, null=True, blank=True)
-    decision_remarks = models.TextField(max_length=500, null=True, blank=True)
+# --- Shared Validation Logic ---
+
+def _validate_review_decisions(instance, prefix):
+    """
+    Custom validation logic to ensure that for each decision pair,
+    exactly one of YES or NO is True, preventing (True, True) or (False, False).
+    It dynamically constructs the attribute names using the provided prefix.
+    """
+    errors = {}
     
-    # Decisions as per data field document
-    decision = models.CharField(max_length=100, choices=RECOMMENDATION_CHOICES, blank=True)
+    for name, yes_suffix, no_suffix in DECISION_SUFFIXES:
+        yes_attr = f'{prefix}_{yes_suffix}'
+        no_attr = f'{prefix}_{no_suffix}'
+
+        # Use getattr to fetch the dynamic field values
+        yes = getattr(instance, yes_attr)
+        no = getattr(instance, no_attr)
+        
+        if yes == no:
+            # This condition catches both (True, True) -> Ambiguous AND (False, False) -> Unanswered
+            error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
+            
+            # Apply error to the specific fields for better form handling
+            if yes: # Ambiguous (True, True)
+                errors[yes_attr] = error_message
+                errors[no_attr] = error_message
+            else: # Unanswered (False, False)
+                errors[yes_attr] = error_message
+                errors[no_attr] = error_message
+
+    if errors:
+        raise ValidationError(errors)
+
+# --- 1. Head of Department (HOD) Review Model ---
+
+class HodReview(models.Model):
+    """
+    The specific model for the Head of Department's final review.
+    Uses OneToOneField to ensure only one HOD review per appraisal.
+    """
+    appraisal = models.OneToOneField(
+        EmployeeAppraisal, 
+        on_delete=models.PROTECT, 
+        related_name='hod_review',
+        verbose_name='Employee Appraisal'
+    )
+    reviewer = models.ForeignKey(
+        Employee, 
+        on_delete=models.PROTECT, 
+        related_name='hod_appraisals',
+        verbose_name='HOD Reviewer'
+    )
     
+    # --- Remarks ---
+    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (HOD)')
+
+    # --- Decisions (Explicit Yes/No BooleanFields with Remarks) ---
+
+    # 1. Promotion Recommended with Increment
+    hod_promo_w_increment_yes = models.BooleanField(default=False, verbose_name='Promo w/ Increment (Yes)')
+    hod_promo_w_increment_no = models.BooleanField(default=False, verbose_name='Promo w/ Increment (No)')
+    hod_promo_w_increment_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 2. Promotion Recommended with PP only
+    hod_promo_w_pp_only_yes = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (Yes)')
+    hod_promo_w_pp_only_no = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (No)')
+    hod_promo_w_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 3. Increment Recommended without Promotion
+    hod_increment_w_no_promo_yes = models.BooleanField(default=False, verbose_name='Increment w/o Promo (Yes)')
+    hod_increment_w_no_promo_no = models.BooleanField(default=False, verbose_name='Increment w/o Promo (No)')
+    hod_increment_w_no_promo_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 4. Only Pay Progression (PP) Recommended
+    hod_pp_only_yes = models.BooleanField(default=False, verbose_name='PP Only (Yes)')
+    hod_pp_only_no = models.BooleanField(default=False, verbose_name='PP Only (No)')
+    hod_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    # 5. Promotion/Increment/PP Deferred
+    hod_deferred_yes = models.BooleanField(default=False, verbose_name='Deferred (Yes)')
+    hod_deferred_no = models.BooleanField(default=False, verbose_name='Deferred (No)')
+    hod_deferred_remarks = models.TextField(max_length=500, null=True, blank=True)
+    
+    # --- Final Remarks on the decision ---
+    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (HOD)')
+    
+    def clean(self):
+        # Run the shared validation logic with the HOD prefix
+        _validate_review_decisions(self, 'hod')
+            
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.get_reviewer_role_display()} Review for {self.appraisal.employee.name}"
+        return f"HOD Review for {self.appraisal.employee.name}"
+
+# --- 2. Chief Operating Officer (COO) Review Model ---
+
+class CooReview(models.Model):
+    """
+    The specific model for the Chief Operating Officer's final review.
+    Uses OneToOneField to ensure only one COO review per appraisal.
+    """
+    appraisal = models.OneToOneField(
+        EmployeeAppraisal, 
+        on_delete=models.PROTECT, 
+        related_name='coo_review',
+        verbose_name='Employee Appraisal'
+    )
+    reviewer = models.ForeignKey(
+        Employee, 
+        on_delete=models.PROTECT, 
+        related_name='coo_appraisals',
+        verbose_name='COO Reviewer'
+    )
+    
+    # --- Remarks ---
+    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (COO)')
+
+    # --- Decisions (Identical fields as HOD/CEO) ---
+    coo_promo_w_increment_yes = models.BooleanField(default=False, verbose_name='Promo w/ Increment (Yes)')
+    coo_promo_w_increment_no = models.BooleanField(default=False, verbose_name='Promo w/ Increment (No)')
+    coo_promo_w_increment_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    coo_promo_w_pp_only_yes = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (Yes)')
+    coo_promo_w_pp_only_no = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (No)')
+    coo_promo_w_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    coo_increment_w_no_promo_yes = models.BooleanField(default=False, verbose_name='Increment w/o Promo (Yes)')
+    coo_increment_w_no_promo_no = models.BooleanField(default=False, verbose_name='Increment w/o Promo (No)')
+    coo_increment_w_no_promo_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    coo_pp_only_yes = models.BooleanField(default=False, verbose_name='PP Only (Yes)')
+    coo_pp_only_no = models.BooleanField(default=False, verbose_name='PP Only (No)')
+    coo_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    coo_deferred_yes = models.BooleanField(default=False, verbose_name='Deferred (Yes)')
+    coo_deferred_no = models.BooleanField(default=False, verbose_name='Deferred (No)')
+    coo_deferred_remarks = models.TextField(max_length=500, null=True, blank=True)
+    
+    # --- Final Remarks on the decision ---
+    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (COO)')
+    
+    def clean(self):
+        # Run the shared validation logic with the COO prefix
+        _validate_review_decisions(self, 'coo')
+            
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"COO Review for {self.appraisal.employee.name}"
+
+# --- 3. Chief Executive Officer (CEO) Review Model ---
+
+class CeoReview(models.Model):
+    """
+    The specific model for the Chief Executive Officer's final review.
+    Uses OneToOneField to ensure only one CEO review per appraisal.
+    """
+    appraisal = models.OneToOneField(
+        EmployeeAppraisal, 
+        on_delete=models.PROTECT, 
+        related_name='ceo_review',
+        verbose_name='Employee Appraisal'
+    )
+    reviewer = models.ForeignKey(
+        Employee, 
+        on_delete=models.PROTECT, 
+        related_name='ceo_appraisals',
+        verbose_name='CEO Reviewer'
+    )
+    
+    # --- Remarks ---
+    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (CEO)')
+
+    # --- Decisions (Identical fields as HOD/COO) ---
+    ceo_promo_w_increment_yes = models.BooleanField(default=False, verbose_name='Promo w/ Increment (Yes)')
+    ceo_promo_w_increment_no = models.BooleanField(default=False, verbose_name='Promo w/ Increment (No)')
+    ceo_promo_w_increment_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    ceo_promo_w_pp_only_yes = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (Yes)')
+    ceo_promo_w_pp_only_no = models.BooleanField(default=False, verbose_name='Promo w/ PP Only (No)')
+    ceo_promo_w_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    ceo_increment_w_no_promo_yes = models.BooleanField(default=False, verbose_name='Increment w/o Promo (Yes)')
+    ceo_increment_w_no_promo_no = models.BooleanField(default=False, verbose_name='Increment w/o Promo (No)')
+    ceo_increment_w_no_promo_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    ceo_pp_only_yes = models.BooleanField(default=False, verbose_name='PP Only (Yes)')
+    ceo_pp_only_no = models.BooleanField(default=False, verbose_name='PP Only (No)')
+    ceo_pp_only_remarks = models.TextField(max_length=500, null=True, blank=True)
+
+    ceo_deferred_yes = models.BooleanField(default=False, verbose_name='Deferred (Yes)')
+    ceo_deferred_no = models.BooleanField(default=False, verbose_name='Deferred (No)')
+    ceo_deferred_remarks = models.TextField(max_length=500, null=True, blank=True)
+    
+    # --- Final Remarks on the decision ---
+    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (CEO)')
+    
+    def clean(self):
+        # Run the shared validation logic with the CEO prefix
+        _validate_review_decisions(self, 'ceo')
+            
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"CEO Review for {self.appraisal.employee.name}"
+
 
 
 # -------------------------
