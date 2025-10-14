@@ -1,30 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import api from '../../services/api'; // Assuming you have an API client configured
-//import { toast } from 'react-toastify'; // Assuming you use react-toastify for notifications
+import api from '../../services/api'; 
 
-// --- API CONSTANTS ---
-// Based on your system/urls.py
 const ROLES_API_URL = 'system/configurations/roles/'; 
-// Assuming this is your endpoint for all role permissions
+
 const PERMISSIONS_API_URL = 'system/role-permissions/'; 
 
-// --- HELPER FUNCTION: Maps frontend section names to backend sub_workspace names ---
+
 const SECTION_TO_SUB_WORKSPACE_MAP = {
     // My Profile Tab
-    official_details: 'Official Details', 
-    personal_details: 'Personal Details',
-    addresses: 'Addresses',
-    work_experiences: 'Work Experiences',
-    education: 'Education',
-    training_certificates: 'Training & Certificates',
-    attachmnets: 'Attachments',
+    official_details: 'My OfficialDetail', 
+    personal_details: 'My PersonalDetail',
+    addresses: 'My Address',
+    work_experiences: 'My WorkExperience',
+    education: 'My Education',
+    training_certificates: 'My ProfessionalCertificate',
+    attachmnets: 'My Attachment',
     
     // Employees Tab
-    employees: 'Employees',
+    employees: 'Employee',
     
     // Appraisal Tab (My Appraisal, Review Appraisals, All Appraisals)
-    review: 'Review Appraisals', 
-    all_appraisal: 'All Appraisals',
+    review: 'Review Appraisal', 
+    all_appraisal: 'All Appraisal',
     appraisal_status: 'Appraisal Status',
     
     // Appraisal Review Steps (Used in My/Review/All Appraisals)

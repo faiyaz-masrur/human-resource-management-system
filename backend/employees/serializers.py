@@ -84,13 +84,24 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
         )
 
         # Email credentials
+        email_subject = "Welcome to Sonali Intellect Limited! Your Account Credentials"
+
+        email_message = (
+            f"Hello {employee.name},\n\n"
+            f"Welcome to Sonali Intellect Limited!\n\n"
+            f"As part of Sonali Intellect Limited’s initiative to automate employee profiles, your employee account has been created.\n\n"
+            f"Your login details:\n\n"
+            f"• Email: {email}\n"
+            f"• Temporary Password: {raw_password}\n\n"
+            f"Please log in at {settings.LOGIN_URL} and update your password immediately.\n\n"
+            f"This is an automated message. For any assistance, please contact your HR representative.\n\n"
+            f"Thank you,\n\n"
+            f"Sonali Intellect Limited, HR Team"
+        )
+
         send_mail(
-            subject="Your Employee Account Credentials",
-            message=f"Hello {employee.name},\n\n"
-                    f"Your account has been created.\n"
-                    f"Username: {email}\n"
-                    f"Password: {raw_password}\n\n"
-                    f"Please change your password after first login.",
+            subject=email_subject,
+            message=email_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
             fail_silently=False,

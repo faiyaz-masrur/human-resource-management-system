@@ -3,7 +3,7 @@ from django.utils import timezone
 from appraisals.models import (
     EmployeeAppraisalTimer,
     ReportingManagerAppraisalTimer,
-    EmployeeAppraisalTrack,
+    EmployeeAppraisalStatusTrack,
     ReportingManagerAppraisalTrack,
 )
 from notifications.models import Notification
@@ -24,7 +24,7 @@ class Command(BaseCommand):
             # based on previous context, rather than the 'self_appraisal_start' used in the original snippet.
             # Please verify the exact field name if this causes an error.
             
-            for track in EmployeeAppraisalTrack.objects.filter(
+            for track in EmployeeAppraisalStatusTrack.objects.filter(
                 appraisal__appraisal_timer=timer, status="not_started"
             ):
                 Notification.objects.create(
@@ -63,7 +63,7 @@ class Command(BaseCommand):
         # --- Employee appraisal reminder (pending appraisals) ---
         for timer in EmployeeAppraisalTimer.objects.filter(employee_self_appraisal_remind=today):
             # NOTE: Assuming the field name is 'employee_self_appraisal_remind'
-            for track in EmployeeAppraisalTrack.objects.filter(
+            for track in EmployeeAppraisalStatusTrack.objects.filter(
                 appraisal__appraisal_timer=timer, status="not_started"
             ):
                 Notification.objects.create(
