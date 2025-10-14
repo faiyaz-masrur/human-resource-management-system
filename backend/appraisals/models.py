@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date
 from system.models import Employee
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # -------------------------
@@ -195,28 +196,28 @@ class ReportingManagerReview(models.Model):
 
 
 class AttendanceSummary(models.Model):
-
+    """
+    Summary of employee attendance and leave usage for the appraisal period.
+    """
     summary_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='attendance_summaries')
     
     # --- Leave Details ---
-       
     casual_leave_taken = models.IntegerField(default=0, verbose_name='Casual Leave Taken')
     sick_leave_taken = models.IntegerField(default=0, verbose_name='Sick Leave Taken')
     annual_leave_taken = models.IntegerField(default=0, verbose_name='Annual Leave Taken')
     
-    total_leave_taken =  casual_leave_taken + sick_leave_taken + annual_leave_taken
-    
+    # Added explicit field to store the calculated total
+    total_leave_taken = models.IntegerField(default=0, verbose_name='Total Leave Taken') 
     
     # --- Attendance Details ---
     on_time_count = models.IntegerField(default=0, verbose_name='On Time Count')
     delay_count = models.IntegerField(default=0, verbose_name='Delay Count')
     early_exit_count = models.IntegerField(default=0, verbose_name='Early Exit Count')
-    
-       
-    def save(self, *args, **kwargs):
         
-        self.total_leave_taken = self.annual_leave_taken + self.sick_leave_taken
+    def save(self, *args, **kwargs):
+        # CORRECTED: Includes all three leave types for total calculation
+        self.total_leave_taken = self.casual_leave_taken + self.sick_leave_taken + self.annual_leave_taken
 
         super().save(*args, **kwargs)
 
@@ -224,20 +225,22 @@ class AttendanceSummary(models.Model):
         return f"Attendance Summary for {self.employee.name}"
 
 class SalaryRecommendation(models.Model):
-
+    """
+    Stores current salary details and proposed salary adjustments 
+    under different recommendation scenarios.
+    """
     recommendation_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='salary_recommendations')
     
     current_basic = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     current_gross = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    #current_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # --- Promotion with Increment ---
     promo_with_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     promo_with_increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     promo_with_increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    # --- Promotion without Increment ---
+    # --- Promotion without Increment (Implied Pay Progression/PP) ---
     promo_without_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     promo_without_increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     promo_without_increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -247,14 +250,15 @@ class SalaryRecommendation(models.Model):
     increment_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     increment_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    # --- Pay Progression (Input Section) ---
+    # --- Pay Progression (PP) Only ---
     pp_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     pp_proposed_gross = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     pp_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     def calculate_variance(self):
+        """Calculates Gross Salary and Gross Difference for all scenarios."""
 
-        FACTOR = 0.55
+        FACTOR = 0.55 # Assuming Gross = Basic / FACTOR
         
         # Current salary
         if self.current_basic is not None:
@@ -263,21 +267,24 @@ class SalaryRecommendation(models.Model):
         # Promotion with Increment
         if self.promo_with_increment_proposed_basic is not None:
             self.promo_with_increment_proposed_gross = self.promo_with_increment_proposed_basic / FACTOR
-            self.promo_with_increment_proposed_gross_difference = self.promo_with_increment_proposed_gross - self.current_gross
+            # CORRECTED: using the actual model field name
+            self.promo_with_increment_gross_difference = self.promo_with_increment_proposed_gross - self.current_gross
         
         # Promotion without Increment
         if self.promo_without_increment_proposed_basic is not None:
             self.promo_without_increment_proposed_gross = self.promo_without_increment_proposed_basic / FACTOR
-            self.promo_without_increment_proposed_gross_difference = self.promo_without_increment_proposed_gross - self.current_gross
-             
+            # CORRECTED: using the actual model field name
+            self.promo_without_increment_gross_difference = self.promo_without_increment_proposed_gross - self.current_gross
+            
         # Increment (without promotion)
         if self.increment_proposed_basic is not None:
             self.increment_proposed_gross = self.increment_proposed_basic / FACTOR
             self.increment_gross_difference = self.increment_proposed_gross - self.current_gross
 
-        # Pay Progression
+        # Pay Progression (PP) Only
         if self.pp_proposed_basic is not None:
-            self.pp_proposed_gross = self.pp_proposed_basic * FACTOR
+            # CORRECTED: Assuming the Gross calculation should be consistent (Basic / FACTOR)
+            self.pp_proposed_gross = self.pp_proposed_basic / FACTOR
             self.pp_gross_difference = self.pp_proposed_gross - self.current_gross
 
     def save(self, *args, **kwargs):
@@ -288,7 +295,50 @@ class SalaryRecommendation(models.Model):
         return f"Salary Recommendation for {self.employee.name}"
 
 
-class HRReview(models.Model):
+# --- Shared Decision Logic ---
+
+DECISION_SUFFIXES = [
+    ('Promotion with Increment', 'promo_w_increment_yes', 'promo_w_increment_no'),
+    ('Promotion with PP only', 'promo_w_pp_only_yes', 'promo_w_pp_only_no'), # Changed 'hr_promo_w_pp_yes' to 'promo_w_pp_only_yes' for consistency across all models
+    ('Increment without Promotion', 'increment_w_no_promo_yes', 'increment_w_no_promo_no'),
+    ('Only Pay Progression (PP)', 'pp_only_yes', 'pp_only_no'),
+    ('Promotion/Increment/PP Deferred', 'deferred_yes', 'deferred_no'),
+]
+
+def _validate_review_decisions(instance, prefix):
+    """
+    Custom validation logic to ensure that for each decision pair,
+    exactly one of YES or NO is True, preventing (True, True) or (False, False).
+    """
+    errors = {}
+    
+    for name, yes_suffix, no_suffix in DECISION_SUFFIXES:
+        yes_attr = f'{prefix}_{yes_suffix}'
+        no_attr = f'{prefix}_{no_suffix}'
+
+        try:
+            yes = getattr(instance, yes_attr)
+            no = getattr(instance, no_attr)
+            
+            if yes == no:
+                error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
+                errors[yes_attr] = error_message
+                errors[no_attr] = error_message
+        except AttributeError:
+            # This handles cases where a model might be missing a decision pair, 
+            # though all provided models seem complete.
+            print(f"Validation Error: Decision pair attributes {yes_attr} or {no_attr} not found on instance.")
+
+
+    if errors:
+        raise ValidationError(errors)
+
+# -------------------------
+# Reviewer Models
+# -------------------------
+
+
+class HrReview(models.Model):
     """
     Review form for HR, linking to Salary and Attendance models and storing final decisions.
     Enforces a mandatory Yes or No decision for each recommendation, using 'hr_' prefixes.
@@ -595,24 +645,89 @@ class CeoReview(models.Model):
 # Tracking Models
 # -------------------------
 
-class EmployeeAppraisalTrack(models.Model):
+class EmployeeAppraisalStatusTrack(models.Model):
     """
-    Tracks appraisal progress for each employee.
+    Tracks appraisal progress for each employee based on submitted appraisals 
+    (for self-appraisal) and required reviews (for subsequent steps).
     """
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_track')
     last_updated = models.DateTimeField(auto_now=True)
     
-    # New boolean fields to track completion of each phase
-    # Set to null to represent 'not applicable' or 'not started'
-    self_appraisal_done = models.CharField(max_length=10, default="NA")
-    rm_review_done = models.CharField(max_length=10, default="NA")
-    hr_review_done = models.CharField(max_length=10, default="NA")
-    hod_review_done = models.CharField(max_length=10, default="NA")
-    coo_review_done = models.CharField(max_length=10, default="NA")
-    ceo_review_done = models.CharField(max_length=10, default="NA")
+    # NOTE: null=True, blank=True allow setting these fields to None (SQL NULL)
+    self_appraisal_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+    rm_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+    hr_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+    hod_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+    coo_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+    ceo_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Custom save method to set the tracking status.
+        
+        Logic for Reviewer Appraisals (rm_review_done onwards):
+        - If Employee boolean is True (review required) -> Track field = "False" (string, pending)
+        - If Employee boolean is False (review not required) -> Track field = None (NULL)
+        
+        Logic for Self-Appraisal (self_appraisal_done):
+        - Check if EmployeeAppraisal exists for this employee -> "True" (submitted)
+        - If not, -> "False" (not submitted)
+        """
+        try:
+            employee = self.employee
+        except ObjectDoesNotExist:
+            super().save(*args, **kwargs)
+            return
+
+        # --- 1. Logic for Self-Appraisal ---
+        try:
+            # Check if an EmployeeAppraisal instance exists for this employee.
+            # We assume EmployeeAppraisal has a ForeignKey named 'employee'.
+            is_self_appraisal_submitted = EmployeeAppraisal.objects.filter(employee=employee).exists()
+            
+            if is_self_appraisal_submitted:
+                self.self_appraisal_done = "True"
+            else:
+                # Required for every employee, set to "False" if not submitted.
+                self.self_appraisal_done = "False" 
+                
+        except Exception as e:
+            # Handle exceptions during the database query (e.g., if model is not defined/imported)
+            print(f"ERROR checking EmployeeAppraisal submission: {e}")
+            self.self_appraisal_done = "ERROR" # Use a distinct error state if necessary
+
+
+        # --- 2. Logic for Reviewer Appraisals (Based on Employee flags) ---
+        review_mappings = [
+            # Removed 'reviewed_by_employee' mapping
+            ('reviewed_by_rm', 'rm_review_done'),
+            ('reviewed_by_hr', 'hr_review_done'),
+            ('reviewed_by_hod', 'hod_review_done'),
+            ('reviewed_by_coo', 'coo_review_done'),
+            ('reviewed_by_ceo', 'ceo_review_done'),
+        ]
+        
+        for employee_attr, track_attr in review_mappings:
+            try:
+                # Safely get the boolean value from the Employee model, defaulting to False
+                is_review_required = getattr(employee, employee_attr, False) 
+                
+                if is_review_required:
+                    # If required, set the field to the string "False" (Pending)
+                    setattr(self, track_attr, "False")
+                else:
+                    # If not required, set the field to None (NULL)
+                    setattr(self, track_attr, None) 
+                    
+            except AttributeError:
+                print(f"ERROR: Employee model is missing expected attribute: {employee_attr}")
+                setattr(self, track_attr, "MISSING_FIELD")
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Appraisal Track - {self.employee.name})"
+        return f"Appraisal Status - {self.employee.name})"
+
 
 
 class ReportingManagerAppraisalTrack(models.Model):
