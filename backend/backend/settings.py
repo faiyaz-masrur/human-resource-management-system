@@ -179,14 +179,22 @@ SIMPLE_JWT = {
 }
 
 
-
+'''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'faiyaz.masrur@gmail.com'  
 EMAIL_HOST_PASSWORD = ''    
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER'''
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'noreply@sonaliintellect.com' 
+EMAIL_HOST_PASSWORD = 'SP4ft@111'         
+DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  
 
 # Company Information for Email Templates
 COMPANY_NAME = 'Sonali Intellect Limited'
