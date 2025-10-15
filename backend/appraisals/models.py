@@ -10,14 +10,10 @@ from django.core.exceptions import ObjectDoesNotExist
 # -------------------------
 
 from django.db import models
-from datetime import date # Assuming date is imported from datetime
-# Assuming Employee is imported from system.models or similar
+from datetime import date 
 
 class EmployeeAppraisalTimer(models.Model):
-    """
-    Defines the period for Employee self-appraisal submission.
-    """
-    # <<< TEMPORARILY ADDED: null=True, blank=True >>>
+
     employee_id = models.ForeignKey(
         Employee, 
         on_delete=models.PROTECT,
@@ -44,9 +40,7 @@ class EmployeeAppraisalTimer(models.Model):
         return f"Employee Appraisal Timer ({self.employee_self_appraisal_start} - {self.employee_self_appraisal_end})"
 
 class ReportingManagerAppraisalTimer(models.Model):
-    """
-    Defines the period for Reporting Manager reviews.
-    """
+
     reporting_manager_review_start = models.DateField(null=True, blank=True)
     reporting_manager_review_end = models.DateField(null=True, blank=True)
     reporting_manager_review_remind = models.DateField(null=True, blank=True)
@@ -67,9 +61,7 @@ class ReportingManagerAppraisalTimer(models.Model):
 
 
 class FinalReviewerAppraisalTimer(models.Model):
-    """
-    Defines the period for higher-level reviewers (HOD, COO, CEO, HR).
-    """
+
     final_review_start = models.DateField(null=True, blank=True)
     final_review_end = models.DateField(null=True, blank=True)
     final_review_remind = models.DateField(null=True, blank=True)
@@ -90,21 +82,20 @@ class FinalReviewerAppraisalTimer(models.Model):
 
 
 class EmployeeAppraisal(models.Model):
-    """
-    Appraisal form filled out by the employee.
-    
-    The review period is now linked to the AppraisalTimer model.
-    """
+
     appraisal_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='self_appraisals')
     
-    appraisal_month_year = models.DateField(auto_now_add=True)
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
     
     achievements_goal_completion = models.TextField(max_length=1000)
     training_development_plan = models.TextField(max_length=1000)
     training_needs = models.TextField(max_length=500)
     
-    # Fields to handle the multiple choice options
     soft_skills_training = models.BooleanField(default=False)
     business_training = models.BooleanField(default=False)
     technical_training = models.BooleanField(default=False)   
@@ -114,10 +105,7 @@ class EmployeeAppraisal(models.Model):
     
 
 class ReportingManagerReview(models.Model):
-    """
-    Review form for the Reporting Manager (RM). Uses 'rm_' prefix for all fields 
-    for clarity and uses OneToOneField to ensure only one review per appraisal.
-    """
+
     OVERALL_PERFORMANCE_RATING_CHOICES = [
         ('does_not_meet', 'Does not meet expectation'),
         ('partially_meets', 'Partially meets expectation'),
@@ -131,7 +119,13 @@ class ReportingManagerReview(models.Model):
         ('medium_potential', 'Medium potential'),
         ('high_potential', 'High potential'),
     ]
+    
+    appraisal_period = models.DateField(null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
     appraisal = models.OneToOneField(
         EmployeeAppraisal, 
         on_delete=models.PROTECT, 
@@ -196,9 +190,7 @@ class ReportingManagerReview(models.Model):
 
 
 class AttendanceSummary(models.Model):
-    """
-    Summary of employee attendance and leave usage for the appraisal period.
-    """
+
     summary_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='attendance_summaries')
     
@@ -216,7 +208,6 @@ class AttendanceSummary(models.Model):
     early_exit_count = models.IntegerField(default=0, verbose_name='Early Exit Count')
         
     def save(self, *args, **kwargs):
-        # CORRECTED: Includes all three leave types for total calculation
         self.total_leave_taken = self.casual_leave_taken + self.sick_leave_taken + self.annual_leave_taken
 
         super().save(*args, **kwargs)
@@ -225,10 +216,7 @@ class AttendanceSummary(models.Model):
         return f"Attendance Summary for {self.employee.name}"
 
 class SalaryRecommendation(models.Model):
-    """
-    Stores current salary details and proposed salary adjustments 
-    under different recommendation scenarios.
-    """
+
     recommendation_id = models.AutoField(primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='salary_recommendations')
     
@@ -256,9 +244,8 @@ class SalaryRecommendation(models.Model):
     pp_gross_difference = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     def calculate_variance(self):
-        """Calculates Gross Salary and Gross Difference for all scenarios."""
 
-        FACTOR = 0.55 # Assuming Gross = Basic / FACTOR
+        FACTOR = 0.55 
         
         # Current salary
         if self.current_basic is not None:
@@ -267,13 +254,11 @@ class SalaryRecommendation(models.Model):
         # Promotion with Increment
         if self.promo_with_increment_proposed_basic is not None:
             self.promo_with_increment_proposed_gross = self.promo_with_increment_proposed_basic / FACTOR
-            # CORRECTED: using the actual model field name
             self.promo_with_increment_gross_difference = self.promo_with_increment_proposed_gross - self.current_gross
         
         # Promotion without Increment
         if self.promo_without_increment_proposed_basic is not None:
             self.promo_without_increment_proposed_gross = self.promo_without_increment_proposed_basic / FACTOR
-            # CORRECTED: using the actual model field name
             self.promo_without_increment_gross_difference = self.promo_without_increment_proposed_gross - self.current_gross
             
         # Increment (without promotion)
@@ -283,12 +268,12 @@ class SalaryRecommendation(models.Model):
 
         # Pay Progression (PP) Only
         if self.pp_proposed_basic is not None:
-            # CORRECTED: Assuming the Gross calculation should be consistent (Basic / FACTOR)
+           
             self.pp_proposed_gross = self.pp_proposed_basic / FACTOR
             self.pp_gross_difference = self.pp_proposed_gross - self.current_gross
 
     def save(self, *args, **kwargs):
-        self.calculate_variance() # Calculate differences before saving
+        self.calculate_variance() 
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -299,17 +284,14 @@ class SalaryRecommendation(models.Model):
 
 DECISION_SUFFIXES = [
     ('Promotion with Increment', 'promo_w_increment_yes', 'promo_w_increment_no'),
-    ('Promotion with PP only', 'promo_w_pp_only_yes', 'promo_w_pp_only_no'), # Changed 'hr_promo_w_pp_yes' to 'promo_w_pp_only_yes' for consistency across all models
+    ('Promotion with PP only', 'promo_w_pp_only_yes', 'promo_w_pp_only_no'), 
     ('Increment without Promotion', 'increment_w_no_promo_yes', 'increment_w_no_promo_no'),
     ('Only Pay Progression (PP)', 'pp_only_yes', 'pp_only_no'),
     ('Promotion/Increment/PP Deferred', 'deferred_yes', 'deferred_no'),
 ]
 
 def _validate_review_decisions(instance, prefix):
-    """
-    Custom validation logic to ensure that for each decision pair,
-    exactly one of YES or NO is True, preventing (True, True) or (False, False).
-    """
+
     errors = {}
     
     for name, yes_suffix, no_suffix in DECISION_SUFFIXES:
@@ -324,9 +306,9 @@ def _validate_review_decisions(instance, prefix):
                 error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
                 errors[yes_attr] = error_message
                 errors[no_attr] = error_message
+                
         except AttributeError:
-            # This handles cases where a model might be missing a decision pair, 
-            # though all provided models seem complete.
+            
             print(f"Validation Error: Decision pair attributes {yes_attr} or {no_attr} not found on instance.")
 
 
@@ -342,6 +324,12 @@ class HrReview(models.Model):
 
     appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.PROTECT, related_name='hr_review')
     reviewer = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='hr_appraisals')
+    
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
     remarks_hr = models.TextField(max_length=1000, null=True, blank=True, verbose_name='Remarks from Human Resource')
@@ -381,10 +369,7 @@ class HrReview(models.Model):
     remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True)
     
     def clean(self):
-        """
-        Custom validation to ensure exactly one of Yes or No is True for each decision.
-        """
-        # Note: Using the actual field attribute names here for easy use with getattr (or direct check)
+
         decision_fields = [
             ('Promotion with Increment', self.hr_promo_w_increment_yes, self.hr_promo_w_increment_no, 'hr_promo_w_increment_yes', 'hr_promo_w_increment_no'),
             ('Promotion with PP only', self.hr_promo_w_pp_yes, self.hr_promo_w_pp_no, 'hr_promo_w_pp_yes', 'hr_promo_w_pp_no'),
@@ -394,20 +379,20 @@ class HrReview(models.Model):
         ]
         
         errors = {}
-        # name is for display, yes/no are values, yes_field/no_field are attribute names
+        
         for name, yes, no, yes_field, no_field in decision_fields:
-            # Enforces that (yes XOR no) is True, preventing (True AND True) and (False AND False)
+
             if yes == no:
                 error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
                 errors[yes_field] = error_message
                 errors[no_field] = error_message
 
         if errors:
-            # Raise the ValidationError using the field names
+
             raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
-        # Always run full validation before saving
+        
         self.full_clean() 
         super().save(*args, **kwargs)
 
@@ -426,30 +411,24 @@ DECISION_SUFFIXES = [
 # --- Shared Validation Logic ---
 
 def _validate_review_decisions(instance, prefix):
-    """
-    Custom validation logic to ensure that for each decision pair,
-    exactly one of YES or NO is True, preventing (True, True) or (False, False).
-    It dynamically constructs the attribute names using the provided prefix.
-    """
+
     errors = {}
     
     for name, yes_suffix, no_suffix in DECISION_SUFFIXES:
         yes_attr = f'{prefix}_{yes_suffix}'
         no_attr = f'{prefix}_{no_suffix}'
 
-        # Use getattr to fetch the dynamic field values
         yes = getattr(instance, yes_attr)
         no = getattr(instance, no_attr)
         
         if yes == no:
-            # This condition catches both (True, True) -> Ambiguous AND (False, False) -> Unanswered
+            
             error_message = f"A decision must be explicitly made ('Yes' or 'No') for '{name}'. It cannot be unanswered or ambiguous."
             
-            # Apply error to the specific fields for better form handling
-            if yes: # Ambiguous (True, True)
+            if yes: 
                 errors[yes_attr] = error_message
                 errors[no_attr] = error_message
-            else: # Unanswered (False, False)
+            else: 
                 errors[yes_attr] = error_message
                 errors[no_attr] = error_message
 
@@ -459,10 +438,7 @@ def _validate_review_decisions(instance, prefix):
 # --- 1. Head of Department (HOD) Review Model ---
 
 class HodReview(models.Model):
-    """
-    The specific model for the Head of Department's final review.
-    Uses OneToOneField to ensure only one HOD review per appraisal.
-    """
+
     appraisal = models.OneToOneField(
         EmployeeAppraisal, 
         on_delete=models.PROTECT, 
@@ -475,6 +451,12 @@ class HodReview(models.Model):
         related_name='hod_appraisals',
         verbose_name='HOD Reviewer'
     )
+    
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
     remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (HOD)')
@@ -510,7 +492,6 @@ class HodReview(models.Model):
     remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (HOD)')
     
     def clean(self):
-        # Run the shared validation logic with the HOD prefix
         _validate_review_decisions(self, 'hod')
             
     def save(self, *args, **kwargs):
@@ -523,10 +504,7 @@ class HodReview(models.Model):
 # --- 2. Chief Operating Officer (COO) Review Model ---
 
 class CooReview(models.Model):
-    """
-    The specific model for the Chief Operating Officer's final review.
-    Uses OneToOneField to ensure only one COO review per appraisal.
-    """
+
     appraisal = models.OneToOneField(
         EmployeeAppraisal, 
         on_delete=models.PROTECT, 
@@ -539,6 +517,12 @@ class CooReview(models.Model):
         related_name='coo_appraisals',
         verbose_name='COO Reviewer'
     )
+    
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
     remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (COO)')
@@ -581,10 +565,7 @@ class CooReview(models.Model):
 # --- 3. Chief Executive Officer (CEO) Review Model ---
 
 class CeoReview(models.Model):
-    """
-    The specific model for the Chief Executive Officer's final review.
-    Uses OneToOneField to ensure only one CEO review per appraisal.
-    """
+
     appraisal = models.OneToOneField(
         EmployeeAppraisal, 
         on_delete=models.PROTECT, 
@@ -597,6 +578,12 @@ class CeoReview(models.Model):
         related_name='ceo_appraisals',
         verbose_name='CEO Reviewer'
     )
+    
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
     remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (CEO)')
@@ -643,14 +630,11 @@ class CeoReview(models.Model):
 # -------------------------
 
 class EmployeeAppraisalStatusTrack(models.Model):
-    """
-    Tracks appraisal progress for each employee based on submitted appraisals 
-    (for self-appraisal) and required reviews (for subsequent steps).
-    """
-    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_track')
+
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.CASCADE)
     last_updated = models.DateTimeField(auto_now=True)
     
-    # NOTE: null=True, blank=True allow setting these fields to None (SQL NULL)
     self_appraisal_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
     rm_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
     hr_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
@@ -659,17 +643,7 @@ class EmployeeAppraisalStatusTrack(models.Model):
     ceo_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        """
-        Custom save method to set the tracking status.
-        
-        Logic for Reviewer Appraisals (rm_review_done onwards):
-        - If Employee boolean is True (review required) -> Track field = "False" (string, pending)
-        - If Employee boolean is False (review not required) -> Track field = None (NULL)
-        
-        Logic for Self-Appraisal (self_appraisal_done):
-        - Check if EmployeeAppraisal exists for this employee -> "True" (submitted)
-        - If not, -> "False" (not submitted)
-        """
+
         try:
             employee = self.employee
         except ObjectDoesNotExist:
@@ -678,25 +652,20 @@ class EmployeeAppraisalStatusTrack(models.Model):
 
         # --- 1. Logic for Self-Appraisal ---
         try:
-            # Check if an EmployeeAppraisal instance exists for this employee.
-            # We assume EmployeeAppraisal has a ForeignKey named 'employee'.
+
             is_self_appraisal_submitted = EmployeeAppraisal.objects.filter(employee=employee).exists()
             
             if is_self_appraisal_submitted:
                 self.self_appraisal_done = "True"
             else:
-                # Required for every employee, set to "False" if not submitted.
                 self.self_appraisal_done = "False" 
                 
         except Exception as e:
-            # Handle exceptions during the database query (e.g., if model is not defined/imported)
             print(f"ERROR checking EmployeeAppraisal submission: {e}")
-            self.self_appraisal_done = "ERROR" # Use a distinct error state if necessary
-
+            self.self_appraisal_done = "ERROR" 
 
         # --- 2. Logic for Reviewer Appraisals (Based on Employee flags) ---
         review_mappings = [
-            # Removed 'reviewed_by_employee' mapping
             ('reviewed_by_rm', 'rm_review_done'),
             ('reviewed_by_hr', 'hr_review_done'),
             ('reviewed_by_hod', 'hod_review_done'),
@@ -706,14 +675,12 @@ class EmployeeAppraisalStatusTrack(models.Model):
         
         for employee_attr, track_attr in review_mappings:
             try:
-                # Safely get the boolean value from the Employee model, defaulting to False
                 is_review_required = getattr(employee, employee_attr, False) 
                 
                 if is_review_required:
-                    # If required, set the field to the string "False" (Pending)
                     setattr(self, track_attr, "False")
                 else:
-                    # If not required, set the field to None (NULL)
+
                     setattr(self, track_attr, None) 
                     
             except AttributeError:
@@ -728,9 +695,7 @@ class EmployeeAppraisalStatusTrack(models.Model):
 
 
 class ReportingManagerAppraisalTrack(models.Model):
-    """
-    Tracks overall review progress of a Reporting Manager across supervisees.
-    """
+
     STATUS_CHOICES = [
         ('not_started', 'Not Started'),
         ('in_progress', 'In Progress'),
@@ -758,3 +723,79 @@ class ReportingManagerAppraisalTrack(models.Model):
 
     def __str__(self):
         return f"RM Track - {self.reporting_manager} ({self.status}, {self.progress_count}/{self.total_count})"
+
+
+class AppraisalDetails(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_details')
+    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.CASCADE, related_name='appraisal_details')
+    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.CASCADE, related_name='appraisal_details')
+    hr_review = models.OneToOneField(HrReview, on_delete=models.CASCADE, related_name='appraisal_details')
+    hod_review = models.OneToOneField(HodReview, on_delete=models.CASCADE, related_name='appraisal_details')
+    coo_review = models.OneToOneField(CooReview, on_delete=models.CASCADE, related_name='appraisal_details')
+    ceo_review = models.OneToOneField(CeoReview, on_delete=models.CASCADE, related_name='appraisal_details')
+
+    appraisal_period = models.DateField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Appraisal Details for {self.employee.name}"
+
+    def set_appraisal_start_date(self):
+        try:
+            timer = EmployeeAppraisalTimer.objects.filter(employee_id=self.employee).first()
+            if timer and timer.employee_self_appraisal_start:
+                self.appraisal_start_date = timer.employee_self_appraisal_start
+        except EmployeeAppraisalTimer.DoesNotExist:
+            pass
+
+    
+class AppraisalBackup(models.Model):
+
+    employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='appraisal_backups')
+    
+    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.PROTECT, related_name='backup')
+    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.PROTECT, related_name='backup')
+    hr_review = models.OneToOneField(HrReview, on_delete=models.PROTECT, related_name='backup')
+    hod_review = models.OneToOneField(HodReview, on_delete=models.PROTECT, related_name='backup')
+    coo_review = models.OneToOneField(CooReview, on_delete=models.PROTECT, related_name='backup')
+    ceo_review = models.OneToOneField(CeoReview, on_delete=models.PROTECT, related_name='backup')
+    
+    backup_date = models.DateField(auto_now_add=True, verbose_name="Backup Date")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Appraisal Backups"
+        ordering = ['-backup_date']
+
+    def __str__(self):
+        return f"Backup for {self.employee.name} on {self.backup_date}"
+
+
+class AllAppraisalRecord(models.Model):
+
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    
+    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.CASCADE, related_name='all_appraisal')
+    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.CASCADE, related_name='all_appraisal')
+    hr_review = models.OneToOneField(HrReview, on_delete=models.CASCADE, related_name='all_appraisal')
+    hod_review = models.OneToOneField(HodReview, on_delete=models.CASCADE, related_name='all_appraisal')
+    coo_review = models.OneToOneField(CooReview, on_delete=models.CASCADE, related_name='all_appraisal')
+    ceo_review = models.OneToOneField(CeoReview, on_delete=models.CASCADE, related_name='all_appraisal')
+
+    appraisal_period = models.DateField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "All Appraisals"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"All Appraisal Record for {self.employee.name}"
