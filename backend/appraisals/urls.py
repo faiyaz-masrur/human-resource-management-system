@@ -5,10 +5,12 @@ urlpatterns = [
     # These paths do not need the 'api/' prefix because it is already handled
     # by the root urls.py file.
     path('self-appraisal/', views.EmployeeSelfAppraisalAPIView.as_view(), name='api_employee_self_appraisal'),
-    path('manager-review-list/', views.ManagerAppraisalListAPIView.as_view(), name='manager-appraisal-list'),
-    path('manager-review/<int:appraisal_id>/', views.ReportingManagerReviewAPIView.as_view(), name='api_manager_review'),
+    path('rm-review-list/', views.ManagerAppraisalListAPIView.as_view(), name='manager-appraisal-list'),
+    path('rm-review/<int:appraisal_id>/', views.ReportingManagerReviewAPIView.as_view(), name='api_manager_review'),
     path('hr-review/<int:appraisal_id>/', views.HRReviewAPIView.as_view(), name='api_hr_review'),
-    path('final-review/<int:appraisal_id>/', views.FinalReviewAPIView.as_view(), name='api_final_review'),
+    path('hod-review/<int:appraisal_id>/', views.HODReviewAPIView.as_view(), name='api_hod_review'),
+    path('coo-review/<int:appraisal_id>/', views.COOReviewAPIView.as_view(), name='api_coo_review'),
+    path('ceo-review/<int:appraisal_id>/', views.CEOReviewAPIView.as_view(), name='api_ceo_review'),
     
     # Timer Creation Paths
     path('admin/employee-timer/create/', views.EmployeeAppraisalTimerCreationAPIView.as_view(), name='api_create_employee_timer'),
