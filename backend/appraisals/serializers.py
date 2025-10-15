@@ -8,8 +8,8 @@ from .models import (
     AttendanceSummary,
     SalaryRecommendation,
     HrReview,
-    HodReview,   
-    CooReview,   
+    HodReview,  
+    CooReview,  
     CeoReview,
     EmployeeAppraisalStatusTrack,
     ReportingManagerAppraisalTrack,
@@ -67,31 +67,42 @@ class FinalReviewerAppraisalTimerSerializer(serializers.ModelSerializer):
 class EmployeeAppraisalSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeAppraisal
-        fields = '__all__'
+        # --- FIX: MUST use an explicit list/tuple instead of '__all__' (which is a string) 
+        # for proper inheritance concatenation in EmployeeAppraisalDetailSerializer.
+        # IMPORTANT: You must ensure this list contains ALL the direct fields from 
+        # your EmployeeAppraisal model that you wish to expose.
+        fields = [
+            'id', 
+            'employee', # Assuming this is a field
+            'reviewer', # Assuming this is a field
+            'status',
+            'appraisal_month_year',
+            # Add ALL other fields from your EmployeeAppraisal model here, e.g.:
+            # 'goals', 'self_rating', 'comments', 'submission_date', etc.
+        ]
         # Explicitly setting all auto-fields as read-only for security
         read_only_fields = ['id', 'appraisal_month_year']
         
-def create(self, validated_data):
+    def create(self, validated_data):
 
-    # 1. First, call the parent class's create method to save the new appraisal instance.
-    appraisal_instance = super().create(validated_data)
-    employee = appraisal_instance.employee
+        # 1. First, call the parent class's create method to save the new appraisal instance.
+        appraisal_instance = super().create(validated_data)
+        employee = appraisal_instance.employee
 
-    try:
-        # 2. Get the corresponding status track instance for the employee.
-        # get_or_create is used to ensure the track exists for this employee.
-        track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
-        
-        track.self_appraisal_done = True
-        
-        track.save()
-        
-    except Exception as e:
+        try:
+            # 2. Get the corresponding status track instance for the employee.
+            # get_or_create is used to ensure the track exists for this employee.
+            track, _ = EmployeeAppraisalStatusTrack.objects.get_or_create(employee=employee)
+            
+            track.self_appraisal_done = True
+            
+            track.save()
+            
+        except Exception as e:
 
-        print(f"Error updating self_appraisal_done status track after creation: {e}") 
+            print(f"Error updating self_appraisal_done status track after creation: {e}") 
 
-    return appraisal_instance
-
+        return appraisal_instance
 
 
 class ReportingManagerReviewSerializer(serializers.ModelSerializer):
@@ -117,7 +128,7 @@ class ReportingManagerReviewSerializer(serializers.ModelSerializer):
 
             print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on ReportingManagerReview.")
         except Exception as e:
-           
+            
             print(f"Error updating rm_review_done status track after creation: {e}") 
 
         return review_instance
@@ -146,7 +157,7 @@ class HRReviewSerializer(serializers.ModelSerializer):
 
             print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on HRReview.")
         except Exception as e:
-           
+            
             print(f"Error updating rm_review_done status track after creation: {e}") 
 
         return review_instance
@@ -175,7 +186,7 @@ class HODReviewSerializer(serializers.ModelSerializer):
 
             print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on HODReview.")
         except Exception as e:
-           
+            
             print(f"Error updating rm_review_done status track after creation: {e}") 
 
         return review_instance
@@ -203,7 +214,7 @@ class COOReviewSerializer(serializers.ModelSerializer):
 
             print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on CooReview.")
         except Exception as e:
-           
+            
             print(f"Error updating rm_review_done status track after creation: {e}") 
 
         return review_instance
@@ -231,7 +242,7 @@ class CEOReviewSerializer(serializers.ModelSerializer):
 
             print(f"Warning: Cannot update status track. Missing 'appraisal' or 'employee' relation on CeoReview.")
         except Exception as e:
-           
+            
             print(f"Error updating rm_review_done status track after creation: {e}") 
 
         return review_instance
@@ -258,19 +269,22 @@ class ReportingManagerAppraisalTrackSerializer(serializers.ModelSerializer):
 
 class EmployeeAppraisalDetailSerializer(EmployeeAppraisalSerializer):
 
+    # Nested fields definitions
     attendance_summary = AttendanceSummarySerializer(read_only=True) 
-    salary_variance = SalaryRecommendationSerializer(read_only=True)       
+    salary_variance = SalaryRecommendationSerializer(read_only=True)     
     rm_review = ReportingManagerReviewSerializer(read_only=True) 
-    hr_review = HRReviewSerializer(read_only=True)                   
+    hr_review = HRReviewSerializer(read_only=True)                 
     hod_review = HODReviewSerializer(read_only=True)
     coo_review = COOReviewSerializer(read_only=True)
-    ceo_review = CEOReviewSerializer(read_only=True)             
+    ceo_review = CEOReviewSerializer(read_only=True)         
 
     class Meta(EmployeeAppraisalSerializer.Meta):
 
+        # FIX: The parent's fields attribute is now a list, allowing concatenation.
+        # FIX: Changed 'salary_recommendation' to 'salary_variance' to match the attribute name above.
         fields = EmployeeAppraisalSerializer.Meta.fields + [
             'attendance_summary', 
-            'salary_recommendation', 
+            'salary_variance', 
             'rm_review', 
             'hr_review', 
             'hod_review', 
