@@ -1,5 +1,7 @@
 from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import get_random_string
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -11,23 +13,31 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        from .models import Role
+    def create_superuser(self, email, id=None, **extra_fields):
+        from .models import Role, generate_employee_id
+        from employees.serializers import EmployeeOfficialDetailSerializer
 
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(_('Superuser must have is_staff=True.'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(_('Superuser must have is_superuser=True.'))
+        if not id:
+            id = generate_employee_id()
 
-        user = self.create_user(email, password, **extra_fields)
+        raw_password = get_random_string(length=8)
 
-        super_role, created = Role.objects.get_or_create(name="SUPER")
+        super_role, _ = Role.objects.get_or_create(name="SUPER")
 
-        user.role = super_role
-        user.save(using=self._db)
+        data = {
+            "id": id,
+            "email": email,
+            "raw_password": raw_password,
+            **extra_fields,
+        }
 
-        return user
+        serializer = EmployeeOfficialDetailSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        employee = serializer.save(role=super_role)  # save role directly
+
+        print(f"Superuser created! Email: {email}, Password: {raw_password}")
+        return employee

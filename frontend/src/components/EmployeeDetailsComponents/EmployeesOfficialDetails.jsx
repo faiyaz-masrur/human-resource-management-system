@@ -224,7 +224,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             return;
           }
           const res = await api.put(
-            `employees/my-official-details/${officialdetails.id}/`,
+            `employees/my-official-details/`,
             officialdetails
           );
           console.log("Updateed Official Details:", res.status);
@@ -257,7 +257,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={officialdetails.id ? !rolePermissions.edit : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
+              disabled={toUpdate ? true : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
               required
             />
           </div>
@@ -268,7 +268,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={officialdetails.email ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? true : !rolePermissions.create}
               required
             />
           </div>
@@ -279,7 +279,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={officialdetails.name ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -293,7 +293,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.department || ""}
               onChange={(e) => handleChange("department", e.target.value)}
-              disabled={officialdetails.department ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -312,7 +312,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                 setGradeId(parseInt(e.target.value))
                 handleChange("grade", e.target.value)
               }}
-              disabled={officialdetails.grade ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -329,7 +329,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={officialdetails.joining_date ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -343,7 +343,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.designation || ""}
               onChange={(e) => handleChange("designation", e.target.value)}
-              disabled={officialdetails.designation ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -361,7 +361,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               onChange={(e) =>
                 handleChange("reporting_manager", e.target.value)
               }
-              disabled={officialdetails.reporting_manager ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -378,7 +378,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={officialdetails.basic_salary ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -391,7 +391,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.role || ""}
               onChange={(e) => handleChange("role", e.target.value)}
-              disabled={officialdetails.role ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -470,7 +470,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={officialdetails[`reviewed_by_${role}`] ? !rolePermissions.edit : !rolePermissions.create}
+                  disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>
@@ -480,14 +480,14 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
         {/* Actions */}
         <div className="form-actions">
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
-          {(user?.is_hr && employee_id) && (
+          {(toUpdate ? rolePermissions.edit : rolePermissions.create) && (
             <button className="btn-success" onClick={handleSave}>
               Save
             </button>
           )}
+          <button className="btn-primary" onClick={onNext}>
+            Next
+          </button>
         </div>
       </div>
     </div>

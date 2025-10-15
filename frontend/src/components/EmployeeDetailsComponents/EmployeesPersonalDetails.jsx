@@ -10,6 +10,8 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
 
   const defaultPersonalDetails = {
+    id: "",
+    employee: "",
     employee_name: "",
     father_name: "",
     mother_name: "",
@@ -32,13 +34,39 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const [bloodGroupList, setBloodGroupList] = useState([]);
   const [maritalStatusList, setMaritalStatusList] = useState([]);
   const [emergencyContactRelationshipList, setEmergencyContactRelationshipList] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeePersonalDetail"}/`);
+        } else if(view.isOwnProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"MyProfile"}/${"MyPersonalDetail"}/`);
+        } else {
+          return;
+        }
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
 
 
   useEffect(() => {
     const fetchPersonalDetails = async () => {
       try {
         let res;
-        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+        if (!rolePermissions.view) {
+          return;
+        }
+        if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-personal-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-personal-details/');
@@ -62,7 +90,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       try {
         const res = await api.get(`system/configurations/blood-group-list/`);
         console.log("Blood Group list: ",res?.data)
-        setBloodGroupList(res?.data || []); 
+        setBloodGroupList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
         console.warn("Error Fetching Blood Group List");
         setBloodGroupList([]); 
@@ -78,7 +106,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       try {
         const res = await api.get(`system/configurations/marital-status-list/`);
         console.log("Marital Status List: ", res?.data)
-        setMaritalStatusList(res?.data || []);
+        setMaritalStatusList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching Marital Status List");
         setMaritalStatusList([]);
@@ -94,7 +122,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       try {
         const res = await api.get(`system/configurations/emergency-contact-relationship-list/`);
         console.log("Emergency Contact Relationship List: ", res?.data)
-        setEmergencyContactRelationshipList(res?.data || []);
+        setEmergencyContactRelationshipList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching Emergency Contact Relationship List");
         setEmergencyContactRelationshipList([]);
@@ -112,35 +140,76 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
   const handleSave = async () => {
     try {
-      let res;
-      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
-        res = await api.put(
-          `employees/employee-personal-details/${employee_id}/`,
-          personalDetails
-        );
-        console.log("Updateed Employee Personal Details:", res.data);
-        if(res.status === 200){
-          alert("Employee personal details updated successfully!");
+      if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+        if(personalDetails.id){
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
+          const res = await api.put(
+            `employees/employee-personal-details/${employee_id}/`,
+            personalDetails
+          );
+          console.log("Updateed Employee Personal Details:", res?.data);
+          if(res.status === 200){
+            alert("Employee personal details updated successfully!");
+          } else {
+            alert("Something went wrong!")
+          }
         } else {
-          alert("Something went wrong!")
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
+          const res = await api.post(
+            `employees/employee-personal-details/${employee_id}/`,
+            personalDetails
+          );
+          console.log("Created Employee Personal Details:", res?.data);
+          if(res.status === 201){
+            alert("Employee personal details created successfully!");
+          } else {
+            alert("Something went wrong!")
+          }    
         }
       } else if(view.isOwnProfileView){
-        res = await api.put(
-          `employees/my-personal-details/`,
-          personalDetails
-        );
-        console.log("Updateed Personal Details:", res.status);
-        if(res.status === 200){
-          alert("Personal details updated successfully!");
+        if(personalDetails.id){
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
+          const res = await api.put(
+            `employees/my-personal-details/`,
+            personalDetails
+          );
+          console.log("Updateed Personal Details:", res?.data);
+          if(res.status === 200){
+            alert("Your personal details updated successfully!");
+          } else {
+            alert("Something went wrong!")
+          }
         } else {
-          alert("Something went wrong!")
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
+          const res = await api.post(
+            `employees/my-personal-details/`,
+            personalDetails
+          );
+          console.log("Created Personal Details:", res?.data);
+          if(res.status === 201){
+            alert("Your personal details created successfully!");
+          } else {
+            alert("Something went wrong!")
+          }    
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        alert("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
-      console.error("Error saving employee personal details:", error.response?.data || error);
+      console.error("Error saving employee personal details:", error?.response?.data || error);
       alert("Failed to save personal details.");
     }
   };
@@ -160,51 +229,29 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               disabled
             />
           </div>
+
           <div className="form-group">
             <label>Phone Number*</label>
-            {
-              user?.is_hr ? (
-                <input
-                  type="tel"
-                  className="form-input"
-                  value={personalDetails.phone_number || ""}
-                  onChange={(e) => handleChange("phone_number", e.target.value)}
-                  required
-                />
-              ) : (
-                <input
-                  type="tel"
-                  className="form-input"
-                  value={personalDetails.phone_number || ""}
-                  onChange={(e) => handleChange("phone_number", e.target.value)}
-                  disabled={personalDetails.phone_number}
-                  required
-                />
-              )
-            }
+            <input
+              type="tel"
+              className="form-input"
+              value={personalDetails.phone_number || ""}
+              onChange={(e) => handleChange("phone_number", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
+            />
           </div>
+
           <div className="form-group">
             <label>National ID*</label>
-            {
-              user?.is_hr ? (
-                <input
-                  type="text"
-                  className="form-input"
-                  value={personalDetails.national_id || ""}
-                  onChange={(e) => handleChange("national_id", e.target.value)}
-                  required
-                />
-              ) : (
-                <input
-                  type="text"
-                  className="form-input"
-                  value={personalDetails.national_id || ""}
-                  onChange={(e) => handleChange("national_id", e.target.value)}
-                  disabled={personalDetails.national_id}
-                  required
-                />
-              )
-            }
+            <input
+              type="text"
+              className="form-input"
+              value={personalDetails.national_id || ""}
+              onChange={(e) => handleChange("national_id", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
+            />
           </div>
         </div>
 
@@ -217,8 +264,10 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.personal_email || ""}
               onChange={(e) => handleChange("personal_email", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Father's Name*</label>
             <input
@@ -226,8 +275,10 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.father_name || ""}
               onChange={(e) => handleChange("father_name", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Mother's Name*</label>
             <input
@@ -235,6 +286,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.mother_name || ""}
               onChange={(e) => handleChange("mother_name", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
         </div>
@@ -248,8 +300,10 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="date-input"
               value={personalDetails.date_of_birth || ""}
               onChange={(e) => handleChange("date_of_birth", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Passport Number</label>
             <input
@@ -257,14 +311,17 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.passport_number || ""}
               onChange={(e) => handleChange("passport_number", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Blood Group*</label>
             <select
               className="form-select"
               value={personalDetails.blood_group || ""}
               onChange={(e) => handleChange("blood_group", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {bloodGroupList.map((bloodGroup)=>(
@@ -282,6 +339,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-select"
               value={personalDetails.marital_status || ""}
               onChange={(e) => handleChange("marital_status", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {maritalStatusList.map((maritalStatus)=>(
@@ -289,6 +347,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               ))}
             </select>
           </div>
+
           <div className="form-group">
             <label>Spouse Name*</label>
             <input
@@ -296,8 +355,10 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.spouse_name || ""}
               onChange={(e) => handleChange("spouse_name", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Spouse NID*</label>
             <input
@@ -305,6 +366,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.spouse_nid || ""}
               onChange={(e) => handleChange("spouse_nid", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
         </div>
@@ -318,14 +380,17 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.emergency_contact_name || ""}
               onChange={(e) => handleChange("emergency_contact_name", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
+
           <div className="form-group">
             <label>Relationship*</label>
             <select
               className="form-select"
               value={personalDetails.emergency_contact_relationship || ""}
               onChange={(e) => handleChange("emergency_contact_relationship", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {emergencyContactRelationshipList.map((relationship)=>(
@@ -333,6 +398,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               ))}
             </select>
           </div>
+
           <div className="form-group">
             <label>Emergency Contact Number*</label>
             <input
@@ -340,17 +406,20 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={personalDetails.emergency_contact_number || ""}
               onChange={(e) => handleChange("emergency_contact_number", e.target.value)}
+              disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="form-actions">
+          {(personalDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+            <button className="btn-success" onClick={handleSave}>
+              Save
+            </button>
+          )}
           <button className="btn-primary" onClick={onNext}>
             Next
-          </button>
-          <button className="btn-success" onClick={handleSave}>
-            Save
           </button>
           <button className="btn-secondary" onClick={onBack}>
             Back

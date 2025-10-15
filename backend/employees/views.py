@@ -26,13 +26,55 @@ class EmployeeOfficialDetailViewSet(viewsets.ModelViewSet):
     sub_workspace = "EmployeeOfficialDetail"
 
 
-class EmployeePersonalDetailView(generics.RetrieveUpdateAPIView):
+class EmployeePersonalDetailView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
     queryset = PersonalDetail.objects.all()
     serializer_class = EmployeePersonalDetailSerializer
     lookup_field = 'employee'  
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeePersonalDetail"
+
+    def perform_create(self, serializer):
+        id = self.kwargs.get("employee")
+        employee = get_object_or_404(Employee, pk=id)
+
+        # Check if an address already exists
+        if PersonalDetail.objects.filter(employee=employee).exists():
+            raise ValidationError("Personal details already exists for this employee.")
+
+        serializer.save(employee=employee)
+
+    def get_object(self):
+        employee_id = self.kwargs.get("employee")
+        employee = get_object_or_404(Employee, pk=employee_id)
+
+        personal_detail = PersonalDetail.objects.filter(employee=employee).first()
+
+        if not personal_detail:
+            personal_detail = PersonalDetail(employee=employee)
+
+        self.request._employee_instance = employee 
+
+        return personal_detail
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
 
 class EmployeeAddressView(
@@ -45,13 +87,9 @@ class EmployeeAddressView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeeAddress"
-    lookup_field = "employee"  # Matches the URL param <employee>
     queryset = Address.objects.all()
 
     def perform_create(self, serializer):
-        """
-        Create address only if it doesn't exist for this employee.
-        """
         id = self.kwargs.get("employee")
         employee = get_object_or_404(Employee, pk=id)
 
@@ -181,7 +219,7 @@ class EmployeeAttatchmentView(generics.RetrieveUpdateAPIView):
 
 #View for employees to get, update their own details
 
-class MyOfficialDetailView(generics.RetrieveAPIView):
+class MyOfficialDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = EmployeeOfficialDetailSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
@@ -191,14 +229,50 @@ class MyOfficialDetailView(generics.RetrieveAPIView):
         return self.request.user
 
 
-class MyPersonalDetailView(generics.RetrieveUpdateAPIView):
+class MyPersonalDetailView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
     serializer_class = EmployeePersonalDetailSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
     sub_workspace = "MyPersonalDetail"
 
+    def perform_create(self, serializer):
+        employee = self.request.user
+
+        if PersonalDetail.objects.filter(employee=employee).exists():
+            raise ValidationError("Personal details already exists for this employee.")
+
+        serializer.save(employee=employee)
+
     def get_object(self):
-        return get_object_or_404(PersonalDetail, employee=self.request.user)
+        employee = self.request.user
+
+        personal_detail = PersonalDetail.objects.filter(employee=employee).first()
+
+        if not personal_detail:
+            personal_detail = PersonalDetail(employee=employee)
+
+        self.request._employee_instance = employee  
+
+        return personal_detail
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
     
 
 class MyAddressView(
