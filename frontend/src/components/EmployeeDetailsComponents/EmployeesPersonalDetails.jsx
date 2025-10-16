@@ -36,6 +36,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const [emergencyContactRelationshipList, setEmergencyContactRelationshipList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
+
   useEffect(() => {
     const fetchRolePermissions = async () => {
       try {
@@ -82,7 +83,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchPersonalDetails();
-  }, []);
+  }, [rolePermissions]);
 
 
   useEffect(() => {
@@ -205,7 +206,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           }    
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        alert("You don't have permission to perform this action. First save employee official details.");
         return;
       }
     } catch (error) {

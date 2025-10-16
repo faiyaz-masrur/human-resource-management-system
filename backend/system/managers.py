@@ -1,6 +1,5 @@
 from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import gettext_lazy as _
-from django.utils.crypto import get_random_string
 
 
 class CustomUserManager(BaseUserManager):
@@ -13,31 +12,24 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, id=None, **extra_fields):
-        from .models import Role, generate_employee_id
-        from employees.serializers import EmployeeOfficialDetailSerializer
+    def create_superuser(self, email, password=None, **extra_fields):
+        from .models import Role
 
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
 
-        if not id:
-            id = generate_employee_id()
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
 
-        raw_password = get_random_string(length=8)
+        user = self.create_user(email, password, **extra_fields)
 
-        super_role, _ = Role.objects.get_or_create(name="SUPER")
+        super_role, created = Role.objects.get_or_create(name="SUPER")
 
-        data = {
-            "id": id,
-            "email": email,
-            "raw_password": raw_password,
-            **extra_fields,
-        }
+        user.role = super_role
+        user.save(using=self._db)
 
-        serializer = EmployeeOfficialDetailSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        employee = serializer.save(role=super_role)  # save role directly
+        return user
 
-        print(f"Superuser created! Email: {email}, Password: {raw_password}")
-        return employee

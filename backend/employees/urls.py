@@ -10,8 +10,8 @@ from .views import (EmployeeOfficialDetailViewSet,
                     MyWorkExperienceView,
                     EmployeeEducationView,
                     MyEducationeView,
-                    EmployeeProfessionalCertificateView,
-                    MyProfessionalCertificateView,
+                    EmployeeTrainingCertificateView,
+                    MyTrainingCertificateView,
                     EmployeeAttatchmentView,
                     MyAttatchmentView,
                     EmployeeListView
@@ -30,8 +30,8 @@ urlpatterns = [
     path('employee-work-experience/<str:employee>/<int:work_experience>/', EmployeeWorkExperienceView.as_view(), name='employee-work-experience'),
     path('employee-education/<str:employee>/', EmployeeEducationView.as_view(), name='employee-education-all'),
     path('employee-education/<str:employee>/<int:education>/', EmployeeEducationView.as_view(), name='employee-education'),
-    path('employee-professional-certificate/<str:employee>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate-all'),
-    path('employee-professional-certificate/<str:employee>/<int:professional_certificate>/', EmployeeProfessionalCertificateView.as_view(), name='employee-professional-certificate'),
+    path('employee-training-certificate/<str:employee>/', EmployeeTrainingCertificateView.as_view(), name='employee-training-certificate-all'),
+    path('employee-training-certificate/<str:employee>/<int:training_certificate>/', EmployeeTrainingCertificateView.as_view(), name='employee-training-certificate'),
     path('employee-attatchment/<str:employee>/', EmployeeAttatchmentView.as_view(), name='employee-attatchment'),
 
     # endpoints for employees to view and update their own details
@@ -42,8 +42,8 @@ urlpatterns = [
     path("my-work-experience/<int:work_experience>/", MyWorkExperienceView.as_view(), name="my-work-experience"),
     path("my-education/", MyEducationeView.as_view(), name="my-education-all"),
     path("my-education/<int:education>/", MyEducationeView.as_view(), name="my-education"),
-    path('my-professional-certificate/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate-all'),
-    path('my-professional-certificate/<int:professional_certificate>/', MyProfessionalCertificateView.as_view(), name='my-professional-certificate'),
+    path('my-training-certificate/', MyTrainingCertificateView.as_view(), name='my-training-certificate-all'),
+    path('my-training-certificate/<int:training_certificate>/', MyTrainingCertificateView.as_view(), name='my-training-certificate'),
     path("my-attatchment/", MyAttatchmentView.as_view(), name="my-attatchment"),
 
     path('employee-list/', EmployeeListView.as_view(), name='employee-list'),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WorkExperience, Education, ProfessionalCertificate, PersonalDetail, Address, Attatchment
+from .models import WorkExperience, Education, TrainingCertificate, PersonalDetail, Address, Attatchment
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.conf import settings
@@ -25,9 +25,9 @@ class EducationSerializer(SmartUpdateSerializer):
         fields = "__all__"
 
     
-class ProfessionalCertificateSerializer(SmartUpdateSerializer):
+class TrainingCertificateSerializer(SmartUpdateSerializer):
     class Meta:
-        model = ProfessionalCertificate
+        model = TrainingCertificate
         fields = "__all__"
 
 
@@ -107,13 +107,12 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
 
 
 class EmployeePersonalDetailSerializer(SmartUpdateSerializer):
-    # Include employee name
     employee_name = serializers.CharField(source='employee.name', read_only=True)
 
     class Meta:
         model = PersonalDetail
         fields = [
-            "employee_name", "employee",
+            "employee_name",
             "id", "father_name", "mother_name", "phone_number", "personal_email",
             "date_of_birth", "national_id", "passport_number","blood_group", 
             "marital_status", "spouse_name", "spouse_nid",

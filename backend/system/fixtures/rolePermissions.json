@@ -13,8 +13,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {
@@ -382,8 +382,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {
@@ -751,8 +751,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {
@@ -1121,8 +1121,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {
@@ -1491,8 +1491,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {
@@ -1861,8 +1861,8 @@
         "workspace": "MyProfile",
         "sub_workspace": "MyPersonalDetail",
         "view": true,
-        "create": false,
-        "edit": true,
+        "create": true,
+        "edit": false,
         "delete": false
     },
     {

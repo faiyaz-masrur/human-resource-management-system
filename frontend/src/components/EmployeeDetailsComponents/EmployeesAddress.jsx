@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
   const defaultAddress = {
+    id: "",
     present_house: "",
     present_road_block_sector: "",
     present_city_village: "",
@@ -24,19 +25,47 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   const [districtList, setDistrictList] = useState([]);
   const [districtId, setDistrictId] = useState(null);
   const [policeStationList, setPoliceStationList] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeeAddress"}/`);
+        } else if(view.isOwnProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"MyProfile"}/${"MyAddress"}/`);
+        } else {
+          return;
+        }
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
 
   useEffect(() => {
     const fetchAddressDetails = async () => {
       try {
+        if (!rolePermissions.view) {
+          return;
+        }
         let res;
-        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+        if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-address/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-address/');
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("Employee address details:", res?.data)
         setAddressDetails(res?.data || defaultAddress); 
       } catch (error) {
         console.warn("No address details found, showing empty form.");
@@ -45,16 +74,17 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchAddressDetails();
-  }, []);
+  }, [rolePermissions]);
+
 
   useEffect(() => {
     const fetchDistrictList = async () => {
       try {
         const res = await api.get(`system/configurations/bd-district-list/`);
-        console.log(res?.data)
-        setDistrictList(res?.data || []);
+        console.log("District list:", res?.data)
+        setDistrictList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
-        console.warn("Error Fetching BD District List", error);
+        console.warn("Error Fetching District List", error);
         setDistrictList([]);
       }
     };
@@ -72,10 +102,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         } else {
           res = await api.get(`system/configurations/bd-thana-list/`);
         }
-        console.log(res?.data)
-        setPoliceStationList(res?.data || []);
+        console.log("Police station list:", res?.data)
+        setPoliceStationList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
-        console.warn("Error Fetching BD Thana List", error);
+        console.warn("Error Fetching Thana List", error);
         setPoliceStationList([]);
       }
     };
@@ -90,8 +120,12 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
   const handleSave = async () => {
     try {
-      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+      if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(!addressDetails.id){
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           const res = await api.post(`employees/employee-address/${employee_id}/`, addressDetails);
           console.log("Created Employee Address:", res.data);
           if(res.status === 201){
@@ -100,6 +134,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             alert("Something went wrong!")
           }
         } else {
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(`employees/employee-address/${employee_id}/`, addressDetails);
           console.log("Updated Employee Address:", res.status);
           if(res.status === 200){
@@ -110,6 +148,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         }
       } else if(view.isOwnProfileView){
         if(!addressDetails.id){
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           const res = await api.post(`employees/my-address/`, addressDetails);
           console.log("Created My Address:", res.data);
           if(res.status === 201){
@@ -118,6 +160,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             alert("Something went wrong!")
           }
         } else {
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(`employees/my-address/`, addressDetails);
           console.log("Updated My Address:", res.status);
           if(res.status === 200){
@@ -150,6 +196,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.present_house || ""}
               onChange={(e) => handleChange("present_house", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -160,6 +207,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.present_road_block_sector || ""}
               onChange={(e) => handleChange("present_road_block_sector", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
         </div>
@@ -173,6 +221,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.present_city_village || ""}
               onChange={(e) => handleChange("present_city_village", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
           <div className="form-group">
@@ -184,6 +233,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
                 setDistrictId(parseInt(e.target.value))
                 handleChange("present_district", e.target.value)}
               }
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -202,6 +252,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-select"
               value={addressDetails.present_police_station || ""}
               onChange={(e) => handleChange("present_police_station", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -217,6 +268,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.present_postal_code || ""}
               onChange={(e) => handleChange("present_postal_code", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -233,6 +285,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.permanent_house || ""}
               onChange={(e) => handleChange("permanent_house", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -243,6 +296,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.permanent_road_block_sector || ""}
               onChange={(e) => handleChange("permanent_road_block_sector", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
         </div>
@@ -256,6 +310,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.permanent_city_village || ""}
               onChange={(e) => handleChange("permanent_city_village", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
             />
           </div>
           <div className="form-group">
@@ -267,6 +322,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
                 setDistrictId(parseInt(e.target.value))
                 handleChange("permanent_district", e.target.value)
               }}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -285,6 +341,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-select"
               value={addressDetails.permanent_police_station || ""}
               onChange={(e) => handleChange("permanent_police_station", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -300,17 +357,20 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-input"
               value={addressDetails.permanent_postal_code || ""}
               onChange={(e) => handleChange("permanent_postal_code", e.target.value)}
+              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
         </div>
         
         <div className="form-actions">
+          {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+            <button className="btn-success" onClick={handleSave}>
+              Save
+            </button>
+          )}
           <button className="btn-primary" onClick={onNext}>
             Next
-          </button>
-          <button className="btn-success" onClick={handleSave}>
-            Save
           </button>
           <button className="btn-secondary" onClick={onBack}>
             Back

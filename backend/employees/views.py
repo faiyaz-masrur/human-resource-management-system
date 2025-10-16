@@ -1,6 +1,6 @@
-from rest_framework import generics, mixins, viewsets
+from rest_framework import generics, mixins, viewsets, response
 from system.permissions import HasRoleWorkspacePermission
-from .models import PersonalDetail, Address, WorkExperience, Education, ProfessionalCertificate, Attatchment
+from .models import PersonalDetail, Address, WorkExperience, Education, TrainingCertificate, Attatchment
 from system.models import Employee
 from .serializers import (
     EmployeeListSerializer,
@@ -9,7 +9,7 @@ from .serializers import (
     AddressSerializer, 
     WorkExperienceSerializer,
     EducationSerializer,
-    ProfessionalCertificateSerializer,
+    TrainingCertificateSerializer,
     AttatchmentSerializer
 )
 from rest_framework.exceptions import ValidationError
@@ -65,7 +65,7 @@ class EmployeePersonalDetailView(
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        return response.Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -175,22 +175,22 @@ class EmployeeEducationView(
         return self.update(request, *args, **kwargs)
     
 
-class EmployeeProfessionalCertificateView(
+class EmployeeTrainingCertificateView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     generics.GenericAPIView
 ):
-    serializer_class = ProfessionalCertificateSerializer
+    serializer_class = TrainingCertificateSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
-    sub_workspace = "EmployeeProfessionalCertificate"
-    lookup_field = "professional_certificate" 
+    sub_workspace = "EmployeeTrainingCertificate"
+    lookup_field = "training_certificate" 
 
     def get_queryset(self):
         # Get employee id from URL
         id = self.kwargs.get("employee")
-        return ProfessionalCertificate.objects.filter(employee__id=id)
+        return TrainingCertificate.objects.filter(employee__id=id)
 
     def perform_create(self, serializer):
         # Set the employee automatically from URL
@@ -263,7 +263,7 @@ class MyPersonalDetailView(
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        return response.Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -362,20 +362,20 @@ class MyEducationeView(
         return self.update(request, *args, **kwargs)
     
 
-class MyProfessionalCertificateView(
+class MyTrainingCertificateView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     generics.GenericAPIView
 ):
-    serializer_class = ProfessionalCertificateSerializer
+    serializer_class = TrainingCertificateSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
-    sub_workspace = "MyProfessionalCertificate"
-    lookup_field = "professional_certificate" 
+    sub_workspace = "MyTrainingCertificate"
+    lookup_field = "training_certificate" 
 
     def get_queryset(self):
-        return ProfessionalCertificate.objects.filter(employee=self.request.user)
+        return TrainingCertificate.objects.filter(employee=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(employee=self.request.user)

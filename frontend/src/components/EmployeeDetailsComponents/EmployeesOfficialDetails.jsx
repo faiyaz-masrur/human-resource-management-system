@@ -57,7 +57,6 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   }, []);
 
 
-  // ✅ Fetch employee details if ID exists
   useEffect(() => {
     const fetchOfficialDetails = async () => {
       try {
