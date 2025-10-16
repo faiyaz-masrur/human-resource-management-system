@@ -6,7 +6,7 @@ from appraisals.models import (
     AppraisalDetails,
     AllAppraisalRecord,
 )
-from employees.models import Employee
+from system.models import Employee
 
 
 @receiver(post_save, sender=EmployeeAppraisalTimer)
@@ -18,7 +18,7 @@ def move_and_reset_completed_appraisals(sender, instance, created, **kwargs):
     3. Reset EmployeeAppraisalStatusTrack only for moved employees.
     """
     if not created:
-        return  # Only run on new timer creation
+        return  
 
     appraisal_details_qs = AppraisalDetails.objects.all()
     moved_count = 0

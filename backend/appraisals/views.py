@@ -33,7 +33,7 @@ from .serializers import (
     EmployeeAppraisalTimerSerializer,
     ReportingManagerAppraisalTimerSerializer,
     FinalReviewerAppraisalTimerSerializer,
-    EmployeeAppraisalDetailSerializer, 
+    AppraisalDetailsSerializer, 
 )
 
 
@@ -333,7 +333,7 @@ class AppraisalDetailAPIView(APIView):
             return Response({'detail': 'Appraisal not found.'}, status=status.HTTP_404_NOT_FOUND)
         
         # Use the comprehensive serializer
-        serializer = EmployeeAppraisalDetailSerializer(appraisal)
+        serializer = AppraisalDetailsSerializer(appraisal)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 
