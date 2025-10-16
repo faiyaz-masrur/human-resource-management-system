@@ -91,8 +91,9 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             f"• Temporary Password: {raw_password}\n\n"
             f"Please log in at {settings.LOGIN_URL} and update your password immediately.\n\n"
             f"This is an automated message. For any assistance, please contact your HR representative.\n\n"
-            f"Thank you,\n\n"
-            f"Sonali Intellect Limited, HR Team"
+            f"Thank you,\n"
+            f"Sonali Intellect Limited,\n" 
+            f"HR Team"
         )
 
         send_mail(
@@ -100,7 +101,7 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             message=email_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
         return employee
