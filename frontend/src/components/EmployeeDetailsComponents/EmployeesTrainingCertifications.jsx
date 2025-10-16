@@ -4,6 +4,7 @@ import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
 const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) => {
+  const { user } = useAuth();
   const [trainings, setTrainings] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
