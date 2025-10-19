@@ -5,13 +5,7 @@ from django.db import transaction, connection
 from appraisals.models import EmployeeAppraisalTimer 
 
 class Command(BaseCommand):
-    """
-    Django management command that runs daily but executes the annual year 
-    reset logic ONLY when the current date is January 1st.
-    
-    This fulfills the requirement of rolling over the appraisal year without 
-    relying on an external scheduler to precisely hit Jan 1st.
-    """
+
     help = 'Checks if today is Jan 1st. If so, resets the year for all appraisal timers.'
 
     def handle(self, *args, **options):
