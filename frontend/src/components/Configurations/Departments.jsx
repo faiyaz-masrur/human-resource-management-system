@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, ArrowLeft, Loader2 } from 'lucide-react';
-import api from '../../services/api'; 
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import api from '../../services/api';
 
 
-// --- API CONSTANT ---
-// Based on the updated backend URL structure: /api/system/configurations/departments/
 const DEPARTMENT_API_URL = 'system/configurations/departments/'; 
 
 // ==============================================================================
@@ -14,7 +14,6 @@ const DepartmentForm = ({ setCurrentView, currentDepartment, refreshList }) => {
     const isEditMode = !!currentDepartment;
     const initialFormData = {
         name: currentDepartment?.name || '',
-        // Ensure description is treated as null if empty for Django model compatibility
         description: currentDepartment?.description || '', 
     };
     const [formData, setFormData] = useState(initialFormData);
@@ -38,7 +37,6 @@ const DepartmentForm = ({ setCurrentView, currentDepartment, refreshList }) => {
         
         const dataToSend = {
             ...formData,
-            // Explicitly set empty string to null if the Django model allows null
             description: formData.description.trim() || null, 
         };
         
@@ -66,7 +64,6 @@ const DepartmentForm = ({ setCurrentView, currentDepartment, refreshList }) => {
             
             let errorMessage = "Failed to save department.";
             if (err.response && err.response.data && err.response.data.name) {
-                // Handle unique constraint error
                 errorMessage = `Error: Name ${err.response.data.name[0]}`;
             } else if (err.response?.data?.detail) {
                 errorMessage = err.response.data.detail;

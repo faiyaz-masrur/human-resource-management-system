@@ -2,8 +2,6 @@ from datetime import date
 from django.core.management.base import BaseCommand
 from django.db import transaction, connection
 
-# Adjust the import path for your models if necessary. 
-# Assuming EmployeeAppraisalTimer is in the 'appraisals' app's models.py
 from appraisals.models import EmployeeAppraisalTimer 
 
 class Command(BaseCommand):
