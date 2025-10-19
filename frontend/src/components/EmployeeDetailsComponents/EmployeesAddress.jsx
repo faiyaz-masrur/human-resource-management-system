@@ -22,9 +22,12 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   }
 
   const [addressDetails, setAddressDetails] = useState(defaultAddress);
-  const [districtList, setDistrictList] = useState([]);
-  const [districtId, setDistrictId] = useState(null);
-  const [policeStationList, setPoliceStationList] = useState([]);
+  const [districtListPresent, setDistrictListPresent] = useState([]);
+  const [districtListParmanent, setDistrictListParmanent] = useState([]);
+  const [districtIdPresent, setDistrictIdPresent] = useState(null);
+  const [districtIdParmanent, setDistrictIdParmanent] = useState(null);
+  const [policeStationListPresent, setPoliceStationListPresent] = useState([]);
+  const [policeStationListParmanent, setPoliceStationListParmanent] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
 
@@ -82,10 +85,12 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
       try {
         const res = await api.get(`system/configurations/bd-district-list/`);
         console.log("District list:", res?.data)
-        setDistrictList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
+        setDistrictListPresent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
+        setDistrictListParmanent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching District List", error);
-        setDistrictList([]);
+        setDistrictListPresent([]);
+        setDistrictListParmanent([]);
       }
     };
 
@@ -94,24 +99,45 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
 
   useEffect(() => {
-    const fetchPoliceStationList = async () => {
+    const fetchPoliceStationListPresent = async () => {
       try {
         let res;
-        if (districtId){
-          res = await api.get(`system/configurations/bd-thana-list/${districtId}`);
+        if (districtIdPresent){
+          res = await api.get(`system/configurations/bd-thana-list/${districtIdPresent}`);
         } else {
           res = await api.get(`system/configurations/bd-thana-list/`);
         }
-        console.log("Police station list:", res?.data)
-        setPoliceStationList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
+        console.log("Police station list Present:", res?.data)
+        setPoliceStationListPresent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
-        console.warn("Error Fetching Thana List", error);
-        setPoliceStationList([]);
+        console.warn("Error Fetching Thana List Present", error);
+        setPoliceStationListPresent([]);
       }
     };
 
-    fetchPoliceStationList();
-  }, [districtId]);
+    fetchPoliceStationListPresent();
+  }, [districtIdPresent]);
+
+
+  useEffect(() => {
+    const fetchPoliceStationListParmanent = async () => {
+      try {
+        let res;
+        if (districtIdParmanent){
+          res = await api.get(`system/configurations/bd-thana-list/${districtIdParmanent}`);
+        } else {
+          res = await api.get(`system/configurations/bd-thana-list/`);
+        }
+        console.log("Police station list Parmanent:", res?.data)
+        setPoliceStationListParmanent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
+      } catch (error) {
+        console.warn("Error Fetching Thana List Parmanent", error);
+        setPoliceStationListParmanent([]);
+      }
+    };
+
+    fetchPoliceStationListParmanent();
+  }, [districtIdParmanent]);
 
 
   const handleChange = (field, value) => {
@@ -130,6 +156,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
           console.log("Created Employee Address:", res.data);
           if(res.status === 201){
             alert("Employee address created successfully!");
+            setAddressDetails(res?.data || addressDetails);
           } else {
             alert("Something went wrong!")
           }
@@ -142,6 +169,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
           console.log("Updated Employee Address:", res.status);
           if(res.status === 200){
             alert("Employee address updated successfully!");
+            setAddressDetails(res?.data || addressDetails);
           } else {
             alert("Something went wrong!")
           }
@@ -156,6 +184,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
           console.log("Created My Address:", res.data);
           if(res.status === 201){
             alert("Your address created successfully!");
+            setAddressDetails(res?.data || addressDetails);
           } else {
             alert("Something went wrong!")
           }
@@ -168,6 +197,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
           console.log("Updated My Address:", res.status);
           if(res.status === 200){
             alert("Your address updated successfully!");
+            setAddressDetails(res?.data || addressDetails);
           } else {
             alert("Something went wrong!")
           }
@@ -230,14 +260,14 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-select"
               value={addressDetails.present_district || ""}
               onChange={(e) => {
-                setDistrictId(parseInt(e.target.value))
+                setDistrictIdPresent(parseInt(e.target.value))
                 handleChange("present_district", e.target.value)}
               }
               disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
-              {districtList.map((district)=>(
+              {districtListPresent.map((district)=>(
                 <option key={district.id} value={district.id}>{district.name}</option>
               ))}
             </select>
@@ -256,7 +286,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               required
             >
               <option value="">-- Select --</option>
-              {policeStationList.map((policeStation)=>(
+              {policeStationListPresent.map((policeStation)=>(
                 <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
               ))}
             </select>
@@ -319,14 +349,14 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               className="form-select"
               value={addressDetails.permanent_district || ""}
               onChange={(e) => {
-                setDistrictId(parseInt(e.target.value))
+                setDistrictIdParmanent(parseInt(e.target.value))
                 handleChange("permanent_district", e.target.value)
               }}
               disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
-              {districtList.map((district)=>(
+              {districtListParmanent.map((district)=>(
                 <option key={district.id} value={district.id}>{district.name}</option>
               ))}
             </select>
@@ -345,7 +375,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               required
             >
               <option value="">-- Select --</option>
-              {policeStationList.map((policeStation)=>(
+              {policeStationListParmanent.map((policeStation)=>(
                 <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
               ))}
             </select>

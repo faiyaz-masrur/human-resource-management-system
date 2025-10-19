@@ -11,6 +11,7 @@ class AddressSerializer(SmartUpdateSerializer):
     class Meta:
         model = Address
         fields = "__all__"
+        read_only_fields = ("employee",)
 
 
 class WorkExperienceSerializer(SmartUpdateSerializer):

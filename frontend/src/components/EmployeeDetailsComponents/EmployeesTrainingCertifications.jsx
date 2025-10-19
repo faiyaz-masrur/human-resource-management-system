@@ -127,6 +127,9 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           const res = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, trainingToSave);
           console.log("Updated Training:", res.data);
           if(res.status === 200){
+            setTrainings(trainings.map(training => 
+              training.id === id ? res.data : training
+            ));
             alert("Employee Training updated successfully.");
           } else {
             alert("Failed to update employee Training.");
@@ -158,6 +161,9 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           const res = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, trainingToSave);
           console.log("Updated Training:", res?.data);
           if(res.status === 200){
+            setTrainings(trainings.map(training => 
+              training.id === id ? res.data : training
+            ));
             alert("Your Training updated successfully.");
           } else {
             alert("Failed to update your Training.");
@@ -305,7 +311,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         <div className="form-row">
           <div className="form-group">
             {rolePermissions.create && (
-              <button type="button" className="btn-add-training" onClick={addNewTraining}>
+              <button type="button" className="btn-primary" onClick={addNewTraining}>
                 + Add New Training/Certification
               </button>
             )}
