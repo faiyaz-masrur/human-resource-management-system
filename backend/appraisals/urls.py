@@ -9,7 +9,7 @@ from .views import (
     ReviewAppraisalListAPIView,
     AllAppraisalStatusAPIView,
     AllAppraisalListAPIView,
-    AppraisalDetailsAPIView, # Consolidated Detail/History View
+    AppraisalDetailsAPIView, 
 )
 
 urlpatterns = [
