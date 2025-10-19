@@ -154,6 +154,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           console.log("Updateed Employee Personal Details:", res?.data);
           if(res.status === 200){
             alert("Employee personal details updated successfully!");
+            setPersonalDetails(res.data || personalDetails)
           } else {
             alert("Something went wrong!")
           }
@@ -169,6 +170,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           console.log("Created Employee Personal Details:", res?.data);
           if(res.status === 201){
             alert("Employee personal details created successfully!");
+            setPersonalDetails(res.data || personalDetails)
           } else {
             alert("Something went wrong!")
           }    
@@ -186,6 +188,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           console.log("Updateed Personal Details:", res?.data);
           if(res.status === 200){
             alert("Your personal details updated successfully!");
+            setPersonalDetails(res.data || personalDetails)
           } else {
             alert("Something went wrong!")
           }
@@ -201,6 +204,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           console.log("Created Personal Details:", res?.data);
           if(res.status === 201){
             alert("Your personal details created successfully!");
+            setPersonalDetails(res.data || personalDetails)
           } else {
             alert("Something went wrong!")
           }    

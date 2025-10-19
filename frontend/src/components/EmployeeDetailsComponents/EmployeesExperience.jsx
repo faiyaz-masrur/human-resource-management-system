@@ -119,6 +119,9 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
           const res = await api.put(`employees/employee-work-experience/${employee_id}/${experienceToSave.id}/`, experienceToSave);
           console.log("Updated Experience:", res.data);
           if(res.status === 200){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
             alert("Employee Work Experience updated successfully.");
           } else {
             alert("Failed to update employee Work Experience.");
@@ -150,6 +153,9 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
           const res = await api.put(`employees/my-work-experience/${experienceToSave.id}/`, experienceToSave);
           console.log("Updated Experience:", res.data);
           if(res.status === 200){
+            setExperiences(experiences.map(exp => 
+              exp.id === id ? res.data : exp
+            ));
             alert("Your Work Experience updated successfully.");
           } else {
             alert("Failed to update your Work Experience.");

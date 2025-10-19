@@ -291,7 +291,6 @@ class MyAddressView(
         return get_object_or_404(Address, employee=self.request.user)
 
     def perform_create(self, serializer):
-        # Create only if it doesn't exist
         if Address.objects.filter(employee=self.request.user).exists():
             raise ValidationError("Address already exists. Use PUT to update.")
         serializer.save(employee=self.request.user)

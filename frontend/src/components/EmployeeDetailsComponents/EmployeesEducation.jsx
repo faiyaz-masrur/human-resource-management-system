@@ -161,6 +161,9 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
           const res = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, educationToSave);
           console.log("Updated Education:", res.data);
           if(res.status === 200){
+            setEducations(educations.map(edu => 
+              edu.id === id ? res.data : edu
+            ));
             alert("Employee Education updated successfully.");
           } else {
             alert("Failed to update employee Education.");
@@ -192,6 +195,9 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
           const res = await api.put(`employees/my-education/${educationToSave.id}/`, educationToSave);
           console.log("Updated Education:", res?.data);
           if(res.status === 200){
+            setEducations(educations.map(edu => 
+              edu.id === id ? res.data : edu
+            ));
             alert("Your Education updated successfully.");
           } else {
             alert("Failed to update your Education.");
