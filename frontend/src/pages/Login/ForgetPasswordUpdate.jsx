@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import api from '../../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import SonaliLogo from "../../assets/sonali-logo.jpg";
@@ -12,10 +12,43 @@ const ForgetPasswordUpdate = () => {
   const { uid, token } = useParams();
   const navigate = useNavigate();
 
+  // Password validation function
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!hasUpperCase) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!hasLowerCase) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!hasNumbers) {
+      return 'Password must contain at least one number';
+    }
+    if (!hasSpecialChar) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setMessage('');
     setError('');
+
+    // Validate new password
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       setError("New password and confirm password don't match.");
@@ -29,7 +62,6 @@ const ForgetPasswordUpdate = () => {
       });
 
       setMessage(response.data.detail);
-      // Redirect to login after successful password reset
       navigate('/login/user');
 
     } catch (err) {
@@ -45,11 +77,16 @@ const ForgetPasswordUpdate = () => {
   return (
     <div className="update-password-container">
       <div className="update-image-section">
-        <img src={LoginImage} className="login-page-img" />
-        <img src={SonaliLogo} className="logo-img-login" />
+        <img src={LoginImage} className="login-page-img" alt="Background" />
+        <img src={SonaliLogo} className="logo-img-login" alt="Sonali Intellect" />
         
         <div className="human-resource-text">
-          <h1>Human Resource Management System</h1>
+          <h1>
+          Human <br />
+          Resource <br />
+          Management <br />
+          System
+        </h1>
         </div>
       </div>
       <div className="update-form-section">
@@ -58,6 +95,7 @@ const ForgetPasswordUpdate = () => {
           <form onSubmit={handleUpdate}>
             {message && <p style={{ color: 'green' }}>{message}</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            
             <div className="form-group password-group">
               <label htmlFor="newPassword">New Password</label>
               <input
@@ -71,6 +109,7 @@ const ForgetPasswordUpdate = () => {
                 <i className="fa fa-eye-slash"></i>
               </span>
             </div>
+            
             <div className="form-group password-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
@@ -84,8 +123,13 @@ const ForgetPasswordUpdate = () => {
                 <i className="fa fa-eye-slash"></i>
               </span>
             </div>
+            
             <button type="submit" className="update-button">Update</button>
           </form>
+          
+          <div className="copyright">
+            Copyright © 2025 Sonali Intellect Limited. All rights reserved.
+          </div>
         </div>
       </div>
     </div>

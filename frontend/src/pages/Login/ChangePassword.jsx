@@ -2,22 +2,55 @@ import React, { useState } from 'react';
 // import api from '../../services/api'; // Keeping the original import commented out
 
 const ChangePassword = () => {
-  // State for the three required fields for a Change Password flow
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  // State for the three required fields for a Change Password flow
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
+  // Password validation function
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password don't match.");
-      return;
-    }
+    if (password.length < minLength) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!hasUpperCase) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!hasLowerCase) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!hasNumbers) {
+      return 'Password must contain at least one number';
+    }
+    if (!hasSpecialChar) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    setError('');
+
+    // Validate new password
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("New password and confirm password don't match.");
+      return;
+    }
 
     // --- API Logic Placeholder (using a simple delay to simulate API call) ---
     console.log('Attempting to change password...');
@@ -42,61 +75,61 @@ const ChangePassword = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     setMessage('Password updated successfully.');
 
-    setOldPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-  };
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
 
-  return (
-    <div className="change-password-container">
-      <div className="change-form-section">
-        <div className="form-content">
-          {/* Heading matches the three-field screenshot */}
-          <h2>CHANGE PASSWORD</h2> 
-          <form onSubmit={handleChangePassword}>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            
-            {/* 1. Old Password Field */}
-            <div className="form-group password-group">
-              <div><label htmlFor="oldPassword">Old Password</label></div>
-              <input
-                type="password"
-                id="oldPassword"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                required
-              />
-              <span className="password-toggle">
-                <i className="fa fa-eye-slash"></i> 
-              </span>
-            </div>
-
-            {/* 2. New Password Field */}
-            <div className="form-group password-group">
-              <label htmlFor="newPassword">New Password</label>
-              <input
-                type="password"
-                id="newPassword"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <span className="password-toggle">
-                <i className="fa fa-eye-slash"></i> 
-              </span>
-            </div>
-
-            {/* 3. Confirm Password Field */}
-            <div className="form-group password-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+  return (
+    <div className="change-password-container">
+      <div className="change-form-section">
+        <div className="form-content">
+          {/* Heading matches the three-field screenshot */}
+          <h2>CHANGE PASSWORD</h2> 
+          <form onSubmit={handleChangePassword}>
+            {message && <p style={{ color: 'green' }}>{message}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            
+            {/* 1. Old Password Field */}
+            <div className="form-group password-group">
+              <div><label htmlFor="oldPassword">Old Password</label></div>
+              <input
+                type="password"
+                id="oldPassword"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
                 required
-               />
+              />
+              <span className="password-toggle">
+                <i className="fa fa-eye-slash"></i> 
+              </span>
+            </div>
+
+            {/* 2. New Password Field */}
+            <div className="form-group password-group">
+              <label htmlFor="newPassword">New Password</label>
+              <input
+                type="password"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              <span className="password-toggle">
+                <i className="fa fa-eye-slash"></i> 
+              </span>
+            </div>
+
+            {/* 3. Confirm Password Field */}
+            <div className="form-group password-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
               <span className="password-toggle">
                 <i className="fa fa-eye-slash"></i>
               </span>

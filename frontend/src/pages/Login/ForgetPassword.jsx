@@ -1,60 +1,68 @@
-import React, { useState } from 'react';
-import api from '../../services/api';
+import React, { useState } from "react";
+import api from "../../services/api";
 import SonaliLogo from "../../assets/sonali-logo.jpg";
 import LoginImage from "../../assets/login_page_image.png";
 
 const ForgetPassword = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
-
     try {
-      const response = await api.post('/system/auth/reset-password/', { email });
-      setMessage(response.data.detail);
-    } catch (err) {
-      console.error('Password reset request failed:', err.response.data);
-      if (err.response && err.response.data) {
-        setError(err.response.data.email[0] || 'An error occurred. Please try again.');
-      } else {
-        setError('An unexpected error occurred.');
-      }
+      const response = await api.post("/system/auth/forgot-password/", { email });
+      setMessage(response.data?.message || "Password reset link sent to your email.");
+    } catch {
+      setMessage("Unable to send reset email. Try again.");
     }
   };
 
   return (
-    <div className="password-recovery-container">
-      <div className="recovery-image-section">
-        <img src={LoginImage} className="login-page-img" />
-        <img src={SonaliLogo} className="logo-img-login" />
-        
+    <div className="login-container">
+      <div className="login-image-section">
+        <img src={LoginImage} alt="Background" className="login-page-img" />
+        <img src={SonaliLogo} alt="Logo" className="logo-img-login" />
         <div className="human-resource-text">
-          <h1>Human Resource Management System</h1>
+          <h1>
+            Human <br />
+            Resource <br />
+            Management <br />
+            System
+          </h1>
         </div>
       </div>
-      <div className="recovery-form-section">
+
+      <div className="login-form-section">
         <div className="form-content">
           <h2>FORGET PASSWORD</h2>
           <form onSubmit={handleSubmit}>
-            {message && <p style={{ color: 'green' }}>{message}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {/* Email Field with closer spacing */}
             <div className="form-group">
-              <label htmlFor="email">Your Email ID</label>
+              <label>Your Email ID</label>
               <input
                 type="email"
-                id="email"
                 placeholder="Example: abc@sonaliintellect.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+
+                style={{ transform: 'translateY(-10px)',
+                  marginBottom: '15px',
+                  padding: '10px 12px',
+                  fontSize: '0.76em',
+                  letterSpacing: '0.001em'
+                }}
               />
             </div>
-            <button type="submit" className="submit-button">Submit</button>
+
+            <button type="submit" className="login-button">SUBMIT</button>
+            {message && <p style={{ marginTop: "20px", color: "#333" }}>{message}</p>}
           </form>
+        </div>
+
+        {/* Copyright - EXACT POSITION */}
+        <div className="copyright">
+          Copyright © 2025 Sonali Intellect Limited. All rights reserved.
         </div>
       </div>
     </div>

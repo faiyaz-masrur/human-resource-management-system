@@ -23,7 +23,6 @@ const UserLogin = () => {
       });
 
       login(response.data)
-
       navigate('/'); 
 
     } catch (err) {
@@ -38,36 +37,48 @@ const UserLogin = () => {
 
   return (
     <div className="login-container">
+      {/* Left Side - Blue Background with Image */}
       <div className="login-image-section">
-        <img src={LoginImage} className="login-page-img" />
-        <img src={SonaliLogo} className="logo-img-login" />
+        <img src={LoginImage} className="login-page-img" alt="Background" />
+        <img src={SonaliLogo} className="logo-img-login" alt="Sonali Intellect" />
         
         <div className="human-resource-text">
-          <h1>Human Resource Management System</h1>
+        <h1>
+          Human <br />
+          Resource <br />
+          Management <br />
+          System
+        </h1>
         </div>
       </div>
 
+      {/* Right Side - Login Form */}
       <div className="login-form-section">
         <div className="form-content">
-          <h2 className="form-header h2">USER SIGN-IN</h2>
+          {/* Header - EXACT MATCH */}
+          <h2>USER SIGN IN</h2>
+          
           <form onSubmit={handleLogin}>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{ color: 'red', fontSize: '0.9em', marginBottom: '20px' }}>{error}</p>}
+            
+            {/* Email Field - EXACT MATCH */}
             <div className="form-group">
-              <label htmlFor="email">Username</label>
+              <label>Your Email ID</label>
               <input
                 type="email"
-                id="email"
                 placeholder="Example: abc@sonaliintellect.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
+
+            {/* Password Field - EXACT MATCH */}
             <div className="form-group password-group">
-              <label htmlFor="password">Password</label>
+              <label>Your Password</label>
               <input
                 type="password"
-                id="password"
+                placeholder="•••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -76,12 +87,21 @@ const UserLogin = () => {
                 <i className="fa fa-eye-slash"></i>
               </span>
             </div>
+
+            {/* Forgot Password - SIDE BY SIDE */}
             <div className="forgot-password">
-              <a href="/forget-password">Forgot username, Password?</a>
+              <a href="/forget-password">Forget Username, Password?</a>
               <span className="contact-admin">Contact System Admin</span>
             </div>
+
+            {/* Sign In Button - CENTERED */}
             <button type="submit" className="login-button">Sign In</button>
           </form>
+          
+          {/* Copyright - EXACT POSITION */}
+          <div className="copyright">
+            Copyright © 2025 Sonali Intellect Limited. All rights reserved.
+          </div>
         </div>
       </div>
     </div>
