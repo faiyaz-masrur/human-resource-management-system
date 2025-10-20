@@ -176,6 +176,12 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
+      const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
+      if (!companyEmailPattern.test(officialdetails.email)) {
+        alert("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
+        return;
+      }
+
       if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
         if (officialdetails.id) {
           // Update existing employee
@@ -238,7 +244,29 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       }
     } catch (error) {
       console.error("Error saving employee:", error.response?.data || error);
-      alert("Failed to save employee.");
+
+    if (error.response && error.response.status === 400) {
+      const errors = error.response.data;
+
+      // If there are field errors (e.g., email, name, etc.)
+      if (typeof errors === "object") {
+        let messages = [];
+        for (const field in errors) {
+          if (Array.isArray(errors[field])) {
+            messages.push(`${field}: ${errors[field][0]}`);
+          } else {
+            messages.push(`${field}: ${errors[field]}`);
+          }
+        }
+
+        // Show all validation messages together
+        alert(`Validation error:\n\n${messages.join("\n")}`);
+      } else {
+        alert("Validation failed. Please check your input.");
+      }
+    } else {
+      alert("Failed to save employee. Please try again.");
+    }
     }
   };
 

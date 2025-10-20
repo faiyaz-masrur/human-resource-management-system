@@ -60,7 +60,13 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
 
-    # --- CREATE ---
+    def validate_email(self, value):
+        if not value.endswith("@sonaliintellect.com"):
+            raise serializers.ValidationError(
+                "Email must be a valid Sonali Intellect address (example@sonaliintellect.com)."
+            )
+        return value
+    
     def create(self, validated_data):
         email = validated_data.get("email")
         raw_password = validated_data.pop("raw_password", None) or get_random_string(8)

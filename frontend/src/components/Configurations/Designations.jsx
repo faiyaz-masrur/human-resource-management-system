@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, ArrowLeft, Eye, X } from 'lucide-react';
 import api from '../../services/api'; 
+import { useAuth } from '../../contexts/AuthContext';
 
 const DESIGNATIONS_API_URL = 'system/configurations/designations/';
+const GRADES_API_URL = 'system/configurations/grades/'; 
 
 
 // ===============================================
 // Designations List Component
 // ===============================================
 const DesignationList = ({ 
+  rolePermissions,
   designations, 
   fetchDesignations, 
   setCurrentView, 
@@ -24,6 +27,10 @@ const DesignationList = ({
   );
 
   const handleDelete = async (id) => {
+    if(!rolePermissions.delete){
+      alert("You don't have permission to delete.")
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this designation?")) {
       return;
     }
@@ -45,33 +52,42 @@ const DesignationList = ({
       
       {/* Search + Add */}
       <div className="list-header-light">
-        <div className="search-bar-container-light">
-          <Search className="search-icon-light" size={18} />
-          <input
-            type="text"
-            placeholder="Search designations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-light"
-          />
-        </div>
+        {rolePermissions.view && (
+          <div className="search-bar-container-light">
+            <Search className="search-icon-light" size={18} />
+            <input
+              type="text"
+              placeholder="Search designations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input-light"
+            />
+          </div>
+        )}
 
-        <button
-          className="btn-add-new-light"
-          onClick={() => setCurrentView('form')}
-        >
-          <Plus size={16} style={{ marginLeft: '0.5rem' }} />
-          ADD DESIGNATION
-        </button>
+        {rolePermissions.create && (
+          <button
+            className="btn-add-new-light"
+            onClick={() => setCurrentView('form')}
+          >
+            <Plus size={16} style={{ marginLeft: '0.5rem' }} />
+            ADD DESIGNATION
+          </button>
+        )}
       </div>
+      
 
       <div className="table-wrapper">
         <table className="data-table">
           <thead>
             <tr>
-              {['ID', 'Name', 'Grade', 'Description', 'Actions'].map(header => (
-                <th key={header} className="table-header-light">{header}</th>
-              ))}
+              {['ID', 'Name', 'Grade', 'Description']
+                .concat((rolePermissions.edit || rolePermissions.delete) 
+                  ? ['Actions'] : [])
+                .map(header => (
+                  <th key={header} className="table-header-light">{header}</th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>
@@ -83,30 +99,37 @@ const DesignationList = ({
                   {/* Access the name property of the nested grade object */}
                   <td className="table-data-light">{des.grade ? des.grade.name : 'N/A'}</td> 
                   <td className="table-data-light">{des.description || 'N/A'}</td>
-                  <td className="table-data-light">
-                    <div className="action-buttons-light">
-                      <button 
-                        title="Edit" 
-                        className="action-button-light action-button--edit-light"
-                        onClick={() => handleEdit(des)}
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
-                        title="Delete" 
-                        className="action-button-light action-button--delete-light"
-                        onClick={() => handleDelete(des.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
+                  {(rolePermissions.edit || rolePermissions.delete) && (
+                    <td className="table-data-light">
+                      <div className="action-buttons-light">
+                        {rolePermissions.edit && (
+                          <button 
+                            title="Edit" 
+                            className="action-button-light action-button--edit-light"
+                            onClick={() => handleEdit(des)}
+                          >
+                            <Pencil size={16} />
+                          </button>
+                        )}
+
+                        {rolePermissions.delete && (
+                          <button 
+                            title="Delete" 
+                            className="action-button-light action-button--delete-light"
+                            onClick={() => handleDelete(des.id)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="5" className="no-data-message">
-                  No designations match your criteria.
+                  No designations.
                 </td>
               </tr>
             )}
@@ -120,7 +143,7 @@ const DesignationList = ({
 // ===============================================
 // Designation Form Component
 // ===============================================
-const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation, setEditingDesignation }) => {
+const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, editingDesignation, setEditingDesignation }) => {
   const isEditing = !!editingDesignation;
   const initialFormState = {
     name: '',
@@ -133,23 +156,27 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
   // Load Grades for the Select Field
   useEffect(() => {
     const fetchGrades = async () => {
       try {
-        const response = await api.get(GRADES_API_URL);
-        setGrades(response.data);
+        if(rolePermissions.view){
+          const response = await api.get(GRADES_API_URL);
+          setGrades(response.data);
+        }
       } catch (err) {
         console.error("Error fetching grades:", err);
         toast.error("Failed to load grades.");
       }
     };
+
     fetchGrades();
-  }, []);
+  }, [rolePermissions]);
 
   // Populate form if editing
   useEffect(() => {
-    if (editingDesignation) {
+    if (editingDesignation && rolePermissions.edit) {
       setFormData({
         name: editingDesignation.name || '',
         // Use the ID for the select field
@@ -159,7 +186,7 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
     } else {
       setFormData(initialFormState);
     }
-  }, [editingDesignation]);
+  }, [editingDesignation, rolePermissions]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -185,11 +212,23 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
 
     try {
       if (isEditing) {
-        await api.put(`${DESIGNATIONS_API_URL}${editingDesignation.id}/`, dataToSend);
-        toast.success("Designation updated successfully!");
+        if(rolePermissions.edit){
+          await api.put(`${DESIGNATIONS_API_URL}${editingDesignation.id}/`, dataToSend);
+          toast.success("Designation updated successfully!");
+        }else{
+          alert("You do not have permission to edit.")
+          setLoading(false);
+          return;
+        }
       } else {
-        await api.post(DESIGNATIONS_API_URL, dataToSend);
-        toast.success("Designation added successfully!");
+        if(rolePermissions.create){
+          await api.post(DESIGNATIONS_API_URL, dataToSend);
+          toast.success("Designation added successfully!");
+        } else {
+          alert("You do not have permission to create.")
+          setLoading(false);
+          return;
+        }
       }
       
       fetchDesignations(); // Refresh list after successful operation
@@ -235,6 +274,7 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
               onChange={handleChange}
               className="input-field-light"
               placeholder="e.g., Lead Developer"
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -248,20 +288,16 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
                 value={formData.grade}
                 onChange={handleChange}
                 className="input-field-light"
+                disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
+                required
               >
-                <option value="">----------</option>
+                <option value="">-- Select --</option>
                 {grades.map(grade => (
                     <option key={grade.id} value={grade.id}>
                         {grade.name}
                     </option>
                 ))}
               </select>
-
-              {/* Action Icons (Placeholder - you need handlers for these) */}
-              <button type="button" className="grade-action-icon" title="Edit Grade"><Pencil size={18} /></button>
-              <button type="button" className="grade-action-icon" title="Add Grade"><Plus size={18} /></button>
-              <button type="button" className="grade-action-icon" title="Delete Grade"><Trash2 size={18} /></button>
-              <button type="button" className="grade-action-icon" title="View Grades"><Eye size={18} /></button>
             </div>
           </div>
 
@@ -275,16 +311,19 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
               onChange={handleChange}
               className="input-field-light textarea-field-light"
               placeholder="Describe the primary responsibilities and reporting structure for this designation."
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
             ></textarea>
           </div>
         </div>
 
         <div className="form-actions-light">
-          <button type="submit" className="btn-save-primary" disabled={loading}>
-            {loading ? 'Saving...' : (isEditing ? 'Update' : 'Save')}
-          </button>
-          
-          {!isEditing && (
+          {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
+            <button type="submit" className="btn-save-primary" disabled={loading}>
+              {loading ? 'Saving...' : (isEditing ? 'Update' : 'Save')}
+            </button>
+          )}
+
+          {(!isEditing && rolePermissions.create) && (
             <button 
               type="button" 
               className="btn-save-secondary"
@@ -308,11 +347,29 @@ const DesignationForm = ({ setCurrentView, fetchDesignations, editingDesignation
 // Main Component
 // ===============================================
 const Designations = () => {
+  const { user } = useAuth();
   const [currentView, setCurrentView] = useState('list');
   const [designations, setDesignations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingDesignation, setEditingDesignation] = useState(null); // State for editing
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        const res = await api.get(`system/role-permissions/${user.role}/${"Configuration"}/${"Designation"}/`)
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
 
   // Fetch function wrapped in useCallback
   const fetchDesignations = useCallback(async () => {
@@ -320,25 +377,32 @@ const Designations = () => {
     setError(null);
     try {
       // FIX: Requesting the correct URL: /api/system/designations/
-      const res = await api.get(DESIGNATIONS_API_URL);
-      setDesignations(res.data);
+      if(rolePermissions.view){
+        const res = await api.get(DESIGNATIONS_API_URL);
+        setDesignations(res.data || []);
+      }
     } catch (err) {
       console.error("Fetch error:", err.response ? err.response.data : err.message);
       setError("Failed to load designations. Please check API server.");
       toast.error("Error fetching departments.");
+      setDesignations([])
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [rolePermissions]);
 
   // Initial data load
   useEffect(() => {
     fetchDesignations();
-  }, [fetchDesignations]);
+  }, [rolePermissions]);
 
   const handleEdit = (designation) => {
-    setEditingDesignation(designation);
-    setCurrentView('form');
+    if(rolePermissions.edit){
+      setEditingDesignation(designation);
+      setCurrentView('form');
+    } else {
+      alert("You don't have permission to edit.")
+    }
   };
 
   if (loading) {
@@ -353,6 +417,7 @@ const Designations = () => {
     <>
       {currentView === 'list' && (
         <DesignationList 
+          rolePermissions={rolePermissions}
           designations={designations} 
           fetchDesignations={fetchDesignations}
           setCurrentView={setCurrentView} 
@@ -361,6 +426,7 @@ const Designations = () => {
       )}
       {currentView === 'form' && (
         <DesignationForm 
+          rolePermissions={rolePermissions}
           setCurrentView={setCurrentView} 
           fetchDesignations={fetchDesignations}
           editingDesignation={editingDesignation}

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api'; 
 
 
@@ -9,7 +10,7 @@ const GRADES_API_URL = 'system/configurations/grades/';
 /* -------------------------
     Grade List Component
 --------------------------*/
-const GradeList = ({ grades, setCurrentView, fetchGrades, handleEdit }) => {
+const GradeList = ({ rolePermissions, grades, setCurrentView, fetchGrades, handleEdit }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredGrades = grades.filter((grade) =>
@@ -18,6 +19,10 @@ const GradeList = ({ grades, setCurrentView, fetchGrades, handleEdit }) => {
   );
 
   const handleDelete = async (id) => {
+    if(!rolePermissions.delete){
+      alert("You don't have permission to delete.")
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this grade?")) {
       return;
     }
@@ -39,24 +44,28 @@ const GradeList = ({ grades, setCurrentView, fetchGrades, handleEdit }) => {
 
       {/* Search + Add */}
       <div className="list-header-light">
-        <div className="search-bar-container-light">
-          <Search className="search-icon-light" size={18} />
-          <input
-            type="text"
-            placeholder="Search grades..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-light"
-          />
-        </div>
+        {rolePermissions.view && (
+          <div className="search-bar-container-light">
+            <Search className="search-icon-light" size={18} />
+            <input
+              type="text"
+              placeholder="Search grades..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input-light"
+            />
+          </div>
+        )}
 
-        <button
-          className="btn-add-new-light"
-          onClick={() => setCurrentView('form')}
-        >
-          <Plus size={16} style={{ marginLeft: '0.5rem' }} />
-          ADD GRADE
-        </button>
+        {rolePermissions.create && (
+          <button
+            className="btn-add-new-light"
+            onClick={() => setCurrentView('form')}
+          >
+            <Plus size={16} style={{ marginLeft: '0.5rem' }} />
+            ADD GRADE
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -64,48 +73,59 @@ const GradeList = ({ grades, setCurrentView, fetchGrades, handleEdit }) => {
         <table className="data-table-light">
           <thead>
             <tr>
-              {['ID', 'Name', 'Description', 'Actions'].map((header) => (
-                <th key={header} className="table-header-light">
-                  {header}
-                </th>
-              ))}
+              {['ID', 'Name', 'Description']
+                .concat((rolePermissions.edit || rolePermissions.delete) 
+                  ? ['Actions'] : [])
+                .map((header) => (
+                  <th key={header} className="table-header-light">
+                    {header}
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>
             {filteredGrades.length > 0 ? (
                 filteredGrades.map((grade) => (
                     <tr key={grade.id} className="table-row-light">
-                        <td className="table-data-light">{grade.id}</td>
-                        <td className="table-data-light table-data--name-light">
-                            {grade.name}
-                        </td>
-                        <td className="table-data-light table-data--description-light">
-                            {grade.description || 'N/A'}
-                        </td>
+                      <td className="table-data-light">{grade.id}</td>
+                      <td className="table-data-light table-data--name-light">
+                          {grade.name}
+                      </td>
+                      <td className="table-data-light table-data--description-light">
+                          {grade.description || 'N/A'}
+                      </td>
+                      {(rolePermissions.edit || rolePermissions.delete) && (
                         <td className="table-data-light">
                             <div className="action-buttons-light">
+                              {rolePermissions.edit && (
                                 <button
-                                    title="Edit"
-                                    className="action-button-light action-button--edit-light"
-                                    onClick={() => handleEdit(grade)}
+                                  title="Edit"
+                                  className="action-button-light action-button--edit-light"
+                                  onClick={() => handleEdit(grade)}
                                 >
-                                    <Pencil size={16} />
+                                  <Pencil size={16} />
                                 </button>
+                              )}
+
+                              {rolePermissions.delete && (
                                 <button
-                                    title="Delete"
-                                    className="action-button-light action-button--delete-light"
-                                    onClick={() => handleDelete(grade.id)}
+                                  title="Delete"
+                                  className="action-button-light action-button--delete-light"
+                                  onClick={() => handleDelete(grade.id)}
                                 >
-                                    <Trash2 size={16} />
+                                  <Trash2 size={16} />
                                 </button>
+                              )}
                             </div>
                         </td>
+                      )}
                     </tr>
                 ))
             ) : (
                 <tr>
                     <td colSpan="4" className="no-data-message-light">
-                        No grades match your criteria.
+                        No grades.
                     </td>
                 </tr>
             )}
@@ -120,7 +140,7 @@ const GradeList = ({ grades, setCurrentView, fetchGrades, handleEdit }) => {
 /* -------------------------
     Grade Form Component
 --------------------------*/
-const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade }) => {
+const GradeForm = ({ rolePermissions, setCurrentView, fetchGrades, editingGrade, setEditingGrade }) => {
   const isEditing = !!editingGrade;
   
   const initialFormState = {
@@ -134,7 +154,7 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
 
   // Populate form if editing
   useEffect(() => {
-    if (editingGrade) {
+    if (editingGrade && rolePermissions.edit) {
       setFormData({
         name: editingGrade.name || '',
         description: editingGrade.description || '',
@@ -142,7 +162,7 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
     } else {
       setFormData(initialFormState);
     }
-  }, [editingGrade]);
+  }, [editingGrade, rolePermissions]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -168,11 +188,23 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
 
     try {
       if (isEditing) {
-        await api.put(`${GRADES_API_URL}${editingGrade.id}/`, dataToSend);
-        toast.success("Grade updated successfully!");
+        if(rolePermissions.edit){
+          await api.put(`${GRADES_API_URL}${editingGrade.id}/`, dataToSend);
+          toast.success("Grade updated successfully!");
+        }else{
+          alert("You do not have permission to edit.")
+          setLoading(false);
+          return;
+        }
       } else {
-        await api.post(GRADES_API_URL, dataToSend);
-        toast.success("Grade added successfully!");
+        if(rolePermissions.create){
+          await api.post(GRADES_API_URL, dataToSend);
+          toast.success("Grade added successfully!");
+        } else {
+          alert("You do not have permission to create.")
+          setLoading(false);
+          return;
+        }
       }
       
       fetchGrades(); // Refresh the list in the parent component
@@ -230,6 +262,7 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
               onChange={handleChange}
               className="input-field-light"
               placeholder="e.g., M-4"
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -244,17 +277,20 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
               onChange={handleChange}
               className="input-field-light textarea-field-light"
               placeholder="Provide a detailed description of the scope and salary band for this grade."
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
             ></textarea>
           </div>
         </div>
 
         {/* Buttons */}
         <div className="form-actions-light">
-          <button type="submit" className="btn-save-light btn-save-light--primary" disabled={loading}>
-            {loading ? 'Processing...' : (isEditing ? 'UPDATE' : 'SAVE')}
-          </button>
-          
-          {!isEditing && (
+          {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
+            <button type="submit" className="btn-save-light btn-save-light--primary" disabled={loading}>
+              {loading ? 'Processing...' : (isEditing ? 'UPDATE' : 'SAVE')}
+            </button>
+          )}
+
+          {(!isEditing && rolePermissions.create) && (
             <button 
               type="button" 
               className="btn-save-light btn-save-light--secondary"
@@ -279,38 +315,66 @@ const GradeForm = ({ setCurrentView, fetchGrades, editingGrade, setEditingGrade 
     Main Grades Component
 --------------------------*/
 const Grades = () => {
+  const { user } = useAuth();
   const [currentView, setCurrentView] = useState('list');
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingGrade, setEditingGrade] = useState(null); // Tracks the grade object being edited
+  const [rolePermissions, setRolePermissions] = useState({});
 
-  // Fetch function wrapped in useCallback
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        const res = await api.get(`system/role-permissions/${user.role}/${"Configuration"}/${"Grade"}/`)
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
+
   const fetchGrades = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       // FIX: Requesting the correct URL: /api/system/grades/
-      const res = await api.get(GRADES_API_URL);
-      setGrades(res.data);
+      if(rolePermissions.view){
+        const res = await api.get(GRADES_API_URL);
+        setGrades(res.data || []);
+      }
     } catch (err) {
       console.error("Fetch error:", err.response ? err.response.data : err.message);
       setError("Error fetching grades. Please check API connection and permissions.");
       toast.error("Failed to load grades.");
+      setGrades([])
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [rolePermissions]);
+
 
   // Initial data load
   useEffect(() => {
     fetchGrades();
-  }, [fetchGrades]);
+  }, [rolePermissions]);
+
 
   const handleEdit = (grade) => {
-    setEditingGrade(grade);
-    setCurrentView('form');
+    if(rolePermissions.edit){
+      setEditingGrade(grade);
+      setCurrentView('form');
+    } else {
+      alert("You don't have permission to edit.")
+    }
   };
+
 
   if (loading) {
     return <div className="loading-message">Loading grades...</div>;
@@ -324,6 +388,7 @@ const Grades = () => {
     <>
       {currentView === 'list' && (
         <GradeList 
+          rolePermissions={rolePermissions}
           grades={grades} 
           setCurrentView={setCurrentView} 
           fetchGrades={fetchGrades}
@@ -332,6 +397,7 @@ const Grades = () => {
       )}
       {currentView === 'form' && (
         <GradeForm 
+          rolePermissions={rolePermissions}
           setCurrentView={setCurrentView} 
           fetchGrades={fetchGrades}
           editingGrade={editingGrade}
