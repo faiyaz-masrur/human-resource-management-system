@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api'; 
+import { useAuth } from '../../contexts/AuthContext';
 
 const ROLES_API_URL = 'system/configurations/roles/'; 
 
@@ -41,7 +42,7 @@ const SECTION_TO_SUB_WORKSPACE_MAP = {
 
 // --- Permission Row Components (No changes here, just kept for completeness) ---
 
-const AllPermissionRow = ({ title, section, permissions, onChange }) => (
+const AllPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
     <div className="urd-permission-row">
         <h4 className="urd-permission-title">{title}</h4>
         <div className="urd-permission-checkboxes">
@@ -51,6 +52,7 @@ const AllPermissionRow = ({ title, section, permissions, onChange }) => (
                         type="checkbox"
                         checked={permissions[section]?.[permissionType] || false}
                         onChange={() => onChange(section, permissionType)}
+                        disabled={!rolePermissions.edit}
                     />
                     {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
                 </label>
@@ -59,7 +61,7 @@ const AllPermissionRow = ({ title, section, permissions, onChange }) => (
     </div>
 );
 
-const PermissionRow = ({ title, section, permissions, onChange }) => (
+const PermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
     <div className="urd-permission-row">
         <h4 className="urd-permission-title">{title}</h4>
         <div className="urd-permission-checkboxes">
@@ -69,6 +71,7 @@ const PermissionRow = ({ title, section, permissions, onChange }) => (
                         type="checkbox"
                         checked={permissions[section]?.[permissionType] || false}
                         onChange={() => onChange(section, permissionType)}
+                        disabled={!rolePermissions.edit}
                     />
                     {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
                 </label>
@@ -77,7 +80,7 @@ const PermissionRow = ({ title, section, permissions, onChange }) => (
     </div>
 );
 
-const LimitedPermissionRow = ({ title, section, permissions, onChange }) => (
+const LimitedPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
     <div className="urd-permission-row">
         <h4 className="urd-permission-title">{title}</h4>
         <div className="urd-permission-checkboxes">
@@ -87,6 +90,7 @@ const LimitedPermissionRow = ({ title, section, permissions, onChange }) => (
                         type="checkbox"
                         checked={permissions[section]?.[permissionType] || false}
                         onChange={() => onChange(section, permissionType)}
+                        disabled={!rolePermissions.edit}
                     />
                     {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
                 </label>
@@ -96,7 +100,7 @@ const LimitedPermissionRow = ({ title, section, permissions, onChange }) => (
 );
 
 
-const ViewOnlyPermissionRow = ({ title, section, permissions, onChange }) => (
+const ViewOnlyPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
     <div className="urd-permission-row">
         <h4 className="urd-permission-title">{title}</h4>
         <div className="urd-permission-checkboxes">
@@ -106,6 +110,7 @@ const ViewOnlyPermissionRow = ({ title, section, permissions, onChange }) => (
                         type="checkbox"
                         checked={permissions[section]?.[permissionType] || false}
                         onChange={() => onChange(section, permissionType)}
+                        disabled={!rolePermissions.edit}
                     />
                     {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
                 </label>
@@ -116,7 +121,7 @@ const ViewOnlyPermissionRow = ({ title, section, permissions, onChange }) => (
 
 // --- View Component 1: User Role Details / Edit View (API Integrated) ---
 
-const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
+const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refreshList }) => {
     
     const [roleName, setRoleName] = useState(currentRole?.name || "");
     const [description, setDescription] = useState(currentRole?.description || "");
@@ -193,13 +198,14 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
 
             // 2. Fetch Role Permissions
             // Assuming your endpoint supports filtering by role ID using a query parameter
-            const permRes = await api.get(PERMISSIONS_API_URL, {
-                params: { role: roleId } 
-            }); 
-            
-            setInitialPermissions(permRes.data);
-            setPermissions(mapApiToState(permRes.data));
-            
+            if(rolePermissions.view){
+                const permRes = await api.get(PERMISSIONS_API_URL, {
+                    params: { role: roleId } 
+                }); 
+                
+                setInitialPermissions(permRes.data);
+                setPermissions(mapApiToState(permRes.data));
+            }
         } catch (err) {
             console.error("Error fetching role data/permissions:", err.response || err);
             toast.error("Failed to load role details or permissions.");
@@ -213,7 +219,8 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [rolePermissions]);
+
 
     useEffect(() => {
         // Initialize basic role info from props
@@ -224,7 +231,8 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
         if (currentRole?.id) {
             fetchRoleData(currentRole.id);
         }
-    }, [currentRole, fetchRoleData]); 
+    }, [currentRole, rolePermissions]); 
+    
     
     // --- Permission Checkbox Handler (Unchanged) ---
     const handleCheckboxChange = (section, permissionType) => {
@@ -242,6 +250,10 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
 
     // --- Save Handler ---
     const handleSave = async () => {
+        if(!rolePermissions.edit){
+            alert("You don't have permission to edit.");
+            return;
+        }
         setLoading(true);
         
         try {
@@ -308,11 +320,23 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
                 
                 <div className="urd-detail-item">
                     <label className="urd-detail-label">User Role ID</label>
-                    <input type="text" value={roleId} readOnly className="urd-detail-input urd-role-id-input" />
+                    <input 
+                        type="text" 
+                        value={roleId} 
+                        className="urd-detail-input urd-role-id-input"
+                        readOnly
+                    />
                 </div>
+
                 <div className="urd-detail-item">
                     <label className="urd-detail-label">Role Name</label>
-                    <input type="text" value={roleName} onChange={(e) => setRoleName(e.target.value)} className="urd-detail-input urd-role-name-input" disabled={loading} />
+                    <input 
+                        type="text" 
+                        value={roleName} 
+                        onChange={(e) => setRoleName(e.target.value)} 
+                        className="urd-detail-input urd-role-name-input" 
+                        disabled={loading || !rolePermissions.edit} 
+                    />
                 </div>
                 <div className="urd-detail-item urd-status-dropdown-wrapper">
                     <label className="urd-detail-label">Status</label>
@@ -320,7 +344,7 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
                         value={status} 
                         onChange={(e) => setStatus(e.target.value)} 
                         className="urd-detail-input urd-status-select" 
-                        disabled={loading}
+                        disabled={loading || !rolePermissions.edit}
                     >
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
@@ -328,7 +352,13 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
                 </div>
                 <div className="urd-detail-item">
                     <label className="urd-detail-label">Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="urd-detail-input urd-description-input" disabled={loading}></textarea>
+                    <textarea 
+                        value={description} 
+                        onChange={(e) => setDescription(e.target.value)} 
+                        className="urd-detail-input urd-description-input" 
+                        disabled={loading || !rolePermissions.edit}
+                    >
+                    </textarea>
                 </div>
             </div>
 
@@ -341,79 +371,86 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
                 <>
                     <div className="urd-permissions-tabs-container">
                         {tabs.map((tab) => (
-                            <button key={tab} className={`urd-permission-tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)} disabled={loading}>{tab}</button>
+                            <button 
+                                key={tab} 
+                                className={`urd-permission-tab ${activeTab === tab ? 'active' : ''}`} 
+                                onClick={() => setActiveTab(tab)} 
+                                disabled={loading}
+                            >
+                                {tab}
+                            </button>
                         ))}
                     </div>
 
                     <div className="urd-permissions-content">
                         {activeTab === 'My Profile' && (
                             <div className="urd-agreement-permissions">
-                                <LimitedPermissionRow title="My Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
+                                <LimitedPermissionRow rolePermissions={rolePermissions} title="My Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
 
                         {activeTab === 'Employees' && (
                             <div className="urd-agreement-permissions">
-                                <PermissionRow title="Employees" section="employees" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employees" section="employees" permissions={permissions} onChange={handleCheckboxChange} />
                                 {/* IMPORTANT: Using same section keys here for employee details means they share permissions with "My Profile" tab. Adjust keys if you need separate permissions for viewing 'My Official Details' vs. 'Employee Official Details'. */}
-                                <PermissionRow title="Employee Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
                         
                         {activeTab === 'My Appraisal' && (
                             <div className="urd-appraisal-permissions">
-                                <PermissionRow title="My Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="My CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="My CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
 
                         {activeTab === 'Review Appraisals' && (
                             <div className="urd-appraisal-permissions">
-                                <LimitedPermissionRow title="Review Appraisals" section="review" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <LimitedPermissionRow rolePermissions={rolePermissions} title="Review Appraisals" section="review" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
 
                         {activeTab === 'All Appraisals' && (
                             <div className="urd-appraisal-permissions">
-                                <ViewOnlyPermissionRow title="Appraisal Status" section= "appraisal_status" permissions={permissions} onChange={handleCheckboxChange} />
-                                <LimitedPermissionRow title="All Appraisals" section= "all_appraisal" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <ViewOnlyPermissionRow rolePermissions={rolePermissions} title="Appraisal Status" section= "appraisal_status" permissions={permissions} onChange={handleCheckboxChange} />
+                                <LimitedPermissionRow rolePermissions={rolePermissions} title="All Appraisals" section= "all_appraisal" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow rolePermissions={rolePermissions} title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
 
                         {activeTab === 'Configurations' && (
                             <div className="urd-appraisal-permissions">
-                                <AllPermissionRow title="Departments" section= "departments" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow title="Designations" section= "designations" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow title="Grades" section= "grades" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow title="Roles" section= "roles" permissions={permissions} onChange={handleCheckboxChange} />
+                                <AllPermissionRow rolePermissions={rolePermissions} title="Departments" section= "departments" permissions={permissions} onChange={handleCheckboxChange} />
+                                <AllPermissionRow rolePermissions={rolePermissions} title="Designations" section= "designations" permissions={permissions} onChange={handleCheckboxChange} />
+                                <AllPermissionRow rolePermissions={rolePermissions} title="Grades" section= "grades" permissions={permissions} onChange={handleCheckboxChange} />
+                                <AllPermissionRow rolePermissions={rolePermissions} title="Roles" section= "roles" permissions={permissions} onChange={handleCheckboxChange} />
                             </div>
                         )}
                     </div>
@@ -421,13 +458,15 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
             )}
 
             <div className="urd-action-buttons">
-                <button 
-                    className="urd-save-button" 
-                    onClick={handleSave} 
-                    disabled={loading || !roleName}
-                >
-                    {loading ? "SAVING..." : "SAVE"}
-                </button>
+                {rolePermissions.edit && (
+                    <button 
+                        className="urd-save-button" 
+                        onClick={handleSave} 
+                        disabled={loading || !roleName}
+                    >
+                        {loading ? "SAVING..." : "SAVE"}
+                    </button>
+                )}
                 <button className="urd-back-button" onClick={goToListView} disabled={loading}>Back</button>
             </div>
         </div>
@@ -436,13 +475,17 @@ const UserRoleDetailsView = ({ goToListView, currentRole, refreshList }) => {
 
 // --- View Component 2: Add New Role (API Integrated) ---
 
-const AddNewRoleView = ({ goToListView, refreshList }) => {
+const AddNewRoleView = ({ rolePermissions, goToListView, refreshList }) => {
     
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async (action) => {
+        if(!rolePermissions.create){
+            alert("You don't have permission to create.");
+            return;
+        }
         setLoading(true);
         try {
             const dataToSend = {
@@ -492,7 +535,7 @@ const AddNewRoleView = ({ goToListView, refreshList }) => {
                         className="add-form-input"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        disabled={loading}
+                        disabled={loading || !rolePermissions.create}
                         required
                     />
                 </div>
@@ -503,19 +546,21 @@ const AddNewRoleView = ({ goToListView, refreshList }) => {
                         className="add-form-textarea"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        disabled={loading}
+                        disabled={loading || !rolePermissions.create}
                     />
                 </div>
             </div>
 
-            <div className="add-form-action-buttons">
-                <button className="add-form-save-button" onClick={() => handleSave('save')} disabled={loading || !name}>
-                    {loading ? "SAVING..." : "SAVE"}
-                </button>
-                <button className="add-form-secondary-button" onClick={() => handleSave('add_another')} disabled={loading || !name}>
-                    Save and add another
-                </button>
-            </div>
+            {rolePermissions.create && (
+                <div className="add-form-action-buttons">
+                    <button className="add-form-save-button" onClick={() => handleSave('save')} disabled={loading || !name}>
+                        {loading ? "SAVING..." : "SAVE"}
+                    </button>
+                    <button className="add-form-secondary-button" onClick={() => handleSave('add_another')} disabled={loading || !name}>
+                        Save and add another
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
@@ -523,7 +568,7 @@ const AddNewRoleView = ({ goToListView, refreshList }) => {
 
 // --- View Component 3: All Roles / List View (API Integrated) ---
 
-const AllRolesView = ({ openDetailsView, openCreateView, roles, handleDelete, isLoading, error }) => {
+const AllRolesView = ({ rolePermissions, openDetailsView, openCreateView, roles, handleDelete, isLoading, error }) => {
     
     const [roleNameFilter, setRoleNameFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
@@ -538,26 +583,30 @@ const AllRolesView = ({ openDetailsView, openCreateView, roles, handleDelete, is
         <div className="ar-container">
             <header className="ar-header">
                 <h1 className="ar-title">All Roles</h1>
-                <button className="ar-add-new-button" onClick={openCreateView} disabled={isLoading}>
-                    <span className="ar-plus-icon">+</span> Add New
-                </button>
+                {rolePermissions.create && (
+                    <button className="ar-add-new-button" onClick={openCreateView} disabled={isLoading}>
+                        <span className="ar-plus-icon">+</span> Add New
+                    </button>
+                )}
             </header>
-
-            <div className="ar-search-filters-section">
-                <div className="ar-filter-item">
-                    <label className="ar-filter-label">Role Name</label>
-                    <input type="text" placeholder="Enter User Role Name" className="ar-filter-input" value={roleNameFilter} onChange={(e) => setRoleNameFilter(e.target.value)} disabled={isLoading} />
+            
+            {rolePermissions.view && (
+                <div className="ar-search-filters-section">
+                    <div className="ar-filter-item">
+                        <label className="ar-filter-label">Role Name</label>
+                        <input type="text" placeholder="Enter User Role Name" className="ar-filter-input" value={roleNameFilter} onChange={(e) => setRoleNameFilter(e.target.value)} disabled={isLoading} />
+                    </div>
+                    <div className="ar-filter-item">
+                        <label className="ar-filter-label">Status</label>
+                        <select className="ar-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} disabled={isLoading}>
+                            <option value="">-- Select --</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    {/* <button className="ar-search-button" onClick={() => {}}>Search</button> */}
                 </div>
-                <div className="ar-filter-item">
-                    <label className="ar-filter-label">Status</label>
-                    <select className="ar-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} disabled={isLoading}>
-                        <option value="">-- Select --</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                {/* <button className="ar-search-button" onClick={() => {}}>Search</button> */}
-            </div>
+            )}
 
             {error ? (
                 <div className="error-message p-4 bg-red-100 text-red-700 border border-red-400 rounded mt-4">{error}</div>
@@ -569,7 +618,7 @@ const AllRolesView = ({ openDetailsView, openCreateView, roles, handleDelete, is
                 <div className="ar-table-container">
                     <table className="ar-roles-table">
                         <thead>
-                            <tr><th>Role ID</th><th>Role Name</th><th>Status</th><th>Last Modified</th><th>Actions</th></tr>
+                            <tr><th>Role ID</th><th>Role Name</th><th>Status</th><th>Last Modified</th>{(rolePermissions.edit || rolePermissions.delete) && <th>Actions</th>}</tr>
                         </thead>
                         <tbody>
                             {filteredRoles.length > 0 ? (
@@ -580,30 +629,37 @@ const AllRolesView = ({ openDetailsView, openCreateView, roles, handleDelete, is
                                         <td><span className={`ar-status-badge ${role.status.toLowerCase()}`}>{role.status}</span></td>
                                         {/* Assuming your API provides a last_modified or date field */}
                                         <td>{new Date(role.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')}</td>
-                                        <td>
-                                            <div className="ar-actions-cell">
-                                                <button 
-                                                    className="action-button-light action-button--edit-light" 
-                                                    onClick={() => openDetailsView(role.id)}
-                                                    title="Edit Role"
-                                                >
-                                                    &#9998;
-                                                </button>
-                                                <button 
-                                                    className="action-button-light action-button--delete-light" 
-                                                    onClick={() => handleDelete(role.id, role.name)}
-                                                    title="Delete Role"
-                                                >
-                                                    &#128465;
-                                                </button>
-                                            </div>
-                                        </td>
+                                        {(rolePermissions.edit || rolePermissions.delete) && (
+                                            <td>
+                                                <div className="ar-actions-cell">
+                                                    {rolePermissions.edit && (
+                                                        <button 
+                                                            className="action-button-light action-button--edit-light" 
+                                                            onClick={() => openDetailsView(role.id)}
+                                                            title="Edit Role"
+                                                        >
+                                                            &#9998;
+                                                        </button>
+                                                    )}
+
+                                                    {rolePermissions.delete && (
+                                                        <button 
+                                                            className="action-button-light action-button--delete-light" 
+                                                            onClick={() => handleDelete(role.id, role.name)}
+                                                            title="Delete Role"
+                                                        >
+                                                            &#128465;
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
                                     <td colSpan="5" className="no-data-message" style={{textAlign: 'center', padding: '20px'}}>
-                                        {roleNameFilter || statusFilter ? "No roles match your search criteria." : "No roles found."}
+                                        {roleNameFilter || statusFilter ? "No roles match your search criteria." : "No roles."}
                                     </td>
                                 </tr>
                             )}
@@ -621,26 +677,44 @@ const AllRolesView = ({ openDetailsView, openCreateView, roles, handleDelete, is
 // ===============================================
 
 const Roles = () => {
-    
-    // Role state is now populated from API
+    const { user } = useAuth();
     const [roles, setRoles] = useState([]); 
     const [currentView, setCurrentView] = useState('list');
     const [selectedRoleId, setSelectedRoleId] = useState(null); 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [rolePermissions, setRolePermissions] = useState({});
 
-    // --- Data Fetching Logic ---
+
+    useEffect(() => {
+        const fetchRolePermissions = async () => {
+            try {
+                const res = await api.get(`system/role-permissions/${user.role}/${"Configuration"}/${"Role"}/`)
+                console.log("User role permission:", res?.data)
+                setRolePermissions(res?.data || {}); 
+            } catch (error) {
+                console.warn("Error fatching role permissions", error);
+                setRolePermissions({}); 
+            }
+        };
+
+        fetchRolePermissions();
+    }, []);
+
+
     const fetchRoles = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await api.get(ROLES_API_URL);
-            // Assuming your API returns a list of roles with id, name, status, and a date field
-            setRoles(res.data.map(role => ({
-                ...role,
-                status: role.status || 'Active', // Default if API misses it
-                date: role.date || new Date().toISOString().split('T')[0], // Use a date field from API
-            })));
+            if(rolePermissions.view){
+                const res = await api.get(ROLES_API_URL);
+                // Assuming your API returns a list of roles with id, name, status, and a date field
+                setRoles(res.data.map(role => ({
+                    ...role,
+                    status: role.status || 'Active', // Default if API misses it
+                    date: role.date || new Date().toISOString().split('T')[0], // Use a date field from API
+                })));
+            }
         } catch (err) {
             console.error("Fetch error:", err.response || err);
             setError("Failed to load roles. Please check the API server and network.");
@@ -648,14 +722,19 @@ const Roles = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []); 
+    }, [rolePermissions]); 
+
 
     useEffect(() => {
         fetchRoles();
-    }, [fetchRoles]); 
+    }, [rolePermissions]); 
 
-    // --- Delete Action ---
+
     const handleDelete = async (id, name) => {
+        if(!rolePermissions.delete){
+            alert("You don't have permission to delete.")
+            return;
+        }
         if (window.confirm(`Are you sure you want to delete the role: "${name}"?`)) {
             setIsLoading(true); 
             try {
@@ -672,14 +751,23 @@ const Roles = () => {
         }
     };
     
-    // --- View Navigation ---
+
     const openDetailsView = (id) => {
-        setSelectedRoleId(id);
-        setCurrentView('details');
+        if (rolePermissions.view){
+            setSelectedRoleId(id);
+            setCurrentView('details');
+        } else {
+            alert("You don't have permission to view.")
+        }
     };
 
+
     const openCreateView = () => {
-        setCurrentView('create');
+        if (rolePermissions.create){
+            setCurrentView('create');
+        } else {
+            alert("You don't have permission to create.")
+        }
     };
 
     const goToListView = () => {
@@ -696,21 +784,27 @@ const Roles = () => {
         switch (currentView) {
             case 'list':
                 return <AllRolesView 
-                    openDetailsView={openDetailsView} 
-                    openCreateView={openCreateView} 
-                    roles={roles}
-                    handleDelete={handleDelete}
-                    isLoading={isLoading}
-                    error={error}
-                />;
+                            rolePermissions={rolePermissions}
+                            openDetailsView={openDetailsView} 
+                            openCreateView={openCreateView} 
+                            roles={roles}
+                            handleDelete={handleDelete}
+                            isLoading={isLoading}
+                            error={error}
+                        />;
             case 'details':
                 return <UserRoleDetailsView 
-                    goToListView={goToListView} 
-                    currentRole={roleToEdit} // Pass the full role object
-                    refreshList={fetchRoles} // Pass the fetch function to update the list after saving
-                />;
+                            rolePermissions={rolePermissions}
+                            goToListView={goToListView} 
+                            currentRole={roleToEdit} // Pass the full role object
+                            refreshList={fetchRoles} // Pass the fetch function to update the list after saving
+                        />;
             case 'create':
-                return <AddNewRoleView goToListView={goToListView} refreshList={fetchRoles} />;
+                return <AddNewRoleView 
+                            rolePermissions={rolePermissions} 
+                            goToListView={goToListView} 
+                            refreshList={fetchRoles} 
+                        />;
             default:
                 return null;
         }

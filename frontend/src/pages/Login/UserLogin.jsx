@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../../services/api';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import SonaliLogo from "../../assets/sonali-logo.jpg";
@@ -17,7 +17,7 @@ const UserLogin = () => {
     setError('');
 
     try {
-      const response = await api.post('/system/auth/login/', {
+      const response = await axios.post('http://127.0.0.1:8000/api/system/auth/login/', {
         email,
         password,
       });
@@ -27,12 +27,8 @@ const UserLogin = () => {
       navigate('/'); 
 
     } catch (err) {
-      console.error('Login failed:', err.response.data);
-      if (err.response && err.response.data) {
-        setError(err.response.data.detail || 'Login failed. Please check your credentials.');
-      } else {
-        setError('An unexpected error occurred.');
-      }
+      console.error('Login failed:', err);
+      setError('Login failed. Please check your credentials.');
     }
   };
 
