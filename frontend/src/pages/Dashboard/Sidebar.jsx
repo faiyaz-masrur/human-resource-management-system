@@ -20,8 +20,8 @@ import settingIcon from "..//../assets/icons/Settings.svg";
 
 // --- Menu Items Definition ---
 const menuItems = [
-  { name: 'Dashboard', icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 18, height: 18 }} />, path: '/dashboard' }, 
-  { name: 'My Profile', icon: <img src={myProfileIcon} alt="Profile" style={{ width: 18, height: 18 }} />, path: '/profile' },
+  { name: 'Dashboard', icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 18, height: 18 }} />, path: '/' }, 
+  { name: 'My Profile', icon: <img src={myProfileIcon} alt="Profile" style={{ width: 18, height: 18 }} />, path: '/employee-details/my-profile' },
   { name: 'Attendance', icon: <img src={attendanceIcon} alt="Attendance" style={{ width: 18, height: 18 }} />, path: '/attendance' },
   { name: 'Payroll', icon: <img src={payrollIcon} alt="payroll" style={{ width: 18, height: 18 }} />, path: '/payroll' },
  { name: 'Employees', icon: <img src={employeeIcon} alt="Employees" style={{ width: 18, height: 18 }} />, path: '/employees' },

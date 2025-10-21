@@ -1,252 +1,188 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../services/api'; 
 
-const HrAppraisal = () => {
+const HrAppraisal = ({ employeeId }) => {
+  const [formData, setFormData] = useState({
+    hr_remarks: '',
+    proposed_basic_inc: '',
+    proposed_gross_inc: '',
+    proposed_basic_pp: '',
+    proposed_gross_pp: '',
+    decisions: {
+      promo_inc: null,
+      promo_pp: null,
+      inc_only: null,
+      pp_only: null,
+      deferred: null,
+      remarks: '',
+    },
+  });
+
+  const [employeeData, setEmployeeData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!employeeId) return;
+
+      try {
+        setLoading(true);
+        const response = await api.get(`/appraisals/employee-appraisal/${employeeId}/hr/`);
+        setEmployeeData(response.data.employee_appraisal);
+
+        if (response.data.hr_review) {
+          setFormData(response.data.hr_review);
+        }
+      } catch (err) {
+        console.error('Error fetching HR appraisal:', err);
+        setIsError(true);
+        setMessage('Failed to load HR appraisal data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [employeeId]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked, dataset } = e.target;
+
+    if (dataset.decision) {
+      setFormData((prev) => ({
+        ...prev,
+        decisions: {
+          ...prev.decisions,
+          [dataset.decision]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
+    setIsError(false);
+    setIsSubmitting(true);
+
+    try {
+      await api.post(`/review-appraisal/employee-appraisal/${employeeId}/hr/`, formData);
+      setMessage('HR review submitted successfully!');
+    } catch (err) {
+      console.error('Submission error:', err);
+      setIsError(true);
+      if (err.response) setMessage(err.response.data.error || 'Submission failed.');
+      else setMessage('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      hr_remarks: '',
+      proposed_basic_inc: '',
+      proposed_gross_inc: '',
+      proposed_basic_pp: '',
+      proposed_gross_pp: '',
+      decisions: {
+        promo_inc: null,
+        promo_pp: null,
+        inc_only: null,
+        pp_only: null,
+        deferred: null,
+        remarks: '',
+      },
+    });
+    setMessage(null);
+    setIsError(false);
+  };
+
+  if (loading) return <div>Loading HR appraisal...</div>;
+
   return (
-    <div className="appraisal-form-container">
-      {/* Remarks Section */}
-      <div className="form-section">
-        <div className="form-header">
-          <label htmlFor="hr-remarks" className="section-title">
-            Remarks from Human Resource
-          </label>
-          <span className="word-count-label">Maximum 1000 words</span>
+    <form className="appraisal-form-container" onSubmit={handleSubmit}>
+      {message && (
+        <div className={`message-container ${isError ? 'error-message' : 'success-message'}`}>
+          {message}
         </div>
+      )}
+
+      {/* HR Remarks */}
+      <div className="form-section">
+        <label className="section-title">Remarks from Human Resource</label>
         <textarea
-          id="hr-remarks"
+          name="hr_remarks"
           className="form-textarea"
+          value={formData.hr_remarks}
+          onChange={handleChange}
           placeholder="Please validate this review and complement any necessary comment"
-        ></textarea>
+        />
       </div>
 
-      {/* Leave Details */}
-      <div className="form-section">
-        <div className="flex justify-between items-center mb-4">
-          <label className="section-title">Leave Details</label>
-          <span className="text-sm font-semibold text-gray-600">Total Leave taken: 19</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Annual</label>
-            <input type="text" className="form-input" placeholder="5" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Sick</label>
-            <input type="text" className="form-input" placeholder="5" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Sick</label>
-            <input type="text" className="form-input" placeholder="7" readOnly />
-          </div>
-        </div>
-      </div>
-
-      {/* Attendance Details */}
-      <div className="form-section">
-        <label className="section-title">Attendance Details</label>
-        <p className="text-sm text-gray-600 mb-4">
-          Very Good:100-91%, Good:81-90%, Average:70-80%, Below Average:Less than 70%
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">On time</label>
-            <input type="text" className="form-input" placeholder="189" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Delay</label>
-            <input type="text" className="form-input" placeholder="29" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Early Exit</label>
-            <input type="text" className="form-input" placeholder="7" readOnly />
-          </div>
-        </div>
-      </div>
-
-      {/* Leave Details (again, based on the image) */}
-      <div className="form-section">
-        <label className="section-title">Leave Details</label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Basic Salary</label>
-            <input type="text" className="form-input" placeholder="XXXXX" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Salary</label>
-            <input type="text" className="form-input" placeholder="XXXXX" readOnly />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Difference</label>
-            <input type="text" className="form-input" placeholder="0" readOnly />
-          </div>
-        </div>
-      </div>
-
-      {/* Promotion and Increment Sections */}
+      {/* Salary / Promotion / Increment */}
       <div className="form-section">
         <label className="section-title">Promotion with Increment</label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Proposed Basic</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Proposed Gross</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Difference</label>
-            <input type="text" className="form-input" placeholder="0" readOnly />
-          </div>
-        </div>
+        <input
+          type="text"
+          name="proposed_basic_inc"
+          className="form-input"
+          placeholder="Proposed Basic"
+          value={formData.proposed_basic_inc}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="proposed_gross_inc"
+          className="form-input"
+          placeholder="Proposed Gross"
+          value={formData.proposed_gross_inc}
+          onChange={handleChange}
+        />
       </div>
 
       <div className="form-section">
-        <label className="section-title">Promotion without Increment</label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Proposed Basic</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
+        <label className="section-title">Promotion / Increment / PP Decisions</label>
+        {['promo_inc','promo_pp','inc_only','pp_only','deferred'].map((key) => (
+          <div key={key} className="decision-item">
+            <label>{key.replace(/_/g,' ')}</label>
+            <div className="flex gap-4">
+              <input
+                type="checkbox"
+                checked={!!formData.decisions[key]}
+                data-decision={key}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-          <div className="form-input-group">
-            <label className="input-label">Proposed Gross</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Difference</label>
-            <input type="text" className="form-input" placeholder="0" readOnly />
-          </div>
-        </div>
+        ))}
+        <textarea
+          name="remarks"
+          data-decision="remarks"
+          className="form-textarea"
+          placeholder="Remarks on your decision"
+          value={formData.decisions.remarks}
+          onChange={handleChange}
+        />
       </div>
 
-      <div className="form-section">
-        <label className="section-title">Increment</label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Proposed Basic</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Proposed Gross</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Difference</label>
-            <input type="text" className="form-input" placeholder="0" readOnly />
-          </div>
-        </div>
-      </div>
-
-      <div className="form-section">
-        <label className="section-title">Pay Progression</label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-input-group">
-            <label className="input-label">Proposed Basic</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Proposed Gross</label>
-            <input type="text" className="form-input" placeholder="Enter Amount" />
-          </div>
-          <div className="form-input-group">
-            <label className="input-label">Gross Difference</label>
-            <input type="text" className="form-input" placeholder="0" readOnly />
-          </div>
-        </div>
-      </div>
-
-      {/* Decisions Section */}
-      <div className="form-section">
-        <label className="section-title">Decisions</label>
-        <div className="decision-grid">
-          <div className="decision-item">
-            <label className="decision-label">Promotion Recommended with Increment</label>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">Yes</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">No</label>
-              </div>
-            </div>
-            <input type="text" className="decision-input" placeholder="Remarks" />
-          </div>
-
-          <div className="decision-item">
-            <label className="decision-label">Promotion Recommended with PP only</label>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">Yes</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">No</label>
-              </div>
-            </div>
-            <input type="text" className="decision-input" placeholder="Remarks" />
-          </div>
-
-          <div className="decision-item">
-            <label className="decision-label">Increment Recommended without Promotion</label>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">Yes</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">No</label>
-              </div>
-            </div>
-            <input type="text" className="decision-input" placeholder="Remarks" />
-          </div>
-
-          <div className="decision-item">
-            <label className="decision-label">Only Pay Progression (PP) Recommended</label>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">Yes</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">No</label>
-              </div>
-            </div>
-            <input type="text" className="decision-input" placeholder="Remarks" />
-          </div>
-
-          <div className="decision-item">
-            <label className="decision-label">Promotion/Increment/PP Deferred</label>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">Yes</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <label className="ml-2">No</label>
-              </div>
-            </div>
-            <input type="text" className="decision-input" placeholder="Remarks" />
-          </div>
-        </div>
-
-        <div className="remarks-on-decision mt-8">
-          <label className="input-label">Remarks on your decision</label>
-          <span className="word-count-label">Maximum 500 words</span>
-          <textarea className="form-textarea" placeholder="Please...." rows="4"></textarea>
-        </div>
-      </div>
-
-      {/* Buttons Section */}
       <div className="button-group">
-        <button className="submit-button">Submit</button>
-        <button className="cancel-button">Cancel</button>
+        <button type="submit" className="submit-button" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
+        </button>
+        <button type="button" className="cancel-button" onClick={handleCancel} disabled={isSubmitting}>
+          Cancel
+        </button>
       </div>
-    </div>
+    </form>
   );
 };
 

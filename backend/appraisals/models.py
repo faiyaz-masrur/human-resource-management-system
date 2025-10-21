@@ -633,7 +633,7 @@ class EmployeeAppraisalStatusTrack(models.Model):
 
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
     appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.CASCADE)
-    last_updated = models.DateTimeField(auto_now=True)
+    last_archived_date = models.DateTimeField(null=True, blank=True)
     
     self_appraisal_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
     rm_review_done = models.CharField(max_length=10, default="NA", null=True, blank=True)
@@ -734,7 +734,8 @@ class AppraisalDetails(models.Model):
     coo_review = models.OneToOneField(CooReview, on_delete=models.CASCADE, related_name='appraisal_details')
     ceo_review = models.OneToOneField(CeoReview, on_delete=models.CASCADE, related_name='appraisal_details')
 
-    appraisal_period = models.DateField(null=True, blank=True)
+    appraisal_start_date = models.DateField(null=True, blank=True, verbose_name='Appraisal Start Date')
+    appraisal_end_date = models.DateField(null=True, blank=True, verbose_name='Appraisal End Date')
 
     created_at = models.DateTimeField(auto_now_add=True)
     

@@ -4,8 +4,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }) => {
   const { user } = useAuth();
-  const [toUpdate, setToUpdate] = useState(false)
   const [gradeId, setGradeId] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   const defaultOfficialDetails = {
     id: "",
@@ -73,7 +73,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
         }
         console.log("Employee official details:", res?.data)
         if(res?.data?.id){
-          setToUpdate(true)
+          setIsEditing(true);
         }
         setOfficialDetails(res?.data || defaultOfficialDetails); 
       } catch (error) {
@@ -180,8 +180,14 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
+      const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
+      if (!companyEmailPattern.test(officialdetails.email)) {
+        alert("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
+        return;
+      }
+
       if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
-        if (toUpdate) {
+        if (isEditing) {
           // Update existing employee
           if (!rolePermissions.edit) {
             alert("You don't have permission to edit.");
@@ -194,6 +200,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           console.log("Updateed Employee:", res.status);
           if(res.status === 200){
             alert("Employee details updated successfully!");
+            setOfficialDetails(res?.data || officialdetails)
           } else {
             alert("Something went wrong!")
           }
@@ -210,13 +217,14 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           console.log("New Employee:", res.status);
           if(res.status === 201){
             alert("Employee created successfully!");
+            setOfficialDetails(res?.data || officialdetails)
             set_employee_id(res.data.id)
           } else {
           alert("Something went wrong!")
           }
         }
       } else if(view.isOwnProfileView){ 
-        if (toUpdate) {
+        if (isEditing) {
           // Update existing employee
           if (!rolePermissions.edit) {
             alert("You don't have permission to edit.");
@@ -229,6 +237,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           console.log("Updateed Official Details:", res.status);
           if(res.status === 200){
             alert("Your official details updated successfully!");
+            setOfficialDetails(res?.data || officialdetails)
           } else {
             alert("Something went wrong!")
           }
@@ -239,7 +248,29 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       }
     } catch (error) {
       console.error("Error saving employee:", error.response?.data || error);
-      alert("Failed to save employee.");
+
+    if (error.response && error.response.status === 400) {
+      const errors = error.response.data;
+
+      // If there are field errors (e.g., email, name, etc.)
+      if (typeof errors === "object") {
+        let messages = [];
+        for (const field in errors) {
+          if (Array.isArray(errors[field])) {
+            messages.push(`${field}: ${errors[field][0]}`);
+          } else {
+            messages.push(`${field}: ${errors[field]}`);
+          }
+        }
+
+        // Show all validation messages together
+        alert(`Validation error:\n\n${messages.join("\n")}`);
+      } else {
+        alert("Validation failed. Please check your input.");
+      }
+    } else {
+      alert("Failed to save employee. Please try again.");
+    }
     }
   };
 
@@ -256,7 +287,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={toUpdate ? true : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
+              disabled={isEditing ? true : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
               required
             />
           </div>
@@ -267,7 +298,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={toUpdate ? true : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -278,7 +309,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -292,7 +323,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.department || ""}
               onChange={(e) => handleChange("department", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -311,7 +342,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                 setGradeId(parseInt(e.target.value))
                 handleChange("grade", e.target.value)
               }}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -328,7 +359,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -342,7 +373,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.designation || ""}
               onChange={(e) => handleChange("designation", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -360,7 +391,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               onChange={(e) =>
                 handleChange("reporting_manager", e.target.value)
               }
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -377,7 +408,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -390,7 +421,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.role || ""}
               onChange={(e) => handleChange("role", e.target.value)}
-              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+              disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -469,7 +500,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
+                  disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>
@@ -479,7 +510,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
         {/* Actions */}
         <div className="form-actions">
-          {(toUpdate ? rolePermissions.edit : rolePermissions.create) && (
+          {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
             <button className="btn-success" onClick={handleSave}>
               Save
             </button>

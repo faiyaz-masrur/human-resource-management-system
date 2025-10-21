@@ -88,7 +88,7 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RolePermission  # Accessing the through model
-        fields = ["id", "role_name", "workspace", "sub_workspace", "view", "create", "edit", "delete"]
+        fields = ["id", "role_name", "role", "workspace", "sub_workspace", "view", "create", "edit", "delete"]
 
 class ReportingManagerSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="manager.name", read_only=True)

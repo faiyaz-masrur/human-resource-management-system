@@ -18,7 +18,7 @@ class Command(BaseCommand):
         fixtures_dir = os.path.join(base_dir, "../../fixtures") 
 
         districts_file = os.path.join(fixtures_dir, "districts.json")
-        upazilas_file = os.path.join(fixtures_dir, "upazilas.json")
+        thanas_file = os.path.join(fixtures_dir, "thanas.json")
         blood_groups_file = os.path.join(fixtures_dir, "bloodgroups.json")
         marital_status_file = os.path.join(fixtures_dir, "maritalstatus.json")
         emergency_contact_relationships_file = os.path.join(fixtures_dir, "emergencyContactRelationships.json")
@@ -38,14 +38,14 @@ class Command(BaseCommand):
         # Create district mapping
         obj_mapping = {}
         for district in districts_data:
-            district_obj, created = BdDistrict.objects.get_or_create(name=district["name"])
+            district_obj, created = BdDistrict.objects.get_or_create(name=district["district_name"])
             obj_mapping[district["id"]] = district_obj
             if created:
-                self.stdout.write(self.style.SUCCESS(f"Created district: {district['name']}"))
+                self.stdout.write(self.style.SUCCESS(f"Created district: {district_obj.name}"))
 
 
         # Load thanas/upazilas
-        with open(upazilas_file, encoding="utf-8") as f:
+        with open(thanas_file, encoding="utf-8") as f:
             thanas_data = json.load(f)
 
         # Populate thanas
@@ -53,9 +53,9 @@ class Command(BaseCommand):
             district_id = thana["district_id"]
             district_obj = obj_mapping.get(district_id)
             if not district_obj:
-                raise ValueError(f"District ID {district_id} not found for thana {thana['name']}")
+                raise ValueError(f"District ID {district_id} not found for thana {thana['thana_name']}")
 
-            thana_obj, created = BdThana.objects.get_or_create(name=thana["name"], district=district_obj)
+            thana_obj, created = BdThana.objects.get_or_create(name=thana["thana_name"], district=district_obj)
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created thana: {thana_obj.name} under {district_obj.name}"))
         obj_mapping.clear()

@@ -47,7 +47,7 @@
     {
         "role": "EMP",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -56,7 +56,7 @@
     {
         "role": "EMP",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -120,7 +120,7 @@
     {
         "role": "EMP",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": false,
         "create": false,
         "edit": false,
@@ -416,7 +416,7 @@
     {
         "role": "RM",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -425,7 +425,7 @@
     {
         "role": "RM",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -489,7 +489,7 @@
     {
         "role": "RM",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": false,
         "create": false,
         "edit": false,
@@ -785,7 +785,7 @@
     {
         "role": "HR",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -794,7 +794,7 @@
     {
         "role": "HR",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -858,7 +858,7 @@
     {
         "role": "HR",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -1155,7 +1155,7 @@
     {
         "role": "HOD",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -1164,7 +1164,7 @@
     {
         "role": "HOD",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -1228,7 +1228,7 @@
     {
         "role": "HOD",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": false,
         "create": false,
         "edit": false,
@@ -1525,7 +1525,7 @@
     {
         "role": "COO",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -1534,7 +1534,7 @@
     {
         "role": "COO",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -1598,7 +1598,7 @@
     {
         "role": "COO",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": false,
         "create": false,
         "edit": false,
@@ -1895,7 +1895,7 @@
     {
         "role": "CEO",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -1904,7 +1904,7 @@
     {
         "role": "CEO",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -1968,7 +1968,7 @@
     {
         "role": "CEO",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": false,
         "create": false,
         "edit": false,
@@ -2265,7 +2265,7 @@
     {
         "role": "SUPER",
         "workspace": "MyProfile",
-        "sub_workspace": "MyProfessionalCertificate",
+        "sub_workspace": "MyTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,
@@ -2274,7 +2274,7 @@
     {
         "role": "SUPER",
         "workspace": "MyProfile",
-        "sub_workspace": "MyAttatchment",
+        "sub_workspace": "MyAttachment",
         "view": true,
         "create": true,
         "edit": true,
@@ -2338,7 +2338,7 @@
     {
         "role": "SUPER",
         "workspace": "Employee",
-        "sub_workspace": "EmployeeProfessionalCertificate",
+        "sub_workspace": "EmployeeTrainingCertificate",
         "view": true,
         "create": true,
         "edit": true,

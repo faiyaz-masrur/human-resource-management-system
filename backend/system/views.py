@@ -36,7 +36,7 @@ from .models import (
 from rest_framework import generics, status, viewsets, views
 from .permissions import HasRoleWorkspacePermission
 from rest_framework import mixins
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -55,6 +55,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     Custom view for token creation to include user data in the response.
     """
     serializer_class = MyTokenObtainPairSerializer
+    permission_classes = [AllowAny]
 
 
 class ChangePasswordView(generics.UpdateAPIView):
