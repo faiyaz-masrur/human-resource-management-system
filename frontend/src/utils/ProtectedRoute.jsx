@@ -1,12 +1,20 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-  if (!user) {
-    // User not logged in, redirect to login
+  // Show nothing while loading
+  if (loading) {
+    return <div style={{ display: 'none' }}></div>; // Hidden loader
+  }
+
+  // Don't redirect if we're already on login page
+  const isLoginPage = location.pathname === '/login';
+  
+  if (!user && !isLoginPage) {
     return <Navigate to="/login" replace />;
   }
 

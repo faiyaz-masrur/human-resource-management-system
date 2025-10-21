@@ -2,22 +2,35 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SonaliLogo from "../../assets/sonali-logo.jpg";
+import employeeIcon from "..//../assets/icons/Empl.svg";
+import dashboardIcon from "..//../assets/icons/Dashboard.svg";
+import myProfileIcon from "..//../assets/icons/Profile.svg";
+import configrationIcon from "..//../assets/icons/Configration.svg";
+import attendanceIcon from "..//../assets/icons/Attendance.svg";
+import payrollIcon from "..//../assets/icons/PayRoll.svg";
+import taxesIcon from "..//../assets/icons/Taxes.svg";
+import providentFundIcon from "..//../assets/icons/Provident Fund.svg";
+import recruitmentIcon from "..//../assets/icons/Recruitment.svg";
+import appraisalIcon from "..//../assets/icons/Apprisal.svg";
+import communicationIcon from "..//../assets/icons/Communication.svg";
+import reportsIcon from "..//../assets/icons/Reports.svg";
+import settingIcon from "..//../assets/icons/Settings.svg";
+
 
 
 // --- Menu Items Definition ---
 const menuItems = [
-  { name: 'Dashboard', icon: '🏠', path: '/' },
-  { name: 'My Profile', icon: '👤', path: '/employee-details/my-profile/' },
-  { name: 'Attendance', icon: '📅', path: '/attendance' },
-  { name: 'Payroll', icon: '💵', path: '/payroll' },
-  { name: 'Employees', icon: '👥', path: '/employees' },
-  { name: 'Taxes', icon: '🧾', path: '/taxes' },
-  { name: 'Provident Fund', icon: '🏦', path: '/provident-fund' },
+  { name: 'Dashboard', icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 18, height: 18 }} />, path: '/' }, 
+  { name: 'My Profile', icon: <img src={myProfileIcon} alt="Profile" style={{ width: 18, height: 18 }} />, path: '/employee-details/my-profile' },
+  { name: 'Attendance', icon: <img src={attendanceIcon} alt="Attendance" style={{ width: 18, height: 18 }} />, path: '/attendance' },
+  { name: 'Payroll', icon: <img src={payrollIcon} alt="payroll" style={{ width: 18, height: 18 }} />, path: '/payroll' },
+ { name: 'Employees', icon: <img src={employeeIcon} alt="Employees" style={{ width: 18, height: 18 }} />, path: '/employees' },
+  { name: 'Taxes', icon: <img src={taxesIcon} alt="Taxes" style={{ width: 18, height: 18 }} />, path: '/taxes' },
+  { name: 'Provident Fund', icon: <img src={providentFundIcon} alt="Provident Fund" style={{ width: 18, height: 18 }} />, path: '/provident Fund' },
 
   { 
     name: 'Appraisal', 
-    icon: '⭐', 
-    path: '/appraisal', 
+     icon: <img src={appraisalIcon} alt="Appraisal" style={{ width: 18, height: 18 }} />, path: '/appraisal', 
     subMenu: [
       { name: 'My Appraisal', path: '/appraisal/my' },
       { name: 'Review Appraisals', path: '/appraisal/review' },
@@ -27,13 +40,12 @@ const menuItems = [
     ]
   },
   
-  { name: 'Reports', icon: '📊', path: '/reports' },
+  { name: 'Reports',  icon: <img src={reportsIcon} alt="reports" style={{ width: 18, height: 18 }} />, path: '/reports' },
   
   // CONFIGURATIONS DROPDOWN STRUCTURE
   { 
     name: 'Configurations', 
-    icon: '🛠️', 
-    path: '/configurations', // Default link for the parent item
+    icon: <img src={configrationIcon} alt="Configration" style={{ width: 18, height: 18 }} />, path: '/configration',  // Default link for the parent item
     subMenu: [
       { name: 'Departments', path: '/configurations/departments' },
       { name: 'Designations', path: '/configurations/designations' },
@@ -43,9 +55,9 @@ const menuItems = [
     ]
   },
   
-  { name: 'Chat', icon: '💬', path: '/chat' },
-  { name: 'Recruitment', icon: '💼', path: '/recruitment' },
-  { name: 'Settings', icon: '⚙️', path: '/settings' },
+  { name: 'Communications',  icon: <img src={communicationIcon} alt="Communication" style={{ width: 18, height: 18 }} />, path: '/communication' },
+  { name: 'Recruitment',  icon: <img src={recruitmentIcon} alt="Recruitment" style={{ width: 18, height: 18 }} />, path: '/recruitment' },
+  { name: 'Settings',  icon: <img src={settingIcon} alt="Settings" style={{ width: 18, height: 18 }} />, path: '/settings' },
 ];
 
 const Sidebar = ({ className, onClose }) => {
