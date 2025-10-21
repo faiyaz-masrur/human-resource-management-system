@@ -2654,6 +2654,208 @@
 /*
  * ===== Appraisal Form (New Styles) =====
  */
+
+/* My Appraisal */
+
+/* === Theme Variables & Global Styles === */
+:root {
+  --color-card-background-light: white;
+  --color-text-primary-dark: #333;
+  --color-text-secondary-gray: #888;
+  --color-accent-blue: #007bff; 
+  --color-header-light: #444; 
+  --color-border-light: #ccc; 
+  --color-input-bg-light: #f9f9f9; 
+  --color-button-primary: #007bff;
+  --color-button-primary-hover: #0056b3;
+  --color-success-bg: #d1fae5;
+  --color-success-text: #059669;
+  --color-error-bg: #fee2e2;
+  --color-error-text: #dc2626;
+}
+
+.appraisal-page {
+  background-color: var(--color-card-background-light); 
+  font-family: 'Inter', sans-serif;
+  padding: 30px; 
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); 
+}
+
+.appraisal-form-container {
+  width: 100%;
+}
+
+.appraisal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary-dark);
+  margin-bottom: 25px;
+  padding-bottom: 5px;
+}
+
+/* === Form Sections === */
+.form-section {
+  margin-bottom: 30px;
+}
+
+.form-header-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 5px;
+  padding-top: 10px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-header-light); 
+}
+
+.word-count-label {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary-gray);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  background-color: var(--color-input-bg-light);
+  color: var(--color-text-primary-dark);
+  font-size: 0.95rem;
+  resize: vertical;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s;
+}
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-blue);
+  box-shadow: 0 0 0 1px var(--color-accent-blue);
+}
+
+/* --- Custom Checkbox Layout Matching SS --- */
+.checkbox-header-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid var(--color-border-light); 
+}
+.checkbox-group {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 15px;
+}
+.checkbox-item {
+  display: flex;
+  align-items: center;
+}
+.form-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-text-secondary-gray);
+  border-radius: 2px;
+  cursor: pointer;
+  margin-right: 5px;
+  transform: translateY(1px); /* slight adjustment for perfect alignment */
+}
+.checkbox-label {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--color-text-primary-dark);
+  cursor: pointer;
+}
+
+/* === Messages === */
+.message-container {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+.success-message {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid #a7f3d0;
+}
+.error-message {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid #fca5a5;
+}
+
+/* === Buttons === */
+.button-group {
+  display: flex;
+  gap: 10px;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-border-light);
+  margin-top: 20px;
+  justify-content: flex-start; /* Buttons align to the left in SS */
+}
+.submit-button, .cancel-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  border: 1px solid transparent;
+  min-width: 100px; 
+  justify-content: center;
+}
+
+.submit-button {
+  background-color: var(--color-button-primary);
+  color: white;
+  border-color: var(--color-button-primary);
+}
+.submit-button:hover:not(:disabled) {
+  background-color: var(--color-button-primary-hover);
+}
+.submit-button:disabled {
+  background-color: #a0cffc;
+  cursor: not-allowed;
+  color: white;
+  border-color: #a0cffc;
+}
+
+.cancel-button {
+  background-color: white;
+  color: var(--color-text-primary-dark);
+  border: 1px solid var(--color-border-light);
+}
+.cancel-button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .appraisal-page {
+    padding: 15px;
+  }
+  .checkbox-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .button-group {
+    flex-wrap: wrap;
+  }
+}
+
 .appraisal-form-container {
   margin-top: 1rem;
   display: flex;
@@ -2825,9 +3027,8 @@
 }
 
 
-
 /* ---------------------------------- */
-/* OtherAppraisals Styles             */
+/* Review Appraisals Styles             */
 /* ---------------------------------- */
 .appraisal-list-container {
   padding: 20px;

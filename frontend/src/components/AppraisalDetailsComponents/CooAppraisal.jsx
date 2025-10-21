@@ -1,184 +1,219 @@
-import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import React from "react";
 
-const CooAppraisal = ({ employeeId }) => {
-  const [formData, setFormData] = useState({
-    remarks: '',
-    decisions: {
-      promo_inc: null,
-      promo_pp: null,
-      inc_only: null,
-      pp_only: null,
-      deferred: null,
-      remarks: '',
+const CooAppraisal = () => {
+  const styles = {
+    container: {
+      backgroundColor: "#fff",
+      padding: "30px 40px",
+      borderRadius: "8px",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+      fontFamily: "Arial, sans-serif",
+      color: "#333",
+      width: "95%",
+      margin: "20px auto",
     },
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState(null);
-  const [isError, setIsError] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const decisionKeys = ['promo_inc', 'promo_pp', 'inc_only', 'pp_only', 'deferred'];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        const response = await api.get(`/appraisals/employee-appraisal/${employeeId}/coo`);
-        if (response.data) setFormData(response.data);
-      } catch (err) {
-        console.error('Error fetching COO appraisal:', err);
-        setIsError(true);
-        setMessage('Failed to load appraisal data.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [employeeId]);
-
-  const handleChange = (e) => {
-    const { type, checked, value, dataset } = e.target;
-    if (dataset.decision) {
-      setFormData((prev) => ({
-        ...prev,
-        decisions: {
-          ...prev.decisions,
-          [dataset.decision]: type === 'checkbox' ? checked : value,
-        },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, remarks: value }));
-    }
+    section: {
+      marginBottom: "40px",
+    },
+    sectionHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "8px",
+    },
+    sectionTitle: {
+      fontSize: "14px",
+      fontWeight: "600",
+      color: "#444",
+    },
+    wordCount: {
+      fontSize: "12px",
+      color: "#999",
+    },
+    textarea: {
+      width: "100%",
+      minHeight: "100px",
+      border: "1px solid #e0e0e0",
+      borderRadius: "6px",
+      padding: "12px 14px",
+      fontSize: "14px",
+      resize: "vertical",
+      outline: "none",
+      backgroundColor: "#fff",
+    },
+    decisionGrid: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "25px",
+      marginTop: "10px",
+    },
+    decisionItem: {
+      display: "grid",
+      gridTemplateColumns: "280px 150px 1fr",
+      alignItems: "center",
+      gap: "20px",
+    },
+    decisionLabel: {
+      fontSize: "14px",
+      color: "#333",
+      fontWeight: "500",
+    },
+    checkboxGroup: {
+      display: "flex",
+      alignItems: "center",
+      gap: "18px",
+    },
+    checkboxLabel: {
+      fontSize: "14px",
+      color: "#444",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+    },
+    checkbox: {
+      appearance: "none",
+      WebkitAppearance: "none",
+      MozAppearance: "none",
+      width: "16px",
+      height: "16px",
+      border: "1.5px solid #ccc",
+      borderRadius: "3px",
+      backgroundColor: "#fff",
+      cursor: "pointer",
+      position: "relative",
+      display: "inline-block",
+    },
+    checkboxChecked: {
+      backgroundColor: "#007bff",
+      borderColor: "#007bff",
+    },
+    input: {
+      border: "1px solid #e0e0e0",
+      borderRadius: "6px",
+      padding: "8px 10px",
+      fontSize: "14px",
+      width: "100%",
+      outline: "none",
+      backgroundColor: "#fff",
+    },
+    remarksSection: {
+      marginTop: "40px",
+    },
+    buttonGroup: {
+      display: "flex",
+      justifyContent: "flex-start",
+      gap: "15px",
+      marginTop: "40px",
+    },
+    submitButton: {
+      backgroundColor: "#007bff",
+      color: "#fff",
+      padding: "8px 24px",
+      border: "none",
+      borderRadius: "6px",
+      fontSize: "14px",
+      cursor: "pointer",
+    },
+    cancelButton: {
+      backgroundColor: "#fff",
+      color: "#333",
+      padding: "8px 24px",
+      border: "1px solid #ddd",
+      borderRadius: "6px",
+      fontSize: "14px",
+      cursor: "pointer",
+    },
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage(null);
-    setIsError(false);
-    setIsSubmitting(true);
-
-    try {
-      await api.post(`/appraisals/coo-review/${employeeId}/`, formData);
-      setMessage('COO review submitted successfully!');
-    } catch (err) {
-      console.error('Submission error:', err);
-      setIsError(true);
-      setMessage(err.response?.data?.error || 'Submission failed.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Small helper for white styled checkbox behavior
+  const WhiteCheckbox = () => {
+    const [checked, setChecked] = React.useState(false);
+    return (
+      <span
+        style={{
+          ...styles.checkbox,
+          ...(checked ? styles.checkboxChecked : {}),
+        }}
+        onClick={() => setChecked(!checked)}
+      >
+        {checked && (
+          <span
+            style={{
+              position: "absolute",
+              top: "1px",
+              left: "4px",
+              width: "4px",
+              height: "8px",
+              border: "solid #fff",
+              borderWidth: "0 2px 2px 0",
+              transform: "rotate(45deg)",
+            }}
+          />
+        )}
+      </span>
+    );
   };
-
-  const handleCancel = () => {
-    setFormData({
-      remarks: '',
-      decisions: {
-        promo_inc: null,
-        promo_pp: null,
-        inc_only: null,
-        pp_only: null,
-        deferred: null,
-        remarks: '',
-      },
-    });
-    setMessage(null);
-    setIsError(false);
-  };
-
-  if (loading) return <div>Loading COO appraisal...</div>;
 
   return (
-    <form className="appraisal-form-container" onSubmit={handleSubmit}>
-      {message && (
-        <div className={`message-container ${isError ? 'error-message' : 'success-message'}`}>
-          {message}
+    <div style={styles.container}>
+      {/* Remarks Section */}
+      <div style={styles.section}>
+        <div style={styles.sectionHeader}>
+          <label style={styles.sectionTitle}>Remarks</label>
+          <span style={styles.wordCount}>Maximum 1000 words</span>
         </div>
-      )}
-
-      {/* Remarks */}
-      <div className="form-section">
-        <label htmlFor="coo-remarks" className="section-title">Remarks</label>
-        <span className="word-count-label">Maximum 1000 words</span>
         <textarea
-          id="coo-remarks"
-          className="form-textarea"
+          style={styles.textarea}
           placeholder="Please confirm your agreement to this review and add any comment you feel necessary."
-          value={formData.remarks}
-          onChange={handleChange}
-        />
+        ></textarea>
       </div>
 
-      {/* Decisions */}
-      <div className="form-section">
-        <label className="section-title">Decisions</label>
-        <div className="decision-grid">
-          {decisionKeys.map((key) => (
-            <div key={key} className="decision-item">
-              <label className="decision-label">{key.replace(/_/g, ' ')}</label>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.decisions[key] === true}
-                    data-decision={key}
-                    onChange={handleChange}
-                  />
-                  <label className="ml-2">Yes</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.decisions[key] === false}
-                    data-decision={key}
-                    onChange={() =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        decisions: { ...prev.decisions, [key]: false },
-                      }))
-                    }
-                  />
-                  <label className="ml-2">No</label>
-                </div>
+      {/* Decisions Section */}
+      <div style={styles.section}>
+        <label style={styles.sectionTitle}>Decisions</label>
+        <div style={styles.decisionGrid}>
+          {[
+            "Promotion Recommended with Increment",
+            "Promotion Recommended with PP only",
+            "Increment Recommended without Promotion",
+            "Only Pay Progression (PP) Recommended",
+            "Promotion/Increment/PP Deferred",
+          ].map((label, i) => (
+            <div style={styles.decisionItem} key={i}>
+              <label style={styles.decisionLabel}>{label}</label>
+              <div style={styles.checkboxGroup}>
+                <label style={styles.checkboxLabel}>
+                  <WhiteCheckbox /> Yes
+                </label>
+                <label style={styles.checkboxLabel}>
+                  <WhiteCheckbox /> No
+                </label>
               </div>
-              <input
-                type="text"
-                className="decision-input"
-                data-decision={key}
-                placeholder="Remarks"
-                value={formData.decisions[key] || ''}
-                onChange={handleChange}
-              />
+              <input type="text" style={styles.input} placeholder="Remarks" />
             </div>
           ))}
         </div>
 
-        <div className="remarks-on-decision mt-8">
-          <label className="input-label">Remarks on your decision</label>
-          <span className="word-count-label">Maximum 500 words</span>
+        {/* Remarks on Decision */}
+        <div style={styles.remarksSection}>
+          <div style={styles.sectionHeader}>
+            <label style={styles.sectionTitle}>Remarks on your decision</label>
+            <span style={styles.wordCount}>Maximum 500 words</span>
+          </div>
           <textarea
-            className="form-textarea"
-            data-decision="remarks"
-            placeholder="Additional remarks..."
+            style={styles.textarea}
+            placeholder="Please....."
             rows="4"
-            value={formData.decisions.remarks}
-            onChange={handleChange}
-          />
+          ></textarea>
         </div>
       </div>
 
       {/* Buttons */}
-      <div className="button-group">
-        <button type="submit" className="submit-button" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit'}
-        </button>
-        <button type="button" className="cancel-button" onClick={handleCancel} disabled={isSubmitting}>
-          Cancel
-        </button>
+      <div style={styles.buttonGroup}>
+        <button style={styles.submitButton}>Submit</button>
+        <button style={styles.cancelButton}>Cancel</button>
       </div>
-    </form>
+    </div>
   );
 };
 
