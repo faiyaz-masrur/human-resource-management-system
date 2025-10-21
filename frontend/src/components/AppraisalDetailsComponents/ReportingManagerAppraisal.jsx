@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api'; 
 
-const ReportingManagerAppraisal = ({ appraisalId }) => {
-  // State for form data
+const ReportingManagerAppraisal = ({ employeeId }) => {
   const [formData, setFormData] = useState({
     achievements_remarks: '',
     training_remarks: '',
@@ -12,94 +11,91 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
     decision_remarks: '',
   });
 
-  // State to hold employee's self-appraisal data for display
   const [employeeAppraisal, setEmployeeAppraisal] = useState(null);
-
-  // State for UI feedback
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch data on component mount
   useEffect(() => {
     const fetchAppraisalData = async () => {
-      if (!appraisalId) {
-        setLoading(false);
-        setIsError(true);
-        //setMessage("No appraisal ID provided.");
-        return;
-      }
+      if (!employeeId) return;
 
       try {
-        const response = await axios.get(`/api/appraisals/history/${appraisalId}/`);
+        setLoading(true);
+        const response = await api.get(`/appraisals/employee-appraisal/${employeeId}/rm/`);
         setEmployeeAppraisal(response.data.employee_appraisal);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
+        // Map RM fields if already present
+        if (response.data.rm_review) {
+          setFormData(response.data.rm_review);
+        }
+      } catch (err) {
+        console.error('Error fetching appraisal data:', err);
         setIsError(true);
-        setMessage("Failed to load employee appraisal data.");
-        console.error("Error fetching appraisal data:", error);
+        setMessage('Failed to load appraisal data.');
+      } finally {
+        setLoading(false);
       }
     };
-    fetchAppraisalData();
-  }, [appraisalId]);
 
-  // Handle form field changes
+    fetchAppraisalData();
+  }, [employeeId]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
     setIsError(false);
+    setIsSubmitting(true);
 
     try {
-      const response = await axios.post(`/api/appraisals/manager-review/${appraisalId}/`, formData);
-      if (response.status === 200) {
-        setMessage('Manager review submitted successfully!');
-      } else {
-        setIsError(true);
-        setMessage('Failed to submit review. Please try again.');
-      }
-    } catch (error) {
+      await api.post(`/review-appraisal/employee-appraisal/${employeeId}/rm/`, formData);
+      setMessage('Manager review submitted successfully!');
+    } catch (err) {
+      console.error('Submission error:', err);
       setIsError(true);
-      if (error.response) {
-        setMessage(error.response.data.error || 'An error occurred during submission.');
-      } else if (error.request) {
-        setMessage('No response from server. Please check your network connection.');
-      } else {
-        setMessage('An unexpected error occurred. Please try again.');
-      }
+      if (err.response) setMessage(err.response.data.error || 'Submission failed.');
+      else setMessage('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) {
-    return <div className="appraisal-form-container">Loading...</div>;
-  }
+  const handleCancel = () => {
+    setMessage(null);
+    setIsError(false);
+    setFormData({
+      achievements_remarks: '',
+      training_remarks: '',
+      justify_overall_rating: '',
+      overall_performance_rating: '',
+      potential_rating: '',
+      decision_remarks: '',
+    });
+  };
+
+  if (loading) return <div>Loading appraisal data...</div>;
 
   return (
     <form className="appraisal-form-container" onSubmit={handleSubmit}>
-      {/* Display messages */}
       {message && (
         <div className={`message-container ${isError ? 'error-message' : 'success-message'}`}>
           {message}
         </div>
       )}
 
-      {/* Employee's Self-Appraisal Data */}
       {employeeAppraisal && (
         <div className="form-section">
           <h2 className="section-title">Employee Self-Appraisal</h2>
           <div className="appraisal-data-display">
             <p><strong>Achievements:</strong> {employeeAppraisal.achievements}</p>
-            <p><strong>Strengths:</strong> {employeeAppraisal.strengths}</p>
-            <p><strong>Areas for Improvement:</strong> {employeeAppraisal.improvements}</p>
             <p><strong>Training Needs:</strong> {employeeAppraisal.training_needs}</p>
             <p><strong>Training Type:</strong></p>
             <ul>
@@ -111,183 +107,80 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
         </div>
       )}
 
-      {/* Achievements/Goal Completion Section */}
+      {/* RM Form Sections */}
       <div className="form-section">
-        <div className="form-header">
-          <label htmlFor="rm-achievements" className="section-title">
-            Achievements/Goal Completion
-          </label>
-          <span className="word-count-label">Maximum 1000 words</span>
-        </div>
+        <label className="section-title">Achievements/Goal Completion Remarks</label>
         <textarea
-          id="rm-achievements"
           name="achievements_remarks"
           className="form-textarea"
-          placeholder="Make any comment that you feel necessary to clarify or supplement the achievements mentioned above, in addition to goals for next year."
           value={formData.achievements_remarks}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
-      {/* Training & Development Plan Section */}
       <div className="form-section">
-        <div className="form-header">
-          <label htmlFor="rm-training" className="section-title">
-            Reporting Manager's remarks for Training and Development Plan
-          </label>
-          <span className="word-count-label hidden">Maximum 1000 words</span>
-        </div>
+        <label className="section-title">Training & Development Remarks</label>
         <textarea
-          id="rm-training"
           name="training_remarks"
           className="form-textarea"
-          placeholder="Make any comment that you feel necessary..."
           value={formData.training_remarks}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
-      {/* Overall Assessment Section */}
       <div className="form-section">
-        <label className="section-title mb-4">
-          Overall Assessment
-        </label>
-        <p className="section-description">
-          How are you going to rate an employee's overall performance in terms of meeting or exceeding performance expectations? Select the option that best reflects the employee's level of performance over time.
-        </p>
+        <label className="section-title">Overall Performance Rating</label>
         <div className="radio-group-grid">
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="performance-1" 
-              name="overall_performance_rating" 
-              className="form-radio" 
-              value="does_not_meet"
-              checked={formData.overall_performance_rating === 'does_not_meet'}
-              onChange={handleChange}
-            />
-            <label htmlFor="performance-1" className="radio-label">Does not meet expectation</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="performance-2" 
-              name="overall_performance_rating" 
-              className="form-radio"
-              value="partially_meets"
-              checked={formData.overall_performance_rating === 'partially_meets'}
-              onChange={handleChange}
-            />
-            <label htmlFor="performance-2" className="radio-label">Partially meets expectation</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="performance-3" 
-              name="overall_performance_rating" 
-              className="form-radio" 
-              value="meets_expectation"
-              checked={formData.overall_performance_rating === 'meets_expectation'}
-              onChange={handleChange}
-            />
-            <label htmlFor="performance-3" className="radio-label">Meets expectation</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="performance-4" 
-              name="overall_performance_rating" 
-              className="form-radio" 
-              value="meets_most_expectation"
-              checked={formData.overall_performance_rating === 'meets_most_expectation'}
-              onChange={handleChange}
-            />
-            <label htmlFor="performance-4" className="radio-label">Meets most expectation</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="performance-5" 
-              name="overall_performance_rating" 
-              className="form-radio" 
-              value="exceeds_expectation"
-              checked={formData.overall_performance_rating === 'exceeds_expectation'}
-              onChange={handleChange}
-            />
-            <label htmlFor="performance-5" className="radio-label">Exceeds Expectation</label>
-          </div>
+          {['does_not_meet','partially_meets','meets_expectation','meets_most_expectation','exceeds_expectation'].map((val) => (
+            <div className="radio-item" key={val}>
+              <input
+                type="radio"
+                name="overall_performance_rating"
+                value={val}
+                checked={formData.overall_performance_rating === val}
+                onChange={handleChange}
+              />
+              <label className="radio-label">{val.replace(/_/g,' ')}</label>
+            </div>
+          ))}
         </div>
-        <p className="word-count-label">Maximum 1000 words</p>
         <textarea
-          id="performance-comments"
           name="justify_overall_rating"
           className="form-textarea"
-          placeholder="Provide comments to justify your rating..."
           value={formData.justify_overall_rating}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
-      {/* Potential Rating Section */}
       <div className="form-section">
-        <label className="section-title mb-4">
-          How are you going to rate an employee's potential? Select the option that best reflects the employee's level of performance over time.
-        </label>
+        <label className="section-title">Potential Rating</label>
         <div className="radio-group-stack">
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="potential-1" 
-              name="potential_rating" 
-              className="form-radio" 
-              value="low_potential"
-              checked={formData.potential_rating === 'low_potential'}
-              onChange={handleChange}
-            />
-            <label htmlFor="potential-1" className="radio-label">Low Potential - improvement not expected; lack of ability and/or motivation.</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="potential-2" 
-              name="potential_rating" 
-              className="form-radio" 
-              value="medium_potential"
-              checked={formData.potential_rating === 'medium_potential'}
-              onChange={handleChange}
-            />
-            <label htmlFor="potential-2" className="radio-label">Medium potential - room for some advancement in terms of performance or expertise.</label>
-          </div>
-          <div className="radio-item">
-            <input 
-              type="radio" 
-              id="potential-3" 
-              name="potential_rating" 
-              className="form-radio" 
-              value="high_potential"
-              checked={formData.potential_rating === 'high_potential'}
-              onChange={handleChange}
-            />
-            <label htmlFor="potential-3" className="radio-label">High potential - performing well and ready for promotion immediately.</label>
-          </div>
+          {['low_potential','medium_potential','high_potential'].map((val) => (
+            <div className="radio-item" key={val}>
+              <input
+                type="radio"
+                name="potential_rating"
+                value={val}
+                checked={formData.potential_rating === val}
+                onChange={handleChange}
+              />
+              <label className="radio-label">{val.replace(/_/g,' ')}</label>
+            </div>
+          ))}
         </div>
-        <p className="word-count-label">Maximum 500 words</p>
         <textarea
-          id="potential-comments"
           name="decision_remarks"
           className="form-textarea"
-          placeholder="Remarks on your decision..."
           value={formData.decision_remarks}
           onChange={handleChange}
-        ></textarea>
+        />
       </div>
 
-      {/* Buttons Section */}
       <div className="button-group">
-        <button type="submit" className="submit-button">
-          Submit
+        <button type="submit" className="submit-button" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
-        <button type="button" className="cancel-button">
+        <button type="button" className="cancel-button" onClick={handleCancel} disabled={isSubmitting}>
           Cancel
         </button>
       </div>
