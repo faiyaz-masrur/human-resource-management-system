@@ -123,99 +123,43 @@ const ViewOnlyPermissionRow = ({ rolePermissions, title, section, permissions, o
 
 const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refreshList }) => {
     
-    const [roleName, setRoleName] = useState(currentRole?.name || "");
-    const [description, setDescription] = useState(currentRole?.description || "");
-    const [status, setStatus] = useState(currentRole?.status || "Active"); 
+    const [role, setRole] = useState(currentRole || {});
     const [loading, setLoading] = useState(false);
-    
-    // Holds permissions state: { section: { view: bool, create: bool, edit: bool, delete: bool, id: optional_int } }
     const [permissions, setPermissions] = useState({});
-    
-    // Store the raw list of permissions from the API to correctly handle POST/PUT logic
-    const [initialPermissions, setInitialPermissions] = useState([]); 
-
     const [activeTab, setActiveTab] = useState('My Profile'); 
     
-    // --- Mappers ---
 
-    // Map raw API data (list of permission objects) to nested state object
-    const mapApiToState = (apiPermissions) => {
-        return apiPermissions.reduce((acc, p) => {
-            // Find the frontend section key (e.g., 'official_details') that matches the backend sub_workspace value (e.g., 'Official Details')
-            const section = Object.keys(SECTION_TO_SUB_WORKSPACE_MAP).find(key => 
-                SECTION_TO_SUB_WORKSPACE_MAP[key] === p.sub_workspace
-            );
-            
-            if (section) {
-                acc[section] = {
-                    view: p.view,
-                    create: p.create,
-                    edit: p.edit,
-                    delete: p.delete,
-                    id: p.id // Crucial: Keep the permission ID for updates
-                };
-            }
-            return acc;
+    const mapListToObj = (rolePermissionsList) => {
+        return rolePermissionsList.reduce((accumulator, rolePermissionObj) => {
+            accumulator[rolePermissionObj.workspace + rolePermissionObj.sub_workspace] = rolePermissionObj
+            return accumulator;
         }, {});
     };
 
-    // Map nested state object back to raw API data (list for batch update)
-    const mapStateToApi = (roleId, statePermissions) => {
-        const permissionsToSave = [];
-        
-        Object.entries(statePermissions).forEach(([section, perms]) => {
-            const sub_workspace = SECTION_TO_SUB_WORKSPACE_MAP[section];
-            if (!sub_workspace) return;
 
-            // Only include permissions where at least one action is true, or if it's an existing permission (p.id)
-            if (perms.view || perms.create || perms.edit || perms.delete || perms.id) {
-                permissionsToSave.push({
-                    ...(perms.id && { id: perms.id }), 
-                    role: roleId,
-                    workspace: "Configuration", // Hardcoded based on common Django setups
-                    sub_workspace: sub_workspace,
-                    view: perms.view || false,
-                    create: perms.create || false,
-                    edit: perms.edit || false,
-                    delete: perms.delete || false,
-                });
-            }
-        });
+    const mapObjToList = (roleId, rolePermissionsObj) => {
+        const rolePermissionsList = Object.keys(rolePermissionsObj).maps(key => {
+
+        })
         
-        return permissionsToSave;
+        
+        
+        return rolePermissionsList;
     };
 
 
-    // --- Fetch Role Details & Permissions ---
     const fetchRoleData = useCallback(async (roleId) => {
         if (!roleId) return;
         setLoading(true);
         try {
-            // 1. Fetch Role Details (Optional: if the list view doesn't have all details)
-            // const roleRes = await api.get(`${ROLES_API_URL}${roleId}/`);
-            // setRoleName(roleRes.data.name);
-            // setDescription(roleRes.data.description);
-
-            // 2. Fetch Role Permissions
-            // Assuming your endpoint supports filtering by role ID using a query parameter
             if(rolePermissions.view){
-                const permRes = await api.get(PERMISSIONS_API_URL, {
-                    params: { role: roleId } 
-                }); 
-                
-                setInitialPermissions(permRes.data);
-                setPermissions(mapApiToState(permRes.data));
+                const res = await api.get(`${PERMISSIONS_API_URL}${roleId}/`); 
+                console.log("Role permission List:", res?.data);
+                setPermissions(mapListToObj(res?.data)|| {});
             }
         } catch (err) {
-            console.error("Error fetching role data/permissions:", err.response || err);
-            toast.error("Failed to load role details or permissions.");
-            
-            // On error, initialize permissions to empty structure to prevent crashes
-            const emptyPermissions = Object.fromEntries(
-                Object.keys(SECTION_TO_SUB_WORKSPACE_MAP).map(key => [key, {}])
-            );
-            setPermissions(emptyPermissions);
-
+            console.error("Error fetching role permissions:", err);
+            setPermissions({});
         } finally {
             setLoading(false);
         }
@@ -223,18 +167,12 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
 
 
     useEffect(() => {
-        // Initialize basic role info from props
-        setRoleName(currentRole?.name || "");
-        setDescription(currentRole?.description || "");
-        setStatus(currentRole?.status || "Active");
-
-        if (currentRole?.id) {
-            fetchRoleData(currentRole.id);
+        if (role?.id) {
+            fetchRoleData(role.id);
         }
-    }, [currentRole, rolePermissions]); 
+    }, [rolePermissions]); 
     
     
-    // --- Permission Checkbox Handler (Unchanged) ---
     const handleCheckboxChange = (section, permissionType) => {
         setPermissions(prevPermissions => {
             const currentSection = prevPermissions[section] || {};
@@ -248,57 +186,40 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
         });
     };
 
-    // --- Save Handler ---
+
+    const handleChange = (field, value) => {
+        setRole((prev) => ({ ...prev, [field]: value }));
+    };
+
     const handleSave = async () => {
         if(!rolePermissions.edit){
             alert("You don't have permission to edit.");
             return;
         }
         setLoading(true);
-        
         try {
-            // 1. Update the Role (Name, Description, Status)
-            const roleData = {
-                name: roleName,
-                description: description || null,
-                status: status,
-                // Add any other top-level role fields here
-            };
-            
-            // PUT request to update the main role object
-            await api.put(`${ROLES_API_URL}${currentRole.id}/`, roleData);
-
-            // 2. Update the Permissions
-            const permissionsToSave = mapStateToApi(currentRole.id, permissions);
-
-            // Process permissions: POST for new ones (no ID), PUT for existing ones (has ID)
-            const permissionPromises = permissionsToSave.map(p => {
-                // Check if the permission object was originally fetched from the API (has an ID)
-                if (p.id) {
-                    // Existing permission, send PUT/PATCH
-                    return api.put(`${PERMISSIONS_API_URL}${p.id}/`, p);
-                } else if (p.view || p.create || p.edit || p.delete) {
-                    // New permission with at least one flag set, send POST
-                    return api.post(PERMISSIONS_API_URL, p);
+            const res = await api.put(`${ROLES_API_URL}${role.id}/`, role);
+            if(res.status === 200){
+                const rolePermissionsList = Object.values(permissions);
+                const res = await api.put(`${PERMISSIONS_API_URL}`, rolePermissionsList)
+                if(res.status === 200){
+                    console.log("Updated role permissions:", res)
+                    toast.success(`Role "${role.name}" and permissions updated successfully.`);
+                } else {
+                    console.log("Failed to updated role permissions:", res)
+                    toast.error("Failed to save role permissions.");
                 }
-                return null; // Skip if it's new and all flags are false
-            }).filter(p => p !== null);
-
-            await Promise.all(permissionPromises);
-            
-            toast.success(`Role "${roleName}" and permissions updated successfully.`);
-            
-            refreshList(); // Update the list view
+            } else {
+                console.log("Failed to updated role:", res)
+                toast.error("Failed to update role.");
+            }
+ 
+            refreshList(); 
             goToListView(); 
             
         } catch (err) {
-            console.error("Save error:", err.response ? err.response.data : err.message);
-            let errorMessage = "Failed to save role or permissions.";
-            if (err.response?.data?.name) {
-                errorMessage = `Error: Role Name ${err.response.data.name[0]}`;
-            }
-            toast.error(errorMessage);
-            
+            console.error("Failed to update role or permissions:", err);
+            toast.error("Failed to update role or permissions.");
         } finally {
             setLoading(false);
         }
@@ -307,13 +228,13 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
     const tabs = ['My Profile', 'My Appraisal', 'Employees', 'Review Appraisals', 'All Appraisals', 'Configurations']; 
     
     // Find the original role data for ID display
-    const roleId = currentRole?.id || "N/A";
+    const roleId = role.id || "N/A";
 
     return (
         <div className="form-container urd-container">
             <header className="urd-page-header">
                 <button className="add-form-back-arrow" onClick={goToListView} disabled={loading}>&larr;</button>
-                User Role Details: {currentRole?.name || "Loading..."}
+                Role Details: {currentRole?.name || "Loading..."}
             </header>
 
             <div className="urd-role-details-section">
@@ -332,8 +253,8 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                     <label className="urd-detail-label">Role Name</label>
                     <input 
                         type="text" 
-                        value={roleName} 
-                        onChange={(e) => setRoleName(e.target.value)} 
+                        value={role.name} 
+                        onChange={(e) => handleChange("name", e.target.value)} 
                         className="urd-detail-input urd-role-name-input" 
                         disabled={loading || !rolePermissions.edit} 
                     />
@@ -341,13 +262,13 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                 <div className="urd-detail-item urd-status-dropdown-wrapper">
                     <label className="urd-detail-label">Status</label>
                     <select 
-                        value={status} 
-                        onChange={(e) => setStatus(e.target.value)} 
+                        value={role.status} 
+                        onChange={(e) => handleChange("status", e.target.value)} 
                         className="urd-detail-input urd-status-select" 
                         disabled={loading || !rolePermissions.edit}
                     >
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
                     </select>
                 </div>
                 <div className="urd-detail-item">
