@@ -5,20 +5,27 @@ import api from '../../services/api';
 const ReviewAppraisals = () => {
   const navigate = useNavigate();
 
-  // ✅ State
   const [appraisals, setAppraisals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // ✅ Fetch review appraisals dynamically
   useEffect(() => {
-    const fetchAppraisals = async () => {
-      try {
-        const response = await api.get('/appraisals/review-appraisal/');
+  const fetchAppraisals = async () => {
+    try {
+      const response = await api.get('/appraisals/review-appraisal/');
         setAppraisals(response.data);
       } catch (err) {
         console.error('Error fetching review appraisals:', err);
-        setError('Failed to load appraisals. Please try again later.');
+
+        const status = err.response?.status;
+
+        if (status === 403) {
+          setPermissionDenied(true);
+          setError('You do not have permission to review appraisals.');
+        } else {
+    // For all other errors (500, network issues, etc.)
+          setError('Failed to load appraisals. Please try again later.');
+      }
       } finally {
         setLoading(false);
       }
@@ -26,13 +33,11 @@ const ReviewAppraisals = () => {
     fetchAppraisals();
   }, []);
 
-  // ✅ Status color
   const getStatusColor = (status) => {
     if (!status) return '#6b7280';
     return status.toLowerCase() === 'completed' ? '#4CAF50' : '#F44336';
   };
 
-  // ✅ Navigate to specific employee appraisal
   const handleEditAppraisal = (employeeId) => {
     navigate(`/appraisal/employee/${employeeId}`);
   };

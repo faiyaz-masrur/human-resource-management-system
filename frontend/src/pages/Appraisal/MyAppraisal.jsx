@@ -19,7 +19,7 @@ const MyAppraisal = () => {
   useEffect(() => {
     const fetchMyAppraisal = async () => {
       try {
-        const response = await api.get(`/appraisals/appraisal-details/${employee_id}/`);
+        const response = await api.get(`/appraisals/appraisal-details/`);
         const data = response.data;
 
         setEmployeeDetails({
@@ -41,8 +41,8 @@ const MyAppraisal = () => {
       }
     };
 
-    if (employee_id) fetchMyAppraisal();
-  }, [employee_id]);
+     fetchMyAppraisal();
+  }, []);
 
   const renderActiveAppraisal = () => {
     switch (activeTab) {

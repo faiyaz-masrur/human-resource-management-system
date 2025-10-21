@@ -179,8 +179,8 @@ class CEOReviewAPIView(BaseAppraisalReviewAPIView):
 # ---------------- Review Appraisal Views ----------------
 
 class ReviewAppraisalListAPIView(AppraisalPermissionMixin, ListAPIView):
-    permission_workspace = 'ReviewAppraisal'
-    permission_sub_workspace = 'ReviewAppraisalList'
+    workspace = 'ReviewAppraisal'
+    workspace = 'ReviewAppraisalList'
     permission_type = 'edit'
     serializer_class = EmployeeAppraisalSerializer
 
