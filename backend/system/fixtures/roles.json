@@ -1,7 +1,9 @@
 [
+    {"name": "EMP", "description": "Employee"},
     {"name": "RM", "description": "Reporting Manager"},
     {"name": "HR", "description": "Human Resources"},
     {"name": "HOD", "description": "Head of Department"},
     {"name": "COO", "description": "Chief Operating Officer"},
-    {"name": "CEO", "description": "Chief Executive Officer"}
+    {"name": "CEO", "description": "Chief Executive Officer"},
+    {"name": "SUPER", "description": "Super User"}
 ]

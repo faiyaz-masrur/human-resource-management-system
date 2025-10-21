@@ -6,14 +6,10 @@ import sys
 
 logger = logging.getLogger(__name__)
 
-# Use a module-level variable to store the scheduler instance
 scheduler = None
 
 def daily_scheduled_tasks():
-    """
-    Wrapper function to run all daily scheduled tasks at once.
-    This includes checking for appraisal year reset and sending time-based notifications.
-    """
+
     # 1. Run the Appraisal Year Reset Check (command name is 'reset_appraisal_year')
     try:
         logger.info("Starting scheduled task: reset_appraisal_year command.")
@@ -54,7 +50,7 @@ def start_scheduler():
         func=daily_scheduled_tasks, # Runs the function that handles both tasks
         trigger='cron',
         # Set to run every day at 9 AM (based on TIME_ZONE in settings.py)
-        hour=9, 
+        hour=0, 
         minute=0, 
         id='daily_combined_checks',
         name='Daily Combined Appraisal & Notification Check (9 AM)',

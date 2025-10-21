@@ -62,7 +62,7 @@ function App() {
           <Route path="configurations/departments" element={<Departments />} />
           <Route path="configurations/designations" element={<Designations />} />
           <Route path="configurations/grades" element={<Grades />} />
-          <Route path="configurations/workspaces" element={<Workspaces />} />
+          {/*<Route path="configurations/workspaces" element={<Workspaces />} />*/}
           <Route path="configurations/roles" element={<Roles />} />
 
           <Route path="employee-details/my-profile/" element={<EmployeeDetails view={{...view, isOwnProfileView: true}}/>} />

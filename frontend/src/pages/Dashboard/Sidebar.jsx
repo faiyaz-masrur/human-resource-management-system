@@ -11,7 +11,7 @@ import payrollIcon from "..//../assets/icons/PayRoll.svg";
 import taxesIcon from "..//../assets/icons/Taxes.svg";
 import providentFundIcon from "..//../assets/icons/Provident Fund.svg";
 import recruitmentIcon from "..//../assets/icons/Recruitment.svg";
-import appraisalIcon from "..//../assets/icons/Appraisal.svg";
+import appraisalIcon from "..//../assets/icons/Apprisal.svg";
 import communicationIcon from "..//../assets/icons/Communication.svg";
 import reportsIcon from "..//../assets/icons/Reports.svg";
 import settingIcon from "..//../assets/icons/Settings.svg";

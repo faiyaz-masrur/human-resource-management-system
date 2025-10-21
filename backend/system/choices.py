@@ -4,7 +4,7 @@ WORKSPACE_CHOICES = [
     ("ReviewAppraisal", "ReviewAppraisal"),
     ("AllAppraisal", "AllAppraisal"),
     ("Employee", "Employee"),
-    ("Configurations", "Configurations"),
+    ("Configuration", "Configuration"),
 ]
 
 SUB_WORKSPACE_CHOICES = [
@@ -13,7 +13,7 @@ SUB_WORKSPACE_CHOICES = [
     ("MyAddress", "MyAddress"),
     ("MyWorkExperience", "MyWorkExperience"),
     ("MyEducation", "MyEducation"),
-    ("MyProfessionalCertificate", "MyProfessionalCertificate"),
+    ("MyTrainingCertificate", "MyTrainingCertificate"),
     ("MyAttatchment", "MyAttachment"),
     ("EmployeeList", "EmployeeList"),
     ("EmployeeOfficialDetail", "EmployeeOfficialDetail"),
@@ -21,7 +21,7 @@ SUB_WORKSPACE_CHOICES = [
     ("EmployeeAddress", "EmployeeAddress"),
     ("EmployeeWorkExperience", "EmployeeWorkExperience"),
     ("EmployeeEducation", "EmployeeEducation"),
-    ("EmployeeProfessionalCertificate", "EmployeeProfessionalCertificate"),
+    ("EmployeeTrainingCertificate", "EmployeeTrainingCertificate"),
     ("EmployeeAttachment", "EmployeeAttachment"),
     ("MyEmployeeAppraisal", "MyEmployeeAppraisal"),
     ("MyRmReview", "MyRmReview"),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WorkExperience, Education, ProfessionalCertificate, PersonalDetail, Address, Attatchment
+from .models import WorkExperience, Education, TrainingCertificate, PersonalDetail, Address, Attatchment
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.conf import settings
@@ -25,9 +25,9 @@ class EducationSerializer(SmartUpdateSerializer):
         fields = "__all__"
 
     
-class ProfessionalCertificateSerializer(SmartUpdateSerializer):
+class TrainingCertificateSerializer(SmartUpdateSerializer):
     class Meta:
-        model = ProfessionalCertificate
+        model = TrainingCertificate
         fields = "__all__"
 
 
@@ -55,23 +55,19 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             "id", "name", "email",
             "joining_date", "basic_salary",
             "department", "designation", "grade",
-            "reporting_manager", "role", "is_active", "basic_salary",
+            "reporting_manager", "role", "is_active",
             "reviewed_by_rm", "reviewed_by_hr", "reviewed_by_hod", "reviewed_by_coo", "reviewed_by_ceo",
         ]
 
     # --- CREATE ---
     def create(self, validated_data):
         email = validated_data.get("email")
-        raw_password = get_random_string(length=8)
+        raw_password = validated_data.pop("raw_password", None) or get_random_string(8)
         
 
         employee = Employee.objects.create_user(
             password=raw_password,
             **validated_data
-        )
-
-        PersonalDetail.objects.create(
-            employee=employee,
         )
 
         WorkExperience.objects.create(
@@ -84,51 +80,55 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
         )
 
         # Email credentials
+        email_subject = "Welcome to Sonali Intellect Limited! Your Account Credentials"
+
+        email_message = (
+            f"Hello {employee.name},\n\n"
+            f"Welcome to Sonali Intellect Limited!\n\n"
+            f"As part of Sonali Intellect Limited’s initiative to automate employee profiles, your employee account has been created.\n\n"
+            f"Your login details:\n\n"
+            f"• Email: {email}\n"
+            f"• Temporary Password: {raw_password}\n\n"
+            f"Please log in at {settings.LOGIN_URL} and update your password immediately.\n\n"
+            f"This is an automated message. For any assistance, please contact your HR representative.\n\n"
+            f"Thank you,\n"
+            f"Sonali Intellect Limited,\n" 
+            f"HR Team"
+        )
+
         send_mail(
-            subject="Your Employee Account Credentials",
-            message=f"Hello {employee.name},\n\n"
-                    f"Your account has been created.\n"
-                    f"Username: {email}\n"
-                    f"Password: {raw_password}\n\n"
-                    f"Please change your password after first login.",
+            subject=email_subject,
+            message=email_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
         return employee
 
 
 class EmployeePersonalDetailSerializer(SmartUpdateSerializer):
-    # Include employee name
     employee_name = serializers.CharField(source='employee.name', read_only=True)
 
     class Meta:
         model = PersonalDetail
         fields = [
             "employee_name",
-            "father_name", "mother_name", "phone_number", "personal_email",
+            "id", "father_name", "mother_name", "phone_number", "personal_email",
             "date_of_birth", "national_id", "passport_number","blood_group", 
             "marital_status", "spouse_name", "spouse_nid",
             "emergency_contact_name", "emergency_contact_relationship", "emergency_contact_number",
         ]
     
-    def update(self, instance, validated_data):
-        user = self.context['request'].user  # logged-in user
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
 
-        # Handle special rules for phone_number and national_id first
-        if user.is_hr:
-            # HR can always update these
-            pass  # no restriction, SmartUpdateSerializer will handle changed fields
-        else:
-            # Employee can only set these if they are currently null
-            if 'phone_number' in validated_data and instance.phone_number:
-                validated_data.pop('phone_number')
-            if 'national_id' in validated_data and instance.national_id:
-                validated_data.pop('national_id')
+        employee = getattr(instance, "employee", None) or getattr(self.context.get("view").request, "_employee_instance", None)
+        if employee:
+            data["employee_name"] = employee.name
 
-        # Now let SmartUpdateSerializer handle actual update (only changed fields)
-        return super().update(instance, validated_data)
+        return data
+
 
 
 

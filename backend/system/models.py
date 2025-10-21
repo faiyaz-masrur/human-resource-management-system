@@ -12,6 +12,7 @@ def generate_employee_id():
 
 class Role(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=True)
     description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
@@ -106,7 +107,7 @@ class Employee(AbstractUser):
 
     email = models.EmailField(_('email address'), unique=True)
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
 
     department = models.ForeignKey(
         Department,
@@ -122,7 +123,7 @@ class Employee(AbstractUser):
         related_name="employees"
     )
 
-    joining_date = models.DateField(null=True, blank=True,)
+    joining_date = models.DateField(null=True, blank=True)
 
     grade = models.ForeignKey(
         Grade,
@@ -134,6 +135,7 @@ class Employee(AbstractUser):
     basic_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
+        null=True, blank=True,
         default=0.00
     )
 

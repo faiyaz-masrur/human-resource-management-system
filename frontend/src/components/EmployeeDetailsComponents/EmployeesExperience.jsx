@@ -6,13 +6,40 @@ import { useAuth } from "../../contexts/AuthContext";
 const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
   const [experiences, setExperiences] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeeWorkExperience"}/`);
+        } else if(view.isOwnProfileView){
+          res = await api.get(`system/role-permissions/${user.role}/${"MyProfile"}/${"MyWorkExperience"}/`);
+        } else {
+          return;
+        }
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
 
 
   useEffect(() => {
     const fetchExperiences = async () => {
       try {
+        if (!rolePermissions.view) {
+          return;
+        }
         let res;
-        if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+        if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-work-experience/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-work-experience/');
@@ -20,7 +47,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
           return;
         }
         console.log("Experiences List: ", res?.data)
-        setExperiences(res?.data || []); 
+        setExperiences(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
         console.warn("No work experiences found, showing empty form.");
         setExperiences([]);
@@ -28,7 +55,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchExperiences();
-  }, []);
+  }, [rolePermissions]);
 
 
   const addNewExperience = () => {
@@ -66,8 +93,12 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
     const experienceToSave = experiences.find(exp => exp.id === id);
     if (!experienceToSave) return;
     try {
-      if(user?.is_hr && employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
+      if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (experienceToSave.isTempId) {
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           delete experienceToSave.id;
           delete experienceToSave.isTempId;
           const res = await api.post(`employees/employee-work-experience/${employee_id}/`, experienceToSave);
@@ -81,12 +112,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             alert("Failed to add employee Work Experience.");
           }
         } else {
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(`employees/employee-work-experience/${employee_id}/${experienceToSave.id}/`, experienceToSave);
           console.log("Updated Experience:", res.data);
           if(res.status === 200){
-            setExperiences(experiences.map(exp => 
-              exp.id === id ? res.data : exp
-            ));
             alert("Employee Work Experience updated successfully.");
           } else {
             alert("Failed to update employee Work Experience.");
@@ -94,6 +126,10 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
         }
       } else if(view.isOwnProfileView) {
         if (experienceToSave.isTempId) {
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           delete experienceToSave.id;
           delete experienceToSave.isTempId;
           const res = await api.post(`employees/my-work-experience/`, experienceToSave);
@@ -107,12 +143,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             alert("Failed to add your Work Experience.");
           }
         } else {
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(`employees/my-work-experience/${experienceToSave.id}/`, experienceToSave);
           console.log("Updated Experience:", res.data);
           if(res.status === 200){
-            setExperiences(experiences.map(exp => 
-              exp.id === id ? res.data : exp
-            ));
             alert("Your Work Experience updated successfully.");
           } else {
             alert("Failed to update your Work Experience.");
@@ -156,6 +193,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Organization Name"
                   value={experience.organization}
                   onChange={(e) => updateExperience(experience.id, 'organization', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 />
               </div>
@@ -167,6 +205,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Designation"
                   value={experience.designation}
                   onChange={(e) => updateExperience(experience.id, 'designation', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 />
               </div>
@@ -178,6 +217,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Department Name"
                   value={experience.department}
                   onChange={(e) => updateExperience(experience.id, 'department', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 />
               </div>
@@ -192,6 +232,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   className="date-input"
                   value={experience.start_date}
                   onChange={(e) => updateExperience(experience.id, 'start_date', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 />
               </div>
@@ -202,6 +243,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   className="date-input"
                   value={experience.end_date}
                   onChange={(e) => updateExperience(experience.id, 'end_date', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                 />
               </div>
             </div>
@@ -216,17 +258,19 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   rows="4"
                   value={experience.responsibilities}
                   onChange={(e) => updateExperience(experience.id, 'responsibilities', e.target.value)}
+                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                 ></textarea>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
+                {(experience.isTempId ? rolePermissions.create : rolePermissions.edit) && (
                   <button className="btn-success" onClick={() => handleSave(experience.id)}>
                     Save
                   </button>
+                )}
               </div>
-
             </div>
 
           </div>
@@ -235,9 +279,11 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
         {/* Add New Experience Button */}
         <div className="form-row">
           <div className="form-group">
-            <button type="button" className="btn-primary" onClick={addNewExperience}>
-              + Add New Experience
-            </button>
+            {rolePermissions.create && (
+              <button type="button" className="btn-primary" onClick={addNewExperience}>
+                + Add New Experience
+              </button>
+            )}
           </div>
         </div>
         

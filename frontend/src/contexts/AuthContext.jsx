@@ -1,57 +1,83 @@
-// src/context/AuthContext.js
+// src/contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
-import Spinner from "../utils/Spinner";
 
-// Create context
 const AuthContext = createContext();
 
-// Provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Load user from localStorage on first render
   useEffect(() => {
+    const token = localStorage.getItem('access_token');
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      console.log("Stored User:", storedUser);
-      setUser(JSON.parse(storedUser));
+    
+    if (token && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("user");
+      }
     }
     setLoading(false);
   }, []);
 
-  // Save user to localStorage when updated
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
-
-  // Fake login (replace with API call)
+  // Login function - FIXED
   const login = (userData) => {
-    localStorage.setItem('access_token', userData.access);
-    localStorage.setItem('refresh_token', userData.refresh);
-    setUser(userData.user);
+    console.log("🔐 Login called with:", userData);
+    
+    // Store tokens
+    if (userData.access) {
+      localStorage.setItem('access_token', userData.access);
+    }
+    if (userData.refresh) {
+      localStorage.setItem('refresh_token', userData.refresh);
+    }
+    
+    // Handle user data - try different possible structures
+    let userToStore = null;
+    
+    if (userData.user) {
+      // Structure: { access, refresh, user: { ... } }
+      userToStore = userData.user;
+    } else if (userData.id || userData.email) {
+      // Structure: { access, refresh, id, email, ... }
+      userToStore = userData;
+    } else {
+      // If no user data, create minimal user object from tokens
+      userToStore = { 
+        id: Date.now(), // temporary ID
+        email: 'user@system.com', // temporary email
+        access_token: userData.access 
+      };
+    }
+    
+    console.log("✅ Storing user:", userToStore);
+    setUser(userToStore);
+    localStorage.setItem("user", JSON.stringify(userToStore));
   };
 
   // Logout
   const logout = () => {
+    console.log("🔓 Logout called");
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     setUser(null);
   };
 
-  if (loading) return <Spinner />; // show spinner while loading
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

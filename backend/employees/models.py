@@ -14,11 +14,9 @@ from system.models import (
 # Employee Personal Details Model
 # -----------------------------
 class PersonalDetail(models.Model):
-
     employee = models.OneToOneField(
         Employee, 
         on_delete=models.CASCADE, 
-        primary_key=True, 
         related_name='personal_details'
     )
     father_name = models.CharField(max_length=100, null=True, blank=True)
@@ -45,7 +43,7 @@ class PersonalDetail(models.Model):
         return f"{self.employee.name} - Personal Details"
     
 class Address(models.Model):
-    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True, related_name='address')
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='address')
     present_house = models.CharField(max_length=225, null=False, blank=False)
     present_road_block_sector = models.CharField(max_length=50, null=True, blank=True)
     present_city_village = models.CharField(max_length=100, null=True, blank=True)
@@ -88,22 +86,22 @@ class Education(models.Model):
     passing_year = models.IntegerField(null=False, blank=False)
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
     results = models.CharField(max_length=50, null=False, blank=False)
-    certificate_file = models.FileField(upload_to='educational_certificates/', null=True, blank=True)
+    certificate = models.FileField(upload_to='educational_certificates/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.degree} from {self.institution}"
 
 # -----------------------------
-# Professional Certificate Model
+# Training Certificate Model
 # -----------------------------
-class ProfessionalCertificate(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='professional_certificates')
+class TrainingCertificate(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='training_certificates')
     title = models.CharField(max_length=255, null=False, blank=False)
     credential_id = models.CharField(max_length=100, null=True, blank=True, unique=True)
     institution = models.CharField(max_length=255, null=False, blank=False)
-    issue_date = models.DateField()
+    issue_date = models.DateField(null=False, blank=False)
     type = models.CharField(max_length=100, null=True, blank=True)
-    certificate_file = models.FileField(upload_to='professional_certificates/', null=True, blank=True)
+    certificate = models.FileField(upload_to='professional_certificates/', null=True, blank=True)
 
     def __str__(self):
         return self.certificate_name

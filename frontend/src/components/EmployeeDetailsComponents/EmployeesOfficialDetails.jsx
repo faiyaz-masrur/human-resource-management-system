@@ -17,9 +17,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     grade: "",
     reporting_manager: "",
     basic_salary: "",
-    role1: "",
-    role2: "",
-    is_hr: false,
+    role: "",
     reviewed_by_rm: false,
     reviewed_by_hr: false,
     reviewed_by_hod: false,
@@ -41,16 +39,16 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       try {
         let res;
         if(view.isAddNewEmployeeProfileView || view.isEmployeeProfileView){
-          res = await api.get(`system/role-permissions/${"Employee"}/${"EmployeeOfficialDetail"}/`);
+          res = await api.get(`system/role-permissions/${user.role}/${"Employee"}/${"EmployeeOfficialDetail"}/`);
         } else if(view.isOwnProfileView){
-          res = await api.get(`system/role-permissions/${"MyProfile"}/${"MyOfficialDetail"}/`);
+          res = await api.get(`system/role-permissions/${user.role}/${"MyProfile"}/${"MyOfficialDetail"}/`);
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("User role permission:", res?.data)
         setRolePermissions(res?.data || {}); 
       } catch (error) {
-        console.warn("Error fatching role permissions");
+        console.warn("Error fatching role permissions", error);
         setRolePermissions({}); 
       }
     };
@@ -59,40 +57,43 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   }, []);
 
 
-  // ✅ Fetch employee details if ID exists
   useEffect(() => {
     const fetchOfficialDetails = async () => {
       try {
+        if (!rolePermissions.view) {
+          return;
+        }
         let res;
-        if(user?.is_hr && employee_id && view.isEmployeeProfileView){
+        if(employee_id && view.isEmployeeProfileView){
           res = await api.get(`employees/empolyee-official-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-official-details/');
         } else {
           return;
         }
-        console.log(res?.data)
+        console.log("Employee official details:", res?.data)
         if(res?.data?.id){
           setToUpdate(true)
         }
         setOfficialDetails(res?.data || defaultOfficialDetails); 
       } catch (error) {
-        console.warn("No employee details found, showing empty form.");
+        console.warn("No employee details found, showing empty form.", error);
         setOfficialDetails(defaultOfficialDetails);
       }
     };
 
     fetchOfficialDetails();
-  }, []);
+  }, [rolePermissions]);
+
 
   useEffect(() => {
     const fetchDepartmentList = async () => {
       try {
-        const res = await api.get(`system/departments/`);
-        console.log(res.data)
-        setDepartmentList(res.data || []); 
+        const res = await api.get(`system/configurations/departments/`);
+        console.log("Department list:", res.data)
+        setDepartmentList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Department List");
+        console.warn("Error Fetching Department List", error);
         setDepartmentList([]); 
       }
     };
@@ -100,14 +101,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchDepartmentList();
   }, []);
 
+
   useEffect(() => {
     const fetchGradeList = async () => {
       try {
-        const res = await api.get(`system/grades/`);
-        console.log(res.data)
-        setGradeList(res.data || []); 
+        const res = await api.get(`system/configurations/grades/`);
+        console.log("Grade list:", res.data)
+        setGradeList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Grade List");
+        console.warn("Error Fetching Grade List", error);
         setGradeList([]); 
       }
     };
@@ -115,19 +117,20 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchGradeList();
   }, []);
 
+
   useEffect(() => {
     const fetchDesignationList = async () => {
       try {
         let res;
         if(gradeId){
-          res = await api.get(`system/designations/grade/${gradeId}/`);
+          res = await api.get(`system/configurations/grade-specific-designations/${gradeId}/`);
         } else {
-          res = await api.get(`system/designations/`);
+          res = await api.get(`system/configurations/designations/`);
         }
-        console.log(res.data)
-        setDesignationList(res.data || []); 
+        console.log("Designation list:", res.data)
+        setDesignationList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Designation List");
+        console.warn("Error Fetching Designation List", error);
         setDesignationList([]);
       }
     };
@@ -135,14 +138,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchDesignationList();
   }, [gradeId]);
 
+
   useEffect(() => {
     const fetchRoleList = async () => {
       try {
-        const res = await api.get(`system/roles/`);
-        console.log(res.data)
-        setRoleList(res.data || []); 
+        const res = await api.get(`system/configurations/roles/`);
+        console.log("Role list:", res.data)
+        setRoleList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Designation List");
+        console.warn("Error Fetching Designation List", error);
         setRoleList([]);
       }
     };
@@ -150,14 +154,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchRoleList();
   }, []);
 
+
   useEffect(() => {
     const fetchReportingManagerList = async () => {
       try {
-        const res = await api.get(`system/reporting-managers/list/`);
-        console.log(res.data)
-        setReportingManagerList(res.data || []); 
+        const res = await api.get(`system/configurations/reporting-managers-list/`);
+        console.log("Reporting manager list:", res.data)
+        setReportingManagerList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
       } catch (error) {
-        console.warn("Error Fetching Reporting Managers List");
+        console.warn("Error Fetching Reporting Managers List", error);
         setReportingManagerList([]);
       }
     };
@@ -165,17 +170,23 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     fetchReportingManagerList();
   }, []);
 
+
   // ✅ Handle input changes
   const handleChange = (field, value) => {
     setOfficialDetails((prev) => ({ ...prev, [field]: value }));
   };
 
+
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      if(user?.is_hr && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
+      if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
         if (toUpdate) {
           // Update existing employee
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
           const res = await api.put(
             `employees/empolyee-official-details/${officialdetails.id}/`,
             officialdetails
@@ -188,6 +199,10 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           }
         } else {
           // Create new employee
+          if (!rolePermissions.create) {
+            alert("You don't have permission to create.");
+            return;
+          }
           const res = await api.post(
             `/employees/empolyee-official-details/`,
             officialdetails
@@ -200,6 +215,24 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           alert("Something went wrong!")
           }
         }
+      } else if(view.isOwnProfileView){ 
+        if (toUpdate) {
+          // Update existing employee
+          if (!rolePermissions.edit) {
+            alert("You don't have permission to edit.");
+            return;
+          }
+          const res = await api.put(
+            `employees/my-official-details/`,
+            officialdetails
+          );
+          console.log("Updateed Official Details:", res.status);
+          if(res.status === 200){
+            alert("Your official details updated successfully!");
+          } else {
+            alert("Something went wrong!")
+          }
+        } 
       } else {
         alert("You don't have permission to perform this action.");
         return;
@@ -209,6 +242,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
       alert("Failed to save employee.");
     }
   };
+
 
   return (
     <div className="official-details">
@@ -222,7 +256,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? true : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
               required
             />
           </div>
@@ -233,7 +267,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.email || ""}
               onChange={(e) => handleChange("email", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? true : !rolePermissions.create}
               required
             />
           </div>
@@ -244,7 +278,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.name || ""}
               onChange={(e) => handleChange("name", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -258,7 +292,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.department || ""}
               onChange={(e) => handleChange("department", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -277,7 +311,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                 setGradeId(parseInt(e.target.value))
                 handleChange("grade", e.target.value)
               }}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -294,7 +328,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="date-input"
               value={officialdetails.joining_date || ""}
               onChange={(e) => handleChange("joining_date", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -308,7 +342,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-select"
               value={officialdetails.designation || ""}
               onChange={(e) => handleChange("designation", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -326,7 +360,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               onChange={(e) =>
                 handleChange("reporting_manager", e.target.value)
               }
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             >
               <option value="">-- Select --</option>
@@ -343,7 +377,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.basic_salary || ""}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
-              disabled={view.isOwnProfileView}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
           </div>
@@ -351,12 +385,12 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
          <div className="form-row">
           <div className="form-group">
-            <label>Role 1*</label>
+            <label>Role*</label>
             <select
               className="form-select"
-              value={officialdetails.role1 || ""}
-              onChange={(e) => handleChange("role1", e.target.value)}
-              disabled={view.isOwnProfileView}
+              value={officialdetails.role || ""}
+              onChange={(e) => handleChange("role", e.target.value)}
+              disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
             >
               <option value="">-- Select --</option>
               {roleList.map((role)=>(
@@ -435,7 +469,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                   onChange={(e) =>
                     handleChange(`reviewed_by_${role}`, e.target.checked)
                   }
-                  disabled={view.isOwnProfileView}
+                  disabled={toUpdate ? !rolePermissions.edit : !rolePermissions.create}
                 />
                 <label>{role.toUpperCase()}</label>
               </div>
@@ -445,14 +479,14 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
         {/* Actions */}
         <div className="form-actions">
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
-          {(user?.is_hr && employee_id) && (
+          {(toUpdate ? rolePermissions.edit : rolePermissions.create) && (
             <button className="btn-success" onClick={handleSave}>
               Save
             </button>
           )}
+          <button className="btn-primary" onClick={onNext}>
+            Next
+          </button>
         </div>
       </div>
     </div>

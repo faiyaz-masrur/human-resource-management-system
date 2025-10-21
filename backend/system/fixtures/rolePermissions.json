@@ -1,0 +1,2585 @@
+[
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "EMP",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+
+
+
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "RM",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+
+
+
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "HR",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "HR",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+
+
+
+
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "HOD",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+
+
+
+
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "COO",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+
+
+
+
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": false
+    },
+    
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": true,
+        "create": true,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+    {
+        "role": "CEO",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+
+
+
+
+
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyOfficialDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyPersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyProfile",
+        "sub_workspace": "MyAttatchment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeOfficialDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeePersonalDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAddress",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeWorkExperience",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeEducation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeProfessionalCertificate",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Employee",
+        "sub_workspace": "EmployeeAttachment",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyRmReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHrReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyHodReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCooReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
+        "sub_workspace": "MyCeoReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeRmReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHrReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeHodReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCooReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeCeoReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AppraisalStatus",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllEmployeeAppraisal",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllRmReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHrReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllHodReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCooReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllCeoReview",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+
+    {
+        "role": "SUPER",
+        "workspace": "Configuration",
+        "sub_workspace": "Department",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Configuration",
+        "sub_workspace": "Designation",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Configuration",
+        "sub_workspace": "Grade",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "Configuration",
+        "sub_workspace": "Role",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    }
+]
