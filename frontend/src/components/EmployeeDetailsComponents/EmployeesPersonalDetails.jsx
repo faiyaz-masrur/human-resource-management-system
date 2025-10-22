@@ -139,7 +139,27 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   };
 
 
+  const validatePersonalDetails = (details) => {
+    if (!details.phone_number?.trim()) {
+      alert("Phone number is required.");
+      return false;
+    }
+    if (!details.personal_email?.trim()) {
+      alert("Personal email is required.");
+      return false;
+    }
+    if (!details.national_id?.trim()) {
+      alert("National id is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSave = async () => {
+    if (!validatePersonalDetails(personalDetails)) return;
+    console.log("Personal details to save:", personalDetails);
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(personalDetails.id){
@@ -263,18 +283,19 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Second Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Personal Email</label>
+            <label>Personal Email*</label>
             <input
               type="email"
               className="form-input"
               value={personalDetails.personal_email || ""}
               onChange={(e) => handleChange("personal_email", e.target.value)}
               disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
             />
           </div>
 
           <div className="form-group">
-            <label>Father's Name*</label>
+            <label>Father's Name</label>
             <input
               type="text"
               className="form-input"
@@ -285,7 +306,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Mother's Name*</label>
+            <label>Mother's Name</label>
             <input
               type="text"
               className="form-input"
@@ -299,7 +320,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Third Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Date of Birth*</label>
+            <label>Date of Birth</label>
             <input 
               type="date" 
               className="date-input"
@@ -321,7 +342,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Blood Group*</label>
+            <label>Blood Group</label>
             <select
               className="form-select"
               value={personalDetails.blood_group || ""}
@@ -339,7 +360,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Fourth Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Marital Status*</label>
+            <label>Marital Status</label>
             <select
               className="form-select"
               value={personalDetails.marital_status || ""}
@@ -354,7 +375,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Spouse Name*</label>
+            <label>Spouse Name</label>
             <input
               type="text"
               className="form-input"
@@ -365,7 +386,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Spouse NID*</label>
+            <label>Spouse NID</label>
             <input
               type="text"
               className="form-input"
@@ -379,7 +400,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Fifth Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Emergency Contact Name*</label>
+            <label>Emergency Contact Name</label>
             <input
               type="text"
               className="form-input"
@@ -390,7 +411,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Relationship*</label>
+            <label>Relationship</label>
             <select
               className="form-select"
               value={personalDetails.emergency_contact_relationship || ""}
@@ -405,7 +426,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Emergency Contact Number*</label>
+            <label>Emergency Contact Number</label>
             <input
               type="tel"
               className="form-input"

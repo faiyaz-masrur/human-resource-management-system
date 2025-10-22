@@ -5,7 +5,7 @@ from django.db import transaction
 from system.models import (
     Department, Grade, Designation, Role,
     BdDistrict, BdThana, BloodGroup, MaritalStatus,
-    EmergencyContactRelationship, Degree, Specialization, RolePermission
+    EmergencyContactRelationship, Degree, Specialization, RolePermission, TrainingType
 )
 
 class Command(BaseCommand):
@@ -24,6 +24,7 @@ class Command(BaseCommand):
         emergency_contact_relationships_file = os.path.join(fixtures_dir, "emergencyContactRelationships.json")
         degrees_file = os.path.join(fixtures_dir, "degrees.json")
         specializations_file = os.path.join(fixtures_dir, "specializations.json")
+        training_type_file = os.path.join(fixtures_dir, "trainingType.json")
         departments_file = os.path.join(fixtures_dir, "departments.json")
         grades_file = os.path.join(fixtures_dir, "grades.json")
         designations_file = os.path.join(fixtures_dir, "designations.json")
@@ -109,6 +110,16 @@ class Command(BaseCommand):
             specialization_obj, created = Specialization.objects.get_or_create(name=specialization["name"], description=specialization["description"])
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created specialization: {specialization_obj.name}"))
+
+
+        # Trainingtypes
+        with open(training_type_file, encoding="utf-8") as f:
+            training_type_data = json.load(f)
+
+        for training_type in training_type_data:
+            training_type_obj, created = TrainingType.objects.get_or_create(name=training_type["name"], description=training_type["description"])
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Created training types: {training_type_obj.name}"))
 
 
         # Departments

@@ -144,7 +144,56 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     setAddressDetails((prev) => ({ ...prev, [field]: value }));
   };
 
+
+  const validateAddress = (address) => {
+    if (!address.present_house?.trim()) {
+      alert("Present House is required.");
+      return false;
+    }
+    if (!address.present_city_village?.trim()) {
+      alert("Present City/Village is required.");
+      return false;
+    }
+    if (!address.present_district) {
+      alert("Present District is required.");
+      return false;
+    }
+    if (!address.present_police_station) {
+      alert("Present Police Station is required.");
+      return false;
+    }
+    if (!address.present_postal_code?.trim()) {
+      alert("Present Postal Code is required.");
+      return false;
+    }
+    if (!address.permanent_house?.trim()) {
+      alert("Permanent House is required.");
+      return false;
+    }
+    if (!address.permanent_city_village?.trim()) {
+      alert("Permanent City/Village is required.");
+      return false;
+    }
+    if (!address.permanent_district) {
+      alert("Permanent District is required.");
+      return false;
+    }
+    if (!address.permanent_police_station) {
+      alert("Permanent Police Station is required.");
+      return false;
+    }
+    if (!address.permanent_postal_code?.trim()) {
+      alert("Permanent Postal Code is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSave = async () => {
+    if (!validateAddress(addressDetails)) return;
+    console.log("Address to save:", addressDetails);
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(!addressDetails.id){
@@ -245,7 +294,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         {/* Row 2: Road/Block/Sector & City/Village */}
         <div className="form-row">
           <div className="form-group">
-            <label>City/Village</label>
+            <label>City/Village*</label>
             <input
               type="text"
               className="form-input"

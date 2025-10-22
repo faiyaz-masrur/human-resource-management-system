@@ -177,15 +177,58 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   };
 
 
+  const validateOfficialDetails = (details) => {
+    const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
+    if (!details.id?.trim()) {
+      alert("Employee ID is required.");
+      return false;
+    }
+    if (!details.email?.trim()) {
+      alert("Email is required.");
+      return false;
+    }
+    if (!companyEmailPattern.test(details.email)) {
+      alert("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
+      return;
+    }
+    if (!details.name?.trim()) {
+      alert("Name is required.");
+      return false;
+    }
+    if (!details.department) {
+      alert("Department is required.");
+      return false;
+    }
+    if (!details.grade) {
+      alert("Grade is required.");
+      return false;
+    }
+    if (!details.joining_date) {
+      alert("Joining Date is required.");
+      return false;
+    }
+    if (!details.designation) {
+      alert("Designation is required.");
+      return false;
+    }
+    if (!details.basic_salary) {
+      alert("Basic Salary is required.");
+      return false;
+    }
+    if (!details.role) {
+      alert("Role is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
-      if (!companyEmailPattern.test(officialdetails.email)) {
-        alert("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
-        return;
-      }
-
+      if (!validateOfficialDetails(officialdetails)) return;
+      console.log("Official Details to save:", officialdetails);
       if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
         if (isEditing) {
           // Update existing employee

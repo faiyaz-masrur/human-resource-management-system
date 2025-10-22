@@ -32,14 +32,14 @@ class TrainingCertificateSerializer(SmartUpdateSerializer):
     class Meta:
         model = TrainingCertificate
         fields = "__all__"
-        read_only_fields = ("employee",)
+        read_only_fields = ("employee","id",)
 
 
 class AttatchmentSerializer(SmartUpdateSerializer):
     class Meta:
         model = Attatchment
         fields = "__all__"
-        read_only_fields = ("employee",)
+        read_only_fields = ("employee","id",)
 
 
 class EmployeeListSerializer(serializers.ModelSerializer):

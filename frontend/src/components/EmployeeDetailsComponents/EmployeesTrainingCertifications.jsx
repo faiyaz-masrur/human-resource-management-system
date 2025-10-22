@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
   const [trainings, setTrainings] = useState([]);
+  const [trainingTypeList, setTrainingTypeList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
 
@@ -58,11 +59,31 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
   }, [rolePermissions]);
 
 
+  useEffect(() => {
+    const fetchTrainingTypeList = async () => {
+      try {
+        const res = await api.get(`system/configurations/training-type-list/`);
+        console.log("Training Type list:", res?.data)
+        setTrainingTypeList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
+      } catch (error) {
+        console.warn("Error Fetching Training Type List", error);
+        setTrainingTypeList([]);
+      }
+    };
+
+    fetchTrainingTypeList();
+  }, []);
+
+
   const addNewTraining = () => {
+    if (!rolePermissions.create) {
+      alert("You don't have permission to create");
+      return;
+    }
     setTrainings([
       ...trainings,
       {
-        id: Date.now(),
+        id: `temp-${Date.now()}`, // More explicit temp ID
         hasTempId: true,
         title: '',
         institution: '',
@@ -88,18 +109,62 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     ));
   };
 
-
   const handleFileChange = (id, event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+
+      // Validate file types
+      const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        return;
+      }
+
       updateTraining(id, 'certificate', file);
     }
+  };
+
+
+  const validateTraining = (training) => {
+    if (!training.title?.trim()) {
+      alert("Title is required.");
+      return false;
+    }
+    if (!training.institution?.trim()) {
+      alert("Institution is required.");
+      return false;
+    }
+    if (!training.issue_date) {
+      alert("Issue Date is required.");
+      return false;
+    }
+    if (!training.type) {
+      alert("Type is required.");
+      return false;
+    }
+    
+    return true;
   };
 
 
   const handleSave = async (id) => {
     const trainingToSave = trainings.find(edu => edu.id === id);
     if (!trainingToSave) return;
+    if (!validateTraining(trainingToSave)) return;
+    console.log("Training to save:", trainingToSave);
+    const saveData = {
+      title: trainingToSave.title,
+      institution: trainingToSave.institution,
+      issue_date: trainingToSave.issue_date,
+      type: trainingToSave.type,
+      credential_id: trainingToSave.credential_id ? trainingToSave.credential_id : null,
+      certificate: trainingToSave.certificate ? trainingToSave.certificate : null,
+    }
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (trainingToSave.hasTempId) {
@@ -107,9 +172,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             alert("You don't have permission to create.");
             return;
           }
-          delete trainingToSave.id;
-          delete trainingToSave.hasTempId;
-          const res = await api.post(`employees/employee-training-certificate/${employee_id}/`, trainingToSave);
+          const res = await api.post(`employees/employee-training-certificate/${employee_id}/`, saveData);
           console.log("Created Training:", res?.data);
           if(res.status === 201){
             setTrainings(trainings.map(training => 
@@ -124,7 +187,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             alert("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, trainingToSave);
+          const res = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, saveData);
           console.log("Updated Training:", res.data);
           if(res.status === 200){
             setTrainings(trainings.map(training => 
@@ -141,9 +204,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             alert("You don't have permission to create.");
             return;
           }
-          delete trainingToSave.id;
-          delete trainingToSave.hasTempId;
-          const res = await api.post(`employees/my-training-certificate/`, trainingToSave);
+          const res = await api.post(`employees/my-training-certificate/`, saveData);
           console.log("Created Training:", res?.data);
           if(res.status === 201){
             setTrainings(trainings.map(training => 
@@ -158,7 +219,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             alert("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, trainingToSave);
+          const res = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, saveData);
           console.log("Updated Training:", res?.data);
           if(res.status === 200){
             setTrainings(trainings.map(training => 
@@ -195,7 +256,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                   type="text" 
                   className="form-input"
                   placeholder="Enter Training or Certification Name"
-                  value={training.title}
+                  value={training.title || ""}
                   onChange={(e) => updateTraining(training.id, 'title', e.target.value)}
                   disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -207,7 +268,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                   type="text" 
                   className="form-input"
                   placeholder="Enter Institution Name"
-                  value={training.institution}
+                  value={training.institution || ""}
                   onChange={(e) => updateTraining(training.id, 'institution', e.target.value)}
                   disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -217,7 +278,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 <label>Year*</label>
                 <select 
                   className="form-select"
-                  value={training.issue_date}
+                  value={training.issue_date || ""}
                   onChange={(e) => updateTraining(training.id, 'issue_date', e.target.value)}
                   disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -239,17 +300,15 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 <label>Type*</label>
                 <select 
                   className="form-select"
-                  value={training.type}
+                  value={training.type || ""}
                   onChange={(e) => updateTraining(training.id, 'type', e.target.value)}
                   disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 >
                   <option value="">-- Select --</option>
-                  <option value="training">Training</option>
-                  <option value="certification">Certification</option>
-                  <option value="workshop">Workshop</option>
-                  <option value="seminar">Seminar</option>
-                  <option value="course">Course</option>
+                  {trainingTypeList.map((trainingType)=>(
+                    <option key={trainingType.id} value={trainingType.id}>{trainingType.name}</option>
+                  ))}
                 </select>
               </div>
               <div className="form-group">
@@ -258,7 +317,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                   type="text" 
                   className="form-input"
                   placeholder="Enter ID/Reference/Tracking Number"
-                  value={training.credential_id}
+                  value={training.credential_id || ""}
                   onChange={(e) => updateTraining(training.id, 'credential_id', e.target.value)}
                   disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
                 />

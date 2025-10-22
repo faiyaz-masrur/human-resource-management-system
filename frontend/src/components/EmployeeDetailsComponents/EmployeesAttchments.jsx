@@ -8,7 +8,7 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     id: '',
     photo: null,
     signature: null,
-    natoinal_id: null,
+    national_id: null,
     passport: null,
     employee_agreement: null
   }
@@ -64,9 +64,22 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     fetchTrainings();
   }, [rolePermissions]);
 
+
   const handleFileChange = (field, e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+
+      // Validate file types
+      const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        return;
+      }
+
       setAttachments(prev => ({
         ...prev,
         [field]: file
@@ -74,7 +87,28 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     }
   };
 
+
+  const validateAttatchment = (attachment) => {
+    if (!attachment.photo) {
+      alert("Photo is required.");
+      return false;
+    }
+    if (!attachment.signature) {
+      alert("Signature is required.");
+      return false;
+    }
+    if (!attachment.national_id) {
+      alert("Natoinal Id is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSave = async () => {
+    if (!validateAttatchment(attachments)) return;
+    console.log("Attachments to save:", attachments);
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(attachments.id){
@@ -222,23 +256,23 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
             <input 
               className="file-input"
               type="file" 
-              id="natoinal_id"
+              id="national_id"
               accept=".pdf,.jpg,.png" 
-              onChange={(e) => handleFileChange('natoinal_id', e)}
+              onChange={(e) => handleFileChange('national_id', e)}
               disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
               required
             />
-            {attachments.natoinal_id ? (
+            {attachments.national_id ? (
               <a 
-                href={attachments.natoinal_id} 
+                href={attachments.national_id} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="file-name"
               >
-                {attachments.natoinal_id.split('/').pop()}
+                {attachments.national_id.split('/').pop()}
               </a>
             ) : (
-              <label htmlFor="natoinal_id" className="file-label">
+              <label htmlFor="national_id" className="file-label">
                 Attach File (.pdf / .jpg / .png)
               </label>
             )}

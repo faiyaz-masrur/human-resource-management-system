@@ -185,7 +185,7 @@ class EmployeeTrainingCertificateView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeeTrainingCertificate"
-    lookup_field = "training_certificate" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         # Get employee id from URL
@@ -371,7 +371,7 @@ class MyTrainingCertificateView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
     sub_workspace = "MyTrainingCertificate"
-    lookup_field = "training_certificate" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         return TrainingCertificate.objects.filter(employee=self.request.user)
