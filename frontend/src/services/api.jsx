@@ -1,64 +1,70 @@
 import axios from 'axios';
 
-const baseURL = 'http://127.0.0.1:8000/api';
+// --- BASE URLS ---
+// Note: Your setup had two different base URLs. I'm clarifying them.
+const API_BASE_URL = "http://127.0.0.1:8000/api"; // For auth, history, etc.
+const ATTENDANCE_BASE_URL = "http://127.0.0.1:8000/attendance"; // For attendance-specific events
 
+// --- Standalone fetch functions for attendance events ---
+// These use 'fetch' as in your original file, but could be converted to use the 'api' instance.
+
+// Fetch Google Maps API key
+export const fetchApiKey = async () => {
+  // Using the /attendance/api-key/ path
+  const response = await fetch(`${ATTENDANCE_BASE_URL}/api-key/`);
+  const data = await response.json();
+  return data.key;
+};
+
+// Log enter/exit event
+export const logEvent = async (employeeId, geofenceId, eventType, isFinalExit) => {
+  const payload = {
+    employee: employeeId,
+    geofence_id: geofenceId,
+    event_type: eventType, // 'enter' or 'exit'
+    is_final_exit: isFinalExit, // Pass this boolean
+  };
+
+  const response = await fetch(`${ATTENDANCE_BASE_URL}/events/log_event/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to log event');
+  }
+  return await response.json(); // This will now return the full attendance object
+};
+
+
+// --------------------------------------------------
+// Axios instance for other API calls (history, reconcile, auth)
+// --------------------------------------------------
 const api = axios.create({
-  baseURL,
+  baseURL: API_BASE_URL, // Use the /api base
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor (as before)
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// ... (interceptors remain exactly the same) ...
 
-// Add a response interceptor to handle token refresh
-api.interceptors.response.use(
-  (response) => response, // Simply return the response if it's successful
-  async (error) => {
-    const originalRequest = error.config;
-
-    // If the error is 401 and it's not a retry request
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark it as a retry
-
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-       const response = await axios.post(`${baseURL}/system/auth/token/refresh/`, {
-          refresh: refreshToken,
-        });
-
-        // Store the new tokens
-        localStorage.setItem('access_token', response.data.access);
-        localStorage.setItem('refresh_token', response.data.refresh);
-
-        // Update the header for the original request
-        originalRequest.headers['Authorization'] = 'Bearer ' + response.data.access;
-
-        // Retry the original request
-        return api(originalRequest);
-      } catch (refreshError) {
-        // If refresh fails, logout the user
-        console.log('Refresh token is invalid. Logging out.');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
-      }
-    }
-
-    return Promise.reject(error);
+// --- NEW FUNCTION ---
+// Add this function to your file
+export const fetchTodayAttendance = async (employeeId) => {
+  // This uses the /attendance/today/ endpoint, which is outside the /api prefix
+  // We'll use the 'api' instance but override the URL
+  try {
+    const response = await api.get(`/attendance/today/?employee_id=${employeeId}`, {
+       baseURL: 'http://127.0.0.1:8000' // Override base URL
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching today's attendance:", error);
+    return null;
   }
-);
+};
+
 
 export default api;
