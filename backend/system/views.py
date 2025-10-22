@@ -16,7 +16,8 @@ from .serializers import (
     DegreeSerializer,
     SpecializationSerializer,
     BdDistrictSerializer,
-    BdThanaSerializer
+    BdThanaSerializer,
+    TrainingTypeSerializer,
 )
 from .models import (
     Department, 
@@ -31,7 +32,8 @@ from .models import (
     Degree,
     Specialization,
     BdDistrict,
-    BdThana
+    BdThana,
+    TrainingType,
 )
 from rest_framework import generics, status, viewsets, views
 from .permissions import HasRoleWorkspacePermission
@@ -55,7 +57,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     Custom view for token creation to include user data in the response.
     """
     serializer_class = MyTokenObtainPairSerializer
-    permission_classes = [AllowAny]
+
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -268,7 +270,7 @@ class RolePermissionAPIView(
         return self.create(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+        return self.update(request, *args, **kwargs)
 
 
 
@@ -326,7 +328,10 @@ class BdThanaListView(generics.ListAPIView):
         return BdThana.objects.all().order_by("name")
 
     
-
+class TrainingTypeListView(generics.ListAPIView):
+    queryset = TrainingType.objects.all().order_by("name")
+    serializer_class = TrainingTypeSerializer
+    permission_classes = [IsAuthenticated]
 
 
     

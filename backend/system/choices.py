@@ -14,7 +14,7 @@ SUB_WORKSPACE_CHOICES = [
     ("MyWorkExperience", "MyWorkExperience"),   #MyProfile
     ("MyEducation", "MyEducation"),     #MyProfile
     ("MyTrainingCertificate", "MyTrainingCertificate"),     #MyProfile
-    ("MyAttatchment", "MyAttachment"),  #MyProfile
+    ("MyAttachment", "MyAttachment"),  #MyProfile
     ("EmployeeList", "EmployeeList"),   #Employee
     ("EmployeeOfficialDetail", "EmployeeOfficialDetail"),   #Employee
     ("EmployeePersonalDetail", "EmployeePersonalDetail"),   #Employee
@@ -48,4 +48,48 @@ SUB_WORKSPACE_CHOICES = [
     ("Designation", "Designation"),     #Configuration
     ("Grade", "Grade"),     #Configuration
     ("Role", "Role"),       #Configuration
+]
+
+
+WORKSPACE_SUBWORKSPACE_MAP = [
+    ("MyOfficialDetail", "MyProfile"),
+    ("MyPersonalDetail", "MyProfile"),  
+    ("MyAddress", "MyProfile"),    
+    ("MyWorkExperience", "MyProfile"),  
+    ("MyEducation", "MyProfile"),     
+    ("MyTrainingCertificate", "MyProfile"),     
+    ("MyAttachment", "MyProfile"),  
+    ("EmployeeList", "Employee"),   
+    ("EmployeeOfficialDetail", "Employee"),   
+    ("EmployeePersonalDetail", "Employee"),  
+    ("EmployeeAddress", "Employee"),     
+    ("EmployeeWorkExperience", "Employee"),   
+    ("EmployeeEducation", "Employee"),    
+    ("EmployeeTrainingCertificate", "Employee"),    
+    ("EmployeeAttachment", "Employee"),   
+    ("MyEmployeeAppraisal", "MyAppraisal"),     
+    ("MyRmReview", "MyAppraisal"),  
+    ("MyHrReview", "MyAppraisal"),   
+    ("MyHodReview", "MyAppraisal"),    
+    ("MyCooReview", "MyAppraisal"),     
+    ("MyCeoReview", "MyAppraisal"),    
+    ("ReviewAppraisalList", "ReviewAppraisal"),    
+    ("EmployeeEmployeeAppraisal", "ReviewAppraisal"),     
+    ("EmployeeRmReview", "ReviewAppraisal"),   
+    ("EmployeeHrReview", "ReviewAppraisal"),   
+    ("EmployeeHodReview", "ReviewAppraisal"),   
+    ("EmployeeCooReview", "ReviewAppraisal"),     
+    ("EmployeeCeoReview", "ReviewAppraisal"),   
+    ("AppraisalStatus", "AllAppraisal"),     
+    ("AllAppraisalList", "AllAppraisal"),  
+    ("AllEmployeeAppraisal", "AllAppraisal"),       
+    ("AllRmReview", "AllAppraisal"),  
+    ("AllHrReview", "AllAppraisal"),   
+    ("AllHodReview", "AllAppraisal"),
+    ("AllCooReview", "AllAppraisal"),   
+    ("AllCeoReview", "AllAppraisal"),  
+    ("Department", "Configuration"),  
+    ("Designation", "Configuration"),     
+    ("Grade", "Configuration"),     
+    ("Role", "Configuration"),       
 ]

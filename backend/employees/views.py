@@ -119,7 +119,7 @@ class EmployeeWorkExperienceView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeeWorkExperience"
-    lookup_field = "work_experience" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         # Get employee id from URL
@@ -152,7 +152,7 @@ class EmployeeEducationView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeeEducation"
-    lookup_field = "education" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         # Get employee id from URL
@@ -315,7 +315,7 @@ class MyWorkExperienceView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
     sub_workspace = "MyWorkExperience"
-    lookup_field = "work_experience" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         return WorkExperience.objects.filter(employee=self.request.user)
@@ -343,7 +343,7 @@ class MyEducationeView(
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
     sub_workspace = "MyEducation"
-    lookup_field = "education" 
+    lookup_field = "pk" 
 
     def get_queryset(self):
         return Education.objects.filter(employee=self.request.user)

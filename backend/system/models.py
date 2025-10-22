@@ -253,3 +253,15 @@ class Specialization(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TrainingType(models.Model):
+    name = models.CharField(max_length=10, unique=True)  
+    description = models.TextField(max_length=100, blank=True, null=True)  
+
+    class Meta:
+        verbose_name = "TrainingType"
+        verbose_name_plural = "TrainingTypes"
+
+    def __str__(self):
+        return self.name
