@@ -1,0 +1,91 @@
+.attendance-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.attendance-container h2,
+.attendance-container h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* --- Today's Record Card --- */
+.status-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 15px;
+  text-align: center;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.status-item .label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.status-item .value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+.status-item .value.in-time { color: #28a745; }
+.status-item .value.out-time { color: #dc3545; }
+
+.status-item .sub-label {
+    font-size: 12px;
+    color: #777;
+    font-style: italic;
+    min-height: 16px; /* Reserve space */
+}
+
+.status-remarks {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+    font-size: 14px;
+    color: #444;
+}
+
+/* --- Map Section --- */
+.map-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.map-section p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-weight: 600;
+    text-align: center;
+}

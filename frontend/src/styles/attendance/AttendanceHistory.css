@@ -1,0 +1,56 @@
+.attendance-history {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  position: relative; /* Needed for modal context */
+}
+
+/* ... (h2, filters, table styles remain the same) ... */
+
+.table-container {
+    overflow-x: auto; /* For smaller screens */
+}
+
+.table th,
+.table td {
+  padding: 12px 15px; /* Increased padding */
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+.table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+}
+
+/* --- NEW EDIT BUTTON --- */
+.btn-edit {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+.btn-edit:hover {
+    background-color: #e0e0e0;
+}
+
+
+/* --- NEW MODAL STYLES --- */
+.reconcile-modal-overlay {
+    position: fixed; /* Cover the whole screen */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* On top of everything */
+}

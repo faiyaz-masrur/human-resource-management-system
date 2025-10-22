@@ -1,0 +1,92 @@
+/* This file now styles the *content* of the modal */
+.reconcile-container {
+  max-width: 500px;
+  /* margin is removed, as it's centered by the overlay */
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1001; /* Above overlay */
+  position: relative;
+  width: 90%;
+}
+
+.reconcile-container h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.reconcile-info {
+    font-size: 14px;
+    color: #555;
+    background-color: #f4f4f4;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.reconcile-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #444;
+}
+
+.reconcile-container input,
+.reconcile-container textarea {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box; /* Important for width: 100% */
+}
+
+.reconcile-container textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.reconcile-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end; /* Align buttons to the right */
+    margin-top: 15px;
+}
+
+.reconcile-actions button {
+  padding: 10px 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reconcile-actions .btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+.reconcile-actions .btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+.reconcile-actions .btn-submit {
+    background-color: #007bff;
+    color: white;
+}
+.reconcile-actions .btn-submit:hover {
+    background-color: #0069d9;
+}
+
+.reconcile-container .status-message {
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 500;
+  color: #333;
+}

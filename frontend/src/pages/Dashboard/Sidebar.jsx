@@ -16,21 +16,31 @@ import communicationIcon from "..//../assets/icons/Communication.svg";
 import reportsIcon from "..//../assets/icons/Reports.svg";
 import settingIcon from "..//../assets/icons/Settings.svg";
 
-
-
 // --- Menu Items Definition ---
 const menuItems = [
   { name: 'Dashboard', icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 18, height: 18 }} />, path: '/' }, 
   { name: 'My Profile', icon: <img src={myProfileIcon} alt="Profile" style={{ width: 18, height: 18 }} />, path: '/employee-details/my-profile' },
-  { name: 'Attendance', icon: <img src={attendanceIcon} alt="Attendance" style={{ width: 18, height: 18 }} />, path: '/attendance' },
+  
+{ 
+    name: 'Attendance', 
+    icon: <img src={attendanceIcon} alt="Attendance" style={{ width: 18, height: 18 }} />, 
+    path: '/attendance/home',
+    subMenu: [
+      { name: "Today's Attendance", path: '/attendance/home' }, //
+      { name: 'Attendance History', path: '/attendance/history' },
+      // { name: 'Reconcile Requests', path: '/attendance/reconcile' }, // 
+      // { name: 'Geofence Map', path: '/attendance/map' }, // 
+    ]
+  },
+
   { name: 'Payroll', icon: <img src={payrollIcon} alt="payroll" style={{ width: 18, height: 18 }} />, path: '/payroll' },
- { name: 'Employees', icon: <img src={employeeIcon} alt="Employees" style={{ width: 18, height: 18 }} />, path: '/employees' },
+  { name: 'Employees', icon: <img src={employeeIcon} alt="Employees" style={{ width: 18, height: 18 }} />, path: '/employees' },
   { name: 'Taxes', icon: <img src={taxesIcon} alt="Taxes" style={{ width: 18, height: 18 }} />, path: '/taxes' },
   { name: 'Provident Fund', icon: <img src={providentFundIcon} alt="Provident Fund" style={{ width: 18, height: 18 }} />, path: '/provident Fund' },
 
   { 
     name: 'Appraisal', 
-     icon: <img src={appraisalIcon} alt="Appraisal" style={{ width: 18, height: 18 }} />, path: '/appraisal', 
+    icon: <img src={appraisalIcon} alt="Appraisal" style={{ width: 18, height: 18 }} />, path: '/appraisal', 
     subMenu: [
       { name: 'My Appraisal', path: '/appraisal/my' },
       { name: 'Review Appraisals', path: '/appraisal/review' },
@@ -63,20 +73,15 @@ const menuItems = [
 const Sidebar = ({ className, onClose }) => {
   const location = useLocation(); 
   
-  // State to track which menu is open (stores the name of the menu)
   const [openMenu, setOpenMenu] = useState(null); 
 
-  // Function to toggle the dropdown state
   const handleToggle = (e, name) => {
-    e.preventDefault(); // Prevent parent link navigation
+    e.preventDefault(); 
     setOpenMenu(openMenu === name ? null : name);
   };
   
-  // Helper to determine if a parent menu item should be active (either itself or a child is active)
   const isParentActive = (item) => {
-      // Check if the parent path is active
       if (location.pathname === item.path) return true;
-      // Check if any sub-menu path is active
       if (item.subMenu) {
           return item.subMenu.some(subItem => location.pathname === subItem.path);
       }
@@ -101,31 +106,26 @@ const Sidebar = ({ className, onClose }) => {
 
             return (
               <React.Fragment key={index}>
-                {/* MAIN MENU ITEM (Parent or Single Link) */}
+                {/* MAIN MENU ITEM */}
                 <li 
-                  // Active class applies if parent or any child is the current route
                   className={`menu-item ${hasSubMenu ? 'menu-dropdown-header' : ''} ${isActive ? 'active' : ''} ${isOpen ? 'open' : ''}`}
                 >
                   <Link 
                     to={item.path} 
                     className="menu-link-content"
-                    // If it has a submenu, toggle the state; otherwise, close sidebar (for mobile)
                     onClick={hasSubMenu ? (e) => handleToggle(e, item.name) : onClose}
                   >
                     <span className="item-icon">{item.icon}</span> 
                     <span className="item-name">{item.name}</span>
-                    {
-                      hasSubMenu && <span className={`item-arrow-down ${isOpen ? 'rotated' : ''}`}>{'>'}</span> // Only show > for dropdown items
-                    }
+                    {hasSubMenu && <span className={`item-arrow-down ${isOpen ? 'rotated' : ''}`}>{'>'}</span>}
                   </Link>
                 </li>
                 
-                {/* SUBMENU ITEMS LIST (Visible only if isOpen is true) */}
+                {/* SUBMENU ITEMS */}
                 <ul className={`submenu-list ${isOpen ? 'open' : ''}`}> 
                   {item.subMenu && item.subMenu.map((subItem, subIndex) => (
                     <li 
                         key={subIndex} 
-                        // Active class applies if the sub-item is the current route
                         className={`submenu-item ${location.pathname === subItem.path ? 'active' : ''}`}
                     >
                       <Link 
