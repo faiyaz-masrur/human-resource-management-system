@@ -31,7 +31,7 @@ urlpatterns = [
     path('employee-education/<str:employee>/', EmployeeEducationView.as_view(), name='employee-education-all'),
     path('employee-education/<str:employee>/<int:pk>/', EmployeeEducationView.as_view(), name='employee-education'),
     path('employee-training-certificate/<str:employee>/', EmployeeTrainingCertificateView.as_view(), name='employee-training-certificate-all'),
-    path('employee-training-certificate/<str:employee>/<int:training_certificate>/', EmployeeTrainingCertificateView.as_view(), name='employee-training-certificate'),
+    path('employee-training-certificate/<str:employee>/<int:pk>/', EmployeeTrainingCertificateView.as_view(), name='employee-training-certificate'),
     path('employee-attatchment/<str:employee>/', EmployeeAttatchmentView.as_view(), name='employee-attatchment'),
 
     # endpoints for employees to view and update their own details
@@ -43,7 +43,7 @@ urlpatterns = [
     path("my-education/", MyEducationeView.as_view(), name="my-education-all"),
     path("my-education/<int:pk>/", MyEducationeView.as_view(), name="my-education"),
     path('my-training-certificate/', MyTrainingCertificateView.as_view(), name='my-training-certificate-all'),
-    path('my-training-certificate/<int:training_certificate>/', MyTrainingCertificateView.as_view(), name='my-training-certificate'),
+    path('my-training-certificate/<int:pk>/', MyTrainingCertificateView.as_view(), name='my-training-certificate'),
     path("my-attatchment/", MyAttatchmentView.as_view(), name="my-attatchment"),
 
     path('employee-list/', EmployeeListView.as_view(), name='employee-list'),

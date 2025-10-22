@@ -130,9 +130,21 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
   const handleFileChange = (id, event) => {
     const file = event.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+
+      const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        return;
+      }
+
       updateEducation(id, 'certificate', file);
     }
   };
+
 
   const validateEducation = (education) => {
     if (!education.degree) {
@@ -166,11 +178,11 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     if (!validateEducation(educationToSave)) return;
     console.log("Education to save:", educationToSave);
     const saveData = {
-      degree: educationToSave?.degree,
-      institution: educationToSave?.institution,
-      passing_year: educationToSave?.passing_year,
-      specialization: educationToSave?.specialization,
-      result: educationToSave?.result,
+      degree: educationToSave.degree,
+      institution: educationToSave.institution,
+      passing_year: educationToSave.passing_year,
+      specialization: educationToSave.specialization,
+      result: educationToSave.result,
       certificate: educationToSave.certificate ? educationToSave.certificate : null,
     }
     try {
@@ -262,7 +274,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                 <label>Degree*</label>
                 <select 
                   className="form-select"
-                  value={education.degree}
+                  value={education.degree || ""}
                   onChange={(e) => updateEducation(education.id, 'degree', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -279,7 +291,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                   type="text" 
                   className="form-input"
                   placeholder="Enter Institution Name"
-                  value={education.institution}
+                  value={education.institution || ""}
                   onChange={(e) => updateEducation(education.id, 'institution', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -289,7 +301,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                 <label>Passing Year*</label>
                 <select 
                   className="form-select"
-                  value={education.passing_year}
+                  value={education.passing_year || ""}
                   onChange={(e) => updateEducation(education.id, 'passing_year', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
@@ -311,7 +323,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                 <label>Specialization*</label>
                 <select 
                   className="form-select"
-                  value={education.specialization}
+                  value={education.specialization || ""}
                   onChange={(e) => updateEducation(education.id, 'specialization', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                 >
@@ -327,7 +339,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                   type="text" 
                   className="form-input"
                   placeholder="Enter Division or CGPA or Grade"
-                  value={education.result}
+                  value={education.result || ""}
                   onChange={(e) => updateEducation(education.id, 'result', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required

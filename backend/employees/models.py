@@ -8,6 +8,7 @@ from system.models import (
     Specialization,
     BdDistrict,
     BdThana,
+    TrainingType
 )
 
 # -----------------------------
@@ -21,10 +22,10 @@ class PersonalDetail(models.Model):
     )
     father_name = models.CharField(max_length=100, null=True, blank=True)
     mother_name = models.CharField(max_length=100, null=True, blank=True) 
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
-    personal_email = models.EmailField(max_length=254, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=False, blank=False)
+    personal_email = models.EmailField(max_length=254, null=False, blank=False)
     date_of_birth = models.DateField(null=True, blank=True)  
-    national_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    national_id = models.CharField(max_length=20, unique=True, null=False, blank=False)
     passport_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     blood_group = models.ForeignKey(BloodGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_personal_details')
     marital_status = models.ForeignKey(MaritalStatus, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_personal_details')
@@ -46,14 +47,14 @@ class Address(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='address')
     present_house = models.CharField(max_length=225, null=False, blank=False)
     present_road_block_sector = models.CharField(max_length=50, null=True, blank=True)
-    present_city_village = models.CharField(max_length=100, null=True, blank=True)
+    present_city_village = models.CharField(max_length=100, null=False, blank=False)
     present_police_station = models.ForeignKey(BdThana, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_present_address')
     present_district = models.ForeignKey(BdDistrict, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_present_address')
     present_postal_code = models.CharField(max_length=20, null=False, blank=False)
 
     permanent_house = models.CharField(max_length=225, null=False, blank=False)
     permanent_road_block_sector = models.CharField(max_length=50, null=True, blank=True)
-    permanent_city_village = models.CharField(max_length=100, null=True, blank=True)
+    permanent_city_village = models.CharField(max_length=100, null=False, blank=False)
     permanent_police_station = models.ForeignKey(BdThana, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_permanent_address')
     permanent_district = models.ForeignKey(BdDistrict, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_permanent_address')
     permanent_postal_code = models.CharField(max_length=20, null=False, blank=False)
@@ -99,8 +100,8 @@ class TrainingCertificate(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     credential_id = models.CharField(max_length=100, null=True, blank=True, unique=True)
     institution = models.CharField(max_length=255, null=False, blank=False)
-    issue_date = models.DateField(null=False, blank=False)
-    type = models.CharField(max_length=100, null=True, blank=True)
+    issue_date = models.IntegerField(null=False, blank=False)
+    type = models.ForeignKey(TrainingType, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_training_type')
     certificate = models.FileField(upload_to='professional_certificates/', null=True, blank=True)
 
     def __str__(self):
@@ -109,9 +110,9 @@ class TrainingCertificate(models.Model):
 
 class Attatchment(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='attatchments')
-    photo = models.ImageField(upload_to='employee_photos/', null=True, blank=True)
-    signature = models.ImageField(upload_to='employee_signatures/', null=True, blank=True)
-    natoinal_id = models.FileField(upload_to='employee_nid_scans/', null=True, blank=True)
+    photo = models.ImageField(upload_to='employee_photos/', null=False, blank=False)
+    signature = models.ImageField(upload_to='employee_signatures/', null=False, blank=False)
+    national_id = models.FileField(upload_to='employee_nid_scans/', null=False, blank=False)
     passport = models.FileField(upload_to='employee_passport_scans/', null=True, blank=True)
     employee_agreement = models.FileField(upload_to='employee_agreements/', null=True, blank=True)
 
