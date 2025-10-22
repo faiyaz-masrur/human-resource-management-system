@@ -10,22 +10,22 @@ from system.models import RolePermission, Employee
 from .models import (
     EmployeeAppraisal,
     ReportingManagerReview,
-    HrReview, 
-    HodReview, 
-    CooReview, 
-    CeoReview, 
+    HrReview,
+    HodReview,
+    CooReview,
+    CeoReview,
     AppraisalDetails,
-    EmployeeAppraisalTimer, 
-    EmployeeAppraisalStatusTrack 
+    EmployeeAppraisalTimer,
+    EmployeeAppraisalStatusTrack
 )
 from .serializers import (
     EmployeeAppraisalSerializer,
     ReportingManagerReviewSerializer,
     HRReviewSerializer,
     HODReviewSerializer,
-    COOReviewSerializer, 
-    CEOReviewSerializer, 
-    AppraisalDetailsSerializer, 
+    COOReviewSerializer,
+    CEOReviewSerializer,
+    AppraisalDetailsSerializer
 )
 
 # ---------------- Permission Class ----------------
@@ -50,6 +50,7 @@ class HasAppraisalPermission(BasePermission):
         except RolePermission.DoesNotExist:
             return False
 
+
 # ---------------- Base Mixins ----------------
 
 class AppraisalPermissionMixin:
@@ -58,11 +59,12 @@ class AppraisalPermissionMixin:
     permission_sub_workspace = None
     permission_type = None
 
+
 class AppraisalReviewSubmissionMixin:
     review_model = None
     review_serializer = None
     status_track_field = None
-    required_timer_model = EmployeeAppraisalTimer 
+    required_timer_model = EmployeeAppraisalTimer
 
     def check_appraisal_timer(self):
         if self.required_timer_model:
@@ -74,15 +76,17 @@ class AppraisalReviewSubmissionMixin:
     def check_review_authorization(self, request, appraisal):
         return True, None
 
-    def post(self, request, appraisal_id):
+    def post(self, request, employee_id):
         if self.required_timer_model:
             ok, msg = self.check_appraisal_timer()
             if not ok:
                 return Response({'error': msg}, status=status.HTTP_400_BAD_REQUEST)
-        appraisal = get_object_or_404(EmployeeAppraisal, pk=appraisal_id)
+
+        appraisal = get_object_or_404(EmployeeAppraisal, employee_id=employee_id)
         auth_ok, auth_error = self.check_review_authorization(request, appraisal)
         if not auth_ok:
             return Response({'error': auth_error}, status=status.HTTP_403_FORBIDDEN)
+
         review_instance, _ = self.review_model.objects.get_or_create(
             appraisal=appraisal, reviewer=request.user.employee_profile
         )
@@ -96,18 +100,24 @@ class AppraisalReviewSubmissionMixin:
                 track.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class BaseAppraisalReviewAPIView(AppraisalPermissionMixin, AppraisalReviewSubmissionMixin, APIView):
     permission_workspace = 'ReviewAppraisal'
     permission_type = 'edit'
 
+
 # ---------------- Employee Self Appraisal ----------------
 
 class EmployeeSelfAppraisalAPIView(AppraisalPermissionMixin, APIView):
-    permission_workspace = 'MyAppraisal'
-    permission_sub_workspace = 'MyEmployeeAppraisal'
+    permission_classes = [HasAppraisalPermission]
+    workspace = 'MyAppraisal'
+    sub_workspace = 'MyEmployeeAppraisal'
     permission_type = 'create'
+    
+    def get_object(self):
+        return self.request.user
 
-    def post(self, request):
+    def post(self, request, employee_id):
         timer = EmployeeAppraisalTimer.objects.first()
         if not timer or not timer.is_active_period():
             return Response({'error': 'The employee self-appraisal period is not active.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -120,9 +130,10 @@ class EmployeeSelfAppraisalAPIView(AppraisalPermissionMixin, APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 # ---------------- Review API Views ----------------
 
-class ReportingManagerReviewAPIView(BaseAppraisalReviewAPIView):
+class RMReviewAPIView(BaseAppraisalReviewAPIView):
     review_model = ReportingManagerReview
     review_serializer = ReportingManagerReviewSerializer
     status_track_field = 'rm_review_done'
@@ -135,6 +146,7 @@ class ReportingManagerReviewAPIView(BaseAppraisalReviewAPIView):
             return False, 'Employee has not completed self-appraisal.'
         return True, None
 
+
 class HRReviewAPIView(BaseAppraisalReviewAPIView):
     review_model = HrReview
     review_serializer = HRReviewSerializer
@@ -142,11 +154,13 @@ class HRReviewAPIView(BaseAppraisalReviewAPIView):
     required_timer_model = None
     permission_sub_workspace = 'EmployeeHrReview'
 
+
 class HODReviewAPIView(BaseAppraisalReviewAPIView):
     review_model = HodReview
     review_serializer = HODReviewSerializer
     status_track_field = 'hod_review_done'
     permission_sub_workspace = 'EmployeeHodReview'
+
 
 class COOReviewAPIView(BaseAppraisalReviewAPIView):
     review_model = CooReview
@@ -154,17 +168,19 @@ class COOReviewAPIView(BaseAppraisalReviewAPIView):
     status_track_field = 'coo_review_done'
     permission_sub_workspace = 'EmployeeCooReview'
 
+
 class CEOReviewAPIView(BaseAppraisalReviewAPIView):
     review_model = CeoReview
     review_serializer = CEOReviewSerializer
     status_track_field = 'ceo_review_done'
     permission_sub_workspace = 'EmployeeCeoReview'
 
-# ---------------- List Views ----------------
+
+# ---------------- Review Appraisal Views ----------------
 
 class ReviewAppraisalListAPIView(AppraisalPermissionMixin, ListAPIView):
-    permission_workspace = 'ReviewAppraisal'
-    permission_sub_workspace = 'ReviewAppraisalList'
+    workspace = 'ReviewAppraisal'
+    workspace = 'ReviewAppraisalList'
     permission_type = 'edit'
     serializer_class = EmployeeAppraisalSerializer
 
@@ -174,29 +190,135 @@ class ReviewAppraisalListAPIView(AppraisalPermissionMixin, ListAPIView):
             return EmployeeAppraisal.objects.none()
         return EmployeeAppraisal.objects.filter(
             employee__reporting_manager=manager,
-            employee__employeeappraisalstatustrack__self_appraisal_done=True,
-            employee__employeeappraisalstatustrack__rm_review_done=False,
+            employee__employeeappraisalstatustrack__self_appraisal_done=True
         )
 
-class AllAppraisalStatusAPIView(AppraisalPermissionMixin, ListAPIView):
+
+class ReviewAppraisalDetailAPIView(AppraisalPermissionMixin, APIView):
+    permission_workspace = 'ReviewAppraisal'
+    permission_sub_workspace = 'ReviewAppraisalDetail'
+    permission_type = 'view'
+
+    def get(self, request, employee_id):
+        appraisal = get_object_or_404(EmployeeAppraisal, employee_id=employee_id)
+        serializer = EmployeeAppraisalSerializer(appraisal)
+        return Response(serializer.data)
+
+
+class ReviewEmployeeAppraisalBaseAPIView(AppraisalPermissionMixin, APIView):
+    permission_workspace = 'ReviewAppraisal'
+    permission_sub_workspace = 'EmployeeAppraisalBase'
+    permission_type = 'view'
+
+    def get(self, request, employee_id):
+        appraisal = get_object_or_404(EmployeeAppraisal, employee_id=employee_id)
+        data = EmployeeAppraisalSerializer(appraisal).data
+        return Response(data, status=status.HTTP_200_OK)
+
+
+# ---------------- All Appraisal Views ----------------
+
+class AllAppraisalListAPIView(AppraisalPermissionMixin, ListAPIView):
     permission_workspace = 'AllAppraisal'
-    permission_sub_workspace = 'AppraisalStatus'
+    permission_sub_workspace = 'AllAppraisalList'
+    permission_type = 'view'
+    serializer_class = EmployeeAppraisalSerializer
+
+    def get_queryset(self):
+        return EmployeeAppraisal.objects.select_related('employee')
+
+
+class AllAppraisalDetailAPIView(AppraisalPermissionMixin, APIView):
+    permission_workspace = 'AllAppraisal'
+    permission_sub_workspace = 'AllAppraisalDetail'
+    permission_type = 'view'
+
+    def get(self, request, employee_id):
+        appraisal = get_object_or_404(EmployeeAppraisal, employee_id=employee_id)
+        return Response(EmployeeAppraisalSerializer(appraisal).data)
+
+
+class AllAppraisalEmployeeBaseAPIView(AppraisalPermissionMixin, APIView):
+    permission_workspace = 'AllAppraisal'
+    permission_sub_workspace = 'AllAppraisalEmployeeBase'
+    permission_type = 'view'
+
+    def get(self, request, employee_id):
+        appraisal = get_object_or_404(EmployeeAppraisal, employee_id=employee_id)
+        return Response(EmployeeAppraisalSerializer(appraisal).data)
+
+
+# ---------------- All Role Review Details ----------------
+
+class AllAppraisalRMDetailAPIView(AllAppraisalDetailAPIView):
+    permission_sub_workspace = 'AllAppraisalRMDetail'
+    def get(self, request, employee_id):
+        review = get_object_or_404(ReportingManagerReview, appraisal__employee_id=employee_id)
+        return Response(ReportingManagerReviewSerializer(review).data)
+
+class AllAppraisalHRDetailAPIView(AllAppraisalDetailAPIView):
+    permission_sub_workspace = 'AllAppraisalHRDetail'
+    def get(self, request, employee_id):
+        review = get_object_or_404(HrReview, appraisal__employee_id=employee_id)
+        return Response(HRReviewSerializer(review).data)
+
+class AllAppraisalHODDetailAPIView(AllAppraisalDetailAPIView):
+    permission_sub_workspace = 'AllAppraisalHODDetail'
+    def get(self, request, employee_id):
+        review = get_object_or_404(HodReview, appraisal__employee_id=employee_id)
+        return Response(HODReviewSerializer(review).data)
+
+class AllAppraisalCOODetailAPIView(AllAppraisalDetailAPIView):
+    permission_sub_workspace = 'AllAppraisalCOODetail'
+    def get(self, request, employee_id):
+        review = get_object_or_404(CooReview, appraisal__employee_id=employee_id)
+        return Response(COOReviewSerializer(review).data)
+
+class AllAppraisalCEODetailAPIView(AllAppraisalDetailAPIView):
+    permission_sub_workspace = 'AllAppraisalCEODetail'
+    def get(self, request, employee_id):
+        review = get_object_or_404(CeoReview, appraisal__employee_id=employee_id)
+        return Response(CEOReviewSerializer(review).data)
+
+
+# ---------------- Employee View Review Feedbacks ----------------
+
+class EmployeeViewRMReviewAPIView(APIView):
+    def get(self, request, employee_id):
+        review = get_object_or_404(ReportingManagerReview, appraisal__employee_id=employee_id)
+        return Response(ReportingManagerReviewSerializer(review).data)
+
+class EmployeeViewHRReviewAPIView(APIView):
+    def get(self, request, employee_id):
+        review = get_object_or_404(HrReview, appraisal__employee_id=employee_id)
+        return Response(HRReviewSerializer(review).data)
+
+class EmployeeViewCOOReviewAPIView(APIView):
+    def get(self, request, employee_id):
+        review = get_object_or_404(CooReview, appraisal__employee_id=employee_id)
+        return Response(COOReviewSerializer(review).data)
+
+class EmployeeViewCEOReviewAPIView(APIView):
+    def get(self, request, employee_id):
+        review = get_object_or_404(CeoReview, appraisal__employee_id=employee_id)
+        return Response(CEOReviewSerializer(review).data)
+
+
+# ---------------- Appraisal Status ----------------
+
+class AppraisalStatusAPIView(AppraisalPermissionMixin, ListAPIView):
+    workspace = 'AllAppraisal'
+    sub_workspace = 'AppraisalStatus'
     permission_type = 'view'
     serializer_class = AppraisalDetailsSerializer
 
     def get_queryset(self):
-        return EmployeeAppraisal.objects.select_related(
-            'employee', 'employee__employeeappraisalstatustrack',
-            'reportingmanagerreview', 'hrreview', 'hodreview', 'cooreview', 'ceoreview'
-        ).filter(employee__employeeappraisalstatustrack__self_appraisal_done=True)
+        return AppraisalDetails.objects.all()
 
-class AllAppraisalListAPIView(AllAppraisalStatusAPIView):
-    permission_sub_workspace = 'AllAppraisalList'
-    permission_type = 'edit'
 
-# ---------------- Appraisal Details (HR editable fields only) ----------------
+# ---------------- Appraisal Detail (HR Editable) ----------------
 
-class AppraisalDetailsAPIView(APIView):
+class AppraisalDetailAPIView(APIView):
     """
     HR can edit appraisal_start_date & appraisal_end_date.
     Other fields are read-only.
@@ -221,59 +343,9 @@ class AppraisalDetailsAPIView(APIView):
         if getattr(user.role, 'name', '').upper() != 'HR':
             return Response({'detail': 'You do not have permission.'}, status=status.HTTP_403_FORBIDDEN)
         appraisal_details = get_object_or_404(AppraisalDetails, employee_id=employee_id)
-        # Only allow HR to update start & end dates
         allowed_data = {k: v for k, v in request.data.items() if k in ['appraisal_start_date', 'appraisal_end_date']}
         serializer = AppraisalDetailsSerializer(appraisal_details, data=allowed_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({'detail': 'Updated successfully', 'data': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# ---------------- Full Appraisal Detail View ----------------
-
-class FullAppraisalAPIView(APIView):
-    def get(self, request, appraisal_id):
-        user = request.user
-        if not user.is_authenticated:
-            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        appraisal = get_object_or_404(
-            EmployeeAppraisal.objects.select_related(
-                'employee', 'reportingmanagerreview', 'hrreview', 'hodreview', 'cooreview', 'ceoreview'
-            ),
-            pk=appraisal_id
-        )
-
-        is_employee = getattr(user, 'employee_profile', None) == appraisal.employee
-        is_hr = getattr(user.role, 'name', '').upper() == 'HR'
-
-        response = {'employee_appraisal': EmployeeAppraisalSerializer(appraisal).data}
-
-        def add_review(key, model_attr, serializer_cls):
-            review_obj = getattr(appraisal, model_attr, None)
-            response[key] = serializer_cls(review_obj).data if review_obj else None
-
-        if is_employee or is_hr:
-            add_review('reporting_manager_review', 'reportingmanagerreview', ReportingManagerReviewSerializer)
-            add_review('hr_review', 'hrreview', HRReviewSerializer)
-            add_review('hod_review', 'hodreview', HODReviewSerializer)
-            add_review('coo_review', 'cooreview', COOReviewSerializer)
-            add_review('ceo_review', 'ceoreview', CEOReviewSerializer)
-        else:
-            # Check RolePermission for other roles
-            phase_map = {
-                'Reporting Manager Review': ('reporting_manager_review', 'reportingmanagerreview', ReportingManagerReviewSerializer),
-                'HR Review': ('hr_review', 'hrreview', HRReviewSerializer),
-                'HOD Review': ('hod_review', 'hodreview', HODReviewSerializer),
-                'COO Review': ('coo_review', 'cooreview', COOReviewSerializer),
-                'CEO Review': ('ceo_review', 'ceoreview', CEOReviewSerializer)
-            }
-            for ws_name, (key, attr, serializer_cls) in phase_map.items():
-                try:
-                    perm = RolePermission.objects.get(role=user.role, workspace='ReviewAppraisal', sub_workspace=ws_name)
-                    if perm.view:
-                        add_review(key, attr, serializer_cls)
-                except RolePermission.DoesNotExist:
-                    response[key] = None
-
-        return Response(response)

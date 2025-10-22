@@ -45,7 +45,9 @@ urlpatterns = [
     path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path("auth/change-password/", ChangePasswordView.as_view(), name="change-password"),
     path("auth/reset-password/", PasswordResetRequestView.as_view(), name="password-reset-request"),
-    path("auth/reset-password/<uuid:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+    #path("auth/reset-password/<uuid:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+    path("auth/reset-password/<str:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+
 
     # 5. Other custom system paths remain directly under 'api/system/'
     path("configurations/reporting-managers-list/", ReportingManagerListView.as_view(), name="reporting-manager-list"),
