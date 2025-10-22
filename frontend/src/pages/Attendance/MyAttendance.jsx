@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchTodayAttendance } from "../../services/api";
-import GeoFenceMap from "./GeoFenceMap"; // Import the map component
-import "../../styles/attendance/AttendanceHome.css";
+import GeoFenceMap from "./GeoFenceMap"; 
+import "../../styles/attendance/MyAttendance.css";
 
 // Helper to format time
 const formatTime = (dateTimeString) => {
@@ -17,7 +17,7 @@ const formatTime = (dateTimeString) => {
   }
 };
 
-const AttendanceHome = () => {
+const MyAttendance = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [todayRecord, setTodayRecord] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -121,4 +121,4 @@ const AttendanceHome = () => {
   );
 };
 
-export default AttendanceHome;
+export default MyAttendance;

@@ -10,7 +10,7 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
         model = AttendanceEvent
         fields = [
             'id', 'employee', 'timestamp', 'event_type',
-            'geofence_id', 'is_final_exit',
+            'is_final_exit',
         ]
         read_only_fields = ['id', 'timestamp']
 
@@ -103,3 +103,46 @@ class AttendanceHistoryItemSerializer(serializers.ModelSerializer):
             minutes = int((obj.outside_region_seconds % 3600) // 60)
             return f"{hours:02d}:{minutes:02d}"
         return "00:00"
+
+
+# ============================================================
+# 🌐 All Employees Attendance Serializer (NEW)
+# ============================================================
+class AllEmployeesAttendanceSerializer(serializers.ModelSerializer):
+    employee_id = serializers.IntegerField(source='employee.id')
+    name = serializers.CharField(source='employee.full_name')
+    total_work_hours = serializers.SerializerMethodField()
+    outside_hours = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EmployeeAttendance
+        fields = [
+            'employee_id', 'name', 'in_time', 'out_time',
+            'total_work_hours', 'outside_hours',
+        ]
+
+    def get_total_work_hours(self, obj):
+        if obj.total_work_seconds:
+            hours = int(obj.total_work_seconds // 3600)
+            minutes = int((obj.total_work_seconds % 3600) // 60)
+            return f"{hours:02d}:{minutes:02d}"
+        return "00:00"
+
+    def get_outside_hours(self, obj):
+        if obj.outside_region_seconds:
+            hours = int(obj.outside_region_seconds // 3600)
+            minutes = int((obj.outside_region_seconds % 3600) // 60)
+            return f"{hours:02d}:{minutes:02d}"
+        return "00:00"
+
+
+# ============================================================
+# 🧾 Attendance Report Serializer (NEW)
+# ============================================================
+class AttendanceReportSerializer(serializers.Serializer):
+    employee_id = serializers.IntegerField()
+    name = serializers.CharField()
+    total_work_hours = serializers.CharField()
+    present_days = serializers.IntegerField()
+    absent_days = serializers.IntegerField()
+    label_counts = serializers.DictField(child=serializers.IntegerField())

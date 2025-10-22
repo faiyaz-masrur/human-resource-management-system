@@ -27,7 +27,8 @@ const menuItems = [
     path: '/attendance/home',
     subMenu: [
       { name: "Today's Attendance", path: '/attendance/home' }, //
-      { name: 'Attendance History', path: '/attendance/history' },
+      { name: 'My Attendance History', path: '/attendance/history' },
+      { name: 'All Attendance ', path: '/attendance/all' },
       // { name: 'Reconcile Requests', path: '/attendance/reconcile' }, // 
       // { name: 'Geofence Map', path: '/attendance/map' }, // 
     ]

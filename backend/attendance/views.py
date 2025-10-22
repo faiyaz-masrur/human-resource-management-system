@@ -246,3 +246,74 @@ class TodayAttendanceAPIView(APIView):
         serializer = AttendanceHistoryItemSerializer(attendance)
         return Response(serializer.data)
 
+class AllEmployeesAttendanceAPIView(APIView):
+    """
+    Fetches attendance records for all employees on a given date.
+    """
+    def get(self, request):
+        date_str = request.query_params.get('date')
+        if date_str:
+            try:
+                date = timezone.datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return Response({"detail": "Invalid date format. Use YYYY-MM-DD."}, status=400)
+        else:
+            date = timezone.now().date()
+
+        attendances = EmployeeAttendance.objects.filter(date=date).select_related('employee')
+        data = [
+            {
+                "employee_id": att.employee.id,
+                "name": att.employee.name,
+                "in_time": att.in_time,
+                "out_time": att.out_time,
+                "total_work_hours": att.total_work_seconds // 3600,
+            } for att in attendances
+        ]
+        return Response(data)
+
+
+class AttendanceReportAPIView(APIView):
+    """
+    Returns monthly attendance summary for all employees.
+    """
+    def get(self, request):
+        date_str = request.query_params.get('date')
+        if date_str:
+            try:
+                date = timezone.datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return Response({"detail": "Invalid date format. Use YYYY-MM-DD."}, status=400)
+        else:
+            date = timezone.now().date()
+
+        month = date.month
+        year = date.year
+
+        attendances = EmployeeAttendance.objects.filter(date__month=month, date__year=year).select_related('employee')
+        
+        report = {}
+        for att in attendances:
+            emp_id = att.employee.id
+            if emp_id not in report:
+                report[emp_id] = {
+                    "employee_id": emp_id,
+                    "name": att.employee.name,
+                    "total_work_hours": 0,
+                    "present_days": 0,
+                    "absent_days": 0,
+                    "label_counts": {}
+                }
+            
+            emp_summary = report[emp_id]
+            emp_summary["total_work_hours"] += att.total_work_seconds // 3600
+            # Simple logic: in_time exists -> present
+            if att.in_time:
+                emp_summary["present_days"] += 1
+            else:
+                emp_summary["absent_days"] += 1
+
+            label = att.remarks or "No Label"
+            emp_summary["label_counts"][label] = emp_summary["label_counts"].get(label, 0) + 1
+
+        return Response({"summary": list(report.values())})

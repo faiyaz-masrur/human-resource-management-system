@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import ReconcileRequest from "./ReconcileRequest"; // <-- IMPORT
-import "../../styles/attendance/AttendanceHistory.css";
+import "../../styles/attendance/MyAttendanceHistory.css";
 
 // Helper to format time
 const formatTime = (dateTimeString) => {
@@ -18,7 +18,7 @@ const formatTime = (dateTimeString) => {
 };
 
 
-const AttendanceHistory = () => {
+const MyAttendanceHistory = () => {
   const [records, setRecords] = useState([]);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -134,4 +134,4 @@ const AttendanceHistory = () => {
   );
 };
 
-export default AttendanceHistory;
+export default MyAttendanceHistory;
