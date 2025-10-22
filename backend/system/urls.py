@@ -17,6 +17,7 @@ from .views import (
     SpecializationListView,
     BdDistrictListView,
     BdThanaListView,
+    TrainingTypeListView,
 )
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -53,6 +54,7 @@ urlpatterns = [
     path("configurations/emergency-contact-relationship-list/", EmergencyContactRelationshipListView.as_view(), name="emergency-contact-relationship-list"),
     path("configurations/degree-list/", DegreeListView.as_view(), name="degree-list"),
     path("configurations/specialization-list/", SpecializationListView.as_view(), name="specialization-list"),
+    path("configurations/training-type-list/", TrainingTypeListView.as_view(), name="training-type-list"),
     path("configurations/bd-district-list/", BdDistrictListView.as_view(), name="bd-district-list"),
     path("configurations/bd-thana-list/", BdThanaListView.as_view(), name="bd-thana-list"),
     path("configurations/bd-thana-list/<int:district_id>/", BdThanaListView.as_view(), name="bd-thana-list-district"),

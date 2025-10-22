@@ -93,16 +93,20 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
 
 
   const addNewEducation = () => {
+    if (!rolePermissions.create) {
+      alert("You don't have permission to create");
+      return;
+    }
     setEducations([
       ...educations,
       {
-        id: Date.now(), // Temporary ID for new entries
+        id: `temp-${Date.now()}`, // More explicit temp ID
         isTempId: true,
         degree: '',
         institution: '',
         passing_year: '',
         specialization: '',
-        results: '',
+        result: '',
         certificate: null
       }
     ]);
@@ -130,10 +134,45 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     }
   };
 
+  const validateEducation = (education) => {
+    if (!education.degree) {
+      alert("Degree is required.");
+      return false;
+    }
+    if (!education.institution?.trim()) {
+      alert("Institution is required.");
+      return false;
+    }
+    if (!education.passing_year) {
+      alert("Passing year is required.");
+      return false;
+    }
+    if (!education.specialization) {
+      alert("specialization is required.");
+      return false;
+    }
+    if (!education.result?.trim()) {
+      alert("Result is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
 
   const handleSave = async (id) => {
     const educationToSave = educations.find(edu => edu.id === id);
     if (!educationToSave) return;
+    if (!validateEducation(educationToSave)) return;
+    console.log("Education to save:", educationToSave);
+    const saveData = {
+      degree: educationToSave?.degree,
+      institution: educationToSave?.institution,
+      passing_year: educationToSave?.passing_year,
+      specialization: educationToSave?.specialization,
+      result: educationToSave?.result,
+      certificate: educationToSave.certificate ? educationToSave.certificate : null,
+    }
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (educationToSave.isTempId) {
@@ -141,9 +180,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             alert("You don't have permission to create.");
             return;
           }
-          delete educationToSave.id;
-          delete educationToSave.isTempId;
-          const res = await api.post(`employees/employee-education/${employee_id}/`, educationToSave);
+          const res = await api.post(`employees/employee-education/${employee_id}/`, saveData);
           console.log("Created Education:", res?.data);
           if(res.status === 201){
             setEducations(educations.map(edu => 
@@ -158,7 +195,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             alert("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, educationToSave);
+          const res = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, saveData);
           console.log("Updated Education:", res.data);
           if(res.status === 200){
             setEducations(educations.map(edu => 
@@ -175,9 +212,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             alert("You don't have permission to create.");
             return;
           }
-          delete educationToSave.id;
-          delete educationToSave.isTempId;
-          const res = await api.post(`employees/my-education/`, educationToSave);
+          const res = await api.post(`employees/my-education/`, saveData);
           console.log("Created Education:", res?.data);
           if(res.status === 201){
             setEducations(educations.map(edu => 
@@ -192,7 +227,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             alert("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/my-education/${educationToSave.id}/`, educationToSave);
+          const res = await api.put(`employees/my-education/${educationToSave.id}/`, saveData);
           console.log("Updated Education:", res?.data);
           if(res.status === 200){
             setEducations(educations.map(edu => 
@@ -254,8 +289,8 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
                 <label>Passing Year*</label>
                 <select 
                   className="form-select"
-                  value={education.passingYear}
-                  onChange={(e) => updateEducation(education.id, 'passingYear', e.target.value)}
+                  value={education.passing_year}
+                  onChange={(e) => updateEducation(education.id, 'passing_year', e.target.value)}
                   disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
                   required
                 >

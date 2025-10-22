@@ -1,0 +1,12 @@
+[
+    {"name": "Technical Training", "description": "Skill development focused on specific technologies, tools, or programming languages."},
+    {"name": "Soft Skills Training", "description": "Training to enhance communication, teamwork, and leadership abilities."},
+    {"name": "Onboarding Training", "description": "Introduction program for new employees to understand company policies and workflows."},
+    {"name": "Compliance Training", "description": "Covers organizational policies, legal guidelines, and workplace ethics."},
+    {"name": "Leadership Development", "description": "Prepares employees for managerial and leadership roles."},
+    {"name": "Product Training", "description": "Provides in-depth knowledge of company products or services."},
+    {"name": "Sales Training", "description": "Enhances negotiation, customer handling, and closing skills for sales teams."},
+    {"name": "Customer Service Training", "description": "Focuses on improving customer interaction, satisfaction, and support skills."},
+    {"name": "Health and Safety Training", "description": "Educates employees about workplace safety procedures and emergency protocols."},
+    {"name": "Time Management Training", "description": "Helps improve productivity through better organization and prioritization skills."}
+]

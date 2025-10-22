@@ -16,7 +16,9 @@ from .models import (
     Specialization,
     BdDistrict,
     BdThana,
+    TrainingType,
 )
+from .choices import WORKSPACE_SUBWORKSPACE_MAP
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,10 +80,22 @@ class GradeSerializer(serializers.ModelSerializer):
         model = Grade
         fields = "__all__"
 
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = "__all__"
+
+    def create(self, validated_data):
+
+        role = Role.objects.create(
+            **validated_data
+        )
+
+        for choice in WORKSPACE_SUBWORKSPACE_MAP:
+            RolePermission.objects.create(role=role, workspace=choice[1], sub_workspace=choice[0])
+
+
 
 class RolePermissionSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source="role.name", read_only=True)
@@ -132,4 +146,7 @@ class BdThanaSerializer(serializers.ModelSerializer):
         model = BdThana
         fields = "__all__"  
 
-
+class TrainingTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingType
+        fields = "__all__"
