@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api'; 
-
+import { toast } from "react-toastify";
 
 const GRADES_API_URL = 'system/configurations/grades/'; 
 
@@ -20,7 +20,7 @@ const GradeList = ({ rolePermissions, grades, setCurrentView, fetchGrades, handl
 
   const handleDelete = async (id) => {
     if(!rolePermissions.delete){
-      alert("You don't have permission to delete.")
+      toast.warning("You don't have permission to delete.")
       return;
     }
     if (!window.confirm("Are you sure you want to delete this grade?")) {
@@ -32,7 +32,7 @@ const GradeList = ({ rolePermissions, grades, setCurrentView, fetchGrades, handl
       fetchGrades(); // Refresh the list
     } catch (error) {
       console.error("Delete error:", error.response ? error.response.data : error.message);
-      toast.error("Failed to delete grade. It may be linked to designations.");
+      toast.error("Failed to delete grade.");
     }
   };
 
@@ -192,7 +192,7 @@ const GradeForm = ({ rolePermissions, setCurrentView, fetchGrades, editingGrade,
           await api.put(`${GRADES_API_URL}${editingGrade.id}/`, dataToSend);
           toast.success("Grade updated successfully!");
         }else{
-          alert("You do not have permission to edit.")
+          toast.warning("You do not have permission to edit.")
           setLoading(false);
           return;
         }
@@ -201,7 +201,7 @@ const GradeForm = ({ rolePermissions, setCurrentView, fetchGrades, editingGrade,
           await api.post(GRADES_API_URL, dataToSend);
           toast.success("Grade added successfully!");
         } else {
-          alert("You do not have permission to create.")
+          toast.warning("You do not have permission to create.")
           setLoading(false);
           return;
         }
@@ -216,16 +216,12 @@ const GradeForm = ({ rolePermissions, setCurrentView, fetchGrades, editingGrade,
       }
       
     } catch (err) {
-      console.error("Submit error:", err.response ? err.response.data : err.message);
+      console.error("Submit error:", err);
       
       let errorMessage = "Failed to save grade.";
-      if (err.response && err.response.data && err.response.data.name) {
-          // Check for unique constraint error (e.g., name already exists)
-          errorMessage = `Error: Name ${err.response.data.name[0]}`;
-      }
       
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error("Failed to save grade.");
     } finally {
       setLoading(false);
     }
@@ -371,7 +367,7 @@ const Grades = () => {
       setEditingGrade(grade);
       setCurrentView('form');
     } else {
-      alert("You don't have permission to edit.")
+      toast.warning("You don't have permission to edit.")
     }
   };
 

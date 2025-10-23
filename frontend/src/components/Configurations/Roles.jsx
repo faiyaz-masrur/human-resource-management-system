@@ -89,7 +89,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
 
     const handleSave = async () => {
         if(!rolePermissions.edit){
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
         }
         setLoading(true);
@@ -582,7 +582,7 @@ const AddNewRoleView = ({ rolePermissions, goToListView, refreshList }) => {
 
     const handleSave = async (action) => {
         if(!rolePermissions.create){
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
         }
         setLoading(true);
@@ -831,7 +831,7 @@ const Roles = () => {
 
     const handleDelete = async (id, name) => {
         if(!rolePermissions.delete){
-            alert("You don't have permission to delete.")
+            toast.warning("You don't have permission to delete.")
             return;
         }
         if (window.confirm(`Are you sure you want to delete the role: "${name}"?`)) {
@@ -856,7 +856,7 @@ const Roles = () => {
             setSelectedRoleId(id);
             setCurrentView('details');
         } else {
-            alert("You don't have permission to view.")
+            toast.warning("You don't have permission to view.")
         }
     };
 
@@ -865,7 +865,7 @@ const Roles = () => {
         if (rolePermissions.create){
             setCurrentView('create');
         } else {
-            alert("You don't have permission to create.")
+            toast.warning("You don't have permission to create.")
         }
     };
 

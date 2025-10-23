@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
 const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -147,43 +148,43 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
   const validateAddress = (address) => {
     if (!address.present_house?.trim()) {
-      alert("Present House is required.");
+      toast.warning("Present House is required.");
       return false;
     }
     if (!address.present_city_village?.trim()) {
-      alert("Present City/Village is required.");
+      toast.warning("Present City/Village is required.");
       return false;
     }
     if (!address.present_district) {
-      alert("Present District is required.");
+      toast.warning("Present District is required.");
       return false;
     }
     if (!address.present_police_station) {
-      alert("Present Police Station is required.");
+      toast.warning("Present Police Station is required.");
       return false;
     }
     if (!address.present_postal_code?.trim()) {
-      alert("Present Postal Code is required.");
+      toast.warning("Present Postal Code is required.");
       return false;
     }
     if (!address.permanent_house?.trim()) {
-      alert("Permanent House is required.");
+      toast.warning("Permanent House is required.");
       return false;
     }
     if (!address.permanent_city_village?.trim()) {
-      alert("Permanent City/Village is required.");
+      toast.warning("Permanent City/Village is required.");
       return false;
     }
     if (!address.permanent_district) {
-      alert("Permanent District is required.");
+      toast.warning("Permanent District is required.");
       return false;
     }
     if (!address.permanent_police_station) {
-      alert("Permanent Police Station is required.");
+      toast.warning("Permanent Police Station is required.");
       return false;
     }
     if (!address.permanent_postal_code?.trim()) {
-      alert("Permanent Postal Code is required.");
+      toast.warning("Permanent Postal Code is required.");
       return false;
     }
     
@@ -198,66 +199,66 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(!addressDetails.id){
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-address/${employee_id}/`, addressDetails);
           console.log("Created Employee Address:", res.data);
           if(res.status === 201){
-            alert("Employee address created successfully!");
+            toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create address")
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-address/${employee_id}/`, addressDetails);
           console.log("Updated Employee Address:", res.status);
           if(res.status === 200){
-            alert("Employee address updated successfully!");
+            toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update address")
           }
         }
       } else if(view.isOwnProfileView){
         if(!addressDetails.id){
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-address/`, addressDetails);
           console.log("Created My Address:", res.data);
           if(res.status === 201){
-            alert("Your address created successfully!");
+            toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create address")
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-address/`, addressDetails);
           console.log("Updated My Address:", res.status);
           if(res.status === 200){
-            alert("Your address updated successfully!");
+            toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update address")
           }
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee address details:", error.response?.data || error);
-      alert("Failed to save address details.");
+      toast.error("Failed to save address details.");
     }
   };
 

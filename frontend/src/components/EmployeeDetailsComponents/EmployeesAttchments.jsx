@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
   const { user } = useAuth();

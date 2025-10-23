@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();

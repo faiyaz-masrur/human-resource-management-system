@@ -3,7 +3,7 @@ import { Plus, Pencil, Trash2, Search, ArrowLeft, Loader2 } from 'lucide-react';
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from '../../services/api';
-
+import { toast } from "react-toastify";
 
 const DEPARTMENT_API_URL = 'system/configurations/departments/'; 
 
@@ -49,7 +49,7 @@ const DepartmentForm = ({ rolePermissions, setCurrentView, currentDepartment, re
                     res = await api.put(`${DEPARTMENT_API_URL}${currentDepartment.id}/`, dataToSend);
                     toast.success(`Department "${res.data.name}" updated successfully!`);
                 }else{
-                    alert("You do not have permission to edit.")
+                    toast.warning("You do not have permission to edit.")
                     setLoading(false);
                     return;
                 }
@@ -58,7 +58,7 @@ const DepartmentForm = ({ rolePermissions, setCurrentView, currentDepartment, re
                     res = await api.post(DEPARTMENT_API_URL, dataToSend);
                     toast.success(`Department "${res.data.name}" added successfully!`);
                 } else {
-                    alert("You do not have permission to create.")
+                    toast.warning("You do not have permission to create.")
                     setLoading(false);
                     return;
                 }
@@ -74,17 +74,10 @@ const DepartmentForm = ({ rolePermissions, setCurrentView, currentDepartment, re
             // 'saveAndContinue' simply stays on the form and keeps the data
             
         } catch (err) {
-            console.error("Save error:", err.response ? err.response.data : err.message);
-            
-            let errorMessage = "Failed to save department.";
-            if (err.response && err.response.data && err.response.data.name) {
-                errorMessage = `Error: Name ${err.response.data.name[0]}`;
-            } else if (err.response?.data?.detail) {
-                errorMessage = err.response.data.detail;
-            }
-            
+            console.error("Save error:", err);
+            const errorMessage = "Failed to save department.";
             setError(errorMessage);
-            toast.error(errorMessage);
+            toast.error("Failed to save department.");
             
         } finally {
             setLoading(false);
@@ -340,8 +333,8 @@ const Departments = () => {
         try {
             if(rolePermissions.view){
                 const res = await api.get(DEPARTMENT_API_URL);
-                console.log(res.data)
-                setDepartments(res.data || []);
+                console.log(res?.data)
+                setDepartments(res?.data || []);
             } 
         } catch (err) {
             console.error("Fetch error:", err.response ? err.response.data : err.message);
@@ -371,13 +364,13 @@ const Departments = () => {
             setEditingDepartment(dept);
             setCurrentView('form');
         } else {
-            alert("You don't have permission to edit.")
+            toast.warning("You don't have permission to edit.")
         }
     };
 
     const handleDelete = async (id, name) => {
         if(!rolePermissions.delete){
-            alert("You don't have permission to delete.")
+            toast.warning("You don't have permission to delete.")
             return;
         }
         if (window.confirm(`Are you sure you want to delete the department: "${name}"?`)) {
@@ -389,9 +382,8 @@ const Departments = () => {
                 // Optimistically remove from local state
                 setDepartments(departments.filter(dept => dept.id !== id));
             } catch (err) {
-                console.error("Delete error:", err.response ? err.response.data : err.message);
-                const message = err.response?.data?.detail || "It might be associated with employees or other data.";
-                alert(`Failed to delete department. ${message}`);
+                console.error("Delete error:", err);
+                toast.error(`Failed to delete department.`);
             } finally {
                 setIsLoading(false);
             }
