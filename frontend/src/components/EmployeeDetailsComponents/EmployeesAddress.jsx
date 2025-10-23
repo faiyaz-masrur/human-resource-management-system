@@ -258,7 +258,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
       }
     } catch (error) {
       console.error("Error saving employee address details:", error.response?.data || error);
-      toast.error("Failed to save address details.");
+      toast.error("Error saving address details!");
     }
   };
 

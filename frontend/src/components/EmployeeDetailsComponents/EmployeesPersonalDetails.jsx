@@ -235,7 +235,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       }
     } catch (error) {
       console.error("Error saving employee personal details:", error?.response?.data || error);
-      toast.error("Failed to save personal details.");
+      toast.error("Error saving personal details!");
     }
   };
   

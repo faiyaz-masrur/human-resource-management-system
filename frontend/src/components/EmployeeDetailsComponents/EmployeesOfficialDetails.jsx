@@ -312,7 +312,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           toast.error("Validation failed. Please check your input.");
         }
       } else {
-        toast.error("Failed to save official details.");
+        toast.error("Error saving official details!");
       }
     }
   };
