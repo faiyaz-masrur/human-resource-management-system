@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Search, ArrowLeft, Eye, X } from 'lucide-react';
 import api from '../../services/api'; 
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
 const DESIGNATIONS_API_URL = 'system/configurations/designations/';
 const GRADES_API_URL = 'system/configurations/grades/'; 
@@ -28,7 +29,7 @@ const DesignationList = ({
 
   const handleDelete = async (id) => {
     if(!rolePermissions.delete){
-      alert("You don't have permission to delete.")
+      toast.warning("You don't have permission to delete.")
       return;
     }
     if (!window.confirm("Are you sure you want to delete this designation?")) {
@@ -216,7 +217,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
           await api.put(`${DESIGNATIONS_API_URL}${editingDesignation.id}/`, dataToSend);
           toast.success("Designation updated successfully!");
         }else{
-          alert("You do not have permission to edit.")
+          toast.warning("You do not have permission to edit.")
           setLoading(false);
           return;
         }
@@ -225,7 +226,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
           await api.post(DESIGNATIONS_API_URL, dataToSend);
           toast.success("Designation added successfully!");
         } else {
-          alert("You do not have permission to create.")
+          toast.warning("You do not have permission to create.")
           setLoading(false);
           return;
         }
@@ -401,7 +402,7 @@ const Designations = () => {
       setEditingDesignation(designation);
       setCurrentView('form');
     } else {
-      alert("You don't have permission to edit.")
+      toast.warning("You don't have permission to edit.")
     }
   };
 

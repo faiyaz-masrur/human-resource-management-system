@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
-
+import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 import DashboardLayout from './pages/Dashboard/DashboardLayout'; 
@@ -48,6 +48,16 @@ function App() {
 
   return (
     <Router>
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
+
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<UserLogin />} />

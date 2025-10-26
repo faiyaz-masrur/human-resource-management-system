@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -77,7 +78,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
 
   const addNewTraining = () => {
     if (!rolePermissions.create) {
-      alert("You don't have permission to create");
+      toast.warning("You don't have permission to create");
       return;
     }
     setTrainings([
@@ -114,14 +115,14 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     if (file) {
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.warning("File size must be less than 5MB");
         return;
       }
 
       // Validate file types
       const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
-        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
         return;
       }
 
@@ -132,19 +133,19 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
 
   const validateTraining = (training) => {
     if (!training.title?.trim()) {
-      alert("Title is required.");
+      toast.warning("Title is required.");
       return false;
     }
     if (!training.institution?.trim()) {
-      alert("Institution is required.");
+      toast.warning("Institution is required.");
       return false;
     }
     if (!training.issue_date) {
-      alert("Issue Date is required.");
+      toast.warning("Issue Date is required.");
       return false;
     }
     if (!training.type) {
-      alert("Type is required.");
+      toast.warning("Type is required.");
       return false;
     }
     
@@ -169,7 +170,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (trainingToSave.hasTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-training-certificate/${employee_id}/`, saveData);
@@ -178,13 +179,13 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             setTrainings(trainings.map(training => 
               training.id === id ? res.data : training
             ));
-            alert("Employee Training added successfully.");
+            toast.success("Training added successfully.");
           } else {
-            alert("Failed to add employee Training.");
+            toast.error("Failed to add training!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, saveData);
@@ -193,15 +194,15 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             setTrainings(trainings.map(training => 
               training.id === id ? res.data : training
             ));
-            alert("Employee Training updated successfully.");
+            toast.success("Training updated successfully.");
           } else {
-            alert("Failed to update employee Training.");
+            toast.error("Failed to update training!");
           }
         }
       } else if(view.isOwnProfileView) {
         if (trainingToSave.hasTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-training-certificate/`, saveData);
@@ -210,13 +211,13 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             setTrainings(trainings.map(training => 
               training.id === id ? res.data : training
             ));
-            alert("Your Training added successfully.");
+            toast.success("Training added successfully.");
           } else {
-            alert("Failed to add your Training.");
+            toast.error("Failed to add training!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, saveData);
@@ -225,18 +226,18 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             setTrainings(trainings.map(training => 
               training.id === id ? res.data : training
             ));
-            alert("Your Training updated successfully.");
+            toast.success("Training updated successfully.");
           } else {
-            alert("Failed to update your Training.");
+            toast.error("Failed to update training!");
           }
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving Training:", error);
-      alert("Error saving Training." );
+      toast.error("Error saving Training." );
     }
   };
 

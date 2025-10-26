@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -62,7 +63,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
 
   const addNewExperience = () => {
     if (!rolePermissions.create) {
-      alert("You don't have permission to create");
+      toast.warning("You don't have permission to create");
       return;
     }
     
@@ -102,19 +103,19 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
 
   const validateExperience = (experience) => {
     if (!experience.organization?.trim()) {
-      alert("Organization name is required.");
+      toast.warning("Organization name is required.");
       return false;
     }
     if (!experience.designation?.trim()) {
-      alert("Designation is required.");
+      toast.warning("Designation is required.");
       return false;
     }
     if (!experience.department?.trim()) {
-      alert("Department is required.");
+      toast.warning("Department is required.");
       return false;
     }
     if (!experience.start_date) {
-      alert("Start date is required.");
+      toast.warning("Start date is required.");
       return false;
     }
     
@@ -139,7 +140,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (experienceToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-work-experience/${employee_id}/`, saveData);
@@ -148,13 +149,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Employee Work Experience added successfully.");
+            toast.success("Work experience added successfully.");
           } else {
-            alert("Failed to add employee Work Experience.");
+            toast.error("Failed to add work experience!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-work-experience/${employee_id}/${experienceToSave.id}/`, saveData);
@@ -163,15 +164,15 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Employee Work Experience updated successfully.");
+            toast.success("Work experience updated successfully.");
           } else {
-            alert("Failed to update employee Work Experience.");
+            toast.error("Failed to update Work experience!");
           }
         }
       } else if(view.isOwnProfileView) {
         if (experienceToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-work-experience/`, saveData);
@@ -180,13 +181,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Your Work Experience added successfully.");
+            toast.success("Work experience added successfully.");
           } else {
-            alert("Failed to add your Work Experience.");
+            toast.error("Failed to add work experience!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-work-experience/${experienceToSave.id}/`, saveData);
@@ -195,18 +196,18 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Your Work Experience updated successfully.");
+            toast.success("Work experience updated successfully.");
           } else {
-            alert("Failed to update your Work Experience.");
+            toast.error("Failed to update work experience!");
           }
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving experience:", error);
-      alert("Error saving experience." );
+      toast.error("Error saving experience!" );
     }
   };
   

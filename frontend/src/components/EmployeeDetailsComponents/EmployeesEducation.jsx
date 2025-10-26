@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -94,7 +95,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
 
   const addNewEducation = () => {
     if (!rolePermissions.create) {
-      alert("You don't have permission to create");
+      toast.warning("You don't have permission to create");
       return;
     }
     setEducations([
@@ -131,13 +132,13 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.warning("File size must be less than 5MB");
         return;
       }
 
       const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
-        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
         return;
       }
 
@@ -148,23 +149,23 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
 
   const validateEducation = (education) => {
     if (!education.degree) {
-      alert("Degree is required.");
+      toast.warning("Degree is required.");
       return false;
     }
     if (!education.institution?.trim()) {
-      alert("Institution is required.");
+      toast.warning("Institution is required.");
       return false;
     }
     if (!education.passing_year) {
-      alert("Passing year is required.");
+      toast.warning("Passing year is required.");
       return false;
     }
     if (!education.specialization) {
-      alert("specialization is required.");
+      toast.warning("specialization is required.");
       return false;
     }
     if (!education.result?.trim()) {
-      alert("Result is required.");
+      toast.warning("Result is required.");
       return false;
     }
     
@@ -189,7 +190,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (educationToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-education/${employee_id}/`, saveData);
@@ -198,13 +199,13 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             setEducations(educations.map(edu => 
               edu.id === id ? res.data : edu
             ));
-            alert("Employee Education added successfully.");
+            toast.success("Education added successfully.");
           } else {
-            alert("Failed to add employee Education.");
+            toast.error("Failed to add education!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, saveData);
@@ -213,15 +214,15 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             setEducations(educations.map(edu => 
               edu.id === id ? res.data : edu
             ));
-            alert("Employee Education updated successfully.");
+            toast.success("Education updated successfully.");
           } else {
-            alert("Failed to update employee Education.");
+            toast.error("Failed to update education!");
           }
         }
       } else if(view.isOwnProfileView) {
         if (educationToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-education/`, saveData);
@@ -230,13 +231,13 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             setEducations(educations.map(edu => 
               edu.id === id ? res.data : edu
             ));
-            alert("Your Education added successfully.");
+            toast.success("Education added successfully.");
           } else {
-            alert("Failed to add your Education.");
+            toast.error("Failed to add education!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-education/${educationToSave.id}/`, saveData);
@@ -245,18 +246,18 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
             setEducations(educations.map(edu => 
               edu.id === id ? res.data : edu
             ));
-            alert("Your Education updated successfully.");
+            toast.success("Education updated successfully.");
           } else {
-            alert("Failed to update your Education.");
+            toast.error("Failed to update education!");
           }
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving Education:", error);
-      alert("Error saving Education." );
+      toast.error("Error saving Education." );
     }
   };
 

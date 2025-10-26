@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
   const { user } = useAuth();
@@ -69,14 +70,14 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.warning("File size must be less than 5MB");
         return;
       }
 
       // Validate file types
       const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
-        alert("Please select a valid file type (JPEG, PNG, PDF)");
+        toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
         return;
       }
 
@@ -90,15 +91,15 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
 
   const validateAttatchment = (attachment) => {
     if (!attachment.photo) {
-      alert("Photo is required.");
+      toast.warning("Photo is required.");
       return false;
     }
     if (!attachment.signature) {
-      alert("Signature is required.");
+      toast.warning("Signature is required.");
       return false;
     }
     if (!attachment.national_id) {
-      alert("Natoinal Id is required.");
+      toast.warning("Natoinal Id is required.");
       return false;
     }
     
@@ -113,7 +114,7 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(attachments.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -122,14 +123,14 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Updateed Employee Attachments:", res?.data);
           if(res.status === 200){
-            alert("Employee attachments updated successfully!");
+            toast.success("Attachments updated successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update attachments!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -138,16 +139,16 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Created Employee Attachments:", res?.data);
           if(res.status === 201){
-            alert("Employee attachments created successfully!");
+            toast.success("Attachments created successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create attachments!")
           }    
         }
       } else if(view.isOwnProfileView){
         if(attachments.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -156,14 +157,14 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Updateed Attachments:", res?.data);
           if(res.status === 200){
-            alert("Your attachments updated successfully!");
+            toast.success("Attachments updated successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update attachments!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -172,19 +173,19 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Created Attachments:", res?.data);
           if(res.status === 201){
-            alert("Your attachments created successfully!");
+            toast.success("Attachments created successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create attachments!")
           }    
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee attachments:", error?.response?.data || error);
-      alert("Failed to save attachments.");
+      toast.error("Error saving attachments!");
     }
   };
 

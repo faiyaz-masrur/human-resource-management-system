@@ -89,7 +89,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
 
     const handleSave = async () => {
         if(!rolePermissions.edit){
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
         }
         setLoading(true);
@@ -207,7 +207,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                             <div className="urd-agreement-permissions">
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Official Details" 
+                                    title="Official Details" 
                                     section="MyOfficialDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -215,7 +215,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Personal Details" 
+                                    title="Personal Details" 
                                     section="MyPersonalDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -223,7 +223,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Addresses" 
+                                    title="Addresses" 
                                     section="MyAddress" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -231,7 +231,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Work Experiences" 
+                                    title="Work Experience" 
                                     section="MyWorkExperience" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -239,7 +239,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Education" 
+                                    title="Education" 
                                     section="MyEducation" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -247,7 +247,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Training & Certificates" 
+                                    title="Training & Certification" 
                                     section="MyTrainingCertificate" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -255,7 +255,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Attachments" 
+                                    title="Attachments" 
                                     section="MyAttachment" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -276,7 +276,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Official Details" 
+                                    title="Official Details" 
                                     section="EmployeeOfficialDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -284,7 +284,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Personal Details" 
+                                    title="Personal Details" 
                                     section="EmployeePersonalDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -292,7 +292,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Addresses" 
+                                    title="Addresses" 
                                     section="EmployeeAddress" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -300,7 +300,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Work Experiences" 
+                                    title="Work Experience" 
                                     section="EmployeeWorkExperience" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -308,7 +308,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Education" 
+                                    title="Education" 
                                     section="EmployeeEducation" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -316,7 +316,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Training & Certificates" 
+                                    title="Training & Certification" 
                                     section="EmployeeTrainingCertificate" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -324,7 +324,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Attachments" 
+                                    title="Attachments" 
                                     section="EmployeeAttachment" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -337,7 +337,15 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                             <div className="urd-appraisal-permissions">
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Employee Appraisal" 
+                                    title="Appraisal Details" 
+                                    section="MyAppraisalDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee" 
                                     section="MyEmployeeAppraisal" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -345,7 +353,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My Reporting Manager Review" 
+                                    title="Reporting Manager" 
                                     section="MyRmReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -353,7 +361,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My HR Review" 
+                                    title="Human Resource" 
                                     section="MyHrReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -361,7 +369,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My HOD Review" 
+                                    title="Head of Department" 
                                     section="MyHodReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -369,7 +377,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My COO Review" 
+                                    title="Chief Operating Officer" 
                                     section="MyCooReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -377,7 +385,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="My CEO Review" 
+                                    title="Chief Executive Officer" 
                                     section="MyCeoReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -390,7 +398,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                             <div className="urd-appraisal-permissions">
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Review Appraisal List" 
+                                    title="Appraisal List" 
                                     section="ReviewAppraisalList" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -398,7 +406,15 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Appraisal" 
+                                    title="Appraisal Details" 
+                                    section="EmployeeAppraisalDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee" 
                                     section="EmployeeEmployeeAppraisal" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -406,7 +422,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Reporting Manager Review" 
+                                    title="Reporting Manager" 
                                     section="EmployeeRmReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -414,7 +430,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="HR Review" 
+                                    title="Human Resource" 
                                     section="EmployeeHrReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -422,7 +438,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="HOD Review" 
+                                    title="Head of Department" 
                                     section="EmployeeHodReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -430,7 +446,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="COO Review" 
+                                    title="Chief Operating Officer" 
                                     section="EmployeeCooReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -438,7 +454,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="CEO Review" 
+                                    title="Chief Executive Officer" 
                                     section="EmployeeCeoReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -459,7 +475,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="All Appraisal List" 
+                                    title="Appraisal List" 
                                     section= "AllAppraisalList" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -467,7 +483,15 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Employee Appraisal" 
+                                    title="Appraisal Details" 
+                                    section="AllAppraisalDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee" 
                                     section="AllEmployeeAppraisal" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -475,7 +499,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="Reporting Manager Review" 
+                                    title="Reporting Manager" 
                                     section="AllRmReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -483,7 +507,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="HR Review" 
+                                    title="Human Resource" 
                                     section="AllHrReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -491,7 +515,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="HOD Review" 
+                                    title="Head of Department" 
                                     section="AllHodReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -499,7 +523,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="COO Review" 
+                                    title="Chief Operating Officer" 
                                     section="AllCooReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
@@ -507,7 +531,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
-                                    title="CEO Review" 
+                                    title="Chief Executive Officer" 
                                     section="AllCeoReview" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
@@ -582,7 +606,7 @@ const AddNewRoleView = ({ rolePermissions, goToListView, refreshList }) => {
 
     const handleSave = async (action) => {
         if(!rolePermissions.create){
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
         }
         setLoading(true);
@@ -722,7 +746,7 @@ const AllRolesView = ({ rolePermissions, openDetailsView, openCreateView, roles,
                                     <tr key={role.id}>
                                         <td>{role.id}</td>
                                         <td>{role.name}</td>
-                                        <td><span className={`ar-status-badge ${role.status.toLowerCase()}`}>{role.status}</span></td>
+                                        <td>{role.status ? "Active" : "Inactive"}</td>
                                         {/* Assuming your API provides a last_modified or date field */}
                                         <td>{new Date(role.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/,/g, '')}</td>
                                         {(rolePermissions.edit || rolePermissions.delete) && (
@@ -831,7 +855,7 @@ const Roles = () => {
 
     const handleDelete = async (id, name) => {
         if(!rolePermissions.delete){
-            alert("You don't have permission to delete.")
+            toast.warning("You don't have permission to delete.")
             return;
         }
         if (window.confirm(`Are you sure you want to delete the role: "${name}"?`)) {
@@ -856,7 +880,7 @@ const Roles = () => {
             setSelectedRoleId(id);
             setCurrentView('details');
         } else {
-            alert("You don't have permission to view.")
+            toast.warning("You don't have permission to view.")
         }
     };
 
@@ -865,7 +889,7 @@ const Roles = () => {
         if (rolePermissions.create){
             setCurrentView('create');
         } else {
-            alert("You don't have permission to create.")
+            toast.warning("You don't have permission to create.")
         }
     };
 

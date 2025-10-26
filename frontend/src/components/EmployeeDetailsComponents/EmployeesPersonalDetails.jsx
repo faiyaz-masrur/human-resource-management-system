@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
-
+import { toast } from "react-toastify";
 
 
 const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
@@ -141,15 +141,15 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
   const validatePersonalDetails = (details) => {
     if (!details.phone_number?.trim()) {
-      alert("Phone number is required.");
+      toast.warning("Phone number is required.");
       return false;
     }
     if (!details.personal_email?.trim()) {
-      alert("Personal email is required.");
+      toast.warning("Personal email is required.");
       return false;
     }
     if (!details.national_id?.trim()) {
-      alert("National id is required.");
+      toast.warning("National id is required.");
       return false;
     }
     
@@ -164,7 +164,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(personalDetails.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -173,14 +173,14 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Updateed Employee Personal Details:", res?.data);
           if(res.status === 200){
-            alert("Employee personal details updated successfully!");
+            toast.success("Personal details updated successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update personal details!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -189,16 +189,16 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Created Employee Personal Details:", res?.data);
           if(res.status === 201){
-            alert("Employee personal details created successfully!");
+            toast.success("Personal details created successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create personal details!")
           }    
         }
       } else if(view.isOwnProfileView){
         if(personalDetails.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -207,14 +207,14 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Updateed Personal Details:", res?.data);
           if(res.status === 200){
-            alert("Your personal details updated successfully!");
+            toast.success("Personal details updated successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update personal details!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -223,19 +223,19 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Created Personal Details:", res?.data);
           if(res.status === 201){
-            alert("Your personal details created successfully!");
+            toast.success("Personal details created successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create personal details!")
           }    
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee personal details:", error?.response?.data || error);
-      alert("Failed to save personal details.");
+      toast.error("Error saving personal details!");
     }
   };
   

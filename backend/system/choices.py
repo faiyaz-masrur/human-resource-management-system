@@ -23,6 +23,7 @@ SUB_WORKSPACE_CHOICES = [
     ("EmployeeEducation", "EmployeeEducation"),     #Employee
     ("EmployeeTrainingCertificate", "EmployeeTrainingCertificate"),     #Employee
     ("EmployeeAttachment", "EmployeeAttachment"),   #Employee
+    ("MyAppraisalDetail", "MyAppraisalDetail"),     #MyAppraisal
     ("MyEmployeeAppraisal", "MyEmployeeAppraisal"),     #MyAppraisal
     ("MyRmReview", "MyRmReview"),   #MyAppraisal
     ("MyHrReview", "MyHrReview"),   #MyAppraisal
@@ -30,6 +31,7 @@ SUB_WORKSPACE_CHOICES = [
     ("MyCooReview", "MyCooReview"),     #MyAppraisal
     ("MyCeoReview", "MyCeoReview"),     #MyAppraisal
     ("ReviewAppraisalList", "ReviewAppraisalList"),     #ReviewAppraisal
+    ("EmployeeAppraisalDetail", "EmployeeAppraisalDetail"),     #ReviewAppraisal
     ("EmployeeEmployeeAppraisal", "EmployeeEmployeeAppraisal"),     #ReviewAppraisal
     ("EmployeeRmReview", "EmployeeRmReview"),   #ReviewAppraisal
     ("EmployeeHrReview", "EmployeeHrReview"),   #ReviewAppraisal
@@ -38,7 +40,8 @@ SUB_WORKSPACE_CHOICES = [
     ("EmployeeCeoReview", "EmployeeCeoReview"),     #ReviewAppraisal
     ("AppraisalStatus", "AppraisalStatus"),     #AllAppraisal
     ("AllAppraisalList", "AllAppraisalList"),   #AllAppraisal
-    ("AllEmployeeAppraisal", "AllEmployeeAppraisal"),       #AllAppraisal
+    ("AllAppraisalDetail", "AllAppraisalDetail"),      #AllAppraisal
+    ("AllEmployeeAppraisal", "AllEmployeeAppraisal"),      #AllAppraisal
     ("AllRmReview", "AllRmReview"),     #AllAppraisal
     ("AllHrReview", "AllHrReview"),     #AllAppraisal
     ("AllHodReview", "AllHodReview"),   #AllAppraisal
@@ -66,14 +69,16 @@ WORKSPACE_SUBWORKSPACE_MAP = [
     ("EmployeeWorkExperience", "Employee"),   
     ("EmployeeEducation", "Employee"),    
     ("EmployeeTrainingCertificate", "Employee"),    
-    ("EmployeeAttachment", "Employee"),   
+    ("EmployeeAttachment", "Employee"),  
+    ("MyAppraisalDetail", "MyAppraisal"), 
     ("MyEmployeeAppraisal", "MyAppraisal"),     
     ("MyRmReview", "MyAppraisal"),  
     ("MyHrReview", "MyAppraisal"),   
     ("MyHodReview", "MyAppraisal"),    
     ("MyCooReview", "MyAppraisal"),     
     ("MyCeoReview", "MyAppraisal"),    
-    ("ReviewAppraisalList", "ReviewAppraisal"),    
+    ("ReviewAppraisalList", "ReviewAppraisal"),  
+    ("EmployeeAppraisalDetail", "ReviewAppraisal"),    
     ("EmployeeEmployeeAppraisal", "ReviewAppraisal"),     
     ("EmployeeRmReview", "ReviewAppraisal"),   
     ("EmployeeHrReview", "ReviewAppraisal"),   
@@ -82,6 +87,7 @@ WORKSPACE_SUBWORKSPACE_MAP = [
     ("EmployeeCeoReview", "ReviewAppraisal"),   
     ("AppraisalStatus", "AllAppraisal"),     
     ("AllAppraisalList", "AllAppraisal"),  
+    ("AllAppraisalDetail", "AllAppraisal"), 
     ("AllEmployeeAppraisal", "AllAppraisal"),       
     ("AllRmReview", "AllAppraisal"),  
     ("AllHrReview", "AllAppraisal"),   
