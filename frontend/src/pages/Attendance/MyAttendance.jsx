@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { fetchTodayAttendance } from "../../services/api";
 import GeoFenceMap from "./GeoFenceMap"; 
 import "../../styles/attendance/MyAttendance.css";
 

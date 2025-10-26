@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { fetchApiKey, logEvent } from "../../services/api";
 
 // Import new CSS
 import "../../styles/attendance/GeoFenceMap.css";
