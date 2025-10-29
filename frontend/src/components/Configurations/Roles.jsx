@@ -7,46 +7,11 @@ const ROLES_API_URL = 'system/configurations/roles/';
 const PERMISSIONS_API_URL = 'system/role-permissions/'; 
 
 
-const SECTION_TO_SUB_WORKSPACE_MAP = {
-    // My Profile Tab
-    official_details: 'My OfficialDetail', 
-    personal_details: 'My PersonalDetail',
-    addresses: 'My Address',
-    work_experiences: 'My WorkExperience',
-    education: 'My Education',
-    training_certificates: 'My ProfessionalCertificate',
-    attachmnets: 'My Attachment',
-    
-    // Employees Tab
-    employees: 'Employee',
-    
-    // Appraisal Tab (My Appraisal, Review Appraisals, All Appraisals)
-    review: 'Review Appraisal', 
-    all_appraisal: 'All Appraisal',
-    appraisal_status: 'Appraisal Status',
-    
-    // Appraisal Review Steps (Used in My/Review/All Appraisals)
-    employee: 'Employee Appraisal',
-    rm: 'Reporting Manager Review',
-    hr: 'HR Review',
-    hod: 'HOD Review',
-    coo: 'COO Review',
-    ceo: 'CEO Review',
-    
-    // Configurations Tab
-    departments: 'Department', 
-    designations: 'Designation', 
-    grades: 'Grade', 
-    roles: 'Role', 
-};
-
-// --- Permission Row Components (No changes here, just kept for completeness) ---
-
-const AllPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
+const PermissionRow = ({ rolePermissions, title, section, permissions, onChange, permissionTypes }) => (
     <div className="urd-permission-row">
         <h4 className="urd-permission-title">{title}</h4>
         <div className="urd-permission-checkboxes">
-            {['view', 'edit', 'create', 'delete'].map((permissionType) => (
+            {permissionTypes.map((permissionType) => (
                 <label key={permissionType} className="urd-permission-label">
                     <input
                         type="checkbox"
@@ -60,66 +25,6 @@ const AllPermissionRow = ({ rolePermissions, title, section, permissions, onChan
         </div>
     </div>
 );
-
-const PermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
-    <div className="urd-permission-row">
-        <h4 className="urd-permission-title">{title}</h4>
-        <div className="urd-permission-checkboxes">
-            {['view', 'edit', 'create'].map((permissionType) => (
-                <label key={permissionType} className="urd-permission-label">
-                    <input
-                        type="checkbox"
-                        checked={permissions[section]?.[permissionType] || false}
-                        onChange={() => onChange(section, permissionType)}
-                        disabled={!rolePermissions.edit}
-                    />
-                    {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
-                </label>
-            ))}
-        </div>
-    </div>
-);
-
-const LimitedPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
-    <div className="urd-permission-row">
-        <h4 className="urd-permission-title">{title}</h4>
-        <div className="urd-permission-checkboxes">
-            {['view', 'edit'].map((permissionType) => (
-                <label key={permissionType} className="urd-permission-label">
-                    <input
-                        type="checkbox"
-                        checked={permissions[section]?.[permissionType] || false}
-                        onChange={() => onChange(section, permissionType)}
-                        disabled={!rolePermissions.edit}
-                    />
-                    {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
-                </label>
-            ))}
-        </div>
-    </div>
-);
-
-
-const ViewOnlyPermissionRow = ({ rolePermissions, title, section, permissions, onChange }) => (
-    <div className="urd-permission-row">
-        <h4 className="urd-permission-title">{title}</h4>
-        <div className="urd-permission-checkboxes">
-            {['view'].map((permissionType) => (
-                <label key={permissionType} className="urd-permission-label">
-                    <input
-                        type="checkbox"
-                        checked={permissions[section]?.[permissionType] || false}
-                        onChange={() => onChange(section, permissionType)}
-                        disabled={!rolePermissions.edit}
-                    />
-                    {permissionType.charAt(0).toUpperCase() + permissionType.slice(1)}
-                </label>
-            ))}
-        </div>
-    </div>
-);
-
-// --- View Component 1: User Role Details / Edit View (API Integrated) ---
 
 const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refreshList }) => {
     
@@ -131,20 +36,9 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
 
     const mapListToObj = (rolePermissionsList) => {
         return rolePermissionsList.reduce((accumulator, rolePermissionObj) => {
-            accumulator[rolePermissionObj.workspace + rolePermissionObj.sub_workspace] = rolePermissionObj
+            accumulator[rolePermissionObj.sub_workspace] = rolePermissionObj
             return accumulator;
         }, {});
-    };
-
-
-    const mapObjToList = (roleId, rolePermissionsObj) => {
-        const rolePermissionsList = Object.keys(rolePermissionsObj).maps(key => {
-
-        })
-        
-        
-        
-        return rolePermissionsList;
     };
 
 
@@ -176,13 +70,15 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
     const handleCheckboxChange = (section, permissionType) => {
         setPermissions(prevPermissions => {
             const currentSection = prevPermissions[section] || {};
-            return {
-                ...prevPermissions,
-                [section]: {
-                    ...currentSection,
-                    [permissionType]: !currentSection[permissionType],
-                },
-            };
+            if(currentSection){
+                return {
+                    ...prevPermissions,
+                    [section]: {
+                        ...currentSection,
+                        [permissionType]: !currentSection[permissionType],
+                    },
+                };
+            }
         });
     };
 
@@ -198,25 +94,28 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
         }
         setLoading(true);
         try {
-            const res = await api.put(`${ROLES_API_URL}${role.id}/`, role);
-            if(res.status === 200){
+            const roleResponse = await api.put(`${ROLES_API_URL}${role.id}/`, role);
+            if(roleResponse.status === 200){
+                console.log("Updated role:", roleResponse)
                 const rolePermissionsList = Object.values(permissions);
-                const res = await api.put(`${PERMISSIONS_API_URL}`, rolePermissionsList)
-                if(res.status === 200){
-                    console.log("Updated role permissions:", res)
+                const updatePromises = rolePermissionsList.map(permission => 
+                    api.put(`${PERMISSIONS_API_URL}${permission.id}/`, permission)
+                );
+                
+                const permissionsResponses = await Promise.all(updatePromises);
+                const allSuccessful = permissionsResponses.every(res => res.status === 200);
+                if(allSuccessful){
                     toast.success(`Role "${role.name}" and permissions updated successfully.`);
+                    refreshList(); 
+                    goToListView();
                 } else {
-                    console.log("Failed to updated role permissions:", res)
+                    console.log("Failed to updated role permissions:", permissionsResponses)
                     toast.error("Failed to save role permissions.");
                 }
             } else {
-                console.log("Failed to updated role:", res)
+                console.log("Failed to updated role:", roleResponse)
                 toast.error("Failed to update role.");
-            }
- 
-            refreshList(); 
-            goToListView(); 
-            
+            } 
         } catch (err) {
             console.error("Failed to update role or permissions:", err);
             toast.error("Failed to update role or permissions.");
@@ -225,7 +124,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
         }
     };
 
-    const tabs = ['My Profile', 'My Appraisal', 'Employees', 'Review Appraisals', 'All Appraisals', 'Configurations']; 
+    const tabs = ['My Profile', 'Employees', 'My Appraisal', 'Review Appraisals', 'All Appraisals', 'Configurations']; 
     
     // Find the original role data for ID display
     const roleId = role.id || "N/A";
@@ -267,15 +166,15 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                         className="urd-detail-input urd-status-select" 
                         disabled={loading || !rolePermissions.edit}
                     >
-                        <option value="true">Active</option>
-                        <option value="false">Inactive</option>
+                        <option value={true}>Active</option>
+                        <option value={false}>Inactive</option>
                     </select>
                 </div>
                 <div className="urd-detail-item">
                     <label className="urd-detail-label">Description</label>
                     <textarea 
-                        value={description} 
-                        onChange={(e) => setDescription(e.target.value)} 
+                        value={role.description} 
+                        onChange={(e) => handleChange("description", e.target.value)} 
                         className="urd-detail-input urd-description-input" 
                         disabled={loading || !rolePermissions.edit}
                     >
@@ -306,72 +205,351 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                     <div className="urd-permissions-content">
                         {activeTab === 'My Profile' && (
                             <div className="urd-agreement-permissions">
-                                <LimitedPermissionRow rolePermissions={rolePermissions} title="My Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Official Details" 
+                                    section="MyOfficialDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Personal Details" 
+                                    section="MyPersonalDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Addresses" 
+                                    section="MyAddress" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Work Experiences" 
+                                    section="MyWorkExperience" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Education" 
+                                    section="MyEducation" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Training & Certificates" 
+                                    section="MyTrainingCertificate" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Attachments" 
+                                    section="MyAttachment" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
                             </div>
                         )}
 
                         {activeTab === 'Employees' && (
                             <div className="urd-agreement-permissions">
-                                <PermissionRow rolePermissions={rolePermissions} title="Employees" section="employees" permissions={permissions} onChange={handleCheckboxChange} />
-                                {/* IMPORTANT: Using same section keys here for employee details means they share permissions with "My Profile" tab. Adjust keys if you need separate permissions for viewing 'My Official Details' vs. 'Employee Official Details'. */}
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Official Details" section="official_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Personal Details" section="personal_details" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Addresses" section="addresses" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Work Experiences" section="work_experiences" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Education" section="education" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Training & Certificates" section="training_certificates" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Attachments" section="attachmnets" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee List" 
+                                    section="EmployeeList" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Official Details" 
+                                    section="EmployeeOfficialDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Personal Details" 
+                                    section="EmployeePersonalDetail" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Addresses" 
+                                    section="EmployeeAddress" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Work Experiences" 
+                                    section="EmployeeWorkExperience" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Education" 
+                                    section="EmployeeEducation" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Training & Certificates" 
+                                    section="EmployeeTrainingCertificate" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Attachments" 
+                                    section="EmployeeAttachment" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit', 'delete']} 
+                                />
                             </div>
                         )}
                         
                         {activeTab === 'My Appraisal' && (
                             <div className="urd-appraisal-permissions">
-                                <PermissionRow rolePermissions={rolePermissions} title="My Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="My CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Employee Appraisal" 
+                                    section="MyEmployeeAppraisal" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My Reporting Manager Review" 
+                                    section="MyRmReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My HR Review" 
+                                    section="MyHrReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My HOD Review" 
+                                    section="MyHodReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My COO Review" 
+                                    section="MyCooReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="My CEO Review" 
+                                    section="MyCeoReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
                             </div>
                         )}
 
                         {activeTab === 'Review Appraisals' && (
                             <div className="urd-appraisal-permissions">
-                                <LimitedPermissionRow rolePermissions={rolePermissions} title="Review Appraisals" section="review" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Review Appraisal List" 
+                                    section="ReviewAppraisalList" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Appraisal" 
+                                    section="EmployeeEmployeeAppraisal" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Reporting Manager Review" 
+                                    section="EmployeeRmReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="HR Review" 
+                                    section="EmployeeHrReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="HOD Review" 
+                                    section="EmployeeHodReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="COO Review" 
+                                    section="EmployeeCooReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="CEO Review" 
+                                    section="EmployeeCeoReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
                             </div>
                         )}
 
                         {activeTab === 'All Appraisals' && (
                             <div className="urd-appraisal-permissions">
-                                <ViewOnlyPermissionRow rolePermissions={rolePermissions} title="Appraisal Status" section= "appraisal_status" permissions={permissions} onChange={handleCheckboxChange} />
-                                <LimitedPermissionRow rolePermissions={rolePermissions} title="All Appraisals" section= "all_appraisal" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Employee Appraisal" section="employee" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="Reporting Manager Review" section="rm" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="HR Review" section="hr" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="HOD Review" section="hod" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="COO Review" section="coo" permissions={permissions} onChange={handleCheckboxChange} />
-                                <PermissionRow rolePermissions={rolePermissions} title="CEO Review" section="ceo" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Appraisal Status" 
+                                    section= "AppraisalStatus" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="All Appraisal List" 
+                                    section= "AllAppraisalList" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Employee Appraisal" 
+                                    section="AllEmployeeAppraisal" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Reporting Manager Review" 
+                                    section="AllRmReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="HR Review" 
+                                    section="AllHrReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="HOD Review" 
+                                    section="AllHodReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="COO Review" 
+                                    section="AllCooReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="CEO Review" 
+                                    section="AllCeoReview" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange}
+                                    permissionTypes={['view', 'create', 'edit']} 
+                                />
                             </div>
                         )}
 
                         {activeTab === 'Configurations' && (
                             <div className="urd-appraisal-permissions">
-                                <AllPermissionRow rolePermissions={rolePermissions} title="Departments" section= "departments" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow rolePermissions={rolePermissions} title="Designations" section= "designations" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow rolePermissions={rolePermissions} title="Grades" section= "grades" permissions={permissions} onChange={handleCheckboxChange} />
-                                <AllPermissionRow rolePermissions={rolePermissions} title="Roles" section= "roles" permissions={permissions} onChange={handleCheckboxChange} />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Departments" 
+                                    section= "Department" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Designations" 
+                                    section= "Designation" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Grades" 
+                                    section= "Grade" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
+                                <PermissionRow 
+                                    rolePermissions={rolePermissions} 
+                                    title="Roles" 
+                                    section= "Role" 
+                                    permissions={permissions} 
+                                    onChange={handleCheckboxChange} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                />
                             </div>
                         )}
                     </div>
@@ -383,7 +561,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                     <button 
                         className="urd-save-button" 
                         onClick={handleSave} 
-                        disabled={loading || !roleName}
+                        disabled={loading || !role.name}
                     >
                         {loading ? "SAVING..." : "SAVE"}
                     </button>
@@ -412,7 +590,7 @@ const AddNewRoleView = ({ rolePermissions, goToListView, refreshList }) => {
             const dataToSend = {
                 name: name,
                 description: description || null,
-                status: 'Active', // Default status for a new role
+                status: true, 
             };
             
             const res = await api.post(ROLES_API_URL, dataToSend);
@@ -428,16 +606,13 @@ const AddNewRoleView = ({ rolePermissions, goToListView, refreshList }) => {
             }
             
         } catch (err) {
-            console.error("Save error:", err.response ? err.response.data : err.message);
-            let errorMessage = "Failed to create role.";
-            if (err.response?.data?.name) {
-                errorMessage = `Error: Role Name ${err.response.data.name[0]}`;
-            }
-            toast.error(errorMessage);
+            console.error("Failed to create role:", err);
+            toast.error("Failed to create role.");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="form-container add-form-container">
@@ -521,8 +696,8 @@ const AllRolesView = ({ rolePermissions, openDetailsView, openCreateView, roles,
                         <label className="ar-filter-label">Status</label>
                         <select className="ar-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} disabled={isLoading}>
                             <option value="">-- Select --</option>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
                         </select>
                     </div>
                     {/* <button className="ar-search-button" onClick={() => {}}>Search</button> */}
@@ -610,12 +785,15 @@ const Roles = () => {
     useEffect(() => {
         const fetchRolePermissions = async () => {
             try {
+                setIsLoading(true);
                 const res = await api.get(`system/role-permissions/${user.role}/${"Configuration"}/${"Role"}/`)
                 console.log("User role permission:", res?.data)
                 setRolePermissions(res?.data || {}); 
             } catch (error) {
                 console.warn("Error fatching role permissions", error);
                 setRolePermissions({}); 
+            } finally {
+                setIsLoading(false);
             }
         };
 

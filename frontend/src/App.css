@@ -1123,6 +1123,38 @@
   font-size: 13px;
 }
 
+/* Input fields */
+.official-details .form-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.official-details .form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* Date input */
+.official-details .date-input {
+  width: 100%;
+  height: 35px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background-color: white;
+  box-sizing: border-box;
+  color: #333;
+}
+
 /* Readonly fields */
 .official-details .form-value {
   width: 100%;
@@ -1180,11 +1212,22 @@
 /* Button styles */
 .official-details .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 25px;
   padding-top: 15px;
   border-top: 1px solid #e0e0e0;
+  grid-column: 1 / -1;
+}
+
+.form-actions-left {
+  display: flex;
+  gap: 10px;
+}
+
+.form-actions-right {
+  display: flex;
+  gap: 10px;
 }
 
 .btn-success {
@@ -1205,7 +1248,7 @@
 }
 
 .btn-primary {
-  background: #0066cc;
+  background: #1b88fc;
   color: white;
   padding: 8px 20px;
   border: none;
@@ -1238,6 +1281,15 @@
   background: #555;
 }
 
+/* Disabled state for inputs */
+.official-details .form-input:disabled,
+.official-details .form-select:disabled,
+.official-details .date-input:disabled {
+  background-color: #f5f5f5;
+  color: #666;
+  cursor: not-allowed;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .official-details .form-row {
@@ -1249,8 +1301,21 @@
     min-width: 100%;
   }
 
-  /* Add these styles for review by to your existing CSS */
+  .official-details .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
 
+  .form-actions-left,
+  .form-actions-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .form-actions-left {
+    margin-bottom: 10px;
+  }
 }
 /* 3. EmployeesPersonalDetails CSS */
 
@@ -1339,14 +1404,41 @@
   flex-direction: column;
 }
 
-/* Button styles matching original */
+/* Button styles matching original - UPDATED FOR LEFT/RIGHT POSITIONING */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 25px;
   padding-top: 15px;
   border-top: 1px solid #e0e0e0;
+}
+
+.form-actions-left {
+  display: flex;
+  gap: 10px;
+}
+
+.form-actions-right {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.btn-success:hover {
+  background: #218838;
 }
 
 .btn-primary {
@@ -1380,7 +1472,7 @@
 }
 
 .btn-secondary:hover {
-  background: #555;
+  background: #555 !important;
 }
 
 /* Responsive adjustments */
@@ -1392,6 +1484,22 @@
   
   .personal-details .form-group {
     min-width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .form-actions-left,
+  .form-actions-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .form-actions-left {
+    margin-bottom: 10px;
   }
 }
 
@@ -2134,303 +2242,413 @@
   }
 }
 
-
-
-
-
-/*  5. EmployeeEducation CSS */
-
-/* src/components/EmployeeDetailsComponents/EmployeesEducation.css */
-.education-details .details-card {
-  width: 100%;
-}
-
-.education-details .section-title {
-  color: #2c3e50;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 30px 0 20px 0;
-  padding-bottom: 5px;
-  border-bottom: 2px solid #3498db;
-  width: 100%;
-}
-
-.education-details .section-title:first-child {
-  margin-top: 0;
-}
-
-.education-details .form-row {
+/* FIXED: Separate file section styling */
+.file-section-separated {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 10px;
+  align-items: center;
 }
 
-.education-details .form-group {
+.choose-file-section {
   flex: 1;
-  min-width: 200px;
-}
-
-.education-details .form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: 600;
-  color: #333;
-  font-size: 13px;
-}
-
-/* Input fields */
-.education-details .form-input {
-  width: 100%;
-  height: 35px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 13px;
-  background-color: white;
-  box-sizing: border-box;
-  color: black;
-}
-
-.education-details .form-input:focus {
-  outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
-}
-
-.education-details .form-input::placeholder {
-  color: #999;
-}
-
-/* Select dropdown styling */
-.education-details .form-select {
-  width: 100%;
-  height: 35px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 13px;
-  background-color: white;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 8px center;
-  background-repeat: no-repeat;
-  background-size: 12px 12px;
-  padding-right: 25px;
-  color: black;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-}
-
-.education-details .form-select:focus {
-  outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
-}
-
-/* File Upload Styling */
-.file-upload-container {
   position: relative;
-  width: 100%;
 }
 
-.file-input {
+.file-input-hidden {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 35px;
+  height: 36px;
   opacity: 0;
   cursor: pointer;
   z-index: 2;
 }
 
-.file-display {
+.choose-file-btn-separate {
   width: 100%;
-  height: 35px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
   font-size: 13px;
   background-color: white;
+  color: #333;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
   box-sizing: border-box;
-  color: #333;
 }
 
-.file-placeholder {
-  color: #999;
-  font-style: italic;
+.choose-file-btn-separate:hover {
+  border-color: #409eff;
+  background-color: #f8f9fa;
 }
 
-.file-name {
-  color: #333;
-  font-weight: 500;
+.download-section {
+  flex-shrink: 0;
 }
 
-.file-input:focus + .file-display {
-  border-color: #0066cc;
-  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
-}
-
-/* Education Section */
-.education-section {
-  margin-bottom: 30px;
-}
-
-.section-divider {
-  border: none;
-  border-top: 2px solid #e0e0e0;
-  margin: 30px 0;
-}
-
-/* Add New Education Button */
-.education-details .btn-add-education {
-  background: #28a745;
+.download-btn-separate {
+  background: #67c23a;
   color: white;
-  padding: 10px 20px;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  height: 36px;
+  min-width: 70px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn-separate:hover {
+  background: #5daf34;
+}
+
+.file-name-display {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  padding: 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 6. Employees Education Details CSS */
+/* Rest of your existing CSS remains the same */
+.education-container {
+  width: 100%;
+  background: white;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.education-content {
+  width: 100%;
+}
+
+.education-block {
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.education-block:last-of-type {
+  margin-bottom: 20px;
+}
+
+.education-header {
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding: 0;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-education-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.delete-education-btn:hover {
+  background: #ff3742;
+}
+
+.education-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.input-group input,
+.input-group select {
+  padding: 8px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  background: white;
+  color: #333;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #409eff;
+}
+
+.input-group input::placeholder {
+  color: #c0c4cc;
+  font-size: 13px;
+}
+
+.input-group input:disabled,
+.input-group select:disabled {
+  background-color: #f5f7fa;
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
+
+.input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 35px;
+}
+
+.save-container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.save-btn {
+  background: #67c23a;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  height: 35px;
+  height: 36px;
+  min-width: 80px;
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+  background: #5daf34;
+}
+
+.add-education-container {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-education-btn {
+  background: #409eff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 36px;
   display: flex;
   align-items: center;
   gap: 5px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
 }
 
-.education-details .btn-add-education:hover {
-  background: #218838;
+.add-education-btn:hover {
+  background: #337ecc;
 }
 
-/* Remove Education Button */
-.btn-remove-education {
-  background: #dc3545;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 35px;
-}
-
-.btn-remove-education:hover {
-  background: #c82333;
-}
-
-/* Button styles */
-.education-details .form-actions {
+.navigation-buttons {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #ebeef5;
 }
 
-.btn-primary {
-  background: #0066cc;
+.back-btn {
+  background: #909399;
   color: white;
-  padding: 8px 20px;
   border: none;
-  border-radius: 3px;
+  padding: 10px 25px;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  height: 35px;
-  min-width: 80px;
+  height: 36px;
+  min-width: 90px;
+  transition: background-color 0.2s;
 }
 
-.btn-primary:hover {
-  background: #0052a3;
+.back-btn:hover {
+  background: #7a7d83;
 }
 
-.btn-secondary {
-  background: #666;
+.next-btn {
+  background: #409eff;
   color: white;
-  padding: 8px 20px;
   border: none;
-  border-radius: 3px;
+  padding: 10px 25px;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  height: 35px;
-  min-width: 80px;
+  height: 36px;
+  min-width: 90px;
+  transition: background-color 0.2s;
 }
 
-.btn-secondary:hover {
-  background: #555;
+.next-btn:hover {
+  background: #337ecc;
 }
 
-/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .education-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+}
+
 @media (max-width: 768px) {
-  .education-details .form-row {
-    flex-direction: column;
+  .education-container {
+    padding: 15px;
+  }
+  
+  .education-grid {
+    grid-template-columns: 1fr;
     gap: 12px;
   }
   
-  .education-details .form-group {
-    min-width: 100%;
+  .file-section-separated {
+    flex-direction: column;
+    gap: 8px;
   }
   
-  .education-details .btn-add-education {
+  .choose-file-section,
+  .download-section {
     width: 100%;
-    justify-content: center;
   }
   
-  .btn-remove-education {
+  .download-btn-separate {
     width: 100%;
   }
 }
 
 /* 6. EmployeesTrainingCertifications CSS*/
-/* src/components/EmployeeDetailsComponents/EmployeesTrainingCertifications.css */
-.training-details .details-card {
+.training-certifications {
   width: 100%;
+  font-family: Arial, sans-serif;
+  background: white;
+  min-height: 100vh;
 }
 
-.training-details .section-title {
+.training-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.section-header {
+  margin-bottom: 25px;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3498db;
+}
+
+.training-section {
+  margin-bottom: 25px;
+}
+
+.training-header {
   color: #2c3e50;
   font-size: 16px;
   font-weight: 600;
-  margin: 30px 0 20px 0;
-  padding-bottom: 5px;
-  border-bottom: 2px solid #3498db;
-  width: 100%;
-}
-
-.training-details .section-title:first-child {
-  margin-top: 0;
-}
-
-.training-details .form-row {
+  margin-bottom: 20px;
+  padding: 0;
+  border: none;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-training-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.delete-training-btn:hover {
+  background: #ff3742;
+}
+
+.form-row {
+  display: flex;
   gap: 15px;
   margin-bottom: 20px;
+  align-items: flex-start;
 }
 
-.training-details .form-group {
+.form-field {
   flex: 1;
-  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.training-details .form-group label {
-  display: block;
-  margin-bottom: 4px;
+.field-label {
   font-weight: 600;
   color: #333;
   font-size: 13px;
+  margin-bottom: 2px;
 }
 
-/* Input fields */
-.training-details .form-input {
+/* FIXED: Input field styles with better placeholder visibility */
+.field-input {
   width: 100%;
   height: 35px;
   padding: 6px 10px;
@@ -2439,20 +2657,48 @@
   font-size: 13px;
   background-color: white;
   box-sizing: border-box;
+  color: #333; /* Ensure text color is dark */
 }
 
-.training-details .form-input:focus {
+.field-input:focus {
   outline: none;
   border-color: #0066cc;
   box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
 }
 
-.training-details .form-input::placeholder {
-  color: #999;
+/* FIXED: Better placeholder styling */
+.field-input::placeholder {
+  color: #666; /* Darker color for better visibility */
+  font-style: italic;
+  opacity: 1; /* Ensure full opacity */
+  font-size: 12px;
 }
 
-/* Select dropdown styling */
-.training-details .form-select {
+.field-input::-webkit-input-placeholder {
+  color: #666;
+  font-style: italic;
+  opacity: 1;
+}
+
+.field-input::-moz-placeholder {
+  color: #666;
+  font-style: italic;
+  opacity: 1;
+}
+
+.field-input:-ms-input-placeholder {
+  color: #666;
+  font-style: italic;
+  opacity: 1;
+}
+
+.field-input:-moz-placeholder {
+  color: #666;
+  font-style: italic;
+  opacity: 1;
+}
+
+.field-select {
   width: 100%;
   height: 35px;
   padding: 6px 10px;
@@ -2467,92 +2713,166 @@
   padding-right: 25px;
   color: #333;
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
 }
 
-.training-details .form-select:focus {
+.field-select:focus {
   outline: none;
   border-color: #0066cc;
   box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
 }
 
-/* File Upload Styling with Size Indicator */
-.file-upload-container {
-  position: relative;
-  width: 100%;
+/* Style for disabled inputs */
+.field-input:disabled,
+.field-select:disabled {
+  background-color: #f5f5f5;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.field-input:disabled::placeholder {
+  color: #999;
+}
+
+/* File Upload Styles */
+.file-input-hidden {
+  display: none;
+}
+
+.file-section-separated {
   display: flex;
-  align-items: center;
   gap: 10px;
-}
-
-.file-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% - 40px);
-  height: 35px;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
-}
-
-.file-display {
-  width: calc(100% - 40px);
-  height: 35px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 13px;
-  background-color: white;
-  display: flex;
   align-items: center;
-  box-sizing: border-box;
-  color: #333;
+}
+
+.choose-file-section {
   flex: 1;
 }
 
-.file-placeholder {
-  color: #999;
-  font-style: italic;
+.file-action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.file-name {
-  color: #333;
+.choose-file-btn-separate {
+  width: 100%;
+  height: 35px;
+  padding: 6px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: white;
+  color: #606266;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.choose-file-btn-separate:hover {
+  background: #f5f7fa;
+  border-color: #c0c4cc;
+}
+
+.choose-file-btn-separate:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #e0e0e0;
+}
+
+.download-btn-separate {
+  height: 35px;
+  padding: 6px 12px;
+  border: 1px solid #67c23a;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #67c23a;
+  color: white;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.download-btn-separate:hover {
+  background: #5daf34;
+  border-color: #5daf34;
+}
+
+.clear-file-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.clear-file-btn:hover {
+  background: #ff3742;
+}
+
+.file-name-display {
+  font-size: 12px;
+  color: #409eff;
+  margin-top: 5px;
   font-weight: 500;
 }
 
-.file-size {
-  width: 30px;
-  text-align: center;
-  font-size: 12px;
-  color: #666;
-  background-color: #f5f5f5;
-  padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
-}
-
-.file-input:focus + .file-display {
-  border-color: #0066cc;
-  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
-}
-
-/* Training Section */
-.training-section {
-  margin-bottom: 30px;
-}
-
-.section-divider {
+.divider {
   border: none;
   border-top: 2px solid #e0e0e0;
-  margin: 30px 0;
+  margin: 25px 0;
 }
 
-/* Add New Training Button */
-.training-details .btn-add-training {
+.save-container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.save-btn {
   background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+}
+
+.save-btn:hover {
+  background: #218838;
+}
+
+.save-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.add-new-section {
+  margin: 25px 0;
+  text-align: left;
+}
+
+.add-new-btn {
+  background: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -2561,45 +2881,30 @@
   font-weight: 500;
   cursor: pointer;
   height: 35px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  transition: background-color 0.3s ease;
 }
 
-.training-details .btn-add-training:hover {
-  background: #218838;
+.add-new-btn:hover {
+  background: #0069d9;
 }
 
-/* Remove Training Button */
-.btn-remove-training {
-  background: #dc3545;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 35px;
+.add-new-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
-.btn-remove-training:hover {
-  background: #c82333;
-}
-
-/* Button styles */
-.training-details .form-actions {
+.navigation-buttons {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
 }
 
-.btn-primary {
-  background: #0066cc;
+.back-btn {
+  background: #6c757d;
   color: white;
   padding: 8px 20px;
   border: none;
@@ -2611,12 +2916,12 @@
   min-width: 80px;
 }
 
-.btn-primary:hover {
-  background: #0052a3;
+.back-btn:hover {
+  background: #5a6268;
 }
 
-.btn-secondary {
-  background: #666;
+.next-btn {
+  background: #007bff;
   color: white;
   padding: 8px 20px;
   border: none;
@@ -2628,68 +2933,86 @@
   min-width: 80px;
 }
 
-.btn-secondary:hover {
-  background: #555;
+.next-btn:hover {
+  background: #0069d9;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .training-details .form-row {
+  .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
   }
   
-  .training-details .form-group {
-    min-width: 100%;
+  .file-section-separated {
+    flex-direction: column;
+    gap: 8px;
   }
   
-  .training-details .btn-add-training {
+  .choose-file-section,
+  .file-action-buttons {
+    width: 100%;
+  }
+  
+  .choose-file-btn-separate {
+    width: 100%;
+  }
+  
+  .file-action-buttons {
+    justify-content: space-between;
+  }
+  
+  .save-container {
+    justify-content: center;
+  }
+  
+  .save-btn {
+    width: 100%;
+  }
+  
+  .add-new-btn {
     width: 100%;
     justify-content: center;
   }
   
-  .btn-remove-training {
-    width: 100%;
-  }
-  
-  .file-upload-container {
+  .navigation-buttons {
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
   }
   
-  .file-input,
-  .file-display {
+  .back-btn, .next-btn {
     width: 100%;
-  }
-  
-  .file-size {
-    align-self: flex-start;
   }
 }
 
-
-/* 7. EmployeesAttachment part CSS*/
+/* 8. EmployeesAttachment part CSS*/
 /* EmployeeAttachments.css */
 
 .employee-attachments {
   padding: 20px;
   font-family: Arial, sans-serif;
   background: #fafafa;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Row Layout */
 .row {
   display: flex;
-  gap: 50px;
+  gap: 20px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .first-row .attachment-box {
-  flex: 1; /* 3 equal columns */
+  flex: 1;
+  min-width: 200px;
+  max-width: calc(25% - 15px);
 }
 
-.second-row .attachment-box.full-width {
-  flex: 0.3; /* full width single row */
+.second-row .attachment-box.same-size {
+  flex: 1;
+  min-width: 200px;
+  max-width: calc(25% - 15px);
 }
 
 /* Box Styling */
@@ -2702,6 +3025,7 @@
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 8px;
+  color: #333;
 }
 
 /* File input styling */
@@ -2713,36 +3037,126 @@
 .file-input {
   opacity: 0;
   position: absolute;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 35px;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .file-label {
   display: block;
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 4px;
   background: #fff;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
   transition: 0.2s ease;
+  text-align: center;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .file-label:hover {
   background: #f9f9f9;
+  border-color: #ccc;
 }
 
-/* Button Section */
-.button-section {
+/* File display styling with download button */
+.file-display-with-download {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+  color: #333;
+  height: 35px;
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
 }
 
-.btn-submit {
-  background: #0066cc;
+.file-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  overflow: hidden;
+}
+
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  z-index: 3;
+  position: relative;
+}
+
+.download-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  position: relative;
+}
+
+.download-btn:hover {
+  background: #0056b3;
+}
+
+/* Button Section - Final layout */
+.button-section-final {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.left-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.right-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save {
+  background: #28a745 !important;
   color: white;
   padding: 8px 20px;
   border: none;
@@ -2752,29 +3166,115 @@
   cursor: pointer;
   height: 35px;
   min-width: 80px;
+  transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+  background: #218838;
+}
+
+.btn-back {
+  background: #6c757d !important;
+  color: white !important;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+  transition: background-color 0.2s;
+}
+
+.btn-back:hover {
+  background: #5a6268 !important;
+}
+
+.btn-submit {
+  background: #1b88fc;
+  color: white !important;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 35px;
+  min-width: 80px;
+  transition: background-color 0.2s;
 }
 
 .btn-submit:hover {
   background: #0052a3;
 }
 
-.btn-secondary {
-  background: #666;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 3px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 35px;
-  min-width: 80px;
+/* Responsive design */
+@media (max-width: 1200px) {
+  .first-row .attachment-box,
+  .second-row .attachment-box.same-size {
+    max-width: calc(50% - 10px);
+    flex: 0 0 calc(50% - 10px);
+  }
 }
 
-.btn-secondary:hover {
-  background: #555;
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .first-row .attachment-box,
+  .second-row .attachment-box.same-size {
+    max-width: 100%;
+    flex: 1;
+  }
+  
+  .file-display-with-download {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .file-actions {
+    align-self: center;
+  }
+  
+  .button-section-final {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .left-buttons,
+  .right-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .btn-save,
+  .btn-back,
+  .btn-submit {
+    width: 100%;
+    max-width: 200px;
+  }
 }
 
+@media (max-width: 480px) {
+  .employee-attachments {
+    padding: 10px;
+  }
+  
+  .file-display-with-download {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    height: auto;
+    min-height: 35px;
+  }
+  
+  .file-actions {
+    align-self: flex-end;
+  }
+}
 /*
 ==========================================================
               Employees - List Design

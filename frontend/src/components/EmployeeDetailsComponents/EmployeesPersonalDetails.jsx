@@ -3,11 +3,8 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
-
-
 const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
-
 
   const defaultPersonalDetails = {
     id: "",
@@ -29,13 +26,11 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     emergency_contact_number: "",
   };
 
-
   const [personalDetails, setPersonalDetails] = useState(defaultPersonalDetails);
   const [bloodGroupList, setBloodGroupList] = useState([]);
   const [maritalStatusList, setMaritalStatusList] = useState([]);
   const [emergencyContactRelationshipList, setEmergencyContactRelationshipList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
-
 
   useEffect(() => {
     const fetchRolePermissions = async () => {
@@ -58,7 +53,6 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
     fetchRolePermissions();
   }, []);
-
 
   useEffect(() => {
     const fetchPersonalDetails = async () => {
@@ -85,7 +79,6 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     fetchPersonalDetails();
   }, [rolePermissions]);
 
-
   useEffect(() => {
     const fetchBloodGroupList = async () => {
       try {
@@ -100,7 +93,6 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
     fetchBloodGroupList();
   }, []);
-
 
   useEffect(() => {
     const fetchMaritalStatusList = async () => {
@@ -117,7 +109,6 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     fetchMaritalStatusList();
   }, []);
 
-
   useEffect(() => {
     const fetchEmergencyContactRelationshipList = async () => {
       try {
@@ -133,11 +124,9 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     fetchEmergencyContactRelationshipList();
   }, []);
 
-
   const handleChange = (field, value) => {
     setPersonalDetails((prev) => ({ ...prev, [field]: value }));
   };
-
 
   const handleSave = async () => {
     try {
@@ -219,7 +208,6 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     }
   };
   
-
   return (
     <div className="personal-details">
       <div className="details-card">
@@ -416,19 +404,23 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons - Updated for left/right positioning */}
         <div className="form-actions">
-          {(personalDetails.id ? rolePermissions.edit : rolePermissions.create) && (
-            <button className="btn-success" onClick={handleSave}>
-              Save
+          <div className="form-actions-left">
+            {(personalDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+              <button className="btn-success" onClick={handleSave}>
+                Save
+              </button>
+            )}
+          </div>
+          <div className="form-actions-right">
+            <button className="btn-secondary" onClick={onBack}>
+              Back
             </button>
-          )}
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
-          <button className="btn-secondary" onClick={onBack}>
-            Back
-          </button>
+            <button className="btn-primary" onClick={onNext}>
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

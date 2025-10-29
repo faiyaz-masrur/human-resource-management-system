@@ -85,7 +85,7 @@ class Education(models.Model):
     institution = models.CharField(max_length=255, null=False, blank=False)
     passing_year = models.IntegerField(null=False, blank=False)
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
-    results = models.CharField(max_length=50, null=False, blank=False)
+    result = models.CharField(max_length=50, null=False, blank=False)
     certificate = models.FileField(upload_to='educational_certificates/', null=True, blank=True)
 
     def __str__(self):

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
 
-const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
+const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
   const { user } = useAuth();
   const defaultAttachments = {
     id: '',
@@ -14,7 +14,6 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
   }
   const [attachments, setAttachments] = useState(defaultAttachments);
   const [rolePermissions, setRolePermissions] = useState({});
-
 
   useEffect(() => {
     const fetchRolePermissions = async () => {
@@ -38,9 +37,8 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     fetchRolePermissions();
   }, []);
 
-
   useEffect(() => {
-    const fetchTrainings = async () => {
+    const fetchAttachments = async () => {
       try {
         if (!rolePermissions.view) {
           return;
@@ -53,15 +51,15 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
         } else {
           return;
         }
-        console.log("Employee Attchments: ", res?.data)
+        console.log("Employee Attachments: ", res?.data)
         setAttachments(res?.data || defaultAttachments); 
       } catch (error) {
-        console.warn("No Employee Attchments found, showing empty form.");
+        console.warn("No Employee Attachments found, showing empty form.");
         setAttachments(defaultAttachments);
       }
     };
 
-    fetchTrainings();
+    fetchAttachments();
   }, [rolePermissions]);
 
   const handleFileChange = (field, e) => {
@@ -74,8 +72,75 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     }
   };
 
+  // Helper function to get file name
+  const getFileName = (file) => {
+    if (!file) return null;
+    
+    // If it's a File object (new upload)
+    if (file instanceof File) {
+      return file.name;
+    }
+    
+    // If it's a string URL (from API response)
+    if (typeof file === 'string') {
+      return file.split('/').pop();
+    }
+    
+    return null;
+  };
+
+  // Helper function to check if file exists and is displayable
+  const hasFile = (file) => {
+    return file && (file instanceof File || typeof file === 'string');
+  };
+
+  // Download file function - FIXED
+  const downloadFile = async (file, fieldName) => {
+    try {
+      if (file instanceof File) {
+        // For newly uploaded files (File objects)
+        const url = URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } else if (typeof file === 'string') {
+        // For files from API (URL strings) - fetch and download
+        const response = await fetch(file);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = getFileName(file) || `${fieldName}.${file.split('.').pop()}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      // Fallback: open in new tab if download fails
+      if (typeof file === 'string') {
+        window.open(file, '_blank');
+      }
+    }
+  };
+
   const handleSave = async () => {
     try {
+      // Create FormData for file uploads
+      const formData = new FormData();
+      
+      // Append all fields to FormData
+      Object.keys(attachments).forEach(key => {
+        if (attachments[key] !== null && attachments[key] !== '') {
+          formData.append(key, attachments[key]);
+        }
+      });
+
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(attachments.id){
           if (!rolePermissions.edit) {
@@ -84,9 +149,14 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           }
           const res = await api.put(
             `employees/employee-attatchment/${employee_id}/`,
-            attachments
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
           );
-          console.log("Updateed Employee Attachments:", res?.data);
+          console.log("Updated Employee Attachments:", res?.data);
           if(res.status === 200){
             alert("Employee attachments updated successfully!");
             setAttachments(res?.data || attachments);
@@ -100,7 +170,12 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           }
           const res = await api.post(
             `employees/employee-attatchment/${employee_id}/`,
-            attachments
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
           );
           console.log("Created Employee Attachments:", res?.data);
           if(res.status === 201){
@@ -118,9 +193,14 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           }
           const res = await api.put(
             `employees/my-attatchment/`,
-            attachments
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
           );
-          console.log("Updateed Attachments:", res?.data);
+          console.log("Updated Attachments:", res?.data);
           if(res.status === 200){
             alert("Your attachments updated successfully!");
             setAttachments(res?.data || attachments);
@@ -134,7 +214,12 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
           }
           const res = await api.post(
             `employees/my-attatchment/`,
-            attachments
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
           );
           console.log("Created Attachments:", res?.data);
           if(res.status === 201){
@@ -154,12 +239,22 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
     }
   };
 
+  // Handle submit - call the onSubmit prop
+  const handleSubmit = () => {
+    if (onSubmit && typeof onSubmit === 'function') {
+      onSubmit();
+    } else {
+      console.log('Submit clicked - no onSubmit handler provided');
+      alert('Submit functionality would proceed to next step');
+    }
+  };
+
   return (
     <div className="employee-attachments">
-      {/* First Row - 3 boxes */}
+      {/* First Row - 4 boxes */}
       <div className="row first-row">
         <div className="attachment-box">
-          <h3 className="box-title">Photo*</h3>
+          <h3 className="box-title">Photo</h3>
           <div className="file-input-wrapper">
             <input 
               className="file-input"
@@ -167,18 +262,27 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
               id="photo"
               accept=".jpg,.png" 
               onChange={(e) => handleFileChange('photo', e)}
-              disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
+              disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
-            {attachments.photo ? (
-              <a 
-                href={attachments.photo} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="file-name"
-              >
-                {attachments.photo.split('/').pop()}
-              </a>
+            {hasFile(attachments.photo) ? (
+              <div className="file-display-with-download">
+                <div className="file-info">
+                  <span className="file-name" title={getFileName(attachments.photo)}>
+                    {getFileName(attachments.photo)}
+                  </span>
+                </div>
+                <div className="file-actions">
+                  <button 
+                    className="download-btn"
+                    onClick={() => downloadFile(attachments.photo, 'photo')}
+                    title="Download"
+                    type="button"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
             ) : (
               <label htmlFor="photo" className="file-label">
                 Attach File (.jpg / .png)
@@ -188,7 +292,7 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
         </div>
 
         <div className="attachment-box">
-          <h3 className="box-title">Signature*</h3>
+          <h3 className="box-title">Signature</h3>
           <div className="file-input-wrapper">
             <input 
               className="file-input"
@@ -196,18 +300,27 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
               id="signature"
               accept=".jpg,.png" 
               onChange={(e) => handleFileChange('signature', e)}
-              disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
+              disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
-            {attachments.signature ? (
-              <a 
-                href={attachments.signature} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="file-name"
-              >
-                {attachments.signature.split('/').pop()}
-              </a>
+            {hasFile(attachments.signature) ? (
+              <div className="file-display-with-download">
+                <div className="file-info">
+                  <span className="file-name" title={getFileName(attachments.signature)}>
+                    {getFileName(attachments.signature)}
+                  </span>
+                </div>
+                <div className="file-actions">
+                  <button 
+                    className="download-btn"
+                    onClick={() => downloadFile(attachments.signature, 'signature')}
+                    title="Download"
+                    type="button"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
             ) : (
               <label htmlFor="signature" className="file-label">
                 Attach File (.pdf / .jpg / .png)
@@ -217,7 +330,7 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
         </div>
 
         <div className="attachment-box">
-          <h3 className="box-title">National ID*</h3>
+          <h3 className="box-title">National ID</h3>
           <div className="file-input-wrapper">
             <input 
               className="file-input"
@@ -225,18 +338,27 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
               id="natoinal_id"
               accept=".pdf,.jpg,.png" 
               onChange={(e) => handleFileChange('natoinal_id', e)}
-              disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
+              disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
-            {attachments.natoinal_id ? (
-              <a 
-                href={attachments.natoinal_id} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="file-name"
-              >
-                {attachments.natoinal_id.split('/').pop()}
-              </a>
+            {hasFile(attachments.natoinal_id) ? (
+              <div className="file-display-with-download">
+                <div className="file-info">
+                  <span className="file-name" title={getFileName(attachments.natoinal_id)}>
+                    {getFileName(attachments.natoinal_id)}
+                  </span>
+                </div>
+                <div className="file-actions">
+                  <button 
+                    className="download-btn"
+                    onClick={() => downloadFile(attachments.natoinal_id, 'national_id')}
+                    title="Download"
+                    type="button"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
             ) : (
               <label htmlFor="natoinal_id" className="file-label">
                 Attach File (.pdf / .jpg / .png)
@@ -254,17 +376,26 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
               id="passport"
               accept=".pdf,.jpg,.png" 
               onChange={(e) => handleFileChange('passport', e)}
-              disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
+              disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
             />
-            {attachments.passport ? (
-              <a 
-                href={attachments.passport} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="file-name"
-              >
-                {attachments.passport.split('/').pop()}
-              </a>
+            {hasFile(attachments.passport) ? (
+              <div className="file-display-with-download">
+                <div className="file-info">
+                  <span className="file-name" title={getFileName(attachments.passport)}>
+                    {getFileName(attachments.passport)}
+                  </span>
+                </div>
+                <div className="file-actions">
+                  <button 
+                    className="download-btn"
+                    onClick={() => downloadFile(attachments.passport, 'passport')}
+                    title="Download"
+                    type="button"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
             ) : (
               <label htmlFor="passport" className="file-label">
                 Attach File (.pdf / .jpg / .png)
@@ -274,9 +405,9 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
         </div>
       </div>
 
-      {/* Second Row - 1 box */}
+      {/* Second Row - 1 box with same size */}
       <div className="row second-row">
-        <div className="attachment-box full-width">
+        <div className="attachment-box same-size">
           <h3 className="box-title">Employee Agreement</h3>
           <div className="file-input-wrapper">
             <input 
@@ -285,17 +416,26 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
               id="employee_agreement"
               accept=".pdf,.jpg,.png" 
               onChange={(e) => handleFileChange('employee_agreement', e)}
-              disabled={attachments.id ? !rolePermissions.create : !rolePermissions.edit}
+              disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
             />
-            {attachments.employee_agreement ? (
-              <a 
-                href={attachments.employee_agreement} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="file-name"
-              >
-                {attachments.employee_agreement.split('/').pop()}
-              </a>
+            {hasFile(attachments.employee_agreement) ? (
+              <div className="file-display-with-download">
+                <div className="file-info">
+                  <span className="file-name" title={getFileName(attachments.employee_agreement)}>
+                    {getFileName(attachments.employee_agreement)}
+                  </span>
+                </div>
+                <div className="file-actions">
+                  <button 
+                    className="download-btn"
+                    onClick={() => downloadFile(attachments.employee_agreement, 'employee_agreement')}
+                    title="Download"
+                    type="button"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
             ) : (
               <label htmlFor="employee_agreement" className="file-label">
                 Attach File (.pdf / .jpg / .png)
@@ -305,14 +445,19 @@ const EmployeeAttachments = ({  view, employee_id, onBack, onSubmit }) => {
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="button-section">
-        {(attachments.id ? rolePermissions.edit : rolePermissions.create) && (
-          <button className="btn-success" onClick={handleSave}>
-            Save
-          </button>
-        )}
-        <button className="btn-secondary" onClick={onBack}>Back</button>
+      {/* Buttons - Save on left, Back/Submit on right */}
+      <div className="button-section-final">
+        <div className="left-buttons">
+          {(attachments.id ? rolePermissions.edit : rolePermissions.create) && (
+            <button className="btn-save" onClick={handleSave} type="button">
+              Save
+            </button>
+          )}
+        </div>
+        <div className="right-buttons">
+          <button className="btn-back" onClick={onBack} type="button">Back</button>
+          <button className="btn-submit" onClick={handleSubmit} type="button">Submit</button>
+        </div>
       </div>
     </div>
   );
