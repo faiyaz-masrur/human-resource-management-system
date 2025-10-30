@@ -77,6 +77,9 @@ class WorkExperience(models.Model):
     def __str__(self):
         return f"{self.designation} at {self.organization}"
 
+    class Meta:
+        ordering = ['id']
+
 # -----------------------------
 # Education Model
 # -----------------------------
