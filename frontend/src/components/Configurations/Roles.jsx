@@ -333,7 +333,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                             </div>
                         )}
                         
-                        {activeTab === 'Own Appraisal' && (
+                        {activeTab === 'My Appraisal' && (
                             <div className="urd-appraisal-permissions">
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
