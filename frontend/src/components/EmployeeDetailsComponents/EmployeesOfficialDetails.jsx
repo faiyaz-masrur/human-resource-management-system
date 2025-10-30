@@ -330,7 +330,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               className="form-input"
               value={officialdetails.id || ""}
               onChange={(e) => handleChange("id", e.target.value)}
-              disabled={isEditing ? true : !rolePermissions.create} // Disable if ID exists and no edit permission or own profile view
+              disabled={isEditing ? true : !rolePermissions.create}
               required
             />
           </div>
@@ -472,38 +472,6 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               ))}
             </select>
           </div>
-          {/*
-          <div className="form-group">
-            <label>Role 2*</label>
-            <select
-              className="form-select"
-              value={officialdetails.role2 || ""}
-              onChange={(e) =>
-                handleChange("role2", e.target.value)
-              }
-              disabled={view.isOwnProfileView}
-            >
-              <option value="">-- Select --</option>
-              {roleList.map((role)=>(
-                <option key={role.id} value={role.id}>{role.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Is HR?*</label>
-            <select
-              className="form-select"
-              value={officialdetails.is_hr === true ? "true" : officialdetails.is_hr === false ? "false" : ""}
-              onChange={(e) => handleChange("is_hr", e.target.value === "true")}
-              disabled={view.isOwnProfileView}
-            >
-              <option value="">-- Select --</option>
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          </div>
-          */}
         </div>
 
         {/* Review Checkboxes */}
@@ -551,16 +519,20 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           </div>
         </div>
 
-        {/* Actions */}
+        {/* to keep Save on left and Next on right */}
         <div className="form-actions">
-          {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
-            <button className="btn-success" onClick={handleSave}>
-              Save
+          <div className="form-actions-left">
+            {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
+              <button className="btn-success" onClick={handleSave}>
+                Save
+              </button>
+            )}
+          </div>
+          <div className="form-actions-right">
+            <button className="btn-primary" onClick={onNext}>
+              Next
             </button>
-          )}
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
+          </div>
         </div>
       </div>
     </div>

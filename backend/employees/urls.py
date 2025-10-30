@@ -47,4 +47,7 @@ urlpatterns = [
     path("my-attatchment/", MyAttatchmentView.as_view(), name="my-attatchment"),
 
     path('employee-list/', EmployeeListView.as_view(), name='employee-list'),
+
+
+
 ]

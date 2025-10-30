@@ -10,7 +10,8 @@ from .serializers import (
     WorkExperienceSerializer,
     EducationSerializer,
     TrainingCertificateSerializer,
-    AttatchmentSerializer
+    AttatchmentSerializer,
+    AttatchmentUpdateSerializer 
 )
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -179,6 +180,7 @@ class EmployeeTrainingCertificateView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = TrainingCertificateSerializer
@@ -207,17 +209,57 @@ class EmployeeTrainingCertificateView(
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
     
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
-class EmployeeAttatchmentView(generics.RetrieveUpdateAPIView):
-    queryset = Attatchment.objects.all()
-    serializer_class = AttatchmentSerializer
-    lookup_field = 'employee'  
+class EmployeeAttatchmentView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "Employee"
     sub_workspace = "EmployeeAttachment"
+    lookup_field = 'employee'
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return AttatchmentUpdateSerializer
+        return AttatchmentSerializer
+
+    def get_object(self):
+        employee_id = self.kwargs.get("employee")
+        employee = get_object_or_404(Employee, pk=employee_id)
+        
+        attachment = Attatchment.objects.filter(employee=employee).first()
+        
+        if not attachment:
+            attachment = Attatchment(employee=employee)
+            
+        return attachment
+
+    def perform_create(self, serializer):
+        employee_id = self.kwargs.get("employee")
+        employee = get_object_or_404(Employee, pk=employee_id)
+        
+        # Check if attachment already exists
+        if Attatchment.objects.filter(employee=employee).exists():
+            raise ValidationError("Attachment already exists for this employee.")
+            
+        serializer.save(employee=employee)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
         
 
-#View for employees to get, update their own details
+
 
 class MyOfficialDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = EmployeeOfficialDetailSerializer
@@ -365,6 +407,7 @@ class MyTrainingCertificateView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = TrainingCertificateSerializer
@@ -387,16 +430,48 @@ class MyTrainingCertificateView(
     
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
-class MyAttatchmentView(generics.RetrieveUpdateAPIView):
-    serializer_class = AttatchmentSerializer
+class MyAttatchmentView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+):
     permission_classes = [HasRoleWorkspacePermission]
     workspace = "MyProfile"
     sub_workspace = "MyAttachment"
 
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return AttatchmentUpdateSerializer
+        return AttatchmentSerializer
+
     def get_object(self):
-        return get_object_or_404(Attatchment, employee=self.request.user)
+        attachment = Attatchment.objects.filter(employee=self.request.user).first()
+        
+        if not attachment:
+            attachment = Attatchment(employee=self.request.user)
+            
+        return attachment
+
+    def perform_create(self, serializer):
+        if Attatchment.objects.filter(employee=self.request.user).exists():
+            raise ValidationError("Attachment already exists. Use PUT to update.")
+            
+        serializer.save(employee=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
 
 class EmployeeListView(generics.ListAPIView):
