@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -59,7 +60,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
 
   const addNewExperience = () => {
     if (!rolePermissions.create) {
-      alert("You don't have permission to create");
+      toast.warning("You don't have permission to create");
       return;
     }
     
@@ -122,19 +123,19 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
 
   const validateExperience = (experience) => {
     if (!experience.organization?.trim()) {
-      alert("Organization name is required.");
+      toast.warning("Organization name is required.");
       return false;
     }
     if (!experience.designation?.trim()) {
-      alert("Designation is required.");
+      toast.warning("Designation is required.");
       return false;
     }
     if (!experience.department?.trim()) {
-      alert("Department is required.");
+      toast.warning("Department is required.");
       return false;
     }
     if (!experience.start_date) {
-      alert("Start date is required.");
+      toast.warning("Start date is required.");
       return false;
     }
     
@@ -159,7 +160,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (experienceToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-work-experience/${employee_id}/`, saveData);
@@ -168,11 +169,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Employee Work Experience added successfully.");
+            toast.success("Work experience added successfully.");
+          } else {
+            toast.error("Failed to add work experience!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-work-experience/${employee_id}/${experienceToSave.id}/`, saveData);
@@ -181,13 +184,15 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Employee Work Experience updated successfully.");
+            toast.success("Work experience updated successfully.");
+          } else {
+            toast.error("Failed to update Work experience!");
           }
         }
       } else if(view.isOwnProfileView) {
         if (experienceToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-work-experience/`, saveData);
@@ -196,11 +201,13 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Your Work Experience added successfully.");
+            toast.success("Work experience added successfully.");
+          } else {
+            toast.error("Failed to add work experience!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-work-experience/${experienceToSave.id}/`, saveData);
@@ -209,21 +216,19 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
             setExperiences(experiences.map(exp => 
               exp.id === id ? res.data : exp
             ));
-            alert("Your Work Experience updated successfully.");
+            toast.success("Work experience updated successfully.");
+          } else {
+            toast.error("Failed to update work experience!");
           }
         }
+      } else {
+        toast.warning("You don't have permission to perform this action.");
+        return;
       }
     } catch (error) {
       console.error("Error saving experience:", error);
-      alert("Error saving experience.");
+      toast.error("Error saving experience!" );
     }
-  };
-
-  // Format date for display while keeping calendar functionality
-  const formatDateForDisplay = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // YYYY-MM-DD format for input[type="date"]
   };
 
   return (
@@ -266,7 +271,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Organization Name"
                   value={experience.organization || ""}
                   onChange={(e) => updateExperience(experience.id, 'organization', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 />
               </div>
               
@@ -277,7 +282,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Designation"
                   value={experience.designation || ""}
                   onChange={(e) => updateExperience(experience.id, 'designation', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 />
               </div>
               
@@ -288,7 +293,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   placeholder="Enter Department Name"
                   value={experience.department || ""}
                   onChange={(e) => updateExperience(experience.id, 'department', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 />
               </div>
 
@@ -300,7 +305,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   className="date-input"
                   value={experience.start_date || ""}
                   onChange={(e) => updateExperience(experience.id, 'start_date', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 />
               </div>
               
@@ -311,7 +316,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   className="date-input"
                   value={experience.end_date || ""}
                   onChange={(e) => updateExperience(experience.id, 'end_date', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 />
               </div>
 
@@ -323,12 +328,12 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   rows="4"
                   value={experience.responsibilities || ""}
                   onChange={(e) => updateExperience(experience.id, 'responsibilities', e.target.value)}
-                  disabled={experience.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  disabled={!rolePermissions.edit && !experience.isTempId}
                 ></textarea>
               </div>
             </div>
 
-            {/* Save Button */}
+            {/* Save Button - Moved to left side */}
             {(experience.isTempId ? rolePermissions.create : rolePermissions.edit) && (
               <div className="save-button-container">
                 <button className="save-btn" onClick={() => handleSave(experience.id)}>
@@ -349,10 +354,15 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
         )}
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons - Back button on right side before Next */}
       <div className="navigation-buttons">
-        <button className="back-btn" onClick={onBack}>Back</button>
-        <button className="next-btn" onClick={onNext}>Next</button>
+        <div className="left-buttons">
+          {/* Additional left buttons can go here if needed */}
+        </div>
+        <div className="right-buttons">
+          <button className="back-btn" onClick={onBack}>Back</button>
+          <button className="next-btn" onClick={onNext}>Next</button>
+        </div>
       </div>
     </div>
   );

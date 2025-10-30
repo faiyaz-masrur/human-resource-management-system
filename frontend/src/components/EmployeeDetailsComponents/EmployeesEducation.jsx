@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -46,10 +47,25 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
           return;
         }
         const educationData = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
-        const educationsWithNumbers = educationData.map((edu, index) => ({
-          ...edu,
-          educationNumber: index + 1
-        }));
+        
+        // FIX: Transform server response to preserve file information
+        const educationsWithNumbers = educationData.map((edu, index) => {
+          // Extract file name from certificate URL if certificate_name is not available
+          let certificate_name = edu.certificate_name;
+          if (!certificate_name && edu.certificate) {
+            const urlParts = edu.certificate.split('/');
+            certificate_name = urlParts[urlParts.length - 1];
+          }
+          
+          return {
+            ...edu,
+            educationNumber: index + 1,
+            // Ensure file information is preserved
+            certificate_name: certificate_name || edu.certificate_name,
+            certificate_file: null // File object is only for new uploads
+          };
+        });
+        
         setEducations(educationsWithNumbers); 
       } catch (error) {
         console.warn("No education found, showing empty form.");
@@ -90,7 +106,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
 
   const addNewEducation = () => {
     if (!rolePermissions.create) {
-      alert("You don't have permission to create");
+      toast.warning("You don't have permission to create");
       return;
     }
     const newEducationNumber = educations.length + 1;
@@ -156,14 +172,12 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
         edu.id === id ? { 
           ...edu, 
           certificate_file: file,
-          certificate_name: file.name,
-          certificate: URL.createObjectURL(file)
+          certificate_name: file.name
         } : edu
       ));
     }
   };
 
-  // FIXED: Simple file input trigger
   const handleChooseFile = (id) => {
     const fileInput = document.getElementById(`file-input-${id}`);
     if (fileInput) {
@@ -171,48 +185,64 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     }
   };
 
-  // FIXED: Simple and reliable download function
-  const handleDownload = (education) => {
-    console.log("DOWNLOAD CLICKED for:", education);
-    
-    if (education.certificate_file) {
-      console.log("Downloading file:", education.certificate_file.name);
+  const handleDownload = async (education) => {
+    try {
+      console.log("Downloading file for education:", education);
       
-      // Create download link
-      const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(education.certificate_file);
-      downloadLink.download = education.certificate_file.name;
+      // If there's a file attached but not saved yet
+      if (education.certificate_file && education.certificate_file instanceof File) {
+        const url = URL.createObjectURL(education.certificate_file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = education.certificate_name || 'certificate';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success("File downloaded successfully");
+        return;
+      }
+
+      // If file is saved on server (has a URL)
+      if (education.certificate && typeof education.certificate === 'string') {
+        if (education.certificate.startsWith('http')) {
+          window.open(education.certificate, '_blank');
+          toast.success("Opening file in new tab");
+        } else {
+          const fullUrl = `http://127.0.0.1:8000${education.certificate.startsWith('/') ? '' : '/'}${education.certificate}`;
+          window.open(fullUrl, '_blank');
+          toast.success("Opening file in new tab");
+        }
+        return;
+      }
+
+      toast.warning("No file available to download");
       
-      // Trigger download
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      
-      console.log("Download should start now");
-    } else {
-      alert("No file available for download. Please attach a file first.");
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast.error("Failed to download file");
     }
   };
 
   const validateEducation = (education) => {
     if (!education.degree) {
-      alert("Degree is required.");
+      toast.warning("Degree is required.");
       return false;
     }
     if (!education.institution?.trim()) {
-      alert("Institution is required.");
+      toast.warning("Institution is required.");
       return false;
     }
     if (!education.passing_year) {
-      alert("Passing year is required.");
+      toast.warning("Passing year is required.");
       return false;
     }
     if (!education.specialization) {
-      alert("Specialization is required.");
+      toast.warning("specialization is required.");
       return false;
     }
     if (!education.result?.trim()) {
-      alert("Result is required.");
+      toast.warning("Result is required.");
       return false;
     }
     
@@ -236,73 +266,114 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     }
 
     try {
+      let response;
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (educationToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
-          const res = await api.post(`employees/employee-education/${employee_id}/`, formData, {
+          response = await api.post(`employees/employee-education/${employee_id}/`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
-          if(res.status === 201){
+          if(response.status === 201){
+            // FIX: Preserve file information when updating state
             setEducations(educations.map(edu => 
-              edu.id === id ? {...res.data, educationNumber: educationToSave.educationNumber} : edu
+              edu.id === id ? {
+                ...response.data, 
+                educationNumber: educationToSave.educationNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_file: educationToSave.certificate_file,
+                certificate_name: educationToSave.certificate_name,
+                certificate: response.data.certificate || educationToSave.certificate
+              } : edu
             ));
-            alert("Employee Education added successfully.");
+            toast.success("Education added successfully.");
+          } else {
+            toast.error("Failed to add education!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, formData, {
+          response = await api.put(`employees/employee-education/${employee_id}/${educationToSave.id}/`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
-          if(res.status === 200){
+          if(response.status === 200){
+            // FIX: Preserve file information when updating state
             setEducations(educations.map(edu => 
-              edu.id === id ? res.data : edu
+              edu.id === id ? {
+                ...response.data,
+                educationNumber: educationToSave.educationNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_file: educationToSave.certificate_file,
+                certificate_name: educationToSave.certificate_name,
+                certificate: response.data.certificate || educationToSave.certificate
+              } : edu
             ));
-            alert("Employee Education updated successfully.");
+            toast.success("Education updated successfully.");
+          } else {
+            toast.error("Failed to update education!");
           }
         }
       } else if(view.isOwnProfileView) {
         if (educationToSave.isTempId) {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
-          const res = await api.post(`employees/my-education/`, formData, {
+          response = await api.post(`employees/my-education/`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
-          if(res.status === 201){
+          if(response.status === 201){
+            // FIX: Preserve file information when updating state
             setEducations(educations.map(edu => 
-              edu.id === id ? {...res.data, educationNumber: educationToSave.educationNumber} : edu
+              edu.id === id ? {
+                ...response.data, 
+                educationNumber: educationToSave.educationNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_file: educationToSave.certificate_file,
+                certificate_name: educationToSave.certificate_name,
+                certificate: response.data.certificate || educationToSave.certificate
+              } : edu
             ));
-            alert("Your Education added successfully.");
+            toast.success("Education added successfully.");
+          } else {
+            toast.error("Failed to add education!");
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/my-education/${educationToSave.id}/`, formData, {
+          response = await api.put(`employees/my-education/${educationToSave.id}/`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           });
-          if(res.status === 200){
+          if(response.status === 200){
+            // FIX: Preserve file information when updating state
             setEducations(educations.map(edu => 
-              edu.id === id ? res.data : edu
+              edu.id === id ? {
+                ...response.data,
+                educationNumber: educationToSave.educationNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_file: educationToSave.certificate_file,
+                certificate_name: educationToSave.certificate_name,
+                certificate: response.data.certificate || educationToSave.certificate
+              } : edu
             ));
-            alert("Your Education updated successfully.");
+            toast.success("Education updated successfully.");
+          } else {
+            toast.error("Failed to update education!");
           }
         }
       } else {
-        alert("You don't have permission to perform this action.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving Education:", error);
-      alert("Error saving Education." );
+      toast.error("Error saving Education." );
     }
   };
 
@@ -322,152 +393,151 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
           certificate_file: null,
           certificate_name: null,
           educationNumber: 1
-        }] : educations).map((education) => (
-          <div key={education.id} className="education-block">
-            <div className="education-header">
-              <span>Education {education.educationNumber}</span>
-              
-              {educations.length > 1 && (
-                <button 
-                  className="delete-education-btn"
-                  onClick={() => removeEducation(education.id)}
-                  title="Delete this education"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-            
-            <div className="education-grid">
-              {/* First Row: Degree, Institution, Passing Year */}
-              <div className="input-group">
-                <label>Degree*</label>
-                <select 
-                  value={education.degree}
-                  onChange={(e) => updateEducation(education.id, 'degree', e.target.value)}
-                  disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                >
-                  <option value="">-- Select --</option>
-                  {degreeList.map((degree) => (
-                    <option key={degree.id} value={degree.id}>{degree.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="input-group">
-                <label>Institution*</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter Institution Name"
-                  value={education.institution}
-                  onChange={(e) => updateEducation(education.id, 'institution', e.target.value)}
-                  disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Passing Year*</label>
-                <select 
-                  value={education.passing_year}
-                  onChange={(e) => updateEducation(education.id, 'passing_year', e.target.value)}
-                  disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                >
-                  <option value="">-- Select --</option>
-                  {Array.from({length: 40}, (_, i) => {
-                    const year = new Date().getFullYear() - i;
-                    return (
-                      <option key={year} value={year}>{year}</option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              {/* Second Row: Specialization, Result, Certificate */}
-              <div className="input-group">
-                <label>Specialization*</label>
-                <select 
-                  value={education.specialization}
-                  onChange={(e) => updateEducation(education.id, 'specialization', e.target.value)}
-                  disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                >
-                  <option value="">-- Select --</option>
-                  {specializationList.map((specialization) => (
-                    <option key={specialization.id} value={specialization.id}>{specialization.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="input-group">
-                <label>Result/Grade*</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter Division or CGPA or Grade"
-                  value={education.result}
-                  onChange={(e) => updateEducation(education.id, 'result', e.target.value)}
-                  disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Attach Certificate</label>
+        }] : educations).map((education) => {
+          const hasFile = education.certificate_file || education.certificate_name || education.certificate;
+          const displayFileName = education.certificate_name || 
+            (education.certificate ? education.certificate.split('/').pop() : null);
+          
+          return (
+            <div key={education.id} className="education-block">
+              <div className="education-header">
+                <span>Education {education.educationNumber}</span>
                 
-                {/* FIXED: Separate containers for choose file and download */}
-                <div className="file-section-separated">
-                  {/* Choose File Section */}
-                  <div className="choose-file-section">
-                    <input 
-                      id={`file-input-${education.id}`}
-                      type="file" 
-                      className="file-input-hidden"
-                      accept=".pdf,.jpg,.png,application/pdf,image/jpeg,image/png"
-                      onChange={(e) => handleFileChange(education.id, e)}
-                      disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
-                    />
-                    <button 
-                      type="button"
-                      className="choose-file-btn-separate"
-                      onClick={() => handleChooseFile(education.id)}
-                    >
-                      Choose File
-                    </button>
-                  </div>
+                {educations.length > 1 && (
+                  <button 
+                    className="delete-education-btn"
+                    onClick={() => removeEducation(education.id)}
+                    title="Delete this education"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              
+              <div className="education-grid">
+                <div className="input-group">
+                  <label>Degree*</label>
+                  <select 
+                    value={education.degree}
+                    onChange={(e) => updateEducation(education.id, 'degree', e.target.value)}
+                    disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  >
+                    <option value="">-- Select --</option>
+                    {degreeList.map((degree) => (
+                      <option key={degree.id} value={degree.id}>{degree.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Institution*</label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter Institution Name"
+                    value={education.institution || ""}
+                    onChange={(e) => updateEducation(education.id, 'institution', e.target.value)}
+                    disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Passing Year*</label>
+                  <select 
+                    value={education.passing_year}
+                    onChange={(e) => updateEducation(education.id, 'passing_year', e.target.value)}
+                    disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  >
+                    <option value="">-- Select --</option>
+                    {Array.from({length: 40}, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <option key={year} value={year}>{year}</option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Specialization*</label>
+                  <select 
+                    value={education.specialization}
+                    onChange={(e) => updateEducation(education.id, 'specialization', e.target.value)}
+                    disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  >
+                    <option value="">-- Select --</option>
+                    {specializationList.map((specialization) => (
+                      <option key={specialization.id} value={specialization.id}>{specialization.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Result/Grade*</label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter Division or CGPA or Grade"
+                    value={education.result || ""}
+                    onChange={(e) => updateEducation(education.id, 'result', e.target.value)}
+                    disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Attach Certificate</label>
                   
-                  {/* Download Section - Only shows when file exists */}
-                  {(education.certificate || education.certificate_file || education.certificate_name) && (
-                    <div className="download-section">
+                  <div className="file-section-separated">
+                    <div className="choose-file-section">
+                      <input 
+                        id={`file-input-${education.id}`}
+                        type="file" 
+                        className="file-input-hidden"
+                        accept=".pdf,.jpg,.png,application/pdf,image/jpeg,image/png"
+                        onChange={(e) => handleFileChange(education.id, e)}
+                        disabled={education.isTempId ? !rolePermissions.create : !rolePermissions.edit}
+                      />
                       <button 
                         type="button"
-                        className="download-btn-separate"
-                        onClick={() => handleDownload(education)}
-                        title="Click to download the attached file"
+                        className="choose-file-btn-separate"
+                        onClick={() => handleChooseFile(education.id)}
                       >
-                        Download
+                        Choose File
                       </button>
+                    </div>
+                    
+                    {hasFile && (
+                      <div className="download-section">
+                        <button 
+                          type="button"
+                          className="download-btn-separate"
+                          onClick={() => handleDownload(education)}
+                          title="Click to download the attached file"
+                        >
+                          Download
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {displayFileName && (
+                    <div className="file-name-display">
+                      ✅ File: {displayFileName}
+                      {education.isTempId ? " (Ready to save)" : ""}
                     </div>
                   )}
                 </div>
-                
-                {/* Show file name when file is attached */}
-                {(education.certificate_name || (education.certificate_file && education.certificate_file.name)) && (
-                  <div className="file-name-display">
-                    File: {education.certificate_name || education.certificate_file.name}
-                  </div>
-                )}
               </div>
+
+              {(education.isTempId ? rolePermissions.create : rolePermissions.edit) && (
+                <div className="save-container">
+                  <button className="save-btn" onClick={() => handleSave(education.id)}>
+                    Save
+                  </button>
+                </div>
+              )}
             </div>
+          );
+        })}
 
-            {/* Save Button */}
-            {(education.isTempId ? rolePermissions.create : rolePermissions.edit) && (
-              <div className="save-container">
-                <button className="save-btn" onClick={() => handleSave(education.id)}>
-                  Save
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Add New Education Button */}
         {rolePermissions.create && (
           <div className="add-education-container">
             <button className="add-education-btn" onClick={addNewEducation}>

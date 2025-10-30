@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }) => {
   const { user } = useAuth();
@@ -171,26 +172,68 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   }, []);
 
 
-  // ✅ Handle input changes
   const handleChange = (field, value) => {
     setOfficialDetails((prev) => ({ ...prev, [field]: value }));
+  };
+
+
+  const validateOfficialDetails = (details) => {
+    const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
+    if (!details.id?.trim()) {
+      toast.warning("Employee ID is required.");
+      return false;
+    }
+    if (!details.email?.trim()) {
+      toast.warning("Email is required.");
+      return false;
+    }
+    if (!companyEmailPattern.test(details.email)) {
+      toast.warning("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
+      return;
+    }
+    if (!details.name?.trim()) {
+      toast.warning("Name is required.");
+      return false;
+    }
+    if (!details.department) {
+      toast.warning("Department is required.");
+      return false;
+    }
+    if (!details.grade) {
+      toast.warning("Grade is required.");
+      return false;
+    }
+    if (!details.joining_date) {
+      toast.warning("Joining Date is required.");
+      return false;
+    }
+    if (!details.designation) {
+      toast.warning("Designation is required.");
+      return false;
+    }
+    if (!details.basic_salary) {
+      toast.warning("Basic Salary is required.");
+      return false;
+    }
+    if (!details.role) {
+      toast.warning("Role is required.");
+      return false;
+    }
+    
+    return true;
   };
 
 
   // ✅ Save (create if new, update if existing)
   const handleSave = async () => {
     try {
-      const companyEmailPattern = /^[a-zA-Z0-9._%+-]+@sonaliintellect\.com$/;
-      if (!companyEmailPattern.test(officialdetails.email)) {
-        alert("Please use a valid Sonali Intellect email (example@sonaliintellect.com).");
-        return;
-      }
-
+      if (!validateOfficialDetails(officialdetails)) return;
+      console.log("Official Details to save:", officialdetails);
       if(view.isEmployeeProfileView || view.isAddNewEmployeeProfileView){
         if (isEditing) {
           // Update existing employee
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -199,15 +242,15 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           );
           console.log("Updateed Employee:", res.status);
           if(res.status === 200){
-            alert("Employee details updated successfully!");
+            toast.success('Official details updated successfully!');
             setOfficialDetails(res?.data || officialdetails)
           } else {
-            alert("Something went wrong!")
+            toast.error('Failed to update official details!')
           }
         } else {
           // Create new employee
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -216,18 +259,18 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           );
           console.log("New Employee:", res.status);
           if(res.status === 201){
-            alert("Employee created successfully!");
+            toast.success('Official details created successfully!');
             setOfficialDetails(res?.data || officialdetails)
             set_employee_id(res.data.id)
           } else {
-          alert("Something went wrong!")
+            toast.error('Failed to create official details!')
           }
         }
       } else if(view.isOwnProfileView){ 
         if (isEditing) {
           // Update existing employee
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -236,41 +279,41 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           );
           console.log("Updateed Official Details:", res.status);
           if(res.status === 200){
-            alert("Your official details updated successfully!");
+            toast.success('Official details updated successfully!');
             setOfficialDetails(res?.data || officialdetails)
           } else {
-            alert("Something went wrong!")
+            toast.error('Failed to updated official details!')
           }
         } 
       } else {
-        alert("You don't have permission to perform this action.");
+        toast.error("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee:", error.response?.data || error);
 
-    if (error.response && error.response.status === 400) {
-      const errors = error.response.data;
+      if (error.response && error.response.status === 400) {
+        const errors = error.response.data;
 
-      // If there are field errors (e.g., email, name, etc.)
-      if (typeof errors === "object") {
-        let messages = [];
-        for (const field in errors) {
-          if (Array.isArray(errors[field])) {
-            messages.push(`${field}: ${errors[field][0]}`);
-          } else {
-            messages.push(`${field}: ${errors[field]}`);
+        // If there are field errors (e.g., email, name, etc.)
+        if (typeof errors === "object") {
+          let messages = [];
+          for (const field in errors) {
+            if (Array.isArray(errors[field])) {
+              messages.push(`${field}: ${errors[field][0]}`);
+            } else {
+              messages.push(`${field}: ${errors[field]}`);
+            }
           }
-        }
 
-        // Show all validation messages together
-        alert(`Validation error:\n\n${messages.join("\n")}`);
+          // Show all validation messages together
+          toast.error(`Validation error:\n\n${messages.join("\n")}`);
+        } else {
+          toast.error("Validation failed. Please check your input.");
+        }
       } else {
-        alert("Validation failed. Please check your input.");
+        toast.error("Error saving official details!");
       }
-    } else {
-      alert("Failed to save employee. Please try again.");
-    }
     }
   };
 

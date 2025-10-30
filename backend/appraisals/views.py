@@ -316,36 +316,6 @@ class AppraisalStatusAPIView(AppraisalPermissionMixin, ListAPIView):
         return AppraisalDetails.objects.all()
 
 
-# ---------------- Appraisal Detail (HR Editable) ----------------
 
 class AppraisalDetailAPIView(APIView):
-    """
-    HR can edit appraisal_start_date & appraisal_end_date.
-    Other fields are read-only.
-    """
-    def get(self, request, employee_id):
-        employee = get_object_or_404(Employee, pk=employee_id)
-        appraisal_details, _ = AppraisalDetails.objects.get_or_create(employee=employee)
-        data = {
-            'employee_id': employee.id,
-            'employee_name': employee.name,
-            'designation': employee.designation.name if employee.designation else None,
-            'department': employee.department.name if employee.department else None,
-            'joining_date': employee.joining_date,
-            'grade': employee.grade.name if employee.grade else None,
-            'appraisal_start_date': appraisal_details.appraisal_start_date,
-            'appraisal_end_date': appraisal_details.appraisal_end_date,
-        }
-        return Response(data, status=status.HTTP_200_OK)
-
-    def patch(self, request, employee_id):
-        user = request.user
-        if getattr(user.role, 'name', '').upper() != 'HR':
-            return Response({'detail': 'You do not have permission.'}, status=status.HTTP_403_FORBIDDEN)
-        appraisal_details = get_object_or_404(AppraisalDetails, employee_id=employee_id)
-        allowed_data = {k: v for k, v in request.data.items() if k in ['appraisal_start_date', 'appraisal_end_date']}
-        serializer = AppraisalDetailsSerializer(appraisal_details, data=allowed_data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'detail': 'Updated successfully', 'data': serializer.data})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = AppraisalDetails

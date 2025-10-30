@@ -6,7 +6,7 @@ import SonaliLogo from "../../assets/sonali-logo.jpg";
 import LoginImage from "../../assets/login_page_image.png";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import * as far from '@fortawesome/free-regular-svg-icons';
+//import * as far from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 
 const UserLogin = () => {

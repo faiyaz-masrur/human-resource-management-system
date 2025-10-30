@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
 const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -133,49 +134,98 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     setAddressDetails((prev) => ({ ...prev, [field]: value }));
   };
 
+
+  const validateAddress = (address) => {
+    if (!address.present_house?.trim()) {
+      toast.warning("Present House is required.");
+      return false;
+    }
+    if (!address.present_city_village?.trim()) {
+      toast.warning("Present City/Village is required.");
+      return false;
+    }
+    if (!address.present_district) {
+      toast.warning("Present District is required.");
+      return false;
+    }
+    if (!address.present_police_station) {
+      toast.warning("Present Police Station is required.");
+      return false;
+    }
+    if (!address.present_postal_code?.trim()) {
+      toast.warning("Present Postal Code is required.");
+      return false;
+    }
+    if (!address.permanent_house?.trim()) {
+      toast.warning("Permanent House is required.");
+      return false;
+    }
+    if (!address.permanent_city_village?.trim()) {
+      toast.warning("Permanent City/Village is required.");
+      return false;
+    }
+    if (!address.permanent_district) {
+      toast.warning("Permanent District is required.");
+      return false;
+    }
+    if (!address.permanent_police_station) {
+      toast.warning("Permanent Police Station is required.");
+      return false;
+    }
+    if (!address.permanent_postal_code?.trim()) {
+      toast.warning("Permanent Postal Code is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSave = async () => {
+    if (!validateAddress(addressDetails)) return;
+    console.log("Address to save:", addressDetails);
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(!addressDetails.id){
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/employee-address/${employee_id}/`, addressDetails);
           if(res.status === 201){
-            alert("Employee address created successfully!");
+            toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/employee-address/${employee_id}/`, addressDetails);
           if(res.status === 200){
-            alert("Employee address updated successfully!");
+            toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
           }
         }
       } else if(view.isOwnProfileView){
         if(!addressDetails.id){
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(`employees/my-address/`, addressDetails);
           if(res.status === 201){
-            alert("Your address created successfully!");
+            toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
           }
         } else {
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(`employees/my-address/`, addressDetails);
           if(res.status === 200){
-            alert("Your address updated successfully!");
+            toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
           }
         }

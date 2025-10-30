@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
+
 
 const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
   const { user } = useAuth();
@@ -128,12 +130,33 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     setPersonalDetails((prev) => ({ ...prev, [field]: value }));
   };
 
+
+  const validatePersonalDetails = (details) => {
+    if (!details.phone_number?.trim()) {
+      toast.warning("Phone number is required.");
+      return false;
+    }
+    if (!details.personal_email?.trim()) {
+      toast.warning("Personal email is required.");
+      return false;
+    }
+    if (!details.national_id?.trim()) {
+      toast.warning("National id is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSave = async () => {
+    if (!validatePersonalDetails(personalDetails)) return;
+    console.log("Personal details to save:", personalDetails);
     try {
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(personalDetails.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -142,14 +165,14 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Updateed Employee Personal Details:", res?.data);
           if(res.status === 200){
-            alert("Employee personal details updated successfully!");
+            toast.success("Personal details updated successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update personal details!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -158,16 +181,16 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Created Employee Personal Details:", res?.data);
           if(res.status === 201){
-            alert("Employee personal details created successfully!");
+            toast.success("Personal details created successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create personal details!")
           }    
         }
       } else if(view.isOwnProfileView){
         if(personalDetails.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -176,14 +199,14 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Updateed Personal Details:", res?.data);
           if(res.status === 200){
-            alert("Your personal details updated successfully!");
+            toast.success("Personal details updated successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update personal details!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -192,19 +215,19 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           );
           console.log("Created Personal Details:", res?.data);
           if(res.status === 201){
-            alert("Your personal details created successfully!");
+            toast.success("Personal details created successfully!");
             setPersonalDetails(res.data || personalDetails)
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create personal details!")
           }    
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee personal details:", error?.response?.data || error);
-      alert("Failed to save personal details.");
+      toast.error("Error saving personal details!");
     }
   };
   
@@ -251,18 +274,19 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Second Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Personal Email</label>
+            <label>Personal Email*</label>
             <input
               type="email"
               className="form-input"
               value={personalDetails.personal_email || ""}
               onChange={(e) => handleChange("personal_email", e.target.value)}
               disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
             />
           </div>
 
           <div className="form-group">
-            <label>Father's Name*</label>
+            <label>Father's Name</label>
             <input
               type="text"
               className="form-input"
@@ -273,7 +297,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Mother's Name*</label>
+            <label>Mother's Name</label>
             <input
               type="text"
               className="form-input"
@@ -287,7 +311,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Third Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Date of Birth*</label>
+            <label>Date of Birth</label>
             <input 
               type="date" 
               className="date-input"
@@ -309,7 +333,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Blood Group*</label>
+            <label>Blood Group</label>
             <select
               className="form-select"
               value={personalDetails.blood_group || ""}
@@ -327,7 +351,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Fourth Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Marital Status*</label>
+            <label>Marital Status</label>
             <select
               className="form-select"
               value={personalDetails.marital_status || ""}
@@ -342,7 +366,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Spouse Name*</label>
+            <label>Spouse Name</label>
             <input
               type="text"
               className="form-input"
@@ -353,7 +377,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Spouse NID*</label>
+            <label>Spouse NID</label>
             <input
               type="text"
               className="form-input"
@@ -367,7 +391,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
         {/* Fifth Row */}
         <div className="form-row">
           <div className="form-group">
-            <label>Emergency Contact Name*</label>
+            <label>Emergency Contact Name</label>
             <input
               type="text"
               className="form-input"
@@ -378,7 +402,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Relationship*</label>
+            <label>Relationship</label>
             <select
               className="form-select"
               value={personalDetails.emergency_contact_relationship || ""}
@@ -393,7 +417,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
           </div>
 
           <div className="form-group">
-            <label>Emergency Contact Number*</label>
+            <label>Emergency Contact Number</label>
             <input
               type="tel"
               className="form-input"

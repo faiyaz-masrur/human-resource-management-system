@@ -139,6 +139,15 @@
     {
         "role": "EMP",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": true,
         "create": true,
@@ -195,6 +204,15 @@
         "role": "EMP",
         "workspace": "ReviewAppraisal",
         "sub_workspace": "ReviewAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -268,6 +286,15 @@
         "role": "EMP",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "EMP",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -508,6 +535,15 @@
     {
         "role": "RM",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": true,
         "create": true,
@@ -567,6 +603,15 @@
         "view": true,
         "create": false,
         "edit": true,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
         "delete": false
     },
     {
@@ -637,6 +682,15 @@
         "role": "RM",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "RM",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -877,6 +931,15 @@
     {
         "role": "HR",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": true,
         "create": true,
@@ -936,6 +999,15 @@
         "view": true,
         "create": false,
         "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
         "delete": false
     },
     {
@@ -1014,56 +1086,65 @@
     {
         "role": "HR",
         "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HR",
+        "workspace": "AllAppraisal",
         "sub_workspace": "AllEmployeeAppraisal",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
     {
         "role": "HR",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllRmReview",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
     {
         "role": "HR",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllHrReview",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
     {
         "role": "HR",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllHodReview",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
     {
         "role": "HR",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllCooReview",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
     {
         "role": "HR",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllCeoReview",
         "view": true,
-        "create": true,
+        "create": false,
         "edit": true,
-        "delete": true
+        "delete": false
     },
 
     {
@@ -1247,6 +1328,15 @@
     {
         "role": "HOD",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": true,
         "create": true,
@@ -1306,6 +1396,15 @@
         "view": true,
         "create": false,
         "edit": true,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
         "delete": false
     },
     {
@@ -1376,6 +1475,15 @@
         "role": "HOD",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "HOD",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -1617,6 +1725,15 @@
     {
         "role": "COO",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": false,
         "create": false,
@@ -1676,6 +1793,15 @@
         "view": true,
         "create": false,
         "edit": true,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
         "delete": false
     },
     {
@@ -1746,6 +1872,15 @@
         "role": "COO",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "COO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -1987,6 +2122,15 @@
     {
         "role": "CEO",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": false,
         "create": false,
@@ -2046,6 +2190,15 @@
         "view": true,
         "create": false,
         "edit": true,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
+        "view": true,
+        "create": false,
+        "edit": false,
         "delete": false
     },
     {
@@ -2116,6 +2269,15 @@
         "role": "CEO",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": false,
+        "create": false,
+        "edit": false,
+        "delete": false
+    },
+    {
+        "role": "CEO",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": false,
         "create": false,
         "edit": false,
@@ -2357,6 +2519,15 @@
     {
         "role": "SUPER",
         "workspace": "MyAppraisal",
+        "sub_workspace": "MyAppraisalDetail",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "MyAppraisal",
         "sub_workspace": "MyEmployeeAppraisal",
         "view": true,
         "create": true,
@@ -2413,6 +2584,15 @@
         "role": "SUPER",
         "workspace": "ReviewAppraisal",
         "sub_workspace": "ReviewAppraisalList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "ReviewAppraisal",
+        "sub_workspace": "EmployeeAppraisalDetail",
         "view": true,
         "create": true,
         "edit": true,
@@ -2486,6 +2666,15 @@
         "role": "SUPER",
         "workspace": "AllAppraisal",
         "sub_workspace": "AllAppraisalList",
+        "view": true,
+        "create": true,
+        "edit": true,
+        "delete": true
+    },
+    {
+        "role": "SUPER",
+        "workspace": "AllAppraisal",
+        "sub_workspace": "AllAppraisalDetail",
         "view": true,
         "create": true,
         "edit": true,

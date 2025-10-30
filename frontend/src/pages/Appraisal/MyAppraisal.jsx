@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import api from '../../services/api';
+import React, { useState } from 'react';
 
+// Import existing appraisal components
 import EmployeeAppraisal from '../../components/AppraisalDetailsComponents/EmployeeAppraisal';
 import ReportingManagerAppraisal from '../../components/AppraisalDetailsComponents/ReportingManagerAppraisal';
 import HrAppraisal from '../../components/AppraisalDetailsComponents/HrAppraisal';
@@ -9,107 +8,99 @@ import HodAppraisal from '../../components/AppraisalDetailsComponents/HodApprais
 import CooAppraisal from '../../components/AppraisalDetailsComponents/CooAppraisal';
 import CeoAppraisal from '../../components/AppraisalDetailsComponents/CeoAppraisal';
 
+
 const MyAppraisal = () => {
-  const { employee_id } = useParams(); 
-  const [activeTab, setActiveTab] = useState('My Appraisal');
-  const [employeeDetails, setEmployeeDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchMyAppraisal = async () => {
-      try {
-        const response = await api.get(`/appraisals/appraisal-details/`);
-        const data = response.data;
-
-        setEmployeeDetails({
-          employee_id: data.employee_id,
-          employee_name: data.employee_name,
-          designation: data.designation?.name || '-',
-          department: data.department?.name || '-',
-          joining_date: data.joining_date || '-',
-          grade: data.grade?.name || '-',
-          appraisal_start_date: data.appraisal_start_date || '-',
-          appraisal_end_date: data.appraisal_end_date || '-',
-        });
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load self-appraisal:', err);
-        setError('Unable to fetch appraisal details.');
-        setLoading(false);
-      }
-    };
-
-     fetchMyAppraisal();
-  }, []);
+  const [activeTab, setActiveTab] = useState('Employee');
 
   const renderActiveAppraisal = () => {
     switch (activeTab) {
       case 'My Appraisal':
-        return <EmployeeAppraisal employeeId={employee_id} />;
+        return <EmployeeAppraisal />;
       case 'Reporting Manager':
-        return <ReportingManagerAppraisal employeeId={employee_id} />;
+        return <ReportingManagerAppraisal />;
       case 'Human Resource':
-        return <HrAppraisal employeeId={employee_id} />;
+        return <HrAppraisal />;
       case 'Head of Department':
-        return <HodAppraisal employeeId={employee_id} />;
+        return <HodAppraisal />;
       case 'Chief Operating Officer':
-        return <CooAppraisal employeeId={employee_id} />;
+        return <CooAppraisal />;
       case 'Chief Executive Officer':
-        return <CeoAppraisal employeeId={employee_id} />;
+        return <CeoAppraisal />;
       default:
-        return <EmployeeAppraisal employeeId={employee_id} />;
+        return <EmployeeAppraisal />;
     }
   };
 
-  const getTabButtonClass = (tabName) =>
-    `appraisal-tab-button ${activeTab === tabName ? 'active-appraisal-tab' : ''}`;
-
-  if (loading) return <div>Loading appraisal details...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  const getTabButtonClass = (tabName) => {
+    return `appraisal-tab-button ${activeTab === tabName ? 'active-appraisal-tab' : ''}`;
+  };
 
   return (
+    
     <div className="appraisal-page-container">
-
+      {/* Employee Details Section */}
       <div className="employee-details-card">
         <h2 className="employee-details-title">My Appraisal</h2>
         <div className="employee-details-grid">
-          {[
-            ['Employee ID', 'employee_id'],
-            ['Employee Name', 'employee_name'],
-            ['Designation', 'designation'],
-            ['Department', 'department'],
-            ['Joining Date', 'joining_date'],
-            ['Grade', 'grade'],
-            ['Appraisal Period Start', 'appraisal_start_date'],
-            ['Appraisal Period End', 'appraisal_end_date'],
-          ].map(([label, key]) => (
-            <div className="employee-detail-item" key={key}>
-              <label className="employee-detail-label">{label}</label>
-              <div className="employee-detail-value">{employeeDetails?.[key] || '-'}</div>
-            </div>
-          ))}
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Employee ID</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Employee Name</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Designation</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Department</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Joining Date</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Grade</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Appraisal Period Start</label>
+            <div className="employee-detail-value"></div>
+          </div>
+          <div className="employee-detail-item">
+            <label className="employee-detail-label">Appraisal Period End</label>
+            <div className="employee-detail-value"></div>
+          </div>
         </div>
       </div>
 
-
+      {/* Appraisal Tabs Section */}
       <div className="appraisal-tabs-container">
         <div className="appraisal-tabs-buttons">
-          {[
-            'My Appraisal',
-            'Reporting Manager',
-            'Human Resource',
-            'Head of Department',
-            'Chief Operating Officer',
-            'Chief Executive Officer',
-          ].map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={getTabButtonClass(tab)}>
-              {tab}
-            </button>
-          ))}
+          <button onClick={() => setActiveTab('Employee')} className={getTabButtonClass('My Appraisal')}>
+            My Appraisal
+          </button>
+          <button onClick={() => setActiveTab('Reporting Manager')} className={getTabButtonClass('Reporting Manager')}>
+            Reporting Manager
+          </button>
+          <button onClick={() => setActiveTab('Human Resource')} className={getTabButtonClass('Human Resource')}>
+            Human Resource
+          </button>
+          <button onClick={() => setActiveTab('Head of Department')} className={getTabButtonClass('Head of Department')}>
+            Head of Department
+          </button>
+          <button onClick={() => setActiveTab('Chief Operating Officer')} className={getTabButtonClass('Chief Operating Officer')}>
+            Chief Operating Officer
+          </button>
+          <button onClick={() => setActiveTab('Chief Executive Officer')} className={getTabButtonClass('Chief Executive Officer')}>
+            Chief Executive Officer
+          </button>
         </div>
 
+        {/* Render active appraisal content */}
         <div className="appraisal-content">{renderActiveAppraisal()}</div>
       </div>
     </div>

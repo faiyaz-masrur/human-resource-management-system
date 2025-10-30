@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
   const { user } = useAuth();
@@ -8,7 +9,7 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
     id: '',
     photo: null,
     signature: null,
-    natoinal_id: null,
+    national_id: null,
     passport: null,
     employee_agreement: null
   }
@@ -62,14 +63,45 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
     fetchAttachments();
   }, [rolePermissions]);
 
+
   const handleFileChange = (field, e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.warning("File size must be less than 5MB");
+        return;
+      }
+
+      // Validate file types
+      const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
+        return;
+      }
+
       setAttachments(prev => ({
         ...prev,
         [field]: file
       }));
     }
+  };
+
+
+  const validateAttatchment = (attachment) => {
+    if (!attachment.photo) {
+      toast.warning("Photo is required.");
+      return false;
+    }
+    if (!attachment.signature) {
+      toast.warning("Signature is required.");
+      return false;
+    }
+    if (!attachment.national_id) {
+      toast.warning("National ID is required.");
+      return false;
+    }
+    
+    return true;
   };
 
   // Helper function to get file name
@@ -94,7 +126,7 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
     return file && (file instanceof File || typeof file === 'string');
   };
 
-  // Download file function - FIXED
+  // Download file function
   const downloadFile = async (file, fieldName) => {
     try {
       if (file instanceof File) {
@@ -130,21 +162,33 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
   };
 
   const handleSave = async () => {
+    if (!validateAttatchment(attachments)) return;
+    console.log("Attachments to save:", attachments);
     try {
       // Create FormData for file uploads
       const formData = new FormData();
       
-      // Append all fields to FormData
+      // Append all fields to FormData - only File objects
       Object.keys(attachments).forEach(key => {
-        if (attachments[key] !== null && attachments[key] !== '') {
-          formData.append(key, attachments[key]);
+        if (attachments[key] !== null && attachments[key] !== '' && attachments[key] !== undefined) {
+          // Only append if it's a File object (new upload)
+          if (attachments[key] instanceof File) {
+            formData.append(key, attachments[key]);
+          }
+          // Skip string URLs (existing files) - backend will keep them
         }
       });
+
+      // For debugging - log what's being sent
+      console.log("FormData contents:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ', pair[1]);
+      }
 
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
         if(attachments.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -158,14 +202,14 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Updated Employee Attachments:", res?.data);
           if(res.status === 200){
-            alert("Employee attachments updated successfully!");
+            toast.success("Attachments updated successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update attachments!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -179,16 +223,16 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Created Employee Attachments:", res?.data);
           if(res.status === 201){
-            alert("Employee attachments created successfully!");
+            toast.success("Attachments created successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create attachments!")
           }    
         }
       } else if(view.isOwnProfileView){
         if(attachments.id){
           if (!rolePermissions.edit) {
-            alert("You don't have permission to edit.");
+            toast.warning("You don't have permission to edit.");
             return;
           }
           const res = await api.put(
@@ -202,14 +246,14 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Updated Attachments:", res?.data);
           if(res.status === 200){
-            alert("Your attachments updated successfully!");
+            toast.success("Attachments updated successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to update attachments!")
           }
         } else {
           if (!rolePermissions.create) {
-            alert("You don't have permission to create.");
+            toast.warning("You don't have permission to create.");
             return;
           }
           const res = await api.post(
@@ -223,19 +267,36 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
           );
           console.log("Created Attachments:", res?.data);
           if(res.status === 201){
-            alert("Your attachments created successfully!");
+            toast.success("Attachments created successfully!");
             setAttachments(res?.data || attachments);
           } else {
-            alert("Something went wrong!")
+            toast.error("Failed to create attachments!")
           }    
         }
       } else {
-        alert("You don't have permission to perform this action. First save employee official details.");
+        toast.warning("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
       console.error("Error saving employee attachments:", error?.response?.data || error);
-      alert("Failed to save attachments.");
+      
+      // Handle validation errors specifically
+      if (error?.response?.status === 400) {
+        const errorData = error.response.data;
+        let errorMessage = "Validation errors: ";
+        
+        Object.keys(errorData).forEach(field => {
+          if (Array.isArray(errorData[field])) {
+            errorMessage += `${field}: ${errorData[field].join(', ')}. `;
+          } else {
+            errorMessage += `${field}: ${errorData[field]}. `;
+          }
+        });
+        
+        toast.error(errorMessage);
+      } else {
+        toast.error("Error saving attachments!");
+      }
     }
   };
 
@@ -245,7 +306,10 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
       onSubmit();
     } else {
       console.log('Submit clicked - no onSubmit handler provided');
-      alert('Submit functionality would proceed to next step');
+      toast.info('Submit functionality would proceed to next step', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -335,23 +399,24 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
             <input 
               className="file-input"
               type="file" 
-              id="natoinal_id"
+              id="national_id"
               accept=".pdf,.jpg,.png" 
-              onChange={(e) => handleFileChange('natoinal_id', e)}
+              onChange={(e) => handleFileChange('national_id', e)}
               disabled={attachments.id ? !rolePermissions.edit : !rolePermissions.create}
               required
             />
-            {hasFile(attachments.natoinal_id) ? (
+
+            {hasFile(attachments.national_id) ? (
               <div className="file-display-with-download">
                 <div className="file-info">
-                  <span className="file-name" title={getFileName(attachments.natoinal_id)}>
-                    {getFileName(attachments.natoinal_id)}
+                  <span className="file-name" title={getFileName(attachments.national_id)}>
+                    {getFileName(attachments.national_id)}
                   </span>
                 </div>
                 <div className="file-actions">
                   <button 
                     className="download-btn"
-                    onClick={() => downloadFile(attachments.natoinal_id, 'national_id')}
+                    onClick={() => downloadFile(attachments.national_id, 'national_id')}
                     title="Download"
                     type="button"
                   >
@@ -360,7 +425,7 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
                 </div>
               </div>
             ) : (
-              <label htmlFor="natoinal_id" className="file-label">
+              <label htmlFor="national_id" className="file-label">
                 Attach File (.pdf / .jpg / .png)
               </label>
             )}

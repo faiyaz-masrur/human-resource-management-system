@@ -1,49 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import React from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 
 const ReviewAppraisals = () => {
-  const navigate = useNavigate();
-
-  const [appraisals, setAppraisals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-  const fetchAppraisals = async () => {
-    try {
-      const response = await api.get('/appraisals/review-appraisal/');
-        setAppraisals(response.data);
-      } catch (err) {
-        console.error('Error fetching review appraisals:', err);
-
-        const status = err.response?.status;
-
-        if (status === 403) {
-          setPermissionDenied(true);
-          setError('You do not have permission to review appraisals.');
-        } else {
-    // For all other errors (500, network issues, etc.)
-          setError('Failed to load appraisals. Please try again later.');
-      }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAppraisals();
-  }, []);
+  // 2. Call useNavigate hook to get the navigation function
+  const navigate = useNavigate(); 
+    
+  const appraisals = [
+    { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', status: 'Completed', dept: 'R&D'},
+    { id: 1066, name: 'Saim Bin Salim', designation: 'Associate Business Analyst', status: 'Pending', dept: 'R&D'},
+    { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', status: 'Completed', dept: 'R&D'},
+  ];
 
   const getStatusColor = (status) => {
-    if (!status) return '#6b7280';
-    return status.toLowerCase() === 'completed' ? '#4CAF50' : '#F44336';
+    return status === 'Completed' ? '#4CAF50' : '#F44336';
   };
-
-  const handleEditAppraisal = (employeeId) => {
-    navigate(`/appraisal/employee/${employeeId}`);
+  
+  // Use it for dynamic value for specific appraisal id
+  /*const handleEditAppraisal = (appraisalId) => {
+    navigate(`/appraisal/employee/${appraisalId}`); 
+    
   };
+  */
 
-  if (loading) return <div className="loading-message">Loading appraisals...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  // Use it for static value to show the static forms
+    const handleEditAppraisal = () => {
+    navigate('/appraisal/employee'); 
+  };
 
   return (
     <div className="appraisal-list-container">
@@ -61,40 +43,31 @@ const ReviewAppraisals = () => {
             </tr>
           </thead>
           <tbody>
-            {appraisals.length > 0 ? (
-              appraisals.map((appraisal) => (
-                <tr key={appraisal.employee.id}>
-                  <td>{appraisal.employee.id}</td>
-                  <td>{appraisal.employee.name}</td>
-                  <td>{appraisal.employee.designation?.name || '-'}</td>
-                  <td>
-                    <span
-                      style={{ color: getStatusColor(appraisal.status), fontWeight: 'bold' }}
-                    >
-                      {appraisal.status
-                        ? appraisal.status.charAt(0).toUpperCase() + appraisal.status.slice(1)
-                        : 'N/A'}
-                    </span>
-                  </td>
-                  <td>{appraisal.employee.department?.name || '-'}</td>
-                  <td>
-                    <button
-                      className="action-button-light action-button--edit-light"
-                      onClick={() => handleEditAppraisal(appraisal.employee.id)}
-                      title="Edit Appraisal"
-                    >
-                      ✎
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center text-gray-500 py-4">
-                  No appraisals found.
+            {appraisals.map((appraisal, index) => (
+              <tr key={index}>
+                <td>{appraisal.id}</td>
+                <td>{appraisal.name}</td>
+                <td>{appraisal.designation}</td>
+                <td>
+                  <span style={{ color: getStatusColor(appraisal.status), fontWeight: 'bold' }}>
+                    {appraisal.status}
+                  </span>
                 </td>
+                <td>{appraisal.dept}</td>
+                <td>
+                  <div className="ar-actions-cell">
+                    <button 
+                        className="action-button-light action-button--edit-light" 
+                        onClick={() => handleEditAppraisal()}
+                        title="edit appraisal"
+                    >
+                        &#9998; {/* Pen emoji for Edit */}
+                    </button>
+                  </div>
+                </td>
+
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
