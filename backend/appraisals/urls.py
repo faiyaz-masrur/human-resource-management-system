@@ -1,142 +1,81 @@
-'''
 from django.urls import path
 from .views import (
-    # --- Review (For RM, HR, HOD, COO, CEO reviewing employees) ---
+    MyAppraisalDetailsAPIView,
+    MyEmployeeAppraisalAPIView,
+    MyRmReviewAPIView,
+    MyHrReviewAPIView,
+    MyHodReviewAPIView,
+    MyCooReviewAPIView,
+    MyCeoReviewAPIView,
+
     ReviewAppraisalListAPIView,
-    ReviewAppraisalDetailAPIView,
-    ReviewEmployeeAppraisalBaseAPIView,
-    RMReviewAPIView,  
-    HRReviewAPIView,
-    HODReviewAPIView,
-    COOReviewAPIView,
-    CEOReviewAPIView,
+    ReviewAppraisalDetailsAPIView,
+    ReviewEmployeeAppraisalAPIView,
+    EmployeeRmReviewAPIView,
+    EmployeeHrReviewAPIView,
+    EmployeeHodReviewAPIView,
+    EmployeeCooReviewAPIView,
+    EmployeeCeoReviewAPIView,
 
-    # --- All Appraisals (For Admin / HR global view) ---
     AllAppraisalListAPIView,
-    AllAppraisalDetailAPIView,
-    AllAppraisalEmployeeBaseAPIView,
-    AllAppraisalRMDetailAPIView,
-    AllAppraisalHRDetailAPIView,
-    AllAppraisalHODDetailAPIView,
-    AllAppraisalCOODetailAPIView,
-    AllAppraisalCEODetailAPIView,
+    AllAppraisalDetailsAPIView,
+    AllEmployeeAppraisalAPIView,
+    AllRmReviewAPIView,
+    AllHrReviewAPIView,
+    AllHodReviewAPIView,
+    AllCooReviewAPIView,
+    AllCeoReviewAPIView,
 
-    # --- Status / Employee endpoints ---
     AppraisalStatusAPIView,
-    AppraisalDetailAPIView,
-    EmployeeSelfAppraisalAPIView,
-    EmployeeViewRMReviewAPIView,
-    EmployeeViewHRReviewAPIView,
-    EmployeeViewCOOReviewAPIView,
-    EmployeeViewCEOReviewAPIView,
 )
 
 urlpatterns = [
-    # --------------------------------------------------------------------------
-    # 1. Review Appraisals (For Reviewers - RM, HR, HOD, COO, CEO)
-    # --------------------------------------------------------------------------
-    path('review-appraisal/', ReviewAppraisalListAPIView.as_view(), name='review-appraisals'),
-    path('review-appraisal/appraisal-details/<int:employee_id>/', ReviewAppraisalDetailAPIView.as_view(), name='review-appraisal-details'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/', ReviewEmployeeAppraisalBaseAPIView.as_view(), name='review-employee-appraisal-base'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/rm/', RMReviewAPIView.as_view(), name='review-employee-appraisal-rm'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/hr/', HRReviewAPIView.as_view(), name='review-employee-appraisal-hr'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/hod/', HODReviewAPIView.as_view(), name='review-employee-appraisal-hod'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/coo/', COOReviewAPIView.as_view(), name='review-employee-appraisal-coo'),
-    path('review-appraisal/employee-appraisal/<int:employee_id>/ceo/', CEOReviewAPIView.as_view(), name='review-employee-appraisal-ceo'),
+    path('my-appraisal-details/', MyAppraisalDetailsAPIView.as_view(), name='my-appraisal-details'),
+    path('my-employee-appraisal/', MyEmployeeAppraisalAPIView.as_view(), name='my-employee-appraisal'),
+    path('my-employee-appraisal/<int:pk>/', MyEmployeeAppraisalAPIView.as_view(), name='my-employee-appraisal-details'),
+    path('my-rm-review/', MyRmReviewAPIView.as_view(), name='my-rm-review'),
+    path('my-rm-review/<int:pk>/', MyRmReviewAPIView.as_view(), name='my-rm-review-details'),
+    path('my-hr-review/', MyHrReviewAPIView.as_view(), name='my-hr-review'),
+    path('my-hr-review/<int:pk>/', MyHrReviewAPIView.as_view(), name='my-hr-review-details'),
+    path('my-hod-review/', MyHodReviewAPIView.as_view(), name='my-hod-review'),
+    path('my-hod-review/<int:pk>/', MyHodReviewAPIView.as_view(), name='my-hod-review-details'),
+    path('my-coo-review/', MyCooReviewAPIView.as_view(), name='my-coo-review'),
+    path('my-coo-review/<int:pk>/', MyCooReviewAPIView.as_view(), name='my-coo-review-details'),
+    path('my-ceo-review/', MyCeoReviewAPIView.as_view(), name='my-ceo-review'),
+    path('my-ceo-review/<int:pk>/', MyCeoReviewAPIView.as_view(), name='my-ceo-review-details'),
 
-    # --------------------------------------------------------------------------
-    # 2. All Appraisals (For Administrative / HR overview)
-    # --------------------------------------------------------------------------
-    path('all-appraisal/', AllAppraisalListAPIView.as_view(), name='all-appraisal-list'),
-    path('all-appraisal/appraisal-details/<int:employee_id>/', AllAppraisalDetailAPIView.as_view(), name='all-appraisal-details'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/', AllAppraisalEmployeeBaseAPIView.as_view(), name='all-appraisal-employee-base'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/rm/', AllAppraisalRMDetailAPIView.as_view(), name='all-appraisal-rm-detail'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/hr/', AllAppraisalHRDetailAPIView.as_view(), name='all-appraisal-hr-detail'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/hod/', AllAppraisalHODDetailAPIView.as_view(), name='all-appraisal-hod-detail'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/coo/', AllAppraisalCOODetailAPIView.as_view(), name='all-appraisal-coo-detail'),
-    path('all-appraisal/employee-appraisal/<int:employee_id>/ceo/', AllAppraisalCEODetailAPIView.as_view(), name='all-appraisal-ceo-detail'),
 
-    # --------------------------------------------------------------------------
-    # 3. Status & Employee Self Appraisals
-    # --------------------------------------------------------------------------
-    path('appraisal-status/', AppraisalStatusAPIView.as_view(), name='appraisal-status-list'),
-    path('appraisal-details/<int:employee_id>/', AppraisalDetailAPIView.as_view(), name='appraisal-details'),
-    path('my-appraisal/<int:employee_id>/', EmployeeSelfAppraisalAPIView.as_view(), name='my-appraisal-base'),
+    path('review-appraisal-list/', ReviewAppraisalListAPIView.as_view(), name='review-appraisal-list'),
+    path('review-appraisal-details/<str:employee>/', ReviewAppraisalDetailsAPIView.as_view(), name='review-appraisal-details'),
+    path('review-employee-appraisal/', ReviewEmployeeAppraisalAPIView.as_view(), name='review-employee-appraisal'),
+    path('review-employee-appraisal/<int:pk>/', ReviewEmployeeAppraisalAPIView.as_view(), name='review-employee-appraisal-details'),
+    path('employee-rm-review/', EmployeeRmReviewAPIView.as_view(), name='employee-rm-review'),
+    path('employee-rm-review/<int:pk>/', EmployeeRmReviewAPIView.as_view(), name='employee-rm-review-details'),
+    path('employee-hr-review/', EmployeeHrReviewAPIView.as_view(), name='employee-hr-review'),
+    path('employee-hr-review/<int:pk>/', EmployeeHrReviewAPIView.as_view(), name='employee-hr-review-details'),
+    path('employee-hod-review/', EmployeeHodReviewAPIView.as_view(), name='employee-hod-review'),
+    path('employee-hod-review/<int:pk>/', EmployeeHodReviewAPIView.as_view(), name='employee-hod-review-details'),
+    path('employee-coo-review/', EmployeeCooReviewAPIView.as_view(), name='employee-coo-review'),
+    path('employee-coo-review/<int:pk>/', EmployeeCooReviewAPIView.as_view(), name='employee-coo-review-details'),
+    path('employee-ceo-review/', EmployeeCeoReviewAPIView.as_view(), name='employee-ceo-review'),
+    path('employee-ceo-review/<int:pk>/', EmployeeCeoReviewAPIView.as_view(), name='employee-ceo-review-details'),
 
-    # --------------------------------------------------------------------------
-    # 4. Employee Views (readonly feedback views)
-    # --------------------------------------------------------------------------
-    path('my-appraisal/<int:employee_id>/rm/', EmployeeViewRMReviewAPIView.as_view(), name='my-appraisal-rm-review'),
-    path('my-appraisal/<int:employee_id>/hr/', EmployeeViewHRReviewAPIView.as_view(), name='my-appraisal-hr-review'),
-    path('my-appraisal/<int:employee_id>/coo/', EmployeeViewCOOReviewAPIView.as_view(), name='my-appraisal-coo-review'),
-    path('my-appraisal/<int:employee_id>/ceo/', EmployeeViewCEOReviewAPIView.as_view(), name='my-appraisal-ceo-review'),
-]
-'''
 
-from django.urls import path
-from .views import (
-    # --- Reviewer Action Views (Used for endpoints 6 & 7) ---
-    RMReviewAPIView,
-    HRReviewAPIView,
-    HODReviewAPIView,
-    COOReviewAPIView,
-    CEOReviewAPIView,
+    path('all-appraisal-list/', AllAppraisalListAPIView.as_view(), name='all-appraisal-list'),
+    path('all-appraisal-details/<str:employee>/', AllAppraisalDetailsAPIView.as_view(), name='all-appraisal-details'),
+    path('all-employee-appraisal/', AllEmployeeAppraisalAPIView.as_view(), name='all-employee-appraisal'),
+    path('all-employee-appraisal/<int:pk>/', AllEmployeeAppraisalAPIView.as_view(), name='all-employee-appraisal-details'),
+    path('all-rm-review/', AllRmReviewAPIView.as_view(), name='all-rm-review'),
+    path('all-rm-review/<int:pk>/', AllRmReviewAPIView.as_view(), name='all-rm-review-details'),
+    path('all-hr-review/', AllHrReviewAPIView.as_view(), name='all-hr-review'),
+    path('all-hr-review/<int:pk>/', AllHrReviewAPIView.as_view(), name='all-hr-review-details'),
+    path('all-hod-review/', AllHodReviewAPIView.as_view(), name='all-hod-review'),
+    path('all-hod-review/<int:pk>/', AllHodReviewAPIView.as_view(), name='all-hod-review-details'),
+    path('all-coo-review/', AllCooReviewAPIView.as_view(), name='all-coo-review'),
+    path('all-coo-review/<int:pk>/', AllCooReviewAPIView.as_view(), name='all-coo-review-details'),
+    path('all-ceo-review/', AllCeoReviewAPIView.as_view(), name='all-ceo-review'),
+    path('all-ceo-review/<int:pk>/', AllCeoReviewAPIView.as_view(), name='all-ceo-review-details'),
 
-    # --- List/Status Views (Used for endpoints 2, 3, 4) ---
-    ReviewAppraisalListAPIView, # 3. All review appraisals (reviewer view)
-    AllAppraisalListAPIView,    # 2. All appraisals (admin/HR)
-    AppraisalStatusAPIView,     # 4. Appraisal status table
+    path('appraisal-status-list/', AppraisalStatusAPIView.as_view(), name='appraisal-status-list'),
 
-    # --- Employee/Base Views (Used for endpoints 1 & 5) ---
-    AppraisalDetailAPIView,     # 1. Single appraisal details (employee view)
-    EmployeeSelfAppraisalAPIView, # 5. Base employee appraisal (self-appraisal)
-
-    # Note: Other imported views from the original file are kept for context,
-    # but their specific paths have been removed to match the frontend API consolidation.
-    ReviewAppraisalDetailAPIView,
-    ReviewEmployeeAppraisalBaseAPIView,
-    AllAppraisalDetailAPIView,
-    AllAppraisalEmployeeBaseAPIView,
-    AllAppraisalRMDetailAPIView,
-    AllAppraisalHRDetailAPIView,
-    AllAppraisalHODDetailAPIView,
-    AllAppraisalCOODetailAPIView,
-    AllAppraisalCEODetailAPIView,
-    EmployeeViewRMReviewAPIView,
-    EmployeeViewHRReviewAPIView,
-    EmployeeViewCOOReviewAPIView,
-    EmployeeViewCEOReviewAPIView,
-)
-
-urlpatterns = [
-    # --------------------------------------------------------------------------
-    # 1. List and Status Endpoints (Matching Frontend APIs 2, 3, 4)
-    # --------------------------------------------------------------------------
-    # /api/appraisals/all-appraisal/ (2. Admin/HR All Appraisals)
-    path('all-appraisal/', AllAppraisalListAPIView.as_view(), name='all-appraisal-list'),
-
-    # /api/appraisals/review-appraisal/ (3. Reviewer List)
-    path('review-appraisal/', ReviewAppraisalListAPIView.as_view(), name='review-appraisal-list'),
-
-    # /api/appraisals/appraisal-status/ (4. Status Table)
-    path('appraisal-status/', AppraisalStatusAPIView.as_view(), name='appraisal-status-list'),
-
-    # --------------------------------------------------------------------------
-    # 2. Employee Specific Appraisals (Matching Frontend APIs 1, 5, 6)
-    # --------------------------------------------------------------------------
-    # /api/appraisals/appraisal-details/<employee_id>/ (1. Employee Read-Only Detail View)
-    path('appraisal-details/<int:employee_id>/', AppraisalDetailAPIView.as_view(), name='appraisal-details-view'),
-
-    # /api/appraisals/employee-appraisal/<employeeId>/ (5. Employee Self-Appraisal Base)
-    # This is for the employee to view/submit their own base appraisal data.
-    path('employee-appraisal/<int:employee_id>/', EmployeeSelfAppraisalAPIView.as_view(), name='employee-self-appraisal-base'),
-
-    # /api/appraisals/employee-appraisal/<employeeId>/[reviewer]/ (6. Reviewer Detail/Action View)
-    # This structure is used for RM, HR, HOD, COO, and CEO to access the detailed review page
-    # for a specific employee. I map to the action views (e.g., RMReviewAPIView).
-    path('employee-appraisal/<int:employee_id>/rm/', RMReviewAPIView.as_view(), name='employee-appraisal-rm-detail'),
-    path('employee-appraisal/<int:employee_id>/hr/', HRReviewAPIView.as_view(), name='employee-appraisal-hr-detail'),
-    path('employee-appraisal/<int:employee_id>/hod/', HODReviewAPIView.as_view(), name='employee-appraisal-hod-detail'),
-    path('employee-appraisal/<int:employee_id>/coo/', COOReviewAPIView.as_view(), name='employee-appraisal-coo-detail'),
-    path('employee-appraisal/<int:employee_id>/ceo/', CEOReviewAPIView.as_view(), name='employee-appraisal-ceo-detail'),
 ]
