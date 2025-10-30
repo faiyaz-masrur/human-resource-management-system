@@ -382,7 +382,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
       <div className="education-content">
         {/* Education Sections */}
         {(educations.length === 0 ? [{
-          id: 'default',
+          id: `temp-${Date.now()}`,
           isTempId: true,
           degree: '',
           institution: '',

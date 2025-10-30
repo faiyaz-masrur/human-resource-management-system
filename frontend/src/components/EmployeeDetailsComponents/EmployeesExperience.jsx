@@ -47,6 +47,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
         } else {
           return;
         }
+        console.log("Fetched Experiences:", res.data);
         const experienceData = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
         setExperiences(experienceData); 
       } catch (error) {
@@ -237,7 +238,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
       <div className="experience-content">
         {/* Previous Experience Sections */}
         {(experiences.length === 0 ? [{
-          id: 'default',
+          id: `temp-${Date.now()}`,
           isTempId: true,
           organization: '',
           designation: '',
@@ -248,7 +249,8 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
         }] : experiences).map((experience, index) => (
           <div key={experience.id} className="experience-block">
             <div className="experience-header">
-              <span>{experiences.length === 1 ? "Previous Experience" : `Previous Experience ${index + 1}`}</span>
+              <span>{experience.organization === 'Sonali Intellect Limited' ? "Current Experience" : `Previous Experience ${index}`}</span>
+            
               
               {/* Delete Button - Show only if more than one experience exists */}
               {experiences.length > 1 && (

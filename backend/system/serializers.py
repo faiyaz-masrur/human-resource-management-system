@@ -98,7 +98,7 @@ class ReportingManagerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReportingManager
-        fields = ["id", "name"]
+        fields = ["manager", "name"]
 
 class BloodGroupSerializer(serializers.ModelSerializer):
     class Meta:

@@ -262,6 +262,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             toast.success('Official details created successfully!');
             setOfficialDetails(res?.data || officialdetails)
             set_employee_id(res.data.id)
+            setIsEditing(true);
           } else {
             toast.error('Failed to create official details!')
           }
