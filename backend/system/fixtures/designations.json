@@ -43,5 +43,8 @@
     {"name": "AVP", "grade": "T330", "description": "Assistant Vice President"},
     {"name": "VP", "grade": "T410", "description": "Vice President"},
     {"name": "SVP", "grade": "T420", "description": "Senior Vice President"},
-    {"name": "EVP", "grade": "T430", "description": "Executive Vice President"}
+    {"name": "EVP", "grade": "T430", "description": "Executive Vice President"},
+    {"name": "COO", "grade": "COO", "description": "Chief Operating Officer"},
+    {"name": "CEO", "grade": "CEO", "description": "Chief Executive Officer"}
+
 ]

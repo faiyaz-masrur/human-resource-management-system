@@ -10,7 +10,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
   const [trainingTypeList, setTrainingTypeList] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
-
   useEffect(() => {
     const fetchRolePermissions = async () => {
       try {
@@ -22,10 +21,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         } else {
           return;
         }
-        console.log("User role permission:", res?.data)
         setRolePermissions(res?.data || {}); 
       } catch (error) {
-        console.warn("Error fatching role permissions", error);
         setRolePermissions({}); 
       }
     };
@@ -33,13 +30,10 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     fetchRolePermissions();
   }, []);
 
-
   useEffect(() => {
     const fetchTrainings = async () => {
       try {
-        if (!rolePermissions.view) {
-          return;
-        }
+        if (!rolePermissions.view) return;
         let res;
         if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/employee-training-certificate/${employee_id}/`);
@@ -48,23 +42,57 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         } else {
           return;
         }
-        console.log("Training Certificate List: ", res?.data)
-        setTrainings(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []); 
+        const trainingData = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+        
+        // FIX: Transform server response to include file information properly
+        const trainingsWithNumbers = trainingData.map((training, index) => {
+          // Extract file name from certificate URL or use existing certificate_name
+          let certificate_name = training.certificate_name;
+          
+          // If no certificate_name but we have a certificate URL, extract filename from URL
+          if (!certificate_name && training.certificate) {
+            // Extract filename from URL (e.g., "/media/certificates/myfile.pdf" -> "myfile.pdf")
+            const urlParts = training.certificate.split('/');
+            certificate_name = urlParts[urlParts.length - 1];
+          }
+          
+          return {
+            ...training,
+            trainingNumber: index + 1,
+            isTemp: false,
+            // Ensure certificate_name is always set if file exists
+            certificate_name: certificate_name || training.certificate_name,
+            // For saved records, we don't have the file object, but we have the URL
+            certificate_file: null // File object is only for new uploads
+          };
+        });
+        
+        setTrainings(trainingsWithNumbers); 
       } catch (error) {
-        console.warn("No Training Certificate found, showing empty form.");
-        setTrainings([]);
+        setTrainings([{
+          id: `temp-${Date.now()}`,
+          isTemp: true,
+          title: '',
+          institution: '',
+          issue_date: '',
+          type: '',
+          credential_id: '',
+          certificate_file: null,
+          certificate_name: null,
+          trainingNumber: 1
+        }]);
       }
     };
 
-    fetchTrainings();
+    if (rolePermissions.view) {
+      fetchTrainings();
+    }
   }, [rolePermissions]);
-
 
   useEffect(() => {
     const fetchTrainingTypeList = async () => {
       try {
         const res = await api.get(`system/configurations/training-type-list/`);
-        console.log("Training Type list:", res?.data)
         setTrainingTypeList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching Training Type List", error);
@@ -75,47 +103,27 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     fetchTrainingTypeList();
   }, []);
 
-
-  const addNewTraining = () => {
-    if (!rolePermissions.create) {
-      toast.warning("You don't have permission to create");
-      return;
-    }
-    setTrainings([
-      ...trainings,
-      {
-        id: `temp-${Date.now()}`, // More explicit temp ID
-        hasTempId: true,
-        title: '',
-        institution: '',
-        issue_date: '',
-        type: '',
-        credential_id: '',
-        certificate: null
-      }
-    ]);
+  const isTempTraining = (training) => {
+    return training.isTemp || (typeof training.id === 'string' && training.id.startsWith('temp-'));
   };
 
-
-  const removeTraining = (id) => {
-    if (trainings.length > 1) {
-      setTrainings(trainings.filter(training => training.id !== id));
+  const handleChooseFile = (id) => {
+    const fileInput = document.getElementById(`file-input-${id}`);
+    if (fileInput) {
+      fileInput.click();
     }
-  };
-
-
-  const updateTraining = (id, field, value) => {
-    setTrainings(trainings.map(training => 
-      training.id === id ? { ...training, [field]: value } : training
-    ));
   };
 
   const handleFileChange = (id, event) => {
     const file = event.target.files[0];
+    console.log("File selected for training:", id, file);
+    
     if (file) {
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast.warning("File size must be less than 5MB");
+        // Reset the file input
+        event.target.value = '';
         return;
       }
 
@@ -123,13 +131,146 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
       const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
         toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
+        // Reset the file input
+        event.target.value = '';
         return;
       }
 
-      updateTraining(id, 'certificate', file);
+      // Update the training with file information
+      setTrainings(trainings.map(training => 
+        training.id === id ? { 
+          ...training, 
+          certificate_file: file, // Store the file object
+          certificate_name: file.name // Store the file name
+        } : training
+      ));
+      
+      toast.success("File attached successfully!");
     }
   };
 
+  const handleDownload = async (training) => {
+    try {
+      console.log("Downloading file for training:", training);
+      
+      // If there's a file attached but not saved yet
+      if (training.certificate_file && training.certificate_file instanceof File) {
+        const url = URL.createObjectURL(training.certificate_file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = training.certificate_name || 'certificate';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success("File downloaded successfully");
+        return;
+      }
+
+      // If file is saved on server (has a URL)
+      if (training.certificate && typeof training.certificate === 'string') {
+        // If it's a full URL
+        if (training.certificate.startsWith('http')) {
+          window.open(training.certificate, '_blank');
+          toast.success("Opening file in new tab");
+        } else {
+          // If it's a relative URL, construct full URL
+          const fullUrl = `http://127.0.0.1:8000${training.certificate.startsWith('/') ? '' : '/'}${training.certificate}`;
+          window.open(fullUrl, '_blank');
+          toast.success("Opening file in new tab");
+        }
+        return;
+      }
+
+      toast.warning("No file available to download");
+      
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast.error("Failed to download file");
+    }
+  };
+
+  const addNewTraining = () => {
+    if (!rolePermissions.create) {
+      toast.warning("You don't have permission to create");
+      return;
+    }
+
+    const newTrainingNumber = trainings.length + 1;
+    setTrainings([
+      ...trainings,
+      {
+        id: `temp-${Date.now()}`,
+        isTemp: true,
+        title: '',
+        institution: '',
+        issue_date: '',
+        type: '',
+        credential_id: '',
+        certificate_file: null,
+        certificate_name: null,
+        trainingNumber: newTrainingNumber
+      }
+    ]);
+  };
+
+  const removeTraining = async (id) => {
+    const trainingToDelete = trainings.find(t => t.id === id);
+    if (!trainingToDelete) return;
+
+    if (isTempTraining(trainingToDelete)) {
+      if (trainings.length > 1) {
+        const updatedTrainings = trainings.filter(training => training.id !== id);
+        const renumberedTrainings = updatedTrainings.map((training, index) => ({
+          ...training,
+          trainingNumber: index + 1
+        }));
+        setTrainings(renumberedTrainings);
+      } else {
+        alert("You need to have at least one training section.");
+      }
+      return;
+    }
+
+    try {
+      if (!rolePermissions.delete) {
+        toast.warning("You don't have permission to delete");
+        return;
+      }
+
+      if (view.isOwnProfileView) {
+        await api.delete(`employees/my-training-certificate/${id}/`);
+      } else if (employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
+        await api.delete(`employees/employee-training-certificate/${employee_id}/${id}/`);
+      }
+      
+      toast.success("Training deleted successfully");
+      
+      if (trainings.length > 1) {
+        const updatedTrainings = trainings.filter(training => training.id !== id);
+        const renumberedTrainings = updatedTrainings.map((training, index) => ({
+          ...training,
+          trainingNumber: index + 1
+        }));
+        setTrainings(renumberedTrainings);
+      } else {
+        alert("You need to have at least one training section.");
+      }
+    } catch (error) {
+      console.error("Error deleting training:", error);
+      if (error.response?.status === 404) {
+        toast.error("Training not found. It may have already been deleted.");
+      } else {
+        toast.error("Failed to delete training");
+      }
+    }
+  };
+
+  const updateTraining = (id, field, value) => {
+    setTrainings(trainings.map(training => 
+      training.id === id ? { ...training, [field]: value } : training
+    ));
+  };
 
   const validateTraining = (training) => {
     if (!training.title?.trim()) {
@@ -152,47 +293,94 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     return true;
   };
 
-
   const handleSave = async (id) => {
-    const trainingToSave = trainings.find(edu => edu.id === id);
+    const trainingToSave = trainings.find(training => training.id === id);
     if (!trainingToSave) return;
     if (!validateTraining(trainingToSave)) return;
+    
     console.log("Training to save:", trainingToSave);
-    const saveData = {
-      title: trainingToSave.title,
-      institution: trainingToSave.institution,
-      issue_date: trainingToSave.issue_date,
-      type: trainingToSave.type,
-      credential_id: trainingToSave.credential_id ? trainingToSave.credential_id : null,
-      certificate: trainingToSave.certificate ? trainingToSave.certificate : null,
+    
+    // Create FormData for file upload
+    const formData = new FormData();
+    formData.append('title', trainingToSave.title);
+    formData.append('institution', trainingToSave.institution);
+    formData.append('issue_date', trainingToSave.issue_date);
+    formData.append('type', trainingToSave.type);
+    
+    if (trainingToSave.credential_id) {
+      formData.append('credential_id', trainingToSave.credential_id);
     }
+    
+    // Append the file if it exists
+    if (trainingToSave.certificate_file) {
+      formData.append('certificate', trainingToSave.certificate_file);
+    }
+
     try {
+      let response;
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
-        if (trainingToSave.hasTempId) {
+        if (isTempTraining(trainingToSave)) {
+          // CREATE new training
           if (!rolePermissions.create) {
             toast.warning("You don't have permission to create.");
             return;
           }
-          const res = await api.post(`employees/employee-training-certificate/${employee_id}/`, saveData);
-          console.log("Created Training:", res?.data);
-          if(res.status === 201){
+          response = await api.post(`employees/employee-training-certificate/${employee_id}/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log("Created Training Response:", response?.data);
+          if(response.status === 201){
+            // Extract filename from response if available
+            let certificate_name = trainingToSave.certificate_name;
+            if (!certificate_name && response.data.certificate) {
+              const urlParts = response.data.certificate.split('/');
+              certificate_name = urlParts[urlParts.length - 1];
+            }
+            
             setTrainings(trainings.map(training => 
-              training.id === id ? res.data : training
+              training.id === id ? {
+                ...response.data, 
+                trainingNumber: trainingToSave.trainingNumber, 
+                isTemp: false,
+                // PRESERVE FILE INFORMATION
+                certificate_name: certificate_name || trainingToSave.certificate_name,
+                certificate_file: null // Clear file object after successful save
+              } : training
             ));
             toast.success("Training added successfully.");
           } else {
             toast.error("Failed to add training!");
           }
         } else {
+          // UPDATE existing training
           if (!rolePermissions.edit) {
             toast.warning("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, saveData);
-          console.log("Updated Training:", res.data);
-          if(res.status === 200){
+          response = await api.put(`employees/employee-training-certificate/${employee_id}/${trainingToSave.id}/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log("Updated Training Response:", response.data);
+          if(response.status === 200){
+            // Extract filename from response if available
+            let certificate_name = trainingToSave.certificate_name;
+            if (!certificate_name && response.data.certificate) {
+              const urlParts = response.data.certificate.split('/');
+              certificate_name = urlParts[urlParts.length - 1];
+            }
+            
             setTrainings(trainings.map(training => 
-              training.id === id ? res.data : training
+              training.id === id ? {
+                ...response.data, 
+                trainingNumber: trainingToSave.trainingNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_name: certificate_name || trainingToSave.certificate_name,
+                certificate_file: null // Clear file object after successful save
+              } : training
             ));
             toast.success("Training updated successfully.");
           } else {
@@ -200,31 +388,68 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           }
         }
       } else if(view.isOwnProfileView) {
-        if (trainingToSave.hasTempId) {
+        if (isTempTraining(trainingToSave)) {
+          // CREATE new training
           if (!rolePermissions.create) {
             toast.warning("You don't have permission to create.");
             return;
           }
-          const res = await api.post(`employees/my-training-certificate/`, saveData);
-          console.log("Created Training:", res?.data);
-          if(res.status === 201){
+          response = await api.post(`employees/my-training-certificate/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log("Created Training Response:", response?.data);
+          if(response.status === 201){
+            // Extract filename from response if available
+            let certificate_name = trainingToSave.certificate_name;
+            if (!certificate_name && response.data.certificate) {
+              const urlParts = response.data.certificate.split('/');
+              certificate_name = urlParts[urlParts.length - 1];
+            }
+            
             setTrainings(trainings.map(training => 
-              training.id === id ? res.data : training
+              training.id === id ? {
+                ...response.data, 
+                trainingNumber: trainingToSave.trainingNumber, 
+                isTemp: false,
+                // PRESERVE FILE INFORMATION
+                certificate_name: certificate_name || trainingToSave.certificate_name,
+                certificate_file: null // Clear file object after successful save
+              } : training
             ));
             toast.success("Training added successfully.");
           } else {
             toast.error("Failed to add training!");
           }
         } else {
+          // UPDATE existing training
           if (!rolePermissions.edit) {
             toast.warning("You don't have permission to edit.");
             return;
           }
-          const res = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, saveData);
-          console.log("Updated Training:", res?.data);
-          if(res.status === 200){
+          response = await api.put(`employees/my-training-certificate/${trainingToSave.id}/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log("Updated Training Response:", response?.data);
+          if(response.status === 200){
+            // Extract filename from response if available
+            let certificate_name = trainingToSave.certificate_name;
+            if (!certificate_name && response.data.certificate) {
+              const urlParts = response.data.certificate.split('/');
+              certificate_name = urlParts[urlParts.length - 1];
+            }
+            
             setTrainings(trainings.map(training => 
-              training.id === id ? res.data : training
+              training.id === id ? {
+                ...response.data, 
+                trainingNumber: trainingToSave.trainingNumber,
+                // PRESERVE FILE INFORMATION
+                certificate_name: certificate_name || trainingToSave.certificate_name,
+                certificate_file: null // Clear file object after successful save
+              } : training
             ));
             toast.success("Training updated successfully.");
           } else {
@@ -237,150 +462,194 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
       }
     } catch (error) {
       console.error("Error saving Training:", error);
-      toast.error("Error saving Training." );
+      if (error.response?.status === 404) {
+        toast.error("API endpoint not found. Please check if the training exists.");
+      } else if (error.response?.status === 400) {
+        const errorData = error.response.data;
+        if (typeof errorData === 'object') {
+          const errorMessages = Object.values(errorData).flat();
+          toast.error(`Validation error: ${errorMessages.join(', ')}`);
+        } else {
+          toast.error("Invalid data. Please check all fields and try again.");
+        }
+      } else {
+        toast.error("Error saving Training. Please try again.");
+      }
     }
   };
 
-
   return (
-    <div className="training-details">
-      <div className="details-card">
-        {trainings.map((training, index) => (
-          <div key={training.id} className="training-section">
-            <h3 className="section-title">Training/Certifications</h3>
-            
-            {/* First Row: Title, Institution, Year */}
-            <div className="form-row">
-              <div className="form-group">
-                <label>Title*</label>
-                <input 
-                  type="text" 
-                  className="form-input"
-                  placeholder="Enter Training or Certification Name"
-                  value={training.title || ""}
-                  onChange={(e) => updateTraining(training.id, 'title', e.target.value)}
-                  disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Institution*</label>
-                <input 
-                  type="text" 
-                  className="form-input"
-                  placeholder="Enter Institution Name"
-                  value={training.institution || ""}
-                  onChange={(e) => updateTraining(training.id, 'institution', e.target.value)}
-                  disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Year*</label>
-                <select 
-                  className="form-select"
-                  value={training.issue_date || ""}
-                  onChange={(e) => updateTraining(training.id, 'issue_date', e.target.value)}
-                  disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                  required
-                >
-                  <option value="">-- Select --</option>
-                  {Array.from({length: 30}, (_, i) => {
-                    const year = new Date().getFullYear() - i;
-                    return (
-                      <option key={year} value={year}>{year}</option>
-                    );
-                  })}
-                </select>
-              </div>
-            </div>
+    <div className="training-certifications">
+      <div className="training-container">
+        <div className="section-header">
+          {/* <h2>Training/Certifications</h2> */}
+        </div>
 
-            {/* Second Row: Type, Credential ID, Certificate */}
-            <div className="form-row">
-              <div className="form-group">
-                <label>Type*</label>
-                <select 
-                  className="form-select"
-                  value={training.type || ""}
-                  onChange={(e) => updateTraining(training.id, 'type', e.target.value)}
-                  disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                  required
-                >
-                  <option value="">-- Select --</option>
-                  {trainingTypeList.map((trainingType)=>(
-                    <option key={trainingType.id} value={trainingType.id}>{trainingType.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Credential ID or Reference ID</label>
-                <input 
-                  type="text" 
-                  className="form-input"
-                  placeholder="Enter ID/Reference/Tracking Number"
-                  value={training.credential_id || ""}
-                  onChange={(e) => updateTraining(training.id, 'credential_id', e.target.value)}
-                  disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                />
-              </div>
-              <div className="form-group">
-                <label>Attach Certificate</label>
-                <div className="file-upload-container">
-                  <input 
-                    type="file" 
-                    className="file-input"
-                    accept=".pdf,.jpg,.png"
-                    onChange={(e) => handleFileChange(training.id, e)}
-                    disabled={training.hasTempId ? !rolePermissions.create : !rolePermissions.edit}
-                  />
-                  <div className="file-display">
-                    {training.certificate ? (
-                      <a 
-                        href={training.certificate} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="file-name"
-                      >
-                        {training.certificate.split('/').pop()}
-                      </a>
-                    ) : (
-                      <span className="file-placeholder">
-                        Attach File (.pdf / .jpg / .png)
-                      </span>
-                    )}
-                  </div>
-              
-                </div>
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                {(training.hasTempId ? rolePermissions.create : rolePermissions.edit) && (
-                  <button className="btn-success" onClick={() => handleSave(training.id)}>
-                    Save
+        {trainings.map((training) => {
+          const isTemp = isTempTraining(training);
+          // FIX: Check for both certificate (URL from server) and certificate_name
+          const hasFile = training.certificate || training.certificate_name || training.certificate_file;
+          // FIX: Get display name - use certificate_name if available, otherwise extract from certificate URL
+          const displayFileName = training.certificate_name || 
+            (training.certificate ? training.certificate.split('/').pop() : null);
+          
+          return (
+            <div key={training.id} className="training-section">
+              <div className="training-header">
+                <span>Training/Certification {training.trainingNumber}</span>
+                
+                {trainings.length > 1 && (
+                  <button 
+                    className="delete-training-btn"
+                    onClick={() => removeTraining(training.id)}
+                    title="Delete this training/certification"
+                  >
+                    ×
                   </button>
                 )}
               </div>
-            </div>
-            
-          </div>
-        ))}
 
-        {/* Add New Training Button */}
-        <div className="form-row">
-          <div className="form-group">
-            {rolePermissions.create && (
-              <button type="button" className="btn-primary" onClick={addNewTraining}>
-                + Add New Training/Certification
-              </button>
-            )}
-          </div>
+              <div className="form-row">
+                <div className="form-field">
+                  <label className="field-label">Title</label>
+                  <input 
+                    type="text" 
+                    className="field-input"
+                    placeholder="Enter Training or Certification Name"
+                    value={training.title || ""}
+                    onChange={(e) => updateTraining(training.id, 'title', e.target.value)}
+                    disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                  />
+                </div>
+                
+                <div className="form-field">
+                  <label className="field-label">Institution</label>
+                  <input 
+                    type="text" 
+                    className="field-input"
+                    placeholder="Enter Institution Name"
+                    value={training.institution || ""}
+                    onChange={(e) => updateTraining(training.id, 'institution', e.target.value)}
+                    disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                  />
+                </div>
+                
+                <div className="form-field">
+                  <label className="field-label">Year</label>
+                  <select 
+                    className="field-select"
+                    value={training.issue_date || ""}
+                    onChange={(e) => updateTraining(training.id, 'issue_date', e.target.value)}
+                    disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                  >
+                    <option value="">-- Select --</option>
+                    {Array.from({length: 30}, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return <option key={year} value={year}>{year}</option>;
+                    })}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-field">
+                  <label className="field-label">Type</label>
+                  <select 
+                    className="field-select"
+                    value={training.type || ""}
+                    onChange={(e) => updateTraining(training.id, 'type', e.target.value)}
+                    disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                  >
+                    <option value="">-- Select --</option>
+                    {trainingTypeList.map((trainingType) => (
+                      <option key={trainingType.id} value={trainingType.id}>{trainingType.name}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="form-field">
+                  <label className="field-label">Credential ID or Reference ID</label>
+                  <input 
+                    type="text" 
+                    className="field-input"
+                    placeholder="Enter ID/Reference/Tracking Number"
+                    value={training.credential_id || ""}
+                    onChange={(e) => updateTraining(training.id, 'credential_id', e.target.value)}
+                    disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label className="field-label">Attach Certificate</label>
+                  
+                  <div className="file-section-separated">
+                    <div className="choose-file-section">
+                      <input 
+                        id={`file-input-${training.id}`}
+                        type="file" 
+                        className="file-input-hidden"
+                        accept=".pdf,.jpg,.png,application/pdf,image/jpeg,image/png"
+                        onChange={(e) => handleFileChange(training.id, e)}
+                        disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                      />
+                      <button 
+                        type="button"
+                        className="choose-file-btn-separate"
+                        onClick={() => handleChooseFile(training.id)}
+                        disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+                      >
+                        Choose File
+                      </button>
+                    </div>
+                    
+                    {hasFile && (
+                      <div className="file-action-buttons">
+                        <button 
+                          type="button"
+                          className="download-btn-separate"
+                          onClick={() => handleDownload(training)}
+                          title="Click to download the attached file"
+                        >
+                          Download
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* FIX: Always show file name if we have either certificate_name or certificate URL */}
+                  {displayFileName && (
+                    <div className="file-name-display">
+                      ✅ File: {displayFileName}
+                      {isTemp ? " (Ready to save)" : " "}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {(isTemp ? rolePermissions.create : rolePermissions.edit) && (
+                <div className="save-container">
+                  <button className="save-btn" onClick={() => handleSave(training.id)}>
+                    Save
+                  </button>
+                </div>
+              )}
+
+              {/* <div className="divider"></div> */}
+            </div>
+          );
+        })}
+
+        <div className="add-new-section">
+          {rolePermissions.create && (
+            <button className="add-new-btn" onClick={addNewTraining}>
+              + Add New Training/Certification
+            </button>
+          )}
         </div>
-        
-        <div className="form-actions">
-          <button className="btn-secondary" onClick={onBack}>Back</button>
-          <button className="btn-primary" onClick={onNext}>Next</button>
+
+        <div className="navigation-buttons">
+          <button className="back-btn" onClick={onBack}>Back</button>
+          <button className="next-btn" onClick={onNext}>Next</button>
         </div>
       </div>
     </div>

@@ -42,6 +42,18 @@ class AttatchmentSerializer(SmartUpdateSerializer):
         fields = "__all__"
         read_only_fields = ("employee","id",)
 
+class AttatchmentUpdateSerializer(SmartUpdateSerializer):
+    class Meta:
+        model = Attatchment
+        fields = "__all__"
+        read_only_fields = ("employee","id",)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make all file fields optional for updates
+        for field_name in ['photo', 'signature', 'national_id', 'passport', 'employee_agreement']:
+            if field_name in self.fields:
+                self.fields[field_name].required = False
 
 class EmployeeListSerializer(serializers.ModelSerializer):
     department = serializers.CharField(source="department.name", read_only=True)

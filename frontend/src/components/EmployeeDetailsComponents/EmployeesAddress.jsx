@@ -31,7 +31,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
   const [policeStationListParmanent, setPoliceStationListParmanent] = useState([]);
   const [rolePermissions, setRolePermissions] = useState({});
 
-
   useEffect(() => {
     const fetchRolePermissions = async () => {
       try {
@@ -43,17 +42,15 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         } else {
           return;
         }
-        console.log("User role permission:", res?.data)
         setRolePermissions(res?.data || {}); 
       } catch (error) {
-        console.warn("Error fatching role permissions", error);
+        console.warn("Error fetching role permissions", error);
         setRolePermissions({}); 
       }
     };
 
     fetchRolePermissions();
   }, []);
-
 
   useEffect(() => {
     const fetchAddressDetails = async () => {
@@ -69,7 +66,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         } else {
           return;
         }
-        console.log("Employee address details:", res?.data)
         setAddressDetails(res?.data || defaultAddress); 
       } catch (error) {
         console.warn("No address details found, showing empty form.");
@@ -80,12 +76,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     fetchAddressDetails();
   }, [rolePermissions]);
 
-
   useEffect(() => {
     const fetchDistrictList = async () => {
       try {
         const res = await api.get(`system/configurations/bd-district-list/`);
-        console.log("District list:", res?.data)
         setDistrictListPresent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
         setDistrictListParmanent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
@@ -98,7 +92,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     fetchDistrictList();
   }, []);
 
-
   useEffect(() => {
     const fetchPoliceStationListPresent = async () => {
       try {
@@ -108,7 +101,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         } else {
           res = await api.get(`system/configurations/bd-thana-list/`);
         }
-        console.log("Police station list Present:", res?.data)
         setPoliceStationListPresent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching Thana List Present", error);
@@ -119,7 +111,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     fetchPoliceStationListPresent();
   }, [districtIdPresent]);
 
-
   useEffect(() => {
     const fetchPoliceStationListParmanent = async () => {
       try {
@@ -129,7 +120,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         } else {
           res = await api.get(`system/configurations/bd-thana-list/`);
         }
-        console.log("Police station list Parmanent:", res?.data)
         setPoliceStationListParmanent(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
       } catch (error) {
         console.warn("Error Fetching Thana List Parmanent", error);
@@ -139,7 +129,6 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
     fetchPoliceStationListParmanent();
   }, [districtIdParmanent]);
-
 
   const handleChange = (field, value) => {
     setAddressDetails((prev) => ({ ...prev, [field]: value }));
@@ -203,12 +192,9 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             return;
           }
           const res = await api.post(`employees/employee-address/${employee_id}/`, addressDetails);
-          console.log("Created Employee Address:", res.data);
           if(res.status === 201){
             toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
-          } else {
-            toast.error("Failed to create address")
           }
         } else {
           if (!rolePermissions.edit) {
@@ -216,12 +202,9 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             return;
           }
           const res = await api.put(`employees/employee-address/${employee_id}/`, addressDetails);
-          console.log("Updated Employee Address:", res.status);
           if(res.status === 200){
             toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
-          } else {
-            toast.error("Failed to update address")
           }
         }
       } else if(view.isOwnProfileView){
@@ -231,12 +214,9 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             return;
           }
           const res = await api.post(`employees/my-address/`, addressDetails);
-          console.log("Created My Address:", res.data);
           if(res.status === 201){
             toast.success("Address created successfully!");
             setAddressDetails(res?.data || addressDetails);
-          } else {
-            toast.error("Failed to create address")
           }
         } else {
           if (!rolePermissions.edit) {
@@ -244,218 +224,214 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             return;
           }
           const res = await api.put(`employees/my-address/`, addressDetails);
-          console.log("Updated My Address:", res.status);
           if(res.status === 200){
             toast.success("Address updated successfully!");
             setAddressDetails(res?.data || addressDetails);
-          } else {
-            toast.error("Failed to update address")
           }
         }
       } else {
-        toast.warning("You don't have permission to perform this action.");
+        alert("You don't have permission to perform this action.");
         return;
       }
     } catch (error) {
-      console.error("Error saving employee address details:", error.response?.data || error);
-      toast.error("Error saving address details!");
+      console.error("Error saving employee address details:", error);
+      alert("Failed to save address details.");
     }
   };
 
   return (
-    <div className="address-details">
-      <div className="details-card">
-        <h3 className="section-title">Present Address</h3>
-        
-        {/* Row 1: House, Apartment & Police Station */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>House, Apartment*</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.present_house || ""}
-              onChange={(e) => handleChange("present_house", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Road/Block/Sector</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.present_road_block_sector || ""}
-              onChange={(e) => handleChange("present_road_block_sector", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-            />
+    <div className="address-container">
+      <div className="address-content">
+        {/* Present Address Section */}
+        <div className="address-section">
+          <div className="section-header">Present Address</div>
+          
+          <div className="address-grid">
+            {/* House, Apartment */}
+            <div className="input-group">
+              <label>House, Apartment*</label>
+              <input
+                type="text"
+                placeholder="Enter details"
+                value={addressDetails.present_house || ""}
+                onChange={(e) => handleChange("present_house", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* Road/Block/Sector */}
+            <div className="input-group">
+              <label>Road/Block/Sector</label>
+              <input
+                type="text"
+                placeholder="2"
+                value={addressDetails.present_road_block_sector || ""}
+                onChange={(e) => handleChange("present_road_block_sector", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* City/Village */}
+            <div className="input-group">
+              <label>City/Village</label>
+              <input
+                type="text"
+                placeholder="Pallabi"
+                value={addressDetails.present_city_village || ""}
+                onChange={(e) => handleChange("present_city_village", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* Police Station */}
+            <div className="input-group">
+              <label>Police Station</label>
+              <select
+                value={addressDetails.present_police_station || ""}
+                onChange={(e) => handleChange("present_police_station", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              >
+                <option value="">Pallabi</option>
+                {policeStationListPresent.map((policeStation) => (
+                  <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* District */}
+            <div className="input-group">
+              <label>District</label>
+              <select
+                value={addressDetails.present_district || ""}
+                onChange={(e) => {
+                  setDistrictIdPresent(parseInt(e.target.value))
+                  handleChange("present_district", e.target.value)
+                }}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              >
+                <option value="">Dhaka</option>
+                {districtListPresent.map((district) => (
+                  <option key={district.id} value={district.id}>{district.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Postal Code */}
+            <div className="input-group">
+              <label>Postal Code</label>
+              <input
+                type="number"
+                placeholder="1216"
+                value={addressDetails.present_postal_code || ""}
+                onChange={(e) => handleChange("present_postal_code", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Row 2: Road/Block/Sector & City/Village */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>City/Village*</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.present_city_village || ""}
-              onChange={(e) => handleChange("present_city_village", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-            />
-          </div>
-          <div className="form-group">
-            <label>District*</label>
-            <select
-              className="form-select"
-              value={addressDetails.present_district || ""}
-              onChange={(e) => {
-                setDistrictIdPresent(parseInt(e.target.value))
-                handleChange("present_district", e.target.value)}
-              }
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            >
-              <option value="">-- Select --</option>
-              {districtListPresent.map((district)=>(
-                <option key={district.id} value={district.id}>{district.name}</option>
-              ))}
-            </select>
+        {/* Permanent Address Section */}
+        <div className="address-section">
+          <div className="section-header">Permanent Address</div>
+          
+          <div className="address-grid">
+            {/* House, Apartment */}
+            <div className="input-group">
+              <label>House, Apartment*</label>
+              <input
+                type="text"
+                placeholder="Enter details"
+                value={addressDetails.permanent_house || ""}
+                onChange={(e) => handleChange("permanent_house", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* Road/Block/Sector */}
+            <div className="input-group">
+              <label>Road/Block/Sector</label>
+              <input
+                type="text"
+                placeholder="2"
+                value={addressDetails.permanent_road_block_sector || ""}
+                onChange={(e) => handleChange("permanent_road_block_sector", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* City/Village */}
+            <div className="input-group">
+              <label>City/Village</label>
+              <input
+                type="text"
+                placeholder="Pallabi"
+                value={addressDetails.permanent_city_village || ""}
+                onChange={(e) => handleChange("permanent_city_village", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
+
+            {/* Police Station */}
+            <div className="input-group">
+              <label>Police Station</label>
+              <select
+                value={addressDetails.permanent_police_station || ""}
+                onChange={(e) => handleChange("permanent_police_station", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              >
+                <option value="">Pallabi</option>
+                {policeStationListParmanent.map((policeStation) => (
+                  <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* District */}
+            <div className="input-group">
+              <label>District</label>
+              <select
+                value={addressDetails.permanent_district || ""}
+                onChange={(e) => {
+                  setDistrictIdParmanent(parseInt(e.target.value))
+                  handleChange("permanent_district", e.target.value)
+                }}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              >
+                <option value="">Dhaka</option>
+                {districtListParmanent.map((district) => (
+                  <option key={district.id} value={district.id}>{district.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Postal Code */}
+            <div className="input-group">
+              <label>Postal Code</label>
+              <input
+                type="number"
+                placeholder="1216"
+                value={addressDetails.permanent_postal_code || ""}
+                onChange={(e) => handleChange("permanent_postal_code", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Row 3: District & Postal Code */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>Police Station*</label>
-            <select
-              className="form-select"
-              value={addressDetails.present_police_station || ""}
-              onChange={(e) => handleChange("present_police_station", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            >
-              <option value="">-- Select --</option>
-              {policeStationListPresent.map((policeStation)=>(
-                <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Postal Code*</label>
-            <input
-              type="number"
-              className="form-input"
-              value={addressDetails.present_postal_code || ""}
-              onChange={(e) => handleChange("present_postal_code", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            />
-          </div>
-        </div>
-
-        <h3 className="section-title">Permanent Address</h3>
-        
-        {/* Row 1: House, Apartment & Police Station */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>House, Apartment*</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.permanent_house || ""}
-              onChange={(e) => handleChange("permanent_house", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Road/Block/Sector</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.permanent_road_block_sector || ""}
-              onChange={(e) => handleChange("permanent_road_block_sector", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-            />
-          </div>
-        </div>
-
-        {/* Row 2: Road/Block/Sector & City/Village */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>City/Village</label>
-            <input
-              type="text"
-              className="form-input"
-              value={addressDetails.permanent_city_village || ""}
-              onChange={(e) => handleChange("permanent_city_village", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-            />
-          </div>
-          <div className="form-group">
-            <label>District*</label>
-            <select
-              className="form-select"
-              value={addressDetails.permanent_district || ""}
-              onChange={(e) => {
-                setDistrictIdParmanent(parseInt(e.target.value))
-                handleChange("permanent_district", e.target.value)
-              }}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            >
-              <option value="">-- Select --</option>
-              {districtListParmanent.map((district)=>(
-                <option key={district.id} value={district.id}>{district.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Row 3: District & Postal Code */}
-        <div className="form-row">
-          <div className="form-group">
-            <label>Police Station*</label>
-            <select
-              className="form-select"
-              value={addressDetails.permanent_police_station || ""}
-              onChange={(e) => handleChange("permanent_police_station", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            >
-              <option value="">-- Select --</option>
-              {policeStationListParmanent.map((policeStation)=>(
-                <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Postal Code</label>
-            <input
-              type="number"
-              className="form-input"
-              value={addressDetails.permanent_postal_code || ""}
-              onChange={(e) => handleChange("permanent_postal_code", e.target.value)}
-              disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              required
-            />
-          </div>
-        </div>
-        
-        <div className="form-actions">
-          {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
-            <button className="btn-success" onClick={handleSave}>
+        {/* Save Button */}
+        {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+          <div className="save-container">
+            <button className="save-btn" onClick={handleSave}>
               Save
             </button>
-          )}
-          <button className="btn-primary" onClick={onNext}>
-            Next
-          </button>
-          <button className="btn-secondary" onClick={onBack}>
-            Back
-          </button>
-        </div>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="navigation-buttons">
+        <button className="back-btn" onClick={onBack}>Back</button>
+        <button className="next-btn" onClick={onNext}>Next</button>
       </div>
     </div>
   );
