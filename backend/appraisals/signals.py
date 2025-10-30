@@ -3,19 +3,18 @@ from django.dispatch import receiver
 from django.utils import timezone
 from appraisals.models import (
     EmployeeAppraisalTimer,
-    EmployeeAppraisalStatusTrack,
+    EmployeeAppraisalStatus,
     AppraisalDetails,
     AllAppraisalRecord,
 )
-from system.models import Employee 
 
 
 def _reset_track_status(current_value):
 
-    if current_value is None or current_value == "NA":
+    if current_value == "NA":
         return current_value
 
-    return "False"
+    return 'PENDING'
 
 
 @receiver(post_save, sender=EmployeeAppraisalTimer)
@@ -41,8 +40,8 @@ def move_and_reset_appraisals_on_period_end(sender, instance, created, **kwargs)
         emp = detail.employee
         
         try:
-            track = EmployeeAppraisalStatusTrack.objects.get(employee=emp)
-        except EmployeeAppraisalStatusTrack.DoesNotExist:
+            track = EmployeeAppraisalStatus.objects.get(employee=emp)
+        except EmployeeAppraisalStatus.DoesNotExist:
             print(f"WARNING: Status track not found for employee {emp.id}. Skipping archival.")
             continue
 

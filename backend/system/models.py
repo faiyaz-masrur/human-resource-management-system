@@ -77,12 +77,12 @@ class Designation(models.Model):
 
     def __str__(self):
         return self.name
-     
+    
 
 class ReportingManager(models.Model):
-    # Will be linked to Employee later
+
     manager = models.OneToOneField(
-        "Employee",   # string ref since Employee is defined later
+        "Employee",  
         on_delete=models.CASCADE,
         primary_key=True,
         related_name="as_manager"
@@ -90,6 +90,58 @@ class ReportingManager(models.Model):
 
     def __str__(self):
         return f"{self.manager.name}"
+    
+
+class Hr(models.Model):
+
+    hr = models.OneToOneField(
+        "Employee", 
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_hr"
+    )
+
+    def __str__(self):
+        return f"{self.hr.name}"
+    
+
+class Hod(models.Model):
+
+    hod = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_hod"
+    )
+
+    def __str__(self):
+        return f"{self.hod.name}"
+     
+
+class Coo(models.Model):
+
+    coo = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_coo"
+    )
+
+    def __str__(self):
+        return f"{self.coo.name}"
+    
+
+class Ceo(models.Model):
+
+    ceo = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_ceo"
+    )
+
+    def __str__(self):
+        return f"{self.ceo.name}"
 
 
 class Employee(AbstractUser):
