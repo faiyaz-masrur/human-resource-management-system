@@ -49,7 +49,7 @@ def start_scheduler():
     scheduler.add_job(
         func=daily_scheduled_tasks, # Runs the function that handles both tasks
         trigger='cron',
-        # Set to run every day at 9 AM (based on TIME_ZONE in settings.py)
+        # Set to run every day at 12 AM (based on TIME_ZONE in settings.py)
         hour=0, 
         minute=0, 
         id='daily_combined_checks',

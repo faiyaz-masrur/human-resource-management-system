@@ -30,13 +30,13 @@ import Roles from "./components/Configurations/Roles";
 // -------------------------
 // Attendance Components
 // -------------------------
-import MyAttendance from './pages/Attendance/MyAttendance';
-import MyAttendanceHistory from './pages/Attendance/MyAttendanceHistory';
-import ReconcileRequest from './pages/Attendance/ReconcileRequest';
-import GeoFenceMap from './pages/Attendance/GeoFenceMap';
-import AllAttendance from './pages/Attendance/AllAttendance';
-import EmployeeAttendance from './pages/Attendance/EmployeeAttendance';
-import AttendanceReport from './pages/Attendance/AttendanceReport';
+//import MyAttendance from './pages/Attendance/MyAttendance';
+//import MyAttendanceHistory from './pages/Attendance/MyAttendanceHistory';
+//import ReconcileRequest from './pages/Attendance/ReconcileRequest';
+//import GeoFenceMap from './pages/Attendance/GeoFenceMap';
+//import AllAttendance from './pages/Attendance/AllAttendance';
+//import EmployeeAttendance from './pages/Attendance/EmployeeAttendance';
+//import AttendanceReport from './pages/Attendance/AttendanceReport';
 
 
 function App() {
@@ -97,7 +97,7 @@ function App() {
 
           {/* ---------------------- */}
           {/* Attendance Routes */}
-          {/* ---------------------- */}
+          {/* ---------------------- 
           <Route path="attendance/home" element={<MyAttendance />} />
           <Route path="attendance/history" element={<MyAttendanceHistory />} />
           <Route path="attendance/reconcile" element={<ReconcileRequest />} />
@@ -105,7 +105,7 @@ function App() {
           <Route path="/attendance/all" element={<AllAttendance />} />
           <Route path="/attendance/employee/:employeeId" element={<EmployeeAttendance />} />
           <Route path="/attendance/report" element={<AttendanceReport />} />
-
+            */}
         </Route>
       </Routes>
     </Router>
