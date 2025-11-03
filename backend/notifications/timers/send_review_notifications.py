@@ -32,70 +32,70 @@ def send_review_notification(sender, instance, created, **kwargs):
         if rm:
             dict = {
                 "next_reviewer": rm.manager,
-                "reviewer_message": f"{employee.name} has completed self-appraisal. It is now awaiting your review.",
+                "reviewer_message": f"{employee.name}'s appraisal is now awaiting for your RM review.",
             }
             list.append(dict)
-            employee_message = "Your self-appraisal has been submitted and is now under review by your Reporting Manager.",
+            employee_message = "Your appraisal is currently under review by Reporting Manager.",
     
 
-    elif instance.rm_review_done == "DONE" and instance.hr_review_done == "PENDING":
+    elif instance.self_appraisal_done == "DONE" and instance.hr_review_done == "PENDING":
 
         next_reviewers = Hr.objects.all()
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
                     "next_reviewer" : next_reviewer,
-                    "reviewer_message" : f"The Reporting Manager review for {employee.name} has been submitted. It is now awaiting your HR review.",
+                    "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your HR review.",
                 }
                 list.append(dict)
-                employee_message = "Your appraisal has been reviewed by the Reporting Manager. HR will review it next."
+                employee_message = "Your appraisal is currently under review by HR.",
 
 
-    elif instance.hr_review_done == "DONE" and instance.hod_review_done == "PENDING":
+    elif instance.self_appraisal_done == "DONE" and instance.hod_review_done == "PENDING":
 
         next_reviewers = Hod.objects.all()
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The HR review for {employee.name} has been submitted. It is now awaiting your HOD review.",
+                    "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your HOD review.",
                 }
                 list.append(dict)
-                employee_message = "Your appraisal has been reviewed by HR. HOD will review it next."
+                employee_message = "Your appraisal is currently under review by HOD."
 
 
-    elif instance.hod_review_done == "DONE" and instance.coo_review_done == "PENDING":
+    elif instance.self_appraisal_done == "DONE" and instance.coo_review_done == "PENDING":
 
         next_reviewers = Coo.objects.all()
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The HOD review for {employee.name} has been submitted. It is now awaiting your COO review."
+                    "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your COO review.",
                 }
                 list.append(dict)
-                employee_message = "Your appraisal has been reviewed by HOD. COO will review it next."
+                employee_message = "Your appraisal is currently under review by COO."
 
 
-    elif instance.coo_review_done == "DONE" and instance.ceo_review_done == "PENDING":
+    elif instance.self_appraisal_done == "DONE" and instance.ceo_review_done == "PENDING":
 
         next_reviewer = Ceo.objects.all()
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
                     "next_reviewer" :   next_reviewer,
-                    "reviewer_message" : f"The COO review for {employee.name} has been submitted. It is now awaiting your CEO review.",
+                    "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your CEO review.",
                 }
                 list.append(dict)
-                employee_message = "Your appraisal has been reviewed by COO. CEO will review it next."
+                employee_message = "Your appraisal is currently under review by CEO."
 
 
-    elif (instance.self_appraisal_done == "DONE" and 
-          instance.rm_review_done == "DONE" and
-          instance.hr_review_done == "DONE" and
-          instance.hod_review_done == "DONE" and
-          instance.coo_review_done == "DONE" and
-          instance.ceo_review_done == "DONE"):
+    elif (instance.self_appraisal_done != "PENDING" and 
+          instance.rm_review_done != "PENDING" and
+          instance.hr_review_done != "PENDING" and
+          instance.hod_review_done != "PENDING" and
+          instance.coo_review_done != "PENDING" and
+          instance.ceo_review_done != "PENDING"):
         
         employee_message = "Your appraisal process has been fully completed."
 

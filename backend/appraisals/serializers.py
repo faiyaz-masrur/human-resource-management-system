@@ -265,7 +265,7 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
     emp_grade = serializers.CharField(source='employee.grade.name', read_only=True)
     emp_des = serializers.CharField(source='employee.designation.name', read_only=True)
     emp_join = serializers.DateField(source='employee.joining_date', read_only=True)
-    emp_basic_salary = serializers.DecimalField(source='employee.basic_salary', read_only=True)
+    emp_basic_salary = serializers.DecimalField(source='employee.basic_salary', read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = AppraisalDetails

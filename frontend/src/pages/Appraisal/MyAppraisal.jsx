@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // Import existing appraisal components
 import EmployeeAppraisal from '../../components/AppraisalDetailsComponents/EmployeeAppraisal';

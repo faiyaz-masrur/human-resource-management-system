@@ -2,9 +2,10 @@ from datetime import date
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from appraisals.models import EmployeeAppraisalTimer
-from system.models import Employee, RolePermission, ReportingManager, WorkExperience, Hr, Hod, Coo, Ceo
-from appraisals.models import EmployeeAppraisalStatus 
+from appraisals.models import EmployeeAppraisalTimer, EmployeeAppraisalStatus, AppraisalDetails
+from employees.models import WorkExperience
+from system.models import Employee, RolePermission, ReportingManager, Hr, Hod, Coo, Ceo
+
 
 
 @receiver(post_save, sender=Employee)
@@ -93,7 +94,15 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
         employee_appraisal_status.appraisal_date = employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None
         employee_appraisal_status.save()
 
+        AppraisalDetails.objects.create(
+            employee=employee, 
+            reporting_manager=employee.reporting_manager,
+            appraisal_start_date=employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None,
+            appraisal_end_date=employee_appraisal_timer.employee_self_appraisal_end if employee_appraisal_timer else None,
+            factor=0.55,    
+        )
         
+
     else:
 
 
