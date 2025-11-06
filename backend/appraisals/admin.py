@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import EmployeeAppraisalTimer, ReportingManagerAppraisalTimer, FinalReviewerAppraisalTimer
+from .models import EmployeeAppraisalTimer #, ReportingManagerAppraisalTimer, FinalReviewerAppraisalTimer
 
 
 @admin.register(EmployeeAppraisalTimer)
@@ -20,7 +20,7 @@ class EmployeeAppraisalTimerAdmin(admin.ModelAdmin):
         """
         return EmployeeAppraisalTimer.objects.count() > 1
 
-
+'''
 @admin.register(ReportingManagerAppraisalTimer)
 class ReportingManagerAppraisalTimerAdmin(admin.ModelAdmin):
     list_display = ('reporting_manager_review_start', 'reporting_manager_review_end', 'reporting_manager_review_remind')
@@ -53,3 +53,4 @@ class FinalReviewerAppraisalTimerAdmin(admin.ModelAdmin):
         Prevents deleting the last remaining instance.
         """
         return FinalReviewerAppraisalTimer.objects.count() > 1
+'''
