@@ -67,12 +67,15 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
             employee_appraisal_timer, _ = EmployeeAppraisalTimer.objects.get_or_create(
                 employee=employee,
                 defaults={
-                    "employee_self_appraisal_start": date(current_date.year+1, 3, 1) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 1),
-                    "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year+1, 3, monthrange(current_date.year+1, 3)[1]) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]),
+                    "employee_self_appraisal_start": date(current_date.year, 3, 1) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 1) if joining_date.year == current_date.year
+                    else date(current_date.year, joining_date.month, 1), 
+                    "employee_self_appraisal_remind": date(current_date.year, 3, 15) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 15) if joining_date.year == current_date.year
+                    else date(current_date.year, joining_date.month, 15),
+                    "employee_self_appraisal_end": date(current_date.year, 3, monthrange(current_date.year, 3)[1]) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]) if joining_date.year == current_date.year
+                    else date(current_date.year, joining_date.month, monthrange(current_date.year, joining_date.month)[1]),
                 }
             )
 
@@ -114,12 +117,15 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
             employee_appraisal_timer, _ = EmployeeAppraisalTimer.objects.update_or_create(
                 employee=employee,
                 defaults={
-                    "employee_self_appraisal_start": date(current_date.year+1, 3, 1) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 1),
-                    "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year+1, 3, monthrange(current_date.year+1, 3)[1]) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]),
+                    "employee_self_appraisal_start": date(current_date.year, 3, 1) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 1) if joining_date.year == current_date.year
+                    else date(current_date.year, joining_date.month, 1),
+                    "employee_self_appraisal_remind": date(current_date.year, 3, 15) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 15) if joining_date.year == current_date.year
+                    else date(current_date.year, joining_date.month, 15),
+                    "employee_self_appraisal_end": date(current_date.year, 3, monthrange(current_date.year, 3)[1]) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]) if joining_date.year == current_date.year 
+                    else date(current_date.year, joining_date.month, monthrange(current_date.year, joining_date.month)[1]),
                 }
             )
 

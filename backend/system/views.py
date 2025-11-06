@@ -235,7 +235,7 @@ class RolePermissionAPIView(
     sub_workspace = "Role"
 
     def get_permissions(self):
-        if self.kwargs.get("workspace") and self.kwargs.get("sub_workspace"):
+        if self.request.method == "GET":
             return [IsAuthenticated()]
         return [permission() for permission in self.permission_classes]
 
