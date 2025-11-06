@@ -1,0 +1,75 @@
+# Use a Docker image that has the 'docker' CLI installed
+image: docker:latest
+
+# Enable Docker-in-Docker service to allow running 'docker' commands
+services:
+  - docker:dind
+
+variables:
+  # Use the GitLab Container Registry for your images
+  CI_REGISTRY_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+  CI_REGISTRY_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  # Log in to the GitLab Container Registry
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+# --- Build Jobs ---
+build_backend:
+  stage: build
+  script:
+    # Build the backend image using its Dockerfile
+    - docker build -t $CI_REGISTRY_IMAGE_BACKEND ./backend
+    # Push the image to the registry
+    - docker push $CI_REGISTRY_IMAGE_BACKEND
+  # Only run if files in the backend directory change (optimization)
+  rules:
+    - changes:
+        - backend/**/*
+        - backend/Dockerfile
+        
+build_frontend:
+  stage: build
+  script:
+    # Build the frontend image using its Dockerfile
+    - docker build -t $CI_REGISTRY_IMAGE_FRONTEND ./frontend
+    # Push the image to the registry
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND
+  rules:
+    - changes:
+        - frontend/**/*
+        - frontend/Dockerfile
+
+# --- Deploy Job ---
+deploy_production:
+  stage: deploy
+  image: alpine/git:latest # Use a lightweight image with SSH capabilities
+  before_script:
+    # Prepare SSH key from variable for deployment
+    - chmod 600 $ID_RSA
+    - eval $(ssh-agent -s)
+    - ssh-add $ID_RSA
+  script:
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER_IP "
+      # Log in to the registry on the deployment server
+      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+      # Pull the latest images
+      docker pull $CI_REGISTRY_IMAGE_BACKEND &&
+      docker pull $CI_REGISTRY_IMAGE_FRONTEND &&
+      # Export environment variables for the deployment script (or use an .env file)
+      export BACKEND_IMAGE=$CI_REGISTRY_IMAGE_BACKEND &&
+      export FRONTEND_IMAGE=$CI_REGISTRY_IMAGE_FRONTEND &&
+      # Run a deployment script on the remote server
+      /path/to/your/deploy_script.sh
+      "
+  environment:
+    name: production
+  when: manual # Only deploy manually to production
+  # Only run if both build jobs succeeded
+  needs:
+    - build_backend
+    - build_frontend

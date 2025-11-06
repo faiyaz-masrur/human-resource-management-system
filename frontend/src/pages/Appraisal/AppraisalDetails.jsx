@@ -131,7 +131,7 @@ const AppraisalDetails = ({ view }) => {
           appraisal_end_date: appraisalDetails?.appraisal_end_date,
         });
       } else if (view?.isAllAppraisal && employee_id) {
-        res = await api.post(`appraisals/all-appraisal-details/${employee_id}/`, {
+        res = await api.patch(`appraisals/all-appraisal-details/${employee_id}/`, {
           appraisal_start_date: appraisalDetails?.appraisal_start_date,
           appraisal_end_date: appraisalDetails?.appraisal_end_date,
         });
