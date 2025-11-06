@@ -19,6 +19,7 @@ def create_default_role_permissions(sender, instance, created, **kwargs):
                     'view': False,
                     'create': False,
                     'edit': False,
-                    'delete': False
+                    'delete': False,
+                    'download': False,
                 }
             )

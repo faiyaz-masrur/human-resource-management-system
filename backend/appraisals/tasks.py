@@ -55,6 +55,8 @@ def monthly_appraisal_task():
 
         # Reset EmployeeAppraisalStatus if it exists
         if appraisalStatus:
+            appraisalStatus.appraisalDetails = appraisalDetails
+            appraisalStatus.appraisal_date = timer.employee_self_appraisal_start
             appraisalStatus.self_appraisal_done = 'PENDING'
             appraisalStatus.rm_review_done = 'PENDING' if employee.reviewed_by_rm else 'NA'
             appraisalStatus.hr_review_done = 'PENDING' if employee.reviewed_by_hr else 'NA'

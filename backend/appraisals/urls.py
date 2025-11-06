@@ -8,7 +8,11 @@ from .views import (
     MyCooReviewAPIView,
     MyCeoReviewAPIView,
 
-    ReviewAppraisalListAPIView,
+    RmReviewAppraisalListAPIView,
+    HrReviewAppraisalListAPIView,
+    HodReviewAppraisalListAPIView,
+    CooReviewAppraisalListAPIView,
+    CeoReviewAppraisalListAPIView,
     ReviewAppraisalDetailsAPIView,
     ReviewEmployeeAppraisalAPIView,
     EmployeeRmReviewAPIView,
@@ -45,7 +49,11 @@ urlpatterns = [
     path('my-ceo-review/<int:pk>/', MyCeoReviewAPIView.as_view(), name='my-ceo-review-details'),
 
 
-    path('review-appraisal-list/', ReviewAppraisalListAPIView.as_view(), name='review-appraisal-list'),
+    path('review-appraisal-list/rm-review/', RmReviewAppraisalListAPIView.as_view(), name='rm-review-list'),
+    path('review-appraisal-list/hr-review/', HrReviewAppraisalListAPIView.as_view(), name='hr-review-list'),
+    path('review-appraisal-list/hod-review/', HodReviewAppraisalListAPIView.as_view(), name='hod-review-list'),
+    path('review-appraisal-list/coo-review/', CooReviewAppraisalListAPIView.as_view(), name='coo-review-list'),
+    path('review-appraisal-list/ceo-review/', CeoReviewAppraisalListAPIView.as_view(), name='ceo-review-list'),
     path('review-appraisal-details/<str:employee>/', ReviewAppraisalDetailsAPIView.as_view(), name='review-appraisal-details'),
     path('review-employee-appraisal/', ReviewEmployeeAppraisalAPIView.as_view(), name='review-employee-appraisal'),
     path('review-employee-appraisal/<int:pk>/', ReviewEmployeeAppraisalAPIView.as_view(), name='review-employee-appraisal-details'),

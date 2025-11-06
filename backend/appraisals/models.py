@@ -85,12 +85,13 @@ class EmployeeAppraisal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     achievements_goal_completion = models.TextField(max_length=1000)
-    training_development_plan = models.TextField(max_length=1000)
-    training_needs = models.TextField(max_length=500)
+    training_plan = models.TextField(max_length=1000)
+    development_plan = models.TextField(max_length=1000)
     
     soft_skills_training = models.BooleanField(default=False)
     business_training = models.BooleanField(default=False)
     technical_training = models.BooleanField(default=False)   
+    training_description = models.TextField(max_length=500)
         
     def __str__(self):
         return f"Self-Appraisal for {self.employee.name}"
@@ -125,46 +126,30 @@ class ReportingManagerReview(models.Model):
         related_name='rm_review',
     )
     
-    # --- Remarks Fields (Max 500 words for sections 1-3) ---
-    rm_achievements_remarks = models.TextField(
+
+    achievements_remarks = models.TextField(
         max_length=500, 
-        null=True, 
-        blank=True, 
         verbose_name='Achievements/Goal Completion Remarks'
     )
-    rm_training_remarks = models.TextField(
+    training_remarks = models.TextField(
         max_length=500, 
-        null=True, 
-        blank=True, 
         verbose_name='Training and Development Plan Remarks'
     )
-    
-    # --- Overall Performance Rating ---
-    rm_overall_performance_rating = models.CharField(
+    overall_performance_rating = models.CharField(
         max_length=50, 
         choices=OVERALL_PERFORMANCE_RATING_CHOICES, 
-        null=True, 
-        blank=True,
         verbose_name='Overall Performance Rating'
     )
-    rm_justify_overall_rating = models.TextField(
+    justify_overall_rating = models.TextField(
         max_length=500, 
-        null=True, 
-        blank=True,
         verbose_name='Justification for Overall Rating' 
     )
-    
-    # --- Potential Rating ---
-    rm_potential_rating = models.CharField(
+    potential_rating = models.CharField(
         max_length=50, 
         choices=POTENTIAL_RATING_CHOICES,
-        null=True, 
-        blank=True,
         verbose_name='Potential Rating'
     )
-    
-    # --- Final Remarks (Max 1000 words) ---
-    rm_final_remarks = models.TextField(
+    decision_remarks = models.TextField(
         max_length=1000, 
         null=True, 
         blank=True,
@@ -189,7 +174,7 @@ class HrReview(models.Model):
 
     appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.CASCADE, related_name='hr_review')
 
-    remarks_hr = models.TextField(max_length=1000, null=True, blank=True, verbose_name='Remarks from Human Resource')
+    remarks_hr = models.TextField(max_length=1000, verbose_name='Remarks from Human Resource')
     
     # --- Leave Details ---
     casual_leave_taken = models.IntegerField(default=0, verbose_name='Casual Leave Taken')
@@ -202,43 +187,43 @@ class HrReview(models.Model):
     early_exit_count = models.IntegerField(default=0, verbose_name='Early Exit Count')
 
     # --- Advancement Details ---
-    current_basic = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    current_basic = models.IntegerField(default=0)
 
     # --- Promotion with Increment ---
-    promo_with_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_with_increment_proposed_basic = models.IntegerField(default=0)
 
     # --- Promotion without Increment (Implied Pay Progression/PP) ---
-    promo_without_increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promo_without_increment_proposed_basic = models.IntegerField(default=0)
     
     # --- Increment (without promotion) ---
-    increment_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    increment_proposed_basic = models.IntegerField(default=0)
     
     # --- Pay Progression (PP) Only ---
-    pp_proposed_basic = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pp_proposed_basic = models.IntegerField(default=0)
     
     # --- Decisions (Checkboxes) ---
     # 1. Promotion Recommended with Increment
-    promo_w_increment = models.BooleanField(null=True, blank=True, verbose_name='Promo with Increment')
+    promo_w_increment = models.BooleanField(default=False, verbose_name='Promo with Increment')
     promo_w_increment_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 2. Promotion Recommended with PP only
-    promo_w_pp = models.BooleanField(null=True, blank=True, verbose_name='Promotion Recommended with PP only')
+    promo_w_pp = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only')
     promo_w_pp_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 3. Increment Recommended without Promotion
-    increment_w_no_promo = models.BooleanField(null=True, blank=True, verbose_name='Increment w/o Promo')
+    increment_w_no_promo = models.BooleanField(default=False, verbose_name='Increment w/o Promo')
     increment_w_no_promo_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 4. Only Pay Progression (PP) Recommended
-    pp_only = models.BooleanField(null=True, blank=True, verbose_name='PP Only')
+    pp_only = models.BooleanField(default=False, verbose_name='PP Only')
     pp_only_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 5. Promotion/Increment/PP Deferred
-    deferred = models.BooleanField(null=True, blank=True, verbose_name='Deferred')
+    deferred = models.BooleanField(default=False, verbose_name='Deferred')
     deferred_remarks = models.TextField(max_length=100, null=True, blank=True)
     
     # --- Final Decision Remarks ---
-    remarks_on_your_decision = models.TextField(max_length=100, null=True, blank=True)
+    remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)
@@ -264,31 +249,31 @@ class HodReview(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
-    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (HOD)')
+    remarks = models.TextField(max_length=1000, verbose_name='General Remarks (HOD)')
 
     # --- Decisions (Checkboxes) ---
     # 1. Promotion Recommended with Increment
-    promo_w_increment = models.BooleanField(null=True, blank=True, verbose_name='Promo with Increment')
+    promo_w_increment = models.BooleanField(default=False, verbose_name='Promo with Increment')
     promo_w_increment_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 2. Promotion Recommended with PP only
-    promo_w_pp = models.BooleanField(null=True, blank=True, verbose_name='Promotion Recommended with PP only')
+    promo_w_pp = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only')
     promo_w_pp_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 3. Increment Recommended without Promotion
-    increment_w_no_promo = models.BooleanField(null=True, blank=True, verbose_name='Increment w/o Promo')
+    increment_w_no_promo = models.BooleanField(default=False, verbose_name='Increment w/o Promo')
     increment_w_no_promo_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 4. Only Pay Progression (PP) Recommended
-    pp_only = models.BooleanField(null=True, blank=True, verbose_name='PP Only')
+    pp_only = models.BooleanField(default=False, verbose_name='PP Only')
     pp_only_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 5. Promotion/Increment/PP Deferred
-    deferred = models.BooleanField(null=True, blank=True, verbose_name='Deferred')
+    deferred = models.BooleanField(default=False, verbose_name='Deferred')
     deferred_remarks = models.TextField(max_length=100, null=True, blank=True)
     
     # --- Final Remarks on the decision ---
-    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (HOD)')
+    remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (HOD)')
 
     def __str__(self):
         return f"HOD Review for {self.appraisal.employee.name}"
@@ -312,31 +297,31 @@ class CooReview(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
-    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (COO)')
+    remarks = models.TextField(max_length=1000, verbose_name='General Remarks (COO)')
 
     # --- Decisions (Checkboxes) ---
     # 1. Promotion Recommended with Increment
-    promo_w_increment = models.BooleanField(null=True, blank=True, verbose_name='Promo with Increment')
+    promo_w_increment = models.BooleanField(default=False, verbose_name='Promo with Increment')
     promo_w_increment_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 2. Promotion Recommended with PP only
-    promo_w_pp = models.BooleanField(null=True, blank=True, verbose_name='Promotion Recommended with PP only')
+    promo_w_pp = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only')
     promo_w_pp_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 3. Increment Recommended without Promotion
-    increment_w_no_promo = models.BooleanField(null=True, blank=True, verbose_name='Increment w/o Promo')
+    increment_w_no_promo = models.BooleanField(default=False, verbose_name='Increment w/o Promo')
     increment_w_no_promo_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 4. Only Pay Progression (PP) Recommended
-    pp_only = models.BooleanField(null=True, blank=True, verbose_name='PP Only')
+    pp_only = models.BooleanField(default=False, verbose_name='PP Only')
     pp_only_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 5. Promotion/Increment/PP Deferred
-    deferred = models.BooleanField(null=True, blank=True, verbose_name='Deferred')
+    deferred = models.BooleanField(default=False, verbose_name='Deferred')
     deferred_remarks = models.TextField(max_length=100, null=True, blank=True)
     
     # --- Final Remarks on the decision ---
-    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (COO)')
+    remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (COO)')
 
     def __str__(self):
         return f"COO Review for {self.appraisal.employee.name}"
@@ -360,31 +345,31 @@ class CeoReview(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     # --- Remarks ---
-    remarks = models.TextField(max_length=1000, null=True, blank=True, verbose_name='General Remarks (CEO)')
+    remarks = models.TextField(max_length=1000, verbose_name='General Remarks (CEO)')
 
     # --- Decisions (Checkboxes) ---
     # 1. Promotion Recommended with Increment
-    promo_w_increment = models.BooleanField(null=True, blank=True, verbose_name='Promo with Increment')
+    promo_w_increment = models.BooleanField(default=False, verbose_name='Promo with Increment')
     promo_w_increment_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 2. Promotion Recommended with PP only
-    promo_w_pp = models.BooleanField(null=True, blank=True, verbose_name='Promotion Recommended with PP only')
+    promo_w_pp = models.BooleanField(default=False, verbose_name='Promotion Recommended with PP only')
     promo_w_pp_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 3. Increment Recommended without Promotion
-    increment_w_no_promo = models.BooleanField(null=True, blank=True, verbose_name='Increment w/o Promo')
+    increment_w_no_promo = models.BooleanField(default=False, verbose_name='Increment w/o Promo')
     increment_w_no_promo_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 4. Only Pay Progression (PP) Recommended
-    pp_only = models.BooleanField(null=True, blank=True, verbose_name='PP Only')
+    pp_only = models.BooleanField(default=False, verbose_name='PP Only')
     pp_only_remarks = models.TextField(max_length=100, null=True, blank=True)
 
     # 5. Promotion/Increment/PP Deferred
-    deferred = models.BooleanField(null=True, blank=True, verbose_name='Deferred')
+    deferred = models.BooleanField(default=False, verbose_name='Deferred')
     deferred_remarks = models.TextField(max_length=100, null=True, blank=True)
     
     # --- Final Remarks on the decision ---
-    remarks_on_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (CEO)')
+    remarks_on_your_decision = models.TextField(max_length=500, null=True, blank=True, verbose_name='Final Decision Remarks (CEO)')
 
     def __str__(self):
         return f"CEO Review for {self.appraisal.employee.name}"

@@ -44,8 +44,8 @@ const menuItems = [
     icon: <img src={appraisalIcon} alt="Appraisal" style={{ width: 18, height: 18 }} />, path: '/appraisal', 
     subMenu: [
       { name: 'My Appraisal', path: '/appraisal/my' },
-      { name: 'Review Appraisals', path: '/appraisal/review' },
-      { name: 'All Appraisals', path: '/appraisal/all' },
+      { name: 'Review Appraisals', path: '/appraisal/review/list' },
+      { name: 'All Appraisals', path: '/appraisal/all/list' },
       { name: 'Active Appraisal Status', path: '/appraisal/status' },
       { name: 'Appraisal Settings', path: '/appraisal/settings' },
     ]

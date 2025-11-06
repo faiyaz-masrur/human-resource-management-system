@@ -1,37 +1,82 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
+
+
+import api from '../../services/api';
 
 const AllAppraisals = () => {
-    // 2. Call useNavigate hook to get the navigation function
+    const { user } = useAuth();
     const navigate = useNavigate(); 
-    
-    const appraisals = [
-        { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', dept: 'R&D', status: 'active', start_date:'', end_date:''},
-        { id: 1066, name: 'Saim Bin Salim', designation: 'Associate Business Analyst', dept: 'R&D', status: 'inactive'},
-        { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', dept: 'R&D', status: 'active'},
-    ];
+    const [allAppraisalList, setAllAppraisalList] = useState([]);
+    const [rolePermissions, setRolePermissions] = useState({});
 
-    const getStatusColor = (status) => {
-        // color mapping based on 'active' (green) and 'inactive' (red)
-        if (status.toLowerCase() === 'active') {
+
+    useEffect(() => {
+        const fetchRolePermissions = async () => {
+            try {
+                const res = await api.get(`system/role-permissions/${user.role}/${"AllAppraisal"}/${"AllAppraisalList"}/`);
+                console.log("User role permission:", res?.data)
+                setRolePermissions(res?.data || {}); 
+            } catch (error) {
+                console.warn("Error fatching role permissions", error);
+                setRolePermissions({}); 
+            }
+        };
+
+        fetchRolePermissions();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchAllAppraisalList= async () => {
+            try {
+                if (rolePermissions?.view) {
+                    const res = await api.get(`appraisals/all-appraisal-list/`);
+                    console.log("RM Review Appraisal List:", res?.data);
+                    setAllAppraisalList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : [])
+                }  
+            } catch (error) {
+                console.warn("Error fetching rm review appraisal List:", error);
+                setAllAppraisalList([]);
+            }
+        };
+
+        fetchAllAppraisalList();
+    }, [rolePermissions]);
+
+
+    const getStatusColor = (start, end) => {
+        if (getStatus(start, end) === true) {
             return '#4CAF50'; // Green
         }
-        if (status.toLowerCase() === 'inactive') {
+        if (getStatus(start, end) === false) {
             return '#F44336'; // Red
         }
-        
     };
+
+
+    const getStatus = (start, end) => {
+        if (start <= new Date() && end >= new Date()) {
+            return true; 
+        } else {
+            return false; 
+        }     
+    };
+
     
     // to show the static forms
-    const handleEditAppraisal = () => {
-        navigate('/appraisal/employee'); 
+    const handleEditAppraisal = (employee_id) => {
+        navigate(`/appraisal/all/details/${employee_id}`); 
     };
     
+
     const handleDownloadAppraisal = () => {
         console.log("Download action triggered!");
         // define download logic - later
         alert("Downloading appraisal data...");
     };
+
 
     return (
         <div className="appraisal-list-container">
@@ -42,48 +87,58 @@ const AllAppraisals = () => {
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Designation</th>
                             <th>Dept</th>
+                            <th>Designation</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            {rolePermissions?.edit && (<th>Actions</th>)}
                         </tr>
                     </thead>
                     <tbody>
-                        {appraisals.map((appraisal, index) => (
+                        {allAppraisalList.map((appraisal, index) => (
                             <tr key={index}>
-                                <td>{appraisal.id}</td>
-                                <td>{appraisal.name}</td>
-                                <td>{appraisal.designation}</td>
-                                <td>{appraisal.dept}</td>
+                                <td>{appraisal.emp_id}</td>
+                                <td>{appraisal.emp_name}</td>
+                                <td>{appraisal.emp_dept}</td>
+                                <td>{appraisal.emp_des}</td>  
                                 <td>
-                                    <span style={{ color: getStatusColor(appraisal.status), fontWeight: 'bold' }}>
-                                        {appraisal.status.charAt(0).toUpperCase() + appraisal.status.slice(1)}
+                                    <span 
+                                        style={{ 
+                                            color: getStatusColor(appraisal.appraisal_start_date, appraisal.appraisal_end_date), 
+                                            fontWeight: 'bold' 
+                                        }}>
+                                        {
+                                            getStatus(appraisal.appraisal_start_date, appraisal.appraisal_end_date) 
+                                                    ? 
+                                                'Active' 
+                                                    : 
+                                                'Inactive'
+                                        }
                                     </span>
                                 </td>
                                 
                                 <td>
                                     <div className="ar-actions-cell">
+                                        {rolePermissions?.edit && (
+                                            <button 
+                                                className="action-button-light action-button--edit-light" 
+                                                onClick={() => (handleEditAppraisal(appraisal.emp_id))}
+                                                title="Edit Appraisal"
+                                            >
+                                                &#9998; {/* Pen emoji for Edit */}
+                                            </button>
+                                        )}
                                         
-                                        <button 
-                                            className="action-button-light action-button--edit-light" 
-                                            onClick={handleEditAppraisal}
-                                            title="Edit Appraisal"
-                                        >
-                                            &#9998; {/* Pen emoji for Edit */}
-                                        </button>
-
-                                        
-                                        <button 
-                                            className="action-button-light action-button--download-light" 
-                                            onClick={handleDownloadAppraisal} 
-                                            title="Download Appraisal"
-                                        >
-                                            &#x2193; {/* Down Arrow (Download) emoji */}
-                                        </button>
-
+                                        {rolePermissions?.download && (
+                                            <button 
+                                                className="action-button-light action-button--download-light" 
+                                                onClick={handleDownloadAppraisal} 
+                                                title="Download Appraisal"
+                                            >
+                                                &#x2193; {/* Down Arrow (Download) emoji */}
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
-
                             </tr>
                         ))}
                     </tbody>

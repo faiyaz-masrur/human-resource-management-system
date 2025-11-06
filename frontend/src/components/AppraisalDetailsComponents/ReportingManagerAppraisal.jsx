@@ -1,9 +1,182 @@
-import React, { useState } from 'react';
-// Axios would be used here in a real app, but is commented out for this example
-// import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
-const ReportingManagerAppraisal = ({ appraisalId }) => {
-  // Mock data for radio button groups to keep the code DRY
+import api from '../../services/api';
+
+
+const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
+  const defaultFormData = {
+    appraisal: appraisalDetails?.emp_appraisal || null,
+    achievements_remarks: '',
+    training_remarks: '',
+    justify_overall_rating: '',
+    overall_performance_rating: '',
+    potential_rating: '', 
+    decision_remarks: '',
+  }
+  const { user } = useAuth();
+  const [formData, setFormData] = useState(defaultFormData);
+  const [rmReviewId, setRmReviewId] = useState(appraisalDetails?.rm_review || null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    setRmReviewId(appraisalDetails?.rm_review || null);
+  }, [appraisalDetails]);
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view?.isMyAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"MyAppraisal"}/${"MyRmReview"}/`);
+        } else if(view?.isReviewAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"ReviewAppraisal"}/${"EmployeeRmReview"}/`);
+        } else if(view?.isAllAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"AllAppraisal"}/${"AllRmReview"}/`);
+        } else {
+          return;
+        }
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchRmAppraisalForm = async () => {
+      try {
+        if (rolePermissions?.view) {
+          let res;
+          if(view?.isMyAppraisal && rmReviewId){
+            res = await api.get(`appraisals/my-rm-review/${rmReviewId}/`);
+          } else if(view?.isReviewAppraisal && rmReviewId){
+            res = await api.get(`appraisals/employee-rm-review/${rmReviewId}/`);
+          } else if(view?.isAllAppraisal && rmReviewId){
+            res = await api.get(`appraisals/all-rm-review/${rmReviewId}/`);
+          } else {
+            return; 
+          }
+          console.log("Rm Review Form:", res?.data);
+          setFormData(res?.data || defaultFormData);
+          setRmReviewId(res?.data?.id || null);
+        }  
+      } catch (error) {
+        console.warn("Error fetching rm review form:", error);
+        setFormData(defaultFormData);
+      }
+    };
+
+    fetchRmAppraisalForm();
+  }, [rolePermissions]);
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+
+  const validateFormData = (form) => {
+    if (!form?.appraisal){
+      toast.warning("Employee appraisal not created.");
+      return false;
+    }
+    if (!form?.achievements_remarks?.trim()) {
+      toast.warning("Comment on Achievements/Goal completion is required.");
+      return false;
+    }
+    if (!form?.training_remarks?.trim()) {
+      toast.warning("Comment on Achievements/Goal completion is required.");
+      return false;
+    }
+    if (!form?.overall_performance_rating?.trim()) {
+      toast.warning("Overall Performance Rating is required.");
+      return false;
+    }
+    if (!form?.justify_overall_rating?.trim()) {
+      toast.warning("Justification on Overall Performance Rating is required.");
+      return false;
+    }
+    if (!form?.potential_rating?.trim()) {
+      toast.warning("Overall Potential Rating is required.");
+      return false;
+    }
+    return true;
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateFormData(formData)) return;
+    setIsSubmitting(true);
+    try {
+      let res;
+      if (rmReviewId) {
+        if (!rolePermissions.edit) {
+          toast.warning("You don't have permission to edit.");
+          return;
+        }
+        if(view?.isMyAppraisal){
+          res = await api.put(`appraisals/my-rm-review/${rmReviewId}/`, formData);
+        } else if(view?.isReviewAppraisal){
+          res = await api.put(`appraisals/employee-rm-review/${rmReviewId}/`, formData);
+        } else if(view?.isAllAppraisal){
+          res = await api.put(`appraisals/all-rm-review/${rmReviewId}/`, formData);
+        } else {
+          toast.warning("You dont have permission to perform this task.");
+          return;
+        }
+        console.log("Update Response:", res?.data);
+        if (res?.status === 200) {
+          toast.success("Review updated successfully.");
+        } else {
+          toast.error("Failed to update review.");
+        }
+      } else {
+        if (!rolePermissions.create) {
+          toast.warning("You don't have permission to create.");
+          return;
+        }
+        if(view?.isMyAppraisal){
+          res = await api.post(`appraisals/my-rm-review/`, formData);
+        } else if(view?.isReviewAppraisal){
+          res = await api.post(`appraisals/employee-rm-review/`, formData);
+        } else if(view?.isAllAppraisal){
+          res = await api.post(`appraisals/all-rm-review/`, formData);
+        } else {
+          toast.warning("You dont have permission to perform this task.");
+          return;
+        }
+        console.log("Create Response:", res?.data);
+        if (res?.status === 201) {
+          setRmReviewId(res?.data?.id);
+          toast.success("Review created successfully.");
+        } else {
+          toast.error("Failed to create review.");
+        }
+      }
+    } catch (error) {
+      console.error("Submission Error:", error);
+      toast.error("An error occurred during submission.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
   const performanceRatings = [
     { id: 'performance-1', value: 'does_not_meet', label: 'Does not meet expectation' },
     { id: 'performance-2', value: 'partially_meets', label: 'Partially meets expectation' },
@@ -18,37 +191,6 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
     { id: 'potential-3', value: 'high_potential', label: 'High potential - performing well and ready for promotion immediately.' },
   ];
 
-  const [formData, setFormData] = useState({
-    achievements_remarks: '',
-    training_remarks: '',
-    justify_overall_rating: '',
-    overall_performance_rating: 'does_not_meet', // Default checked value from screenshot
-    potential_rating: 'low_potential', // Default checked value from screenshot
-    decision_remarks: '',
-  });
-
-  const [message, setMessage] = useState(null);
-  const [isError, setIsError] = useState(false);
-  const [loading, setLoading] = useState(false); // Set to false as data fetching is removed
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('Submitting...');
-    setIsError(false);
-    // Mock submission logic
-    setTimeout(() => {
-        setMessage('Manager review submitted successfully!');
-        console.log("Form Data Submitted:", formData);
-    }, 1000);
-  };
 
   const styles = {
     pageWrapper: {
@@ -108,6 +250,18 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
       resize: "vertical",
       boxSizing: "border-box",
     },
+    textAreaDec: {
+      width: "100%",
+      minHeight: "60px",
+      border: "1px solid #d1d5db",
+      borderRadius: "6px",
+      padding: "12px",
+      fontSize: "14px",
+      color: "#374151",
+      backgroundColor: "#fff",
+      resize: "vertical",
+      boxSizing: "border-box",
+    },
     radioGroupGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -149,7 +303,7 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
       gap: "12px",
       marginTop: "20px",
     },
-    submitButton: {
+    primaryButton: {
       backgroundColor: "#2563eb",
       color: "#fff",
       border: "none",
@@ -158,6 +312,10 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
       fontSize: "14px",
       fontWeight: 500,
       cursor: "pointer",
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+      cursor: 'not-allowed',
     },
     cancelButton: {
       backgroundColor: "#fff",
@@ -186,7 +344,7 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
   };
   
   // Custom Radio Button component to handle checked state style
-  const CustomRadio = ({ id, name, value, label, checked, onChange }) => {
+  const CustomRadio = ({ id, name, value, label, checked, onChange, rmReviewId, rolePermissions }) => {
     const checkedStyle = checked ? styles.radioInputChecked : {};
     return (
       <div style={styles.radioItem}>
@@ -198,6 +356,7 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
           checked={checked}
           onChange={onChange}
           style={{...styles.radioInput, ...checkedStyle}}
+          disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
         />
         <label htmlFor={id} style={styles.radioLabel}>{label}</label>
       </div>
@@ -205,18 +364,9 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
   };
 
 
-  if (loading) {
-    return <div style={styles.pageWrapper}><div style={styles.container}>Loading...</div></div>;
-  }
-
   return (
     <div style={styles.pageWrapper}>
       <form style={styles.container} onSubmit={handleSubmit}>
-        {message && (
-          <div style={{...styles.messageContainer, ...(isError ? styles.errorMessage : styles.successMessage)}}>
-            {message}
-          </div>
-        )}
         
         {/* Achievements/Goal Completion */}
         <div style={styles.section}>
@@ -230,9 +380,11 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
             id="rm-achievements"
             name="achievements_remarks"
             style={styles.textArea}
-            placeholder="Make any comment that you feel necessary to clarify or supplement the achievements mentioned above, in addition to goals for next year."
-            value={formData.achievements_remarks}
+            placeholder="Make any comment that you feel necessary to clarify or supplement the Achievements mentioned above. In addition set goals for next year."
+            value={formData.achievements_remarks || ''}
             onChange={handleChange}
+            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            required
           ></textarea>
         </div>
 
@@ -247,9 +399,11 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
             id="rm-training"
             name="training_remarks"
             style={styles.textArea}
-            placeholder="Make any comment that you feel necessary..."
-            value={formData.training_remarks}
+            placeholder="Reporting managers remarks for Training and Development Plan:"
+            value={formData.training_remarks || ''}
             onChange={handleChange}
+            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            required
           ></textarea>
         </div>
 
@@ -269,6 +423,8 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
                 label={rating.label}
                 checked={formData.overall_performance_rating === rating.value}
                 onChange={handleChange}
+                rmReviewId={rmReviewId}
+                rolePermissions={rolePermissions}
               />
             ))}
           </div>
@@ -280,51 +436,59 @@ const ReportingManagerAppraisal = ({ appraisalId }) => {
             name="justify_overall_rating"
             style={styles.textArea}
             placeholder="Provide comments to justify your rating. When crafting your comments, consider the following factors: consistent demonstrations of skills, competencies, and the results they have delivered for the organization."
-            value={formData.justify_overall_rating}
+            value={formData.justify_overall_rating || ''}
             onChange={handleChange}
+            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            required
           ></textarea>
         </div>
 
         {/* Potential Rating */}
         <div style={styles.lastSection}>
-            <h2 style={styles.sectionTitle}>Potential Rating</h2>
-            <p style={styles.sectionDescription}>
-                How are you going to rate an employee's potential? Select the option that best reflects the employee's level of performance over time.
-            </p>
+          <h2 style={styles.sectionTitle}>Potential Rating</h2>
+          <p style={styles.sectionDescription}>
+            How are you going to rate an employee's potential? Select the option that best reflects the employee's level of performance over time.
+          </p>
           <div style={styles.radioGroupStack}>
             {potentialRatings.map(rating => (
-                 <CustomRadio
-                    key={rating.id}
-                    id={rating.id}
-                    name="potential_rating"
-                    value={rating.value}
-                    label={rating.label}
-                    checked={formData.potential_rating === rating.value}
-                    onChange={handleChange}
-                />
+              <CustomRadio
+                key={rating.id}
+                id={rating.id}
+                name="potential_rating"
+                value={rating.value}
+                label={rating.label}
+                checked={formData.potential_rating === rating.value}
+                onChange={handleChange}
+                rmReviewId={rmReviewId}
+                rolePermissions={rolePermissions}
+              />
             ))}
           </div>
           <div style={{...styles.header, justifyContent: 'flex-end'}}>
-              <span style={styles.wordCountLabel}>Maximum 500 words</span>
+            <span style={styles.wordCountLabel}>Maximum 500 words</span>
           </div>
           <textarea
             id="potential-comments"
             name="decision_remarks"
-            style={styles.textArea}
+            style={styles.textAreaDec}
             placeholder="Remarks on your decision..."
-            value={formData.decision_remarks}
+            value={formData.decision_remarks || ''}
             onChange={handleChange}
+            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
           ></textarea>
         </div>
 
         {/* Buttons */}
         <div style={styles.buttonGroup}>
-          <button type="submit" style={styles.submitButton}>
-            Submit
-          </button>
-          <button type="button" style={styles.cancelButton}>
-            Cancel
-          </button>
+          {(rmReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
+            <button
+              type="submit"
+              style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          )}
         </div>
       </form>
     </div>

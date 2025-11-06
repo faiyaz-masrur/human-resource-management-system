@@ -272,11 +272,12 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
         fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
             "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "appraisal_start_date", "appraisal_end_date"
+            "appraisal_start_date", "appraisal_end_date", "factor"
         ]
         read_only_fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review"
+            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
+            "factor"
         ]
 
 

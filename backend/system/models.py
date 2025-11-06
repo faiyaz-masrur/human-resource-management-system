@@ -31,6 +31,7 @@ class RolePermission(models.Model):
     create = models.BooleanField(default=False)
     edit = models.BooleanField(default=False)
     delete = models.BooleanField(default=False)
+    download = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "System Role Permission"
