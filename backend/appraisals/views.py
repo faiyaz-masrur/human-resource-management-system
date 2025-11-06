@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from system.permissions import HasRoleWorkspacePermission
+from system.models import RolePermission
 from .models import (
     EmployeeAppraisal,
     ReportingManagerReview,
@@ -151,14 +152,82 @@ class MyCeoReviewAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
 
 
 
-class ReviewAppraisalListAPIView(ListAPIView):
-    serializer_class = EmployeeAppraisalSerializer
+class RmReviewAppraisalListAPIView(ListAPIView):
+    serializer_class = AppraisalDetailsSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = 'ReviewAppraisal'
-    workspace = 'ReviewAppraisalList'
+    sub_workspace = 'ReviewAppraisalList'
     
     def get_queryset(self):
-        return AppraisalDetails.objects.filter(employee__reporting_manager = self.request.user)
+        return AppraisalDetails.objects.filter(employee__reporting_manager__manager = self.request.user)
+    
+
+class HrReviewAppraisalListAPIView(ListAPIView):
+    serializer_class = AppraisalDetailsSerializer
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = 'ReviewAppraisal'
+    sub_workspace = 'ReviewAppraisalList'
+    
+    def get_queryset(self):
+        reviewPermission = RolePermission.objects.filter(
+            role=self.request.user.role, 
+            workspace='ReviewAppraisal', 
+            sub_workspace='EmployeeHrReview'
+        ).first()
+        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.filter(employee__reviewed_by_hr = True)
+        return AppraisalDetails.objects.none()
+    
+
+class HodReviewAppraisalListAPIView(ListAPIView):
+    serializer_class = AppraisalDetailsSerializer
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = 'ReviewAppraisal'
+    sub_workspace = 'ReviewAppraisalList'
+    
+    def get_queryset(self):
+        reviewPermission = RolePermission.objects.filter(
+            role=self.request.user.role, 
+            workspace='ReviewAppraisal', 
+            sub_workspace='EmployeeHodReview'
+        ).first()
+        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.filter(employee__reviewed_by_hod = True)
+        return AppraisalDetails.objects.none()
+    
+
+class CooReviewAppraisalListAPIView(ListAPIView):
+    serializer_class = AppraisalDetailsSerializer
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = 'ReviewAppraisal'
+    sub_workspace = 'ReviewAppraisalList'
+    
+    def get_queryset(self):
+        reviewPermission = RolePermission.objects.filter(
+            role=self.request.user.role, 
+            workspace='ReviewAppraisal', 
+            sub_workspace='EmployeeCooReview'
+        ).first()
+        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.filter(employee__reviewed_by_coo = True)
+        return AppraisalDetails.objects.none()
+    
+
+class CeoReviewAppraisalListAPIView(ListAPIView):
+    serializer_class = AppraisalDetailsSerializer
+    permission_classes = [HasRoleWorkspacePermission]
+    workspace = 'ReviewAppraisal'
+    sub_workspace = 'ReviewAppraisalList'
+    
+    def get_queryset(self):
+        reviewPermission = RolePermission.objects.filter(
+            role=self.request.user.role, 
+            workspace='ReviewAppraisal', 
+            sub_workspace='EmployeeCeoReview'
+        ).first()
+        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.filter(employee__reviewed_by_ceo = True)
+        return AppraisalDetails.objects.none()
     
 
 class ReviewAppraisalDetailsAPIView(RetrieveUpdateAPIView):
@@ -286,10 +355,10 @@ class EmployeeCeoReviewAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModel
 
 class AllAppraisalListAPIView(ListAPIView):
     queryset = AppraisalDetails.objects.all()
-    serializer_class = EmployeeAppraisalSerializer
+    serializer_class = AppraisalDetailsSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = 'AllAppraisal'
-    workspace = 'AllAppraisalList'
+    sub_workspace = 'AllAppraisalList'
     
 
 class AllAppraisalDetailsAPIView(RetrieveUpdateAPIView):

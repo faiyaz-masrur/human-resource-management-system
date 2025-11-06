@@ -1,12 +1,10 @@
 from rest_framework import serializers
 from .models import WorkExperience, Education, TrainingCertificate, PersonalDetail, Address, Attatchment
-from appraisals.models import EmployeeAppraisalStatusTrack
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.conf import settings
-from system.models import Employee, RolePermission, ReportingManager
+from system.models import Employee
 from system.utils.serializers import SmartUpdateSerializer
-from django.db import transaction
 
 
 class AddressSerializer(SmartUpdateSerializer):

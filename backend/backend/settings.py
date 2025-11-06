@@ -1,5 +1,4 @@
 from datetime import timedelta
-import os
 from pathlib import Path
 
 import os
@@ -40,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist', 
     'corsheaders', # Add this to handle Cross-Origin Resource Sharing
+    'celery',
     'system',
     'appraisals',
     'employees',
@@ -124,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
@@ -236,3 +236,24 @@ SCHEDULER_EXECUTORS = {
 # This keeps your database clean by removing jobs older than a week.
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # seconds
 SCHEDULER_AUTOSTART = True
+
+
+
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# set the celery timezone
+CELERY_TIMEZONE = 'Asia/Dhaka'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "monthly_appraisal_task": {
+        "task": "appraisals.tasks.monthly_appraisal_task",  # path to your Celery task
+        "schedule": crontab(hour=0, minute=0, day_of_month=1),  # 1st of every month at 00:00 UTC
+        "args": (),  # any arguments if your task needs them
+    },
+}

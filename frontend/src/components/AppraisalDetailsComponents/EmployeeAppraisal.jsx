@@ -1,21 +1,84 @@
-import React, { useState } from 'react';
-// Axios is not used in this standalone example but would be in a real app
-// import axios from 'axios'; 
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
-const EmployeeAppraisal = ({ employeeId = '1001' }) => {
-  const [formData, setFormData] = useState({
-    achievements: '',
-    training_needs_top: '',
-    training_needs_bottom: '',
-    training_description: '',
-    soft_skills_training: true,
-    business_training: true,
+import api from '../../services/api';
+
+const EmployeeAppraisal = ({ view, appraisalDetails }) => {
+  const defaultFormData = {
+    employee: appraisalDetails?.emp_id || null,
+    achievements_goal_completion: '',
+    training_plan: '',
+    development_plan: '',
+    soft_skills_training: false,
+    business_training: false,
     technical_training: false,
-  });
-
-  const [message, setMessage] = useState(null);
-  const [isError, setIsError] = useState(false);
+    training_description: '',
+  }
+  const { user } = useAuth();
+  const [formData, setFormData] = useState(defaultFormData);
+  const [appraisalId, setAppraisalId] = useState(appraisalDetails?.emp_appraisal || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+    setAppraisalId(appraisalDetails?.emp_appraisal || null);
+  }, [appraisalDetails]);
+
+
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        let res;
+        if(view?.isMyAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"MyAppraisal"}/${"MyEmployeeAppraisal"}/`);
+        } else if(view?.isReviewAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"ReviewAppraisal"}/${"EmployeeEmployeeAppraisal"}/`);
+        } else if(view?.isAllAppraisal){
+          res = await api.get(`system/role-permissions/${user.role}/${"AllAppraisal"}/${"AllEmployeeAppraisal"}/`);
+        } else {
+          return;
+        }
+        console.log("User role permission:", res?.data)
+        setRolePermissions(res?.data || {}); 
+      } catch (error) {
+        console.warn("Error fatching role permissions", error);
+        setRolePermissions({}); 
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchEmployeeAppraisalForm = async () => {
+      try {
+        if (rolePermissions?.view) {
+          let res;
+          if(view?.isMyAppraisal && appraisalId){
+            res = await api.get(`appraisals/my-employee-appraisal/${appraisalId}/`);
+          } else if(view?.isReviewAppraisal && appraisalId){
+            res = await api.get(`appraisals/review-employee-appraisal/${appraisalId}/`);
+          } else if(view?.isAllAppraisal && appraisalId){
+            res = await api.get(`appraisals/all-employee-appraisal/${appraisalId}/`);
+          } else {
+            return; 
+          }
+          console.log("Employee Appraisal Form:", res?.data);
+          setFormData(res?.data || defaultFormData);
+          setAppraisalId(res?.data?.id || null);
+        }  
+      } catch (error) {
+        console.warn("Error fetching employee appraisal form:", error);
+        setFormData(defaultFormData);
+      }
+    };
+
+    fetchEmployeeAppraisalForm();
+  }, [rolePermissions]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,39 +88,83 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
     }));
   };
 
+
+  const validateFormData = (form) => {
+    if (!form?.achievements_goal_completion?.trim()) {
+      toast.warning("Achievements/Goal completion is required.");
+      return false;
+    }
+    if (!form?.training_plan?.trim()) {
+      toast.warning("Training & Development plan is required.");
+      return false;
+    }
+    if (!form?.development_plan?.trim()) {
+      toast.warning("Training & Development plan is required.");
+      return false;
+    }
+    
+    return true;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
-    setIsError(false);
+    if (!validateFormData(formData)) return;
     setIsSubmitting(true);
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log(`Submitting appraisal for Employee ID: ${employeeId}`, formData);
-      setMessage('Appraisal submitted successfully!');
-      // Optionally reset form after submission
+      let res;
+      if (appraisalId) {
+        if (!rolePermissions.edit) {
+          toast.warning("You don't have permission to edit.");
+          return;
+        }
+        if(view?.isMyAppraisal){
+          res = await api.put(`appraisals/my-employee-appraisal/${appraisalId}/`, formData);
+        } else if(view?.isReviewAppraisal){
+          res = await api.put(`appraisals/review-employee-appraisal/${appraisalId}/`, formData);
+        } else if(view?.isAllAppraisal){
+          res = await api.put(`appraisals/all-employee-appraisal/${appraisalId}/`, formData);
+        } else {
+          toast.warning("You dont have permission to perform this task.");
+          return;
+        }
+        console.log("Update Response:", res?.data);
+        if (res?.status === 200) {
+          toast.success("Appraisal updated successfully.");
+        } else {
+          toast.error("Failed to update appraisal.");
+        }
+      } else {
+        if (!rolePermissions.create) {
+          toast.warning("You don't have permission to create.");
+          return;
+        }
+        if(view?.isMyAppraisal){
+          res = await api.post(`appraisals/my-employee-appraisal/`, formData);
+        } else if(view?.isReviewAppraisal){
+          res = await api.post(`appraisals/review-employee-appraisal/`, formData);
+        } else if(view?.isAllAppraisal){
+          res = await api.post(`appraisals/all-employee-appraisal/`, formData);
+        } else {
+          toast.warning("You dont have permission to perform this task.");
+          return;
+        }
+        console.log("Create Response:", res?.data);
+        if (res?.status === 201) {
+          setAppraisalId(res?.data?.id);
+          toast.success("Appraisal created successfully.");
+        } else {
+          toast.error("Failed to create appraisal.");
+        }
+      }
     } catch (error) {
-      setIsError(true);
-      setMessage('An error occurred during submission.');
+      console.error("Submission Error:", error);
+      toast.error("An error occurred during submission.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancel = () => {
-    setMessage(null);
-    setIsError(false);
-    setFormData({
-        achievements: '',
-        training_needs_top: '',
-        training_needs_bottom: '',
-        training_description: '',
-        soft_skills_training: false,
-        business_training: false,
-        technical_training: false,
-    });
-    console.log('Form reset.');
-  };
 
   const styles = {
     pageWrapper: {
@@ -95,6 +202,18 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
     textArea: {
       width: "100%",
       minHeight: "120px",
+      border: "1px solid #d1d5db",
+      borderRadius: "6px",
+      padding: "12px",
+      fontSize: "14px",
+      color: "#374151",
+      backgroundColor: "#fff",
+      resize: "vertical",
+      boxSizing: "border-box",
+    },
+    textAreaDesc: {
+      width: "100%",
+      minHeight: "70px",
       border: "1px solid #d1d5db",
       borderRadius: "6px",
       padding: "12px",
@@ -171,8 +290,8 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
       cursor: "pointer",
     },
     buttonDisabled: {
-        opacity: 0.6,
-        cursor: 'not-allowed',
+      opacity: 0.6,
+      cursor: 'not-allowed',
     },
     messageContainer: {
         padding: '12px',
@@ -191,7 +310,7 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
   };
 
   // Custom Checkbox Component for styling
-  const CustomCheckbox = ({ id, name, label, checked, onChange }) => (
+  const CustomCheckbox = ({ id, name, label, checked, onChange, rolePermissions, appraisalId }) => (
     <label htmlFor={id} style={styles.checkboxItem}>
       <input
         id={id}
@@ -200,6 +319,7 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
         checked={checked}
         onChange={onChange}
         style={styles.checkboxInput}
+        disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
       />
       <span style={{ ...styles.checkboxCustom, ...(checked && styles.checkboxCustomChecked) }}>
         <span style={{ ...styles.checkmark, ...(checked && styles.checkmarkVisible) }}>✔</span>
@@ -211,11 +331,6 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
   return (
     <div style={styles.pageWrapper}>
       <form style={styles.container} onSubmit={handleSubmit}>
-        {message && (
-          <div style={{...styles.messageContainer, ...(isError ? styles.errorMessage : styles.successMessage)}}>
-            {message}
-          </div>
-        )}
 
         {/* Achievements/Goal Completion */}
         <div style={styles.formSection}>
@@ -227,11 +342,12 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
           </div>
           <textarea
             id="achievements"
-            name="achievements"
+            name="achievements_goal_completion"
             style={styles.textArea}
             placeholder="You are encouraged to provide details of your key achievements and contributions during the review period, with specific examples where possible."
-            value={formData.achievements}
+            value={formData.achievements_goal_completion || ''}
             onChange={handleChange}
+            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
             required
           />
         </div>
@@ -246,11 +362,13 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
           </div>
           <textarea
             id="training_needs_top"
-            name="training_needs_top"
+            name="training_plan"
             style={styles.textArea}
-            placeholder="What do you consider to be your key development goals for the next review period? What support do you need to achieve them?"
-            value={formData.training_needs_top}
+            placeholder="What do you consider to be your main strengths that contribute to your overall performance?"
+            value={formData.training_plan || ''}
             onChange={handleChange}
+            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            required
           />
         </div>
 
@@ -258,11 +376,13 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
         <div style={styles.formSection}>
           <textarea
             id="training_needs_bottom"
-            name="training_needs_bottom"
+            name="development_plan"
             style={styles.textArea}
-            placeholder="What do you consider to be your key development goals for the next review period? What support do you need to achieve them?"
-            value={formData.training_needs_bottom}
+            placeholder="What do you consider to be the aspects of your performance that needs to be improved?"
+            value={formData.development_plan || ''}
             onChange={handleChange}
+            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            required
           />
         </div>
 
@@ -279,51 +399,52 @@ const EmployeeAppraisal = ({ employeeId = '1001' }) => {
               id="soft-skills"
               name="soft_skills_training"
               label="Soft Skills Training"
-              checked={formData.soft_skills_training}
+              checked={formData.soft_skills_training  || false}
               onChange={handleChange}
+              rolePermissions={rolePermissions}
+              appraisalId={appraisalId}
             />
             <CustomCheckbox
               id="business-training"
               name="business_training"
               label="Business Training"
-              checked={formData.business_training}
+              checked={formData.business_training || false}
               onChange={handleChange}
+              rolePermissions={rolePermissions}
+              appraisalId={appraisalId}
             />
             <CustomCheckbox
               id="technical-training"
               name="technical_training"
               label="Technical Training"
-              checked={formData.technical_training}
+              checked={formData.technical_training || false}
               onChange={handleChange}
+              rolePermissions={rolePermissions}
+              appraisalId={appraisalId}
             />
           </div>
           <textarea
             id="training_description"
             name="training_description"
-            style={styles.textArea}
-            placeholder="What do you consider to be your key development goals for the next review period? What support do you need to achieve them?"
-            value={formData.training_description}
+            style={styles.textAreaDesc}
+            placeholder="Please Specify (if any):"
+            value={formData.training_description || ''}
             onChange={handleChange}
+            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
           />
         </div>
         
         {/* Buttons */}
         <div style={styles.buttonGroup}>
-          <button
-            type="submit"
-            style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </button>
-          <button
-            type="button"
-            style={{...styles.secondaryButton, ...(isSubmitting && styles.buttonDisabled)}}
-            onClick={handleCancel}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
+          {(appraisalId ? rolePermissions?.edit : rolePermissions?.create) && (
+            <button
+              type="submit"
+              style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          )}
         </div>
       </form>
     </div>

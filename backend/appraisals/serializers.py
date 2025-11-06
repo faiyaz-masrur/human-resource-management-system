@@ -265,18 +265,19 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
     emp_grade = serializers.CharField(source='employee.grade.name', read_only=True)
     emp_des = serializers.CharField(source='employee.designation.name', read_only=True)
     emp_join = serializers.DateField(source='employee.joining_date', read_only=True)
-    emp_basic_salary = serializers.DecimalField(source='employee.basic_salary', read_only=True)
+    emp_basic_salary = serializers.DecimalField(source='employee.basic_salary', read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = AppraisalDetails
         fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
             "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "appraisal_start_date", "appraisal_end_date"
+            "appraisal_start_date", "appraisal_end_date", "factor"
         ]
         read_only_fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review"
+            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
+            "factor"
         ]
 
 

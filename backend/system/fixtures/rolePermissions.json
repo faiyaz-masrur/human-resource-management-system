@@ -6,7 +6,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -15,7 +16,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -24,7 +26,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -33,7 +36,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -42,7 +46,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "EMP",
@@ -51,7 +56,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "EMP",
@@ -60,7 +66,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
 
     {
@@ -70,7 +77,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -79,7 +87,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -88,7 +97,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -97,7 +107,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -106,7 +117,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -115,7 +127,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -124,7 +137,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -133,7 +147,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -143,7 +158,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "EMP",
@@ -152,7 +168,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -161,7 +178,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -170,7 +188,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -179,7 +198,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -188,7 +208,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -197,7 +218,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -207,7 +229,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -216,7 +239,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -225,7 +249,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -234,7 +259,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -243,7 +269,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -252,7 +279,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -261,7 +289,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -270,7 +299,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -280,7 +310,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -289,7 +320,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -298,7 +330,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -307,7 +340,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -316,7 +350,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -325,7 +360,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -334,7 +370,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -343,7 +380,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -352,7 +390,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -362,7 +401,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -371,7 +411,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -380,7 +421,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "EMP",
@@ -389,7 +431,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
 
@@ -402,7 +445,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -411,7 +455,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -420,7 +465,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -429,7 +475,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -438,7 +485,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "RM",
@@ -447,7 +495,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "RM",
@@ -456,7 +505,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     
     {
@@ -466,7 +516,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -475,7 +526,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -484,7 +536,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -493,7 +546,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -502,7 +556,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -511,7 +566,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -520,7 +576,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -529,7 +586,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -539,7 +597,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "RM",
@@ -548,7 +607,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -557,7 +617,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -566,7 +627,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -575,7 +637,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -584,7 +647,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -593,7 +657,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -603,7 +668,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -612,7 +678,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -621,7 +688,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -630,7 +698,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -639,7 +708,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -648,7 +718,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -657,7 +728,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -666,7 +738,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -676,7 +749,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -685,7 +759,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -694,7 +769,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -703,7 +779,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -712,7 +789,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -721,7 +799,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -730,7 +809,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -739,7 +819,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -748,7 +829,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -758,7 +840,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -767,7 +850,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -776,7 +860,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "RM",
@@ -785,7 +870,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
 
@@ -798,7 +884,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -807,7 +894,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -816,7 +904,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -825,7 +914,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -834,7 +924,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -843,7 +934,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -852,7 +944,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     
     {
@@ -862,7 +955,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HR",
@@ -871,7 +965,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -880,7 +975,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -889,7 +985,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -898,7 +995,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -907,7 +1005,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "HR",
@@ -916,7 +1015,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "HR",
@@ -925,7 +1025,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
 
     {
@@ -935,7 +1036,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HR",
@@ -944,7 +1046,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -953,7 +1056,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -962,7 +1066,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -971,7 +1076,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -980,7 +1086,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -989,7 +1096,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -999,7 +1107,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1008,7 +1117,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1017,7 +1127,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1026,7 +1137,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1035,7 +1147,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1044,7 +1157,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1053,7 +1167,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1062,7 +1177,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1072,7 +1188,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HR",
@@ -1081,7 +1198,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HR",
@@ -1090,7 +1208,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HR",
@@ -1099,7 +1218,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1108,7 +1228,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1117,7 +1238,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1126,7 +1248,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1135,7 +1258,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HR",
@@ -1144,7 +1268,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1154,7 +1279,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -1163,7 +1289,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -1172,7 +1299,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
     {
         "role": "HR",
@@ -1181,7 +1309,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": false
     },
 
 
@@ -1195,7 +1324,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1204,7 +1334,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1213,7 +1344,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1222,7 +1354,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1231,7 +1364,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HOD",
@@ -1240,7 +1374,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HOD",
@@ -1249,7 +1384,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     
     {
@@ -1259,7 +1395,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1268,7 +1405,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1277,7 +1415,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1286,7 +1425,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1295,7 +1435,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1304,7 +1445,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1313,7 +1455,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1322,7 +1465,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1332,7 +1476,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "HOD",
@@ -1341,7 +1486,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1350,7 +1496,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1359,7 +1506,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1368,7 +1516,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1377,7 +1526,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1386,7 +1536,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1396,7 +1547,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1405,7 +1557,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1414,7 +1567,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1423,7 +1577,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1432,7 +1587,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1441,7 +1597,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1450,7 +1607,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1459,7 +1617,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1469,7 +1628,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1478,7 +1638,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1487,7 +1648,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1496,7 +1658,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1505,7 +1668,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1514,7 +1678,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1523,7 +1688,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1532,7 +1698,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1541,7 +1708,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1551,7 +1719,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1560,7 +1729,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1569,7 +1739,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "HOD",
@@ -1578,7 +1749,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
 
@@ -1592,7 +1764,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1601,7 +1774,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1610,7 +1784,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1619,7 +1794,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1628,7 +1804,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "COO",
@@ -1637,7 +1814,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "COO",
@@ -1646,7 +1824,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     
     {
@@ -1656,7 +1835,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1665,7 +1845,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1674,7 +1855,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1683,7 +1865,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1692,7 +1875,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1701,7 +1885,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1710,7 +1895,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1719,7 +1905,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1729,7 +1916,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1738,7 +1926,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1747,7 +1936,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1756,7 +1946,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1765,7 +1956,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1774,7 +1966,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1783,7 +1976,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1793,7 +1987,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1802,7 +1997,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1811,7 +2007,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1820,7 +2017,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1829,7 +2027,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1838,7 +2037,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1847,7 +2047,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1856,7 +2057,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1866,7 +2068,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1875,7 +2078,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1884,7 +2088,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1893,7 +2098,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1902,7 +2108,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1911,7 +2118,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1920,7 +2128,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1929,7 +2138,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1938,7 +2148,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -1948,7 +2159,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1957,7 +2169,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1966,7 +2179,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "COO",
@@ -1975,7 +2189,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
 
@@ -1989,7 +2204,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -1998,7 +2214,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2007,7 +2224,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2016,7 +2234,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2025,7 +2244,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "CEO",
@@ -2034,7 +2254,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     {
         "role": "CEO",
@@ -2043,7 +2264,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": true
     },
     
     {
@@ -2053,7 +2275,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2062,7 +2285,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2071,7 +2295,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2080,7 +2305,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2089,7 +2315,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2098,7 +2325,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2107,7 +2335,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2116,7 +2345,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -2126,7 +2356,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2135,7 +2366,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2144,7 +2376,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2153,7 +2386,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2162,7 +2396,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2171,7 +2406,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2180,7 +2416,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -2190,7 +2427,8 @@
         "view": true,
         "create": false,
         "edit": true,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2199,7 +2437,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2208,7 +2447,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2217,7 +2457,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2226,7 +2467,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2235,7 +2477,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2244,7 +2487,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2253,7 +2497,8 @@
         "view": true,
         "create": true,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -2263,7 +2508,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2272,7 +2518,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2281,7 +2528,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2290,7 +2538,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2299,7 +2548,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2308,7 +2558,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2317,7 +2568,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2326,7 +2578,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2335,7 +2588,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
     {
@@ -2345,7 +2599,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2354,7 +2609,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2363,7 +2619,8 @@
         "view": true,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
     {
         "role": "CEO",
@@ -2372,7 +2629,8 @@
         "view": false,
         "create": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "download": false
     },
 
 
@@ -2386,7 +2644,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2395,7 +2654,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2404,7 +2664,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2413,7 +2674,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2422,7 +2684,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2431,7 +2694,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2440,7 +2704,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     
     {
@@ -2450,7 +2715,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2459,7 +2725,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2468,7 +2735,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2477,7 +2745,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2486,7 +2755,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2495,7 +2765,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2504,7 +2775,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2513,7 +2785,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
 
     {
@@ -2523,7 +2796,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2532,7 +2806,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2541,7 +2816,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2550,7 +2826,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2559,7 +2836,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2568,7 +2846,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2577,7 +2856,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
 
     {
@@ -2587,7 +2867,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2596,7 +2877,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2605,7 +2887,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2614,7 +2897,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2623,7 +2907,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2632,7 +2917,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2641,7 +2927,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2650,7 +2937,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
 
     {
@@ -2660,7 +2948,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2669,7 +2958,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2678,7 +2968,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2687,7 +2978,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2696,7 +2988,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2705,7 +2998,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2714,7 +3008,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2723,7 +3018,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2732,7 +3028,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
 
     {
@@ -2742,7 +3039,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2751,7 +3049,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2760,7 +3059,8 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     },
     {
         "role": "SUPER",
@@ -2769,6 +3069,7 @@
         "view": true,
         "create": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "download": true
     }
 ]

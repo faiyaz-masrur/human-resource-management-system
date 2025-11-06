@@ -178,9 +178,6 @@ class Command(BaseCommand):
         for grade in grades_data:
             grade_obj, created = Grade.objects.get_or_create(
                 name=grade["name"], 
-                defaults={
-                    'description': grade["description"]
-                }
             )
             obj_mapping[grade["name"]] = grade_obj
             if created:
@@ -244,7 +241,8 @@ class Command(BaseCommand):
                     'view': role_permission['view'],
                     'create': role_permission['create'],
                     'edit': role_permission['edit'],
-                    'delete': role_permission['delete']
+                    'delete': role_permission['delete'],
+                    'download': role_permission['download'],
                 }
             )
             if created:

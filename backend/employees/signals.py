@@ -2,9 +2,10 @@ from datetime import date
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from appraisals.models import EmployeeAppraisalTimer
-from system.models import Employee, RolePermission, ReportingManager, WorkExperience, Hr, Hod, Coo, Ceo
-from appraisals.models import EmployeeAppraisalStatus 
+from appraisals.models import EmployeeAppraisalTimer, EmployeeAppraisalStatus, AppraisalDetails
+from employees.models import WorkExperience
+from system.models import Employee, RolePermission, ReportingManager, Hr, Hod, Coo, Ceo
+
 
 
 @receiver(post_save, sender=Employee)
@@ -69,10 +70,18 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
                     else date(current_date.year+1, joining_date.month, 1),
                     "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
                     else date(current_date.year+1, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year+1, 4, 1) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month%12+1, 1),
+                    "employee_self_appraisal_end": date(current_date.year+1, 3, 30) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 30),
                 }
             )
+
+        appraisalDetails = AppraisalDetails.objects.create(
+            employee=employee, 
+            reporting_manager=employee.reporting_manager,
+            appraisal_start_date=employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None,
+            appraisal_end_date=employee_appraisal_timer.employee_self_appraisal_end if employee_appraisal_timer else None,
+            factor=0.55,    
+        )
 
         employee_appraisal_status = EmployeeAppraisalStatus.objects.create(employee=employee)
 
@@ -90,27 +99,44 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
             if is_review_required:
                 setattr(employee_appraisal_status, status_attr, 'PENDING')
         
+        employee_appraisal_status.appraisalDetails = appraisalDetails if appraisalDetails else None
         employee_appraisal_status.appraisal_date = employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None
         employee_appraisal_status.save()
-
         
+
     else:
 
 
         update_fields = kwargs.get('update_fields') or []
 
         if 'joining_date' in update_fields:
-            EmployeeAppraisalTimer.objects.update_or_create(
+            employee_appraisal_timer = EmployeeAppraisalTimer.objects.update_or_create(
                 employee=employee,
                 defaults={
-                    "employee_self_appraisal_start": date(current_date.year, 3, 1) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year, joining_date.month, 1),
-                    "employee_self_appraisal_remind": date(current_date.year, 3, 15) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year, 4, 1) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year, joining_date.month%12+1, 1),
+                    "employee_self_appraisal_start": date(current_date.year+1, 3, 1) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 1),
+                    "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 15),
+                    "employee_self_appraisal_end": date(current_date.year+1, 3, 30) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, 30),
                 }
             )
+
+            AppraisalDetails.objects.update_or_create(
+                employee=employee,
+                defaults={
+                    "appraisal_start_date": employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None,
+                    "appraisal_end_date": employee_appraisal_timer.employee_self_appraisal_end if employee_appraisal_timer else None,
+                }
+            )
+
+            EmployeeAppraisalStatus.objects.update_or_create(
+                employee=employee,
+                defaults={
+                    "appraisal_date": employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None,
+                }
+            )
+
 
         if 'role' in update_fields:
             employee_review_permission_list = RolePermission.objects.filter(
