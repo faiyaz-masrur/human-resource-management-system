@@ -1,4 +1,5 @@
 from datetime import date
+from calendar import monthrange
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -63,15 +64,15 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
 
         employee_appraisal_timer = None
         if joining_date: 
-            employee_appraisal_timer = EmployeeAppraisalTimer.objects.get_or_create(
+            employee_appraisal_timer, _ = EmployeeAppraisalTimer.objects.get_or_create(
                 employee=employee,
                 defaults={
                     "employee_self_appraisal_start": date(current_date.year+1, 3, 1) if joining_date < date(2023, 4, 1)
                     else date(current_date.year+1, joining_date.month, 1),
                     "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
                     else date(current_date.year+1, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year+1, 3, 30) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 30),
+                    "employee_self_appraisal_end": date(current_date.year+1, 3, monthrange(current_date.year+1, 3)[1]) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]),
                 }
             )
 
@@ -110,15 +111,15 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
         update_fields = kwargs.get('update_fields') or []
 
         if 'joining_date' in update_fields:
-            employee_appraisal_timer = EmployeeAppraisalTimer.objects.update_or_create(
+            employee_appraisal_timer, _ = EmployeeAppraisalTimer.objects.update_or_create(
                 employee=employee,
                 defaults={
                     "employee_self_appraisal_start": date(current_date.year+1, 3, 1) if joining_date < date(2023, 4, 1)
                     else date(current_date.year+1, joining_date.month, 1),
                     "employee_self_appraisal_remind": date(current_date.year+1, 3, 15) if joining_date < date(2023, 4, 1)
                     else date(current_date.year+1, joining_date.month, 15),
-                    "employee_self_appraisal_end": date(current_date.year+1, 3, 30) if joining_date < date(2023, 4, 1)
-                    else date(current_date.year+1, joining_date.month, 30),
+                    "employee_self_appraisal_end": date(current_date.year+1, 3, monthrange(current_date.year+1, 3)[1]) if joining_date < date(2023, 4, 1)
+                    else date(current_date.year+1, joining_date.month, monthrange(current_date.year+1, joining_date.month)[1]),
                 }
             )
 

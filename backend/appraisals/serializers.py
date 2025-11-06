@@ -285,6 +285,10 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
 # --- Tracking Serializers ---
 
 class EmployeeAppraisalStatusSerializer(serializers.ModelSerializer):
+
+    emp_id = serializers.CharField(source='employee.id', read_only=True)
+    emp_name = serializers.CharField(source='employee.name', read_only=True)
+    
     class Meta:
         model = EmployeeAppraisalStatus
         fields = '__all__'
