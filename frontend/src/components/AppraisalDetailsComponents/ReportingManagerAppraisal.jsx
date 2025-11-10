@@ -19,12 +19,18 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
   const [formData, setFormData] = useState(defaultFormData);
   const [rmReviewId, setRmReviewId] = useState(appraisalDetails?.rm_review || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReportingManager, setIsReportingManager] = useState(false);
   const [rolePermissions, setRolePermissions] = useState({});
 
 
   useEffect(() => {
     setRmReviewId(appraisalDetails?.rm_review || null);
-  }, [appraisalDetails]);
+    setIsReportingManager(user?.id === appraisalDetails?.reporting_manager);
+    setFormData(prev => ({
+      ...prev,
+      appraisal: appraisalDetails?.emp_appraisal || null
+    }));
+  }, [user, appraisalDetails]);
 
 
   useEffect(() => {
@@ -77,7 +83,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
     };
 
     fetchRmAppraisalForm();
-  }, [rolePermissions]);
+  }, [rolePermissions, rmReviewId]);
 
 
   const handleChange = (e) => {
@@ -125,7 +131,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
     try {
       let res;
       if (rmReviewId) {
-        if (!rolePermissions.edit) {
+        if (!rolePermissions.edit && appraisalDetails.active_status && isReportingManager) {
           toast.warning("You don't have permission to edit.");
           return;
         }
@@ -146,7 +152,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
           toast.error("Failed to update review.");
         }
       } else {
-        if (!rolePermissions.create) {
+        if (!rolePermissions.create && appraisalDetails.active_status && isReportingManager) {
           toast.warning("You don't have permission to create.");
           return;
         }
@@ -344,7 +350,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
   };
   
   // Custom Radio Button component to handle checked state style
-  const CustomRadio = ({ id, name, value, label, checked, onChange, rmReviewId, rolePermissions }) => {
+  const CustomRadio = ({ id, name, value, label, checked, onChange, isReportingManager, rmReviewId, rolePermissions, appraisalDetails }) => {
     const checkedStyle = checked ? styles.radioInputChecked : {};
     return (
       <div style={styles.radioItem}>
@@ -356,7 +362,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
           checked={checked}
           onChange={onChange}
           style={{...styles.radioInput, ...checkedStyle}}
-          disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+          disabled={(appraisalDetails.active_status && isReportingManager) ? rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
         />
         <label htmlFor={id} style={styles.radioLabel}>{label}</label>
       </div>
@@ -383,7 +389,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
             placeholder="Make any comment that you feel necessary to clarify or supplement the Achievements mentioned above. In addition set goals for next year."
             value={formData.achievements_remarks || ''}
             onChange={handleChange}
-            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={(appraisalDetails.active_status && isReportingManager) ? rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           ></textarea>
         </div>
@@ -402,7 +408,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
             placeholder="Reporting managers remarks for Training and Development Plan:"
             value={formData.training_remarks || ''}
             onChange={handleChange}
-            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={(appraisalDetails.active_status && isReportingManager) ? rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           ></textarea>
         </div>
@@ -423,8 +429,10 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
                 label={rating.label}
                 checked={formData.overall_performance_rating === rating.value}
                 onChange={handleChange}
+                isReportingManager={isReportingManager}
                 rmReviewId={rmReviewId}
                 rolePermissions={rolePermissions}
+                appraisalDetails={appraisalDetails}
               />
             ))}
           </div>
@@ -438,7 +446,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
             placeholder="Provide comments to justify your rating. When crafting your comments, consider the following factors: consistent demonstrations of skills, competencies, and the results they have delivered for the organization."
             value={formData.justify_overall_rating || ''}
             onChange={handleChange}
-            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={(appraisalDetails.active_status && isReportingManager) ? rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           ></textarea>
         </div>
@@ -459,8 +467,10 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
                 label={rating.label}
                 checked={formData.potential_rating === rating.value}
                 onChange={handleChange}
+                isReportingManager={isReportingManager}
                 rmReviewId={rmReviewId}
                 rolePermissions={rolePermissions}
+                appraisalDetails={appraisalDetails}
               />
             ))}
           </div>
@@ -474,22 +484,24 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
             placeholder="Remarks on your decision..."
             value={formData.decision_remarks || ''}
             onChange={handleChange}
-            disabled={rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={(appraisalDetails.active_status && isReportingManager) ? rmReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
           ></textarea>
         </div>
 
         {/* Buttons */}
-        <div style={styles.buttonGroup}>
-          {(rmReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
-            <button
-              type="submit"
-              style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-          )}
-        </div>
+        {isReportingManager && (
+          <div style={styles.buttonGroup}>
+            {(rmReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
+              <button
+                type="submit"
+                style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
+                disabled={!appraisalDetails.active_status || isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            )}
+          </div>
+        )}
       </form>
     </div>
   );

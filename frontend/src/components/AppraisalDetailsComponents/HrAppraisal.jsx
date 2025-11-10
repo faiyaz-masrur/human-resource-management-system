@@ -42,6 +42,10 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
 
   useEffect(() => {
     setHrReviewId(appraisalDetails?.hr_review || null);
+    setFormData(prev => ({
+      ...prev,
+      appraisal: appraisalDetails?.emp_appraisal || null
+    }));
   }, [appraisalDetails]);
 
 
@@ -95,14 +99,14 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
     };
 
     fetchHrAppraisalForm();
-  }, [rolePermissions]);
+  }, [rolePermissions, hrReviewId]);
 
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === 'number' ? value === '' ? '' : Number(value) : value, 
     }));
   };
 
@@ -215,7 +219,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
     try {
       let res;
       if (hrReviewId) {
-        if (!rolePermissions.edit) {
+        if (!rolePermissions.edit && appraisalDetails.active_status) {
           toast.warning("You don't have permission to edit.");
           return;
         }
@@ -236,7 +240,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
           toast.error("Failed to update review.");
         }
       } else {
-        if (!rolePermissions.create) {
+        if (!rolePermissions.create && appraisalDetails.active_status) {
           toast.warning("You don't have permission to create.");
           return;
         }
@@ -524,7 +528,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
             name="remarks_hr"
             value={formData.remarks_hr || ''}
             onChange={handleChange}
-            disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           ></textarea>
         </div>
@@ -555,7 +559,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="casual_leave_taken"
                 value={formData.casual_leave_taken || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required  
               />
             </div>
@@ -568,7 +572,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="sick_leave_taken"
                 value={formData.sick_leave_taken || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required   
               />
             </div>
@@ -581,7 +585,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="annual_leave_taken"
                 value={formData.annual_leave_taken || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required 
               />
             </div>
@@ -617,7 +621,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="on_time_count"
                 value={formData.on_time_count || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required 
               />
             </div>
@@ -630,7 +634,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="delay_count"
                 value={formData.delay_count || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required 
               />
             </div>
@@ -643,7 +647,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name="early_exit_count"
                 value={formData.early_exit_count || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                 required  
               />
             </div>
@@ -682,7 +686,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                   name={item.value}
                   value={formData[item.value] || ''}
                   onChange={handleChange}
-                  disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                  disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                   required  
                 />
               </div>
@@ -727,7 +731,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                     name={item.value} // Group radio buttons by name
                     onChange={() => setFormData(prev => ({ ...prev, [item.value]: true }))}
                     checked={formData[item.value] === true}
-                    disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                    disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                   />{" "}
                   Yes
                 </label>
@@ -738,7 +742,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                     name={item.value} // Group radio buttons by name
                     onChange={() => setFormData(prev => ({ ...prev, [item.value]: false }))}
                     checked={formData[item.value] === false}
-                    disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                    disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                   />{" "}
                   No
                 </label>
@@ -750,7 +754,7 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
                 name={item.valueRemarks}
                 value={formData[item.valueRemarks] || ''}
                 onChange={handleChange}
-                disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
               />
             </div>
           ))}
@@ -766,24 +770,24 @@ const HrAppraisal = ({ view, appraisalDetails }) => {
               name="remarks_on_your_decision"
               value={formData.remarks_on_your_decision || ''}
               onChange={handleChange}
-              disabled={hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+              disabled={appraisalDetails.active_status ? hrReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             >
             </textarea>
           </div>
         </div>
 
         {/* Buttons */}
-        <div style={styles.buttonRow}>
-          {(hrReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
-            <button
-              type="submit"
-              style={{...styles.btnPrimary, ...(isSubmitting && styles.buttonDisabled)}}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-          )}
-        </div>
+          <div style={styles.buttonRow}>
+            {(hrReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
+              <button
+                type="submit"
+                style={{...styles.btnPrimary, ...(isSubmitting && styles.buttonDisabled)}}
+                disabled={!appraisalDetails.active_status || isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            )}
+          </div>
       </form>
     </div>
   );

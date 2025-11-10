@@ -9,13 +9,14 @@ from .models import (
     EmployeeAppraisalStatus,
     AppraisalDetails,
 )
+from system.utils.serializers import SmartUpdateSerializer
 
 class AppraisalValidatorMixin:
 
-    def validate_appraisal(self, employee, reviewed_flag=True):
+    def validate_appraisal_object(self, employee, reviewed_flag=True):
 
         if not employee:
-            raise serializers.ValidationError("Employee must be specified for appraisal.")
+            raise serializers.ValidationError("Invalid employee instance passed for appraisal.")
         
         if not reviewed_flag:
             raise serializers.ValidationError("Review not allowed as per employee's review hierarchy.")
@@ -30,7 +31,7 @@ class AppraisalValidatorMixin:
             )
 
 
-class EmployeeAppraisalSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class EmployeeAppraisalSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
     class Meta:
         model = EmployeeAppraisal
         fields = '__all__'
@@ -38,7 +39,7 @@ class EmployeeAppraisalSerializer(AppraisalValidatorMixin, serializers.ModelSeri
 
     def validate(self, attrs):
         employee = attrs.get('employee')
-        self.validate_appraisal(employee)
+        self.validate_appraisal_object(employee)
         return attrs
         
     def create(self, validated_data):
@@ -65,7 +66,7 @@ class EmployeeAppraisalSerializer(AppraisalValidatorMixin, serializers.ModelSeri
 
 
 
-class ReportingManagerReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class ReportingManagerReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 
     class Meta:
         model = ReportingManagerReview
@@ -76,7 +77,7 @@ class ReportingManagerReviewSerializer(AppraisalValidatorMixin, serializers.Mode
         appraisal = attrs.get('appraisal')
         if not appraisal:
             raise serializers.ValidationError(f"Appraisal not created.")
-        self.validate_appraisal(appraisal.employee, appraisal.employee.reviewed_by_rm)
+        self.validate_appraisal_object(appraisal.employee, appraisal.employee.reviewed_by_rm)
         return attrs
     
     def create(self, validated_data):
@@ -103,7 +104,7 @@ class ReportingManagerReviewSerializer(AppraisalValidatorMixin, serializers.Mode
 
 
 
-class HrReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class HrReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 
     class Meta:
         model = HrReview
@@ -113,15 +114,17 @@ class HrReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
     def validate(self, attrs):
         appraisal = attrs.get('appraisal')
         if not appraisal:
-            raise serializers.ValidationError(f"Appraisal not created.")
-        self.validate_appraisal(appraisal.employee, appraisal.employee.reviewed_by_hr)
+            raise serializers.ValidationError("Appraisal not created.")
+        self.validate_appraisal_object(appraisal.employee, appraisal.employee.reviewed_by_hr)
         return attrs
     
     def create(self, validated_data):
         review_instance = super().create(validated_data)
+        employee = review_instance.appraisal.employee
+        if not employee:
+            raise serializers.ValidationError("Employee must be linked to this appraisal.")
         
         try:
-            employee = review_instance.appraisal.employee
             track, _ = EmployeeAppraisalStatus.objects.get_or_create(employee=employee)
             track.hr_review_done = 'DONE' 
             track.save()
@@ -141,7 +144,7 @@ class HrReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
 
 
 
-class HodReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class HodReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 
     class Meta:
         model = HodReview
@@ -152,7 +155,7 @@ class HodReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
         appraisal = attrs.get('appraisal')
         if not appraisal:
             raise serializers.ValidationError(f"Appraisal not created.")
-        self.validate_appraisal(appraisal.employee, appraisal.employee.reviewed_by_hod)
+        self.validate_appraisal_object(appraisal.employee, appraisal.employee.reviewed_by_hod)
         return attrs
     
     def create(self, validated_data):
@@ -179,7 +182,7 @@ class HodReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
 
 
 
-class CooReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class CooReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 
     class Meta:
         model = CooReview
@@ -190,7 +193,7 @@ class CooReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
         appraisal = attrs.get('appraisal')
         if not appraisal:
             raise serializers.ValidationError(f"Appraisal not created.")
-        self.validate_appraisal(appraisal.employee, appraisal.employee.reviewed_by_coo)
+        self.validate_appraisal_object(appraisal.employee, appraisal.employee.reviewed_by_coo)
         return attrs
     
     def create(self, validated_data):
@@ -217,7 +220,7 @@ class CooReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
 
 
 
-class CeoReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
+class CeoReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 
     class Meta:
         model = CeoReview
@@ -228,7 +231,7 @@ class CeoReviewSerializer(AppraisalValidatorMixin, serializers.ModelSerializer):
         appraisal = attrs.get('appraisal')
         if not appraisal:
             raise serializers.ValidationError(f"Appraisal not created.")
-        self.validate_appraisal(appraisal.employee, appraisal.employee.reviewed_by_ceo)
+        self.validate_appraisal_object(appraisal.employee, appraisal.employee.reviewed_by_ceo)
         return attrs
     
     def create(self, validated_data):
@@ -265,19 +268,20 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
     emp_grade = serializers.CharField(source='employee.grade.name', read_only=True)
     emp_des = serializers.CharField(source='employee.designation.name', read_only=True)
     emp_join = serializers.DateField(source='employee.joining_date', read_only=True)
-    emp_basic_salary = serializers.DecimalField(source='employee.basic_salary', read_only=True, max_digits=10, decimal_places=2)
+    emp_basic_salary = serializers.IntegerField(source='employee.basic_salary', read_only=True)
+    active_status = serializers.BooleanField(source='is_in_active_period', read_only=True)
 
     class Meta:
         model = AppraisalDetails
         fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "appraisal_start_date", "appraisal_end_date", "factor"
+            "emp_appraisal", "reporting_manager", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
+            "appraisal_start_date", "appraisal_end_date", "factor", "active_status", "appraisal_status"
         ]
         read_only_fields = [
             "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "factor"
+            "emp_appraisal", "reporting_manager", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
+            "factor", "active_status", "appraisal_status"
         ]
 
 

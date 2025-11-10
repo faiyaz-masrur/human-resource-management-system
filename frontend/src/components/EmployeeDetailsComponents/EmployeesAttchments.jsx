@@ -61,7 +61,7 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
     };
 
     fetchAttachments();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
 
   const handleFileChange = (field, e) => {

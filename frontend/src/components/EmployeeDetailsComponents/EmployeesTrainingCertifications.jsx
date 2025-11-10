@@ -87,7 +87,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     if (rolePermissions.view) {
       fetchTrainings();
     }
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   useEffect(() => {
     const fetchTrainingTypeList = async () => {

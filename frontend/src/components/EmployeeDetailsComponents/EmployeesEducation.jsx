@@ -74,7 +74,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchEducations();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   useEffect(() => {
     const fetchDegreeList = async () => {

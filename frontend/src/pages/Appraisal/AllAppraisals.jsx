@@ -46,22 +46,8 @@ const AllAppraisals = () => {
     }, [rolePermissions]);
 
 
-    const getStatusColor = (start, end) => {
-        if (getStatus(start, end) === true) {
-            return '#4CAF50'; // Green
-        }
-        if (getStatus(start, end) === false) {
-            return '#F44336'; // Red
-        }
-    };
-
-
-    const getStatus = (start, end) => {
-        if (start <= new Date() && end >= new Date()) {
-            return true; 
-        } else {
-            return false; 
-        }     
+    const getStatusColor = (status) => {
+        return status ? '#4CAF50' : '#F44336'; 
     };
 
     
@@ -84,14 +70,16 @@ const AllAppraisals = () => {
             <div className="appraisal-table-responsive">
                 <table className="appraisal-table">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Dept</th>
-                            <th>Designation</th>
-                            <th>Status</th>
-                            {rolePermissions?.edit && (<th>Actions</th>)}
-                        </tr>
+                        {rolePermissions?.view &&(
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Dept</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                                {rolePermissions?.edit && (<th>Actions</th>)}
+                            </tr>
+                        )}
                     </thead>
                     <tbody>
                         {allAppraisalList.map((appraisal, index) => (
@@ -102,20 +90,16 @@ const AllAppraisals = () => {
                                 <td>{appraisal.emp_des}</td>  
                                 <td>
                                     <span 
-                                        style={{ 
-                                            color: getStatusColor(appraisal.appraisal_start_date, appraisal.appraisal_end_date), 
+                                        style={{
+                                            color: getStatusColor(appraisal.active_status), 
                                             fontWeight: 'bold' 
-                                        }}>
+                                        }}
+                                    >
                                         {
-                                            getStatus(appraisal.appraisal_start_date, appraisal.appraisal_end_date) 
-                                                    ? 
-                                                'Active' 
-                                                    : 
-                                                'Inactive'
+                                            appraisal.active_status ? 'Active' : 'Inactive'
                                         }
                                     </span>
                                 </td>
-                                
                                 <td>
                                     <div className="ar-actions-cell">
                                         {rolePermissions?.edit && (

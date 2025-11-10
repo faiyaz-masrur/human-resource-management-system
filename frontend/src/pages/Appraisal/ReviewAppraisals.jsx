@@ -43,7 +43,7 @@ const ReviewAppraisals = () => {
 
         const map = {};
         list.forEach((p) => (map[p.sub_workspace] = p));
-
+        console.log("Review Appraisal role permissions:", map);
         setReviewPermissions(map);
       } catch (error) {
         console.warn("Error fetching role permissions", error);
@@ -73,6 +73,11 @@ const ReviewAppraisals = () => {
 
 
   const getStatusColor = (status) => {
+    return status === "Active" ? "#4CAF50" : "#F44336";
+  };
+
+
+  const getReviewColor = (status) => {
     return status === "Completed" ? "#4CAF50" : "#F44336";
   };
 
@@ -85,13 +90,14 @@ const ReviewAppraisals = () => {
   // ✅ Render selected tab component
   const renderActiveComponent = () => {
     const active = TABS.find((t) => t.key === activeTab);
-    if (!active) return <div></div>;
+    if (!active) return null;
 
     const Component = active.component;
     return (
       <Component
         rolePermissions={reviewPermissions["ReviewAppraisalList"]}
         getStatusColor={getStatusColor}
+        getReviewColor={getReviewColor}
         handleEditAppraisal={handleEditAppraisal}
       />
     );
@@ -100,29 +106,30 @@ const ReviewAppraisals = () => {
   return (
     <div className="appraisal-list-container">
       <h2 className="appraisal-list-title">Review Appraisals</h2>
+      {reviewPermissions["ReviewAppraisalList"]?.view && (
+        <div className="appraisal-tabs-container">
+          {/* ✅ Render only permitted tabs */}
+          <div className="appraisal-tabs-buttons">
+            {TABS.map((tab) => {
+              const perm = reviewPermissions[tab.perm];
+              if (!perm?.create && !perm?.edit) return null;
 
-      <div className="appraisal-tabs-container">
-        {/* ✅ Render only permitted tabs */}
-        <div className="appraisal-tabs-buttons">
-          {TABS.map((tab) => {
-            const perm = reviewPermissions[tab.perm];
-            if (!perm?.create && !perm?.edit) return null;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={getTabButtonClass(tab.key)}
+                >
+                  {tab.key}
+                </button>
+              );
+            })}
+          </div>
 
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={getTabButtonClass(tab.key)}
-              >
-                {tab.key}
-              </button>
-            );
-          })}
+          {/* ✅ Render Active Component */}
+          <div className="appraisal-content">{renderActiveComponent()}</div>
         </div>
-
-        {/* ✅ Render Active Component */}
-        <div className="appraisal-content">{renderActiveComponent()}</div>
-      </div>
+      )}
     </div>
   );
 };

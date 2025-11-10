@@ -31,6 +31,7 @@ from .views import (
     AllCeoReviewAPIView,
 
     AppraisalStatusAPIView,
+    AppraisalStatusView
 )
 
 urlpatterns = [
@@ -85,5 +86,7 @@ urlpatterns = [
     path('all-ceo-review/<int:pk>/', AllCeoReviewAPIView.as_view(), name='all-ceo-review-details'),
 
     path('appraisal-status-list/', AppraisalStatusAPIView.as_view(), name='appraisal-status-list'),
+    path('appraisal-status/<int:pk>/', AppraisalStatusView.as_view(), name='appraisal-status'),
+
 
 ]

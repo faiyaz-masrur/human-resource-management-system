@@ -24,6 +24,10 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
 
   useEffect(() => {
     setAppraisalId(appraisalDetails?.emp_appraisal || null);
+    setFormData(prev => ({
+      ...prev,
+      employee: appraisalDetails?.emp_id || null
+    }));
   }, [appraisalDetails]);
 
 
@@ -77,7 +81,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
     };
 
     fetchEmployeeAppraisalForm();
-  }, [rolePermissions]);
+  }, [rolePermissions, appraisalId]);
 
 
   const handleChange = (e) => {
@@ -114,7 +118,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
     try {
       let res;
       if (appraisalId) {
-        if (!rolePermissions.edit) {
+        if (!rolePermissions.edit && appraisalDetails.active_status) {
           toast.warning("You don't have permission to edit.");
           return;
         }
@@ -135,7 +139,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
           toast.error("Failed to update appraisal.");
         }
       } else {
-        if (!rolePermissions.create) {
+        if (!rolePermissions.create && appraisalDetails.active_status) {
           toast.warning("You don't have permission to create.");
           return;
         }
@@ -310,7 +314,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
   };
 
   // Custom Checkbox Component for styling
-  const CustomCheckbox = ({ id, name, label, checked, onChange, rolePermissions, appraisalId }) => (
+  const CustomCheckbox = ({ id, name, label, checked, onChange, rolePermissions, appraisalId, appraisalDetails }) => (
     <label htmlFor={id} style={styles.checkboxItem}>
       <input
         id={id}
@@ -319,7 +323,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
         checked={checked}
         onChange={onChange}
         style={styles.checkboxInput}
-        disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+        disabled={appraisalDetails.active_status ? appraisalId ? !rolePermissions?.edit : !rolePermissions?.create : true}
       />
       <span style={{ ...styles.checkboxCustom, ...(checked && styles.checkboxCustomChecked) }}>
         <span style={{ ...styles.checkmark, ...(checked && styles.checkmarkVisible) }}>✔</span>
@@ -347,7 +351,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
             placeholder="You are encouraged to provide details of your key achievements and contributions during the review period, with specific examples where possible."
             value={formData.achievements_goal_completion || ''}
             onChange={handleChange}
-            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? appraisalId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           />
         </div>
@@ -367,7 +371,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
             placeholder="What do you consider to be your main strengths that contribute to your overall performance?"
             value={formData.training_plan || ''}
             onChange={handleChange}
-            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? appraisalId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           />
         </div>
@@ -381,7 +385,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
             placeholder="What do you consider to be the aspects of your performance that needs to be improved?"
             value={formData.development_plan || ''}
             onChange={handleChange}
-            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? appraisalId ? !rolePermissions?.edit : !rolePermissions?.create : true}
             required
           />
         </div>
@@ -403,6 +407,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
               onChange={handleChange}
               rolePermissions={rolePermissions}
               appraisalId={appraisalId}
+              appraisalDetails={appraisalDetails}
             />
             <CustomCheckbox
               id="business-training"
@@ -412,6 +417,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
               onChange={handleChange}
               rolePermissions={rolePermissions}
               appraisalId={appraisalId}
+              appraisalDetails={appraisalDetails}
             />
             <CustomCheckbox
               id="technical-training"
@@ -421,6 +427,7 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
               onChange={handleChange}
               rolePermissions={rolePermissions}
               appraisalId={appraisalId}
+              appraisalDetails={appraisalDetails}
             />
           </div>
           <textarea
@@ -430,22 +437,22 @@ const EmployeeAppraisal = ({ view, appraisalDetails }) => {
             placeholder="Please Specify (if any):"
             value={formData.training_description || ''}
             onChange={handleChange}
-            disabled={appraisalId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? appraisalId ? !rolePermissions?.edit : !rolePermissions?.create : true}
           />
         </div>
         
         {/* Buttons */}
-        <div style={styles.buttonGroup}>
-          {(appraisalId ? rolePermissions?.edit : rolePermissions?.create) && (
-            <button
-              type="submit"
-              style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-          )}
-        </div>
+          <div style={styles.buttonGroup}>
+            {(appraisalId ? rolePermissions?.edit : rolePermissions?.create) && (
+              <button
+                type="submit"
+                style={{...styles.primaryButton, ...(isSubmitting && styles.buttonDisabled)}}
+                disabled={!appraisalDetails.active_status || isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+            )}
+          </div>
       </form>
     </div>
   );

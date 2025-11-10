@@ -74,7 +74,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchAddressDetails();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   useEffect(() => {
     const fetchDistrictList = async () => {

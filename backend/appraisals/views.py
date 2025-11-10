@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, GenericAPIView
+from django.db.models import Q
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from system.permissions import HasRoleWorkspacePermission
+from rest_framework.permissions import IsAuthenticated
 from system.models import RolePermission
 from .models import (
     EmployeeAppraisal,
@@ -159,7 +161,7 @@ class RmReviewAppraisalListAPIView(ListAPIView):
     sub_workspace = 'ReviewAppraisalList'
     
     def get_queryset(self):
-        return AppraisalDetails.objects.filter(employee__reporting_manager__manager = self.request.user)
+        return AppraisalDetails.objects.filter(employee__reviewed_by_rm=True, employee__reporting_manager__manager=self.request.user, emp_appraisal__isnull=False)
     
 
 class HrReviewAppraisalListAPIView(ListAPIView):
@@ -174,9 +176,13 @@ class HrReviewAppraisalListAPIView(ListAPIView):
             workspace='ReviewAppraisal', 
             sub_workspace='EmployeeHrReview'
         ).first()
-        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
-            return AppraisalDetails.objects.filter(employee__reviewed_by_hr = True)
-        return AppraisalDetails.objects.none()
+        if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.none()
+        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_hr=True, emp_appraisal__isnull=False)
+        queryset = queryset.filter(
+            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False)
+        )
+        return queryset
     
 
 class HodReviewAppraisalListAPIView(ListAPIView):
@@ -191,9 +197,14 @@ class HodReviewAppraisalListAPIView(ListAPIView):
             workspace='ReviewAppraisal', 
             sub_workspace='EmployeeHodReview'
         ).first()
-        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
-            return AppraisalDetails.objects.filter(employee__reviewed_by_hod = True)
-        return AppraisalDetails.objects.none()
+        if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.none()
+        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_hod=True, emp_appraisal__isnull=False)
+        queryset = queryset.filter(
+            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
+            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False)
+        )
+        return queryset
     
 
 class CooReviewAppraisalListAPIView(ListAPIView):
@@ -208,9 +219,15 @@ class CooReviewAppraisalListAPIView(ListAPIView):
             workspace='ReviewAppraisal', 
             sub_workspace='EmployeeCooReview'
         ).first()
-        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
-            return AppraisalDetails.objects.filter(employee__reviewed_by_coo = True)
-        return AppraisalDetails.objects.none()
+        if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.none()
+        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_coo=True, emp_appraisal__isnull=False)
+        queryset = queryset.filter(
+            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
+            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False),
+            Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False),
+        )
+        return queryset
     
 
 class CeoReviewAppraisalListAPIView(ListAPIView):
@@ -225,9 +242,16 @@ class CeoReviewAppraisalListAPIView(ListAPIView):
             workspace='ReviewAppraisal', 
             sub_workspace='EmployeeCeoReview'
         ).first()
-        if reviewPermission and (reviewPermission.create or reviewPermission.edit):
-            return AppraisalDetails.objects.filter(employee__reviewed_by_ceo = True)
-        return AppraisalDetails.objects.none()
+        if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
+            return AppraisalDetails.objects.none()
+        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_ceo=True, emp_appraisal__isnull=False)
+        queryset = queryset.filter(
+            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
+            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False),
+            Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False),
+            Q(employee__reviewed_by_coo=False) | Q(coo_review__isnull=False),
+        )
+        return queryset
     
 
 class ReviewAppraisalDetailsAPIView(RetrieveUpdateAPIView):
@@ -490,3 +514,9 @@ class AppraisalStatusAPIView(ListAPIView):
     permission_classes = [HasRoleWorkspacePermission]
     workspace = 'AllAppraisal'
     sub_workspace = 'AppraisalStatus'
+
+
+class AppraisalStatusView(RetrieveAPIView):
+    queryset = EmployeeAppraisalStatus.objects.all()
+    serializer_class = EmployeeAppraisalStatusSerializer
+    permission_classes = [IsAuthenticated]

@@ -79,7 +79,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchPersonalDetails();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   useEffect(() => {
     const fetchBloodGroupList = async () => {

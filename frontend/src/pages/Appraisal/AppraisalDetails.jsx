@@ -29,6 +29,7 @@ const AppraisalDetails = ({ view }) => {
   const { employee_id } = useParams();
   const [activeTab, setActiveTab] = useState('Employee');
   const [appraisalDetails, setAppraisalDetails] = useState(defaultAppraisalDetails);
+  const [appraisalStatus, setAppraisalStatus] = useState({});
   const [rolePermissions, setRolePermissions] = useState({});
 
 
@@ -84,6 +85,24 @@ const AppraisalDetails = ({ view }) => {
   }, [rolePermissions]);
 
 
+  useEffect(() => {
+    const fetchAppraisalStatus= async () => {
+      try {
+        if (rolePermissions?.view && appraisalDetails?.appraisal_status) {
+          const  res = await api.get(`appraisals/appraisal-status/${appraisalDetails.appraisal_status}`)
+          console.log("Appraisal Status:", res?.data);
+          setAppraisalStatus(res?.data || {});
+        }  
+      } catch (error) {
+        console.warn("Error fetching appraisal details:", error);
+        setAppraisalStatus({});
+      }
+    };
+
+    fetchAppraisalStatus();
+  }, [rolePermissions, appraisalDetails]);
+
+
   const renderActiveAppraisal = () => {
     switch (activeTab) {
       case 'Employee':
@@ -131,7 +150,7 @@ const AppraisalDetails = ({ view }) => {
           appraisal_end_date: appraisalDetails?.appraisal_end_date,
         });
       } else if (view?.isAllAppraisal && employee_id) {
-        res = await api.post(`appraisals/all-appraisal-details/${employee_id}/`, {
+        res = await api.patch(`appraisals/all-appraisal-details/${employee_id}/`, {
           appraisal_start_date: appraisalDetails?.appraisal_start_date,
           appraisal_end_date: appraisalDetails?.appraisal_end_date,
         });
@@ -141,6 +160,7 @@ const AppraisalDetails = ({ view }) => {
       }
       console.log("Set Period Response:", res?.data);
       if(res.status === 200){
+        setAppraisalDetails(res?.data || appraisalDetails)
         toast.success("Appraisal period set successfully.");
       } else {
         toast.error("Failed to set appraisal period.");
@@ -224,21 +244,31 @@ const AppraisalDetails = ({ view }) => {
           <button onClick={() => setActiveTab('Employee')} className={getTabButtonClass('Employee')}>
             Employee
           </button>
-          <button onClick={() => setActiveTab('Reporting Manager')} className={getTabButtonClass('Reporting Manager')}>
-            Reporting Manager
-          </button>
-          <button onClick={() => setActiveTab('Human Resource')} className={getTabButtonClass('Human Resource')}>
-            Human Resource
-          </button>
-          <button onClick={() => setActiveTab('Head of Department')} className={getTabButtonClass('Head of Department')}>
-            Head of Department
-          </button>
-          <button onClick={() => setActiveTab('Chief Operating Officer')} className={getTabButtonClass('Chief Operating Officer')}>
-            Chief Operating Officer
-          </button>
-          <button onClick={() => setActiveTab('Chief Executive Officer')} className={getTabButtonClass('Chief Executive Officer')}>
-            Chief Executive Officer
-          </button>
+          {!(appraisalStatus?.rm_review_done === 'NA') && (
+            <button onClick={() => setActiveTab('Reporting Manager')} className={getTabButtonClass('Reporting Manager')}>
+              Reporting Manager
+            </button>
+          )}
+          {!(appraisalStatus?.hr_review_done === 'NA') && (
+            <button onClick={() => setActiveTab('Human Resource')} className={getTabButtonClass('Human Resource')}>
+              Human Resource
+            </button>
+          )}
+          {!(appraisalStatus?.hod_review_done === 'NA') && (
+            <button onClick={() => setActiveTab('Head of Department')} className={getTabButtonClass('Head of Department')}>
+              Head of Department
+            </button>
+          )}
+          {!(appraisalStatus?.coo_review_done === 'NA') && (
+            <button onClick={() => setActiveTab('Chief Operating Officer')} className={getTabButtonClass('Chief Operating Officer')}>
+              Chief Operating Officer
+            </button>
+          )}
+          {!(appraisalStatus?.ceo_review_done === 'NA') && (
+            <button onClick={() => setActiveTab('Chief Executive Officer')} className={getTabButtonClass('Chief Executive Officer')}>
+              Chief Executive Officer
+            </button>
+          )}
         </div>
 
         {/* Render active appraisal content */}

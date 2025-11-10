@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 
-const HrReviewList = ({ rolePermissions, getStatusColor, handleEditAppraisal }) => {
+const HrReviewList = ({ rolePermissions, getReviewColor, getStatusColor, handleEditAppraisal }) => {
   const [reviewAppraisalList, setReviewAppraisalList] = useState([]);
   
   
@@ -33,6 +33,7 @@ const HrReviewList = ({ rolePermissions, getStatusColor, handleEditAppraisal }) 
               <th>Dept</th>
               <th>Designation</th>
               <th>Status</th>
+              <th>Review</th>
               { rolePermissions?.edit && (<th>Actions</th>)}
             </tr>
           </thead>
@@ -46,7 +47,16 @@ const HrReviewList = ({ rolePermissions, getStatusColor, handleEditAppraisal }) 
                 <td>
                   <span 
                     style={{ 
-                      color: getStatusColor(reviewAppraisal.hr_review ? 'Completed' : 'Pending'), 
+                      color: getStatusColor(reviewAppraisal.active_status ? 'Active' : 'Inactive'), 
+                      fontWeight: 'bold' 
+                    }}>
+                    {reviewAppraisal.active_status ? 'Active' : 'Inactive'}
+                  </span>
+                </td> 
+                <td>
+                  <span 
+                    style={{ 
+                      color: getReviewColor(reviewAppraisal.hr_review ? 'Completed' : 'Pending'), 
                       fontWeight: 'bold' 
                     }}>
                     {reviewAppraisal.hr_review ? 'Completed' : 'Pending'}

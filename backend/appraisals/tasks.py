@@ -24,6 +24,16 @@ def monthly_appraisal_task():
         if not appraisalDetails:
             continue  # skip if no AppraisalDetails
 
+        if appraisalStatus:
+            appraisalStatus.appraisal_date = timer.employee_self_appraisal_start if timer else None
+            appraisalStatus.self_appraisal_done = 'PENDING'
+            appraisalStatus.rm_review_done = 'PENDING' if employee.reviewed_by_rm else 'NA'
+            appraisalStatus.hr_review_done = 'PENDING' if employee.reviewed_by_hr else 'NA'
+            appraisalStatus.hod_review_done = 'PENDING' if employee.reviewed_by_hod else 'NA'
+            appraisalStatus.coo_review_done = 'PENDING' if employee.reviewed_by_coo else 'NA'
+            appraisalStatus.ceo_review_done = 'PENDING' if employee.reviewed_by_ceo else 'NA'
+            appraisalStatus.save()
+
         # Backup AppraisalDetails only if emp_appraisal exists
         if appraisalDetails.emp_appraisal:
             AppraisalDetailsBackup.objects.create(
@@ -48,20 +58,10 @@ def monthly_appraisal_task():
         appraisalDetails.hod_review = None
         appraisalDetails.coo_review = None
         appraisalDetails.ceo_review = None
+        appraisalDetails.appraisal_status = appraisalStatus if appraisalStatus else None
         appraisalDetails.appraisal_start_date = timer.employee_self_appraisal_start
         appraisalDetails.appraisal_end_date = timer.employee_self_appraisal_end
         appraisalDetails.factor = 0.55
         appraisalDetails.save()
 
-        # Reset EmployeeAppraisalStatus if it exists
-        if appraisalStatus:
-            appraisalStatus.appraisalDetails = appraisalDetails if appraisalDetails else None
-            appraisalStatus.appraisal_date = timer.employee_self_appraisal_start if timer else None
-            appraisalStatus.self_appraisal_done = 'PENDING'
-            appraisalStatus.rm_review_done = 'PENDING' if employee.reviewed_by_rm else 'NA'
-            appraisalStatus.hr_review_done = 'PENDING' if employee.reviewed_by_hr else 'NA'
-            appraisalStatus.hod_review_done = 'PENDING' if employee.reviewed_by_hod else 'NA'
-            appraisalStatus.coo_review_done = 'PENDING' if employee.reviewed_by_coo else 'NA'
-            appraisalStatus.ceo_review_done = 'PENDING' if employee.reviewed_by_ceo else 'NA'
-            appraisalStatus.appraisal_date = None
-            appraisalStatus.save()
+        

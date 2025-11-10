@@ -12,11 +12,9 @@ import EmployeesAttchments from "../../components/EmployeeDetailsComponents/Empl
 
 function EmployeeDetails({ view }) {
   const [activeTab, setActiveTab] = useState('official');
-  let { employee_id } = useParams();
+  const params = useParams();
+  const [employee_id, set_employee_id] = useState(params.employee_id || null);
 
-  const set_employee_id = (emp_id) => {
-    employee_id = emp_id;
-  }
 
   const tabs = [
     { id: 'official', label: 'Official Details' },

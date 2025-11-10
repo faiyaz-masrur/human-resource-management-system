@@ -376,20 +376,51 @@ class CeoReview(models.Model):
 
 
 
+
+
+# -------------------------
+# Appraisal Status Model
+# -------------------------
+
+class EmployeeAppraisalStatus(models.Model):
+
+    STATUS_CHOICES = [
+        ('NA', 'NA'),
+        ('PENDING', 'PENDING'),
+        ('DONE', 'DONE'),
+    ]
+
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='employee_appraisal_status')
+    appraisal_date = models.DateField(null=True, blank=True)
+    
+    self_appraisal_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING', null=True, blank=True)
+    rm_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
+    hr_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
+    hod_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
+    coo_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
+    ceo_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
+
+    def __str__(self):
+        return f"Appraisal Status - {self.employee.name}"
+    
+
+
+
+
 # -------------------------
 # Appraisal Details Model
 # -------------------------
 
 class AppraisalDetails(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_details')
-    reporting_manager = models.ForeignKey(Employee, on_delete=models.SET_NULL, related_name='managed_appraisal_details', null=True, blank=True)
+    reporting_manager = models.ForeignKey(ReportingManager, on_delete=models.SET_NULL, related_name='managed_appraisal_details', null=True, blank=True)
     emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
     rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
     hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
     hod_review = models.OneToOneField(HodReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
     coo_review = models.OneToOneField(CooReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
     ceo_review = models.OneToOneField(CeoReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-
+    appraisal_status = models.OneToOneField(EmployeeAppraisalStatus, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
 
     appraisal_start_date = models.DateField(null=True, blank=True, verbose_name='Appraisal Start Date')
     appraisal_end_date = models.DateField(null=True, blank=True, verbose_name='Appraisal End Date')
@@ -415,33 +446,6 @@ class AppraisalDetails(models.Model):
             and self.appraisal_start_date <= today <= self.appraisal_end_date
         )
 
-
-
-# -------------------------
-# Appraisal Status Model
-# -------------------------
-
-class EmployeeAppraisalStatus(models.Model):
-
-    STATUS_CHOICES = [
-        ('NA', 'NA'),
-        ('PENDING', 'PENDING'),
-        ('DONE', 'DONE'),
-    ]
-
-    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='employee_appraisal_status')
-    appraisalDetails = models.OneToOneField(AppraisalDetails, on_delete=models.SET_NULL, null=True, blank=True)
-    appraisal_date = models.DateTimeField(null=True, blank=True)
-    
-    self_appraisal_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING', null=True, blank=True)
-    rm_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
-    hr_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
-    hod_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
-    coo_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
-    ceo_review_done = models.CharField(max_length=10, choices=STATUS_CHOICES, default="NA", null=True, blank=True)
-
-    def __str__(self):
-        return f"Appraisal Status - {self.employee.name}"
     
 
 
@@ -452,7 +456,7 @@ class EmployeeAppraisalStatus(models.Model):
 class AppraisalDetailsBackup(models.Model):
 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='appraisal_details_backups')
-    reporting_manager = models.ForeignKey(Employee, on_delete=models.SET_NULL, related_name='managed_appraisal_details_backups', null=True, blank=True)
+    reporting_manager = models.ForeignKey(ReportingManager, on_delete=models.SET_NULL, related_name='managed_appraisal_details_backups', null=True, blank=True)
     emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
     rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
     hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)

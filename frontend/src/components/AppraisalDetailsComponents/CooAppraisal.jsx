@@ -31,6 +31,10 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
 
   useEffect(() => {
     setCooReviewId(appraisalDetails?.coo_review || null);
+    setFormData(prev => ({
+      ...prev,
+      appraisal: appraisalDetails?.emp_appraisal || null
+    }));
   }, [appraisalDetails]);
 
 
@@ -84,7 +88,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
     };
 
     fetchCooAppraisalForm();
-  }, [rolePermissions]);
+  }, [rolePermissions, cooReviewId]);
 
 
   const handleChange = (e) => {
@@ -137,7 +141,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
     try {
       let res;
       if (cooReviewId) {
-        if (!rolePermissions.edit) {
+        if (!rolePermissions.edit && appraisalDetails.active_status) {
           toast.warning("You don't have permission to edit.");
           return;
         }
@@ -158,7 +162,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
           toast.error("Failed to update review.");
         }
       } else {
-        if (!rolePermissions.create) {
+        if (!rolePermissions.create && appraisalDetails.active_status) {
           toast.warning("You don't have permission to create.");
           return;
         }
@@ -229,14 +233,14 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
     },
     textarea: {
       width: "100%",
-      minHeight: "100px",
-      border: "1px solid #e0e0e0",
+      height: "100px",
+      border: "1px solid #d1d5db",
       borderRadius: "6px",
-      padding: "12px 14px",
-      fontSize: "14px",
-      resize: "vertical",
-      outline: "none",
+      padding: "10px",
+      fontSize: "13.5px",
+      color: "#374151",
       backgroundColor: "#fff",
+      resize: "vertical",
     },
     remarkBox: {
       width: "100%",
@@ -299,6 +303,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
       borderRadius: "6px",
       padding: "8px 10px",
       fontSize: "14px",
+      color: "#374151",
       width: "100%",
       outline: "none",
       backgroundColor: "#fff",
@@ -379,7 +384,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
           name="remarks"
           value={formData.remarks || ''}
           onChange={handleChange}
-          disabled={cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+          disabled={appraisalDetails.active_status ? cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
           required
         ></textarea>
       </div>
@@ -398,7 +403,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
                     name={item.value} // Group radio buttons by name
                     onChange={() => setFormData(prev => ({ ...prev, [item.value]: true }))}
                     checked={formData[item.value] === true}
-                    disabled={cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                    disabled={appraisalDetails.active_status ? cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                   />{" "} 
                   Yes
                 </label>
@@ -408,7 +413,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
                     name={item.value} // Group radio buttons by name
                     onChange={() => setFormData(prev => ({ ...prev, [item.value]: false }))}
                     checked={formData[item.value] === false}
-                    disabled={cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+                    disabled={appraisalDetails.active_status ? cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
                   />{" "}
                   No
                 </label>
@@ -420,7 +425,7 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
                 name={item.valueRemarks}
                 value={formData[item.valueRemarks] || ''}
                 onChange={handleChange}
-                disabled={cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create} 
+                disabled={appraisalDetails.active_status ? cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
               />
             </div>
           ))}
@@ -438,23 +443,23 @@ const CooAppraisal = ({ view, appraisalDetails }) => {
             name="remarks_on_your_decision"
             value={formData.remarks_on_your_decision || ''}
             onChange={handleChange}
-            disabled={cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create}
+            disabled={appraisalDetails.active_status ? cooReviewId ? !rolePermissions?.edit : !rolePermissions?.create : true}
           ></textarea>
         </div>
       </div>
 
       {/* Buttons */}
-      <div style={styles.buttonGroup}>
-        {(cooReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
-          <button
-            type="submit"
-            style={{...styles.submitButton, ...(isSubmitting && styles.buttonDisabled)}}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </button>
-        )}
-      </div>
+        <div style={styles.buttonGroup}>
+          {(cooReviewId ? rolePermissions?.edit : rolePermissions?.create) && (
+            <button
+              type="submit"
+              style={{...styles.submitButton, ...(isSubmitting && styles.buttonDisabled)}}
+              disabled={!appraisalDetails.active_status || isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          )}
+        </div>
     </form>
   );
 };
