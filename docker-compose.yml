@@ -13,21 +13,31 @@ services:
       - db
     environment:
       - DB_HOST=db
-      - DB_NAME=atm
+      - DB_NAME=performace_appraisal
       - DB_USER=root
       - DB_PASSWORD=root
-      - DJANGO_SUPERUSER_EMAIL=admin@sonali.com
+      - DJANGO_SUPERUSER_EMAIL=noreply@sonaliintellect.com
       - DJANGO_SUPERUSER_PASSWORD=admin12345@
     ports:
       - "8000:8000"
+    # --- ADDED HEALTHCHECK ---
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep gunicorn || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
     container_name: react_frontend
     ports:
-      - "3000:80"
+      - "5173:80"
+    # --- UPDATED DEPENDS_ON ---
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy # Ensure backend is ready and serving before starting NGINX
     volumes:
       - static_volume:/static
       - media_volume:/media
@@ -39,12 +49,12 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: atm
+      MYSQL_DATABASE: performace_appraisal
     volumes:
       - db_data:/var/lib/mysql
     expose:
       - "3306"
-  
+ 
 volumes: 
   db_data:
   static_volume:

@@ -17,8 +17,14 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+echo "Load initial data..."
+# This command failed previously because it was likely run with '--noinput'
+# It is now fixed to run without any arguments.
+python manage.py load_initial_data
+
 # Create superuser if it does not exist
-email=${DJANGO_SUPERUSER_EMAIL:-admin@sonali.com}
+# Use ${VAR:-default} for robust default assignment in bash
+email=${DJANGO_SUPERUSER_EMAIL:-noreply@sonaliintellect.com}
 password=${DJANGO_SUPERUSER_PASSWORD:-admin12345@}
 
 echo "Creating superuser if it does not exist..."
