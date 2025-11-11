@@ -24,19 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ['id', 'email', 'name', 'role']
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        # The default result (access/refresh tokens)
-        data = super().validate(attrs)
-        
-        # Serialize the user data and add it to the response
-        serializer = UserSerializer(self.user)
-        user_data = serializer.data
-        
-        data['user'] = user_data
-        return data
     
 
 class ChangePasswordSerializer(serializers.Serializer):
