@@ -264,12 +264,21 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
 
     emp_id = serializers.CharField(source='employee.id', read_only=True)
     emp_name = serializers.CharField(source='employee.name', read_only=True)
-    emp_dept = serializers.CharField(source='employee.department.name', read_only=True)
-    emp_grade = serializers.CharField(source='employee.grade.name', read_only=True)
-    emp_des = serializers.CharField(source='employee.designation.name', read_only=True)
+    emp_dept = serializers.SerializerMethodField()
+    emp_grade = serializers.SerializerMethodField()
+    emp_des = serializers.SerializerMethodField()
     emp_join = serializers.DateField(source='employee.joining_date', read_only=True)
     emp_basic_salary = serializers.IntegerField(source='employee.basic_salary', read_only=True)
     active_status = serializers.BooleanField(source='is_in_active_period', read_only=True)
+
+    def get_emp_dept(self, obj):
+        return obj.employee.department.name if obj.employee.department else None
+
+    def get_emp_grade(self, obj):
+        return obj.employee.grade.name if obj.employee.grade else None
+
+    def get_emp_des(self, obj):
+        return obj.employee.designation.name if obj.employee.designation else None
 
     class Meta:
         model = AppraisalDetails
