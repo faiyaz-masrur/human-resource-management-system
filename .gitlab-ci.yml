@@ -6,9 +6,13 @@ services:
   - docker:dind
 
 variables:
-  # Use the GitLab Container Registry for your images
+  # Base image name for backend, tagged with the commit SHA
   CI_REGISTRY_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+  # Base image name for frontend, tagged with the commit SHA
   CI_REGISTRY_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
+  # Latest tags for easy deployment reference
+  CI_REGISTRY_IMAGE_BACKEND_LATEST: $CI_REGISTRY_IMAGE/backend:latest
+  CI_REGISTRY_IMAGE_FRONTEND_LATEST: $CI_REGISTRY_IMAGE/frontend:latest
 
 stages:
   - build
@@ -22,27 +26,36 @@ before_script:
 build_backend:
   stage: build
   script:
-    # Build the backend image using its Dockerfile
+    # 1. Build the backend image using its Dockerfile in the './backend' context
     - docker build -t $CI_REGISTRY_IMAGE_BACKEND ./backend
-    # Push the image to the registry
+    # 2. Also tag it as 'latest' (optional, but useful for quick reference)
+    - docker tag $CI_REGISTRY_IMAGE_BACKEND $CI_REGISTRY_IMAGE_BACKEND_LATEST
+    # 3. Push both tags to the registry
     - docker push $CI_REGISTRY_IMAGE_BACKEND
+    - docker push $CI_REGISTRY_IMAGE_BACKEND_LATEST
   # Only run if files in the backend directory change (optimization)
   rules:
     - changes:
-        - backend/**/*
-        - backend/Dockerfile
-        
+      - backend/**/*
+      - docker-compose.yml
+    # Run by default if no changes rule matches
+    - when: always
+
 build_frontend:
   stage: build
   script:
-    # Build the frontend image using its Dockerfile
+    # 1. Build the frontend image using its Dockerfile in the './frontend' context
     - docker build -t $CI_REGISTRY_IMAGE_FRONTEND ./frontend
-    # Push the image to the registry
+    # 2. Also tag it as 'latest'
+    - docker tag $CI_REGISTRY_IMAGE_FRONTEND $CI_REGISTRY_IMAGE_FRONTEND_LATEST
+    # 3. Push both tags to the registry
     - docker push $CI_REGISTRY_IMAGE_FRONTEND
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND_LATEST
   rules:
     - changes:
-        - frontend/**/*
-        - frontend/Dockerfile
+      - frontend/**/*
+      - docker-compose.yml
+    - when: always
 
 # --- Deploy Job ---
 deploy_production:
@@ -55,21 +68,19 @@ deploy_production:
     - ssh-add $ID_RSA
   script:
     - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER_IP "
-      # Log in to the registry on the deployment server
+      # 1. Log in to the registry on the deployment server
       docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
-      # Pull the latest images
-      docker pull $CI_REGISTRY_IMAGE_BACKEND &&
-      docker pull $CI_REGISTRY_IMAGE_FRONTEND &&
-      # Export environment variables for the deployment script (or use an .env file)
-      export BACKEND_IMAGE=$CI_REGISTRY_IMAGE_BACKEND &&
-      export FRONTEND_IMAGE=$CI_REGISTRY_IMAGE_FRONTEND &&
-      # Run a deployment script on the remote server
-      /path/to/your/deploy_script.sh
+      # 2. Export environment variables for the deployment script
+      export BACKEND_IMAGE=$CI_REGISTRY_IMAGE_BACKEND_LATEST &&
+      export FRONTEND_IMAGE=$CI_REGISTRY_IMAGE_FRONTEND_LATEST &&
+      export CI_REGISTRY=$CI_REGISTRY &&
+      # 3. Navigate to the project directory and run the deployment script
+      cd /path/to/your/project &&
+      sh deploy_script.sh
       "
   environment:
     name: production
   when: manual # Only deploy manually to production
-  # Only run if both build jobs succeeded
   needs:
     - build_backend
     - build_frontend
