@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, BooleanField, ExpressionWrapper, F
 from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 from system.permissions import HasRoleWorkspacePermission
@@ -161,7 +161,24 @@ class RmReviewAppraisalListAPIView(ListAPIView):
     sub_workspace = 'ReviewAppraisalList'
     
     def get_queryset(self):
-        return AppraisalDetails.objects.filter(employee__reviewed_by_rm=True, employee__reporting_manager__manager=self.request.user, emp_appraisal__isnull=False)
+        queryset = (
+            AppraisalDetails.objects
+            .select_related('employee', 'employee__department', 'employee__grade', 'employee__designation', 'reporting_manager')
+            .filter(
+                employee__reviewed_by_rm=True,
+                emp_appraisal__isnull=False,
+                reporting_manager__isnull=False,
+                reporting_manager__manager=self.request.user,
+            )
+            .annotate(
+                rm_review_is_null=ExpressionWrapper(
+                    Q(rm_review__isnull=True),
+                    output_field=BooleanField()
+                )
+            )
+            .order_by('-rm_review_is_null') 
+        )
+        return queryset
     
 
 class HrReviewAppraisalListAPIView(ListAPIView):
@@ -178,9 +195,18 @@ class HrReviewAppraisalListAPIView(ListAPIView):
         ).first()
         if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
             return AppraisalDetails.objects.none()
-        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_hr=True, emp_appraisal__isnull=False)
-        queryset = queryset.filter(
-            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False)
+        queryset = (
+            AppraisalDetails.objects
+            .select_related('employee') 
+            .filter(
+                Q(employee__reviewed_by_hr=True) &
+                Q(emp_appraisal__isnull=False) &
+                (Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False))
+            )
+            .annotate(
+                hr_review_is_null=ExpressionWrapper(Q(hr_review__isnull=True), output_field=BooleanField())
+            )
+            .order_by('-hr_review_is_null')
         )
         return queryset
     
@@ -199,10 +225,19 @@ class HodReviewAppraisalListAPIView(ListAPIView):
         ).first()
         if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
             return AppraisalDetails.objects.none()
-        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_hod=True, emp_appraisal__isnull=False)
-        queryset = queryset.filter(
-            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
-            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False)
+        queryset = (
+            AppraisalDetails.objects
+            .select_related('employee')
+            .filter(
+                Q(employee__reviewed_by_hod=True) & 
+                Q(emp_appraisal__isnull=False) &
+                (Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False)) &
+                (Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False))
+            )
+            .annotate(
+                hod_review_is_null=ExpressionWrapper(Q(hod_review__isnull=True), output_field=BooleanField())
+            )
+            .order_by('-hod_review_is_null')
         )
         return queryset
     
@@ -221,11 +256,20 @@ class CooReviewAppraisalListAPIView(ListAPIView):
         ).first()
         if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
             return AppraisalDetails.objects.none()
-        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_coo=True, emp_appraisal__isnull=False)
-        queryset = queryset.filter(
-            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
-            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False),
-            Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False),
+        queryset = (
+            AppraisalDetails.objects
+            .select_related('employee')
+            .filter(
+                Q(employee__reviewed_by_coo=True) & 
+                Q(emp_appraisal__isnull=False) &
+                (Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False)) &
+                (Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False)) &
+                (Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False))
+            )
+            .annotate(
+                coo_review_is_null=ExpressionWrapper(Q(coo_review__isnull=True), output_field=BooleanField())
+            )
+            .order_by('-coo_review_is_null')
         )
         return queryset
     
@@ -244,12 +288,21 @@ class CeoReviewAppraisalListAPIView(ListAPIView):
         ).first()
         if not reviewPermission or not (reviewPermission.create or reviewPermission.edit):
             return AppraisalDetails.objects.none()
-        queryset = AppraisalDetails.objects.filter(employee__reviewed_by_ceo=True, emp_appraisal__isnull=False)
-        queryset = queryset.filter(
-            Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False),
-            Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False),
-            Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False),
-            Q(employee__reviewed_by_coo=False) | Q(coo_review__isnull=False),
+        queryset = (
+            AppraisalDetails.objects
+            .select_related('employee')
+            .filter(
+                Q(employee__reviewed_by_ceo=True) & 
+                Q(emp_appraisal__isnull=False) &
+                (Q(employee__reviewed_by_rm=False) | Q(rm_review__isnull=False)) &
+                (Q(employee__reviewed_by_hr=False) | Q(hr_review__isnull=False)) &
+                (Q(employee__reviewed_by_hod=False) | Q(hod_review__isnull=False)) &
+                (Q(employee__reviewed_by_coo=False) | Q(coo_review__isnull=False)) 
+            )
+            .annotate(
+                ceo_review_is_null=ExpressionWrapper(Q(ceo_review__isnull=True), output_field=BooleanField())
+            )
+            .order_by('-ceo_review_is_null')
         )
         return queryset
     
