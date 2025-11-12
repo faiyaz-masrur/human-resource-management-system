@@ -3287,15 +3287,25 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #4B5563;
+  color: #634b4b;
 }
 
 .employee-detail-value {
   margin-top: 0.25rem;
   padding: 0.75rem;
-  background-color: #F3F4F6;
+  background-color: #0d57e00e;
+  color:#000;
   border-radius: 0.375rem;
 }
+
+
+.employee-detail-value-button{
+  margin-top: 0.25rem;
+  padding: 0.75rem;
+  background-color: #3B82F6;
+  border-radius: 0.375rem;
+}
+
 
 /* Appraisal Tabs */
 .appraisal-tabs-container {
