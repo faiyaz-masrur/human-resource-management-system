@@ -229,7 +229,7 @@ const AppraisalDetails = ({ view }) => {
           <div>
             {
               rolePermissions.edit && (
-                <button className='' onClick={handleSetPeriod}>
+                <button className='employee-detail-value-button' onClick={handleSetPeriod}>
                   Set Period
                 </button>
               )
