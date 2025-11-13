@@ -19,14 +19,11 @@ class NotificationListView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Ensure the user has an associated Employee profile
-        if not hasattr(self.request.user, 'employee_profile'):
-            return Notification.objects.none()
-
-        # Fetch notifications only for the logged-in employee's profile
         return Notification.objects.filter(
-            employee=self.request.user.employee_profile
+            employee=self.request.user,
+            is_read=False
         ).order_by('-created_at')
+
 
 class NotificationUnreadCountView(APIView):
     """
@@ -35,15 +32,18 @@ class NotificationUnreadCountView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        if not hasattr(request.user, 'employee_profile'):
-            return Response({'unread_count': 0}, status=status.HTTP_200_OK)
-
-        unread_count = Notification.objects.filter(
-            employee=request.user.employee_profile,
-            is_read=False
-        ).count()
-        
-        return Response({'unread_count': unread_count}, status=status.HTTP_200_OK)
+        try:
+            unread_count = Notification.objects.filter(
+                employee=request.user,
+                is_read=False
+            ).count()
+            
+            return Response({'unread_count': unread_count}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': f'Error fetching unread notifications: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class NotificationMarkReadView(APIView):
@@ -53,13 +53,8 @@ class NotificationMarkReadView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk=None, format=None):
-        if not hasattr(request.user, 'employee_profile'):
-            return Response(
-                {'detail': 'User profile not found.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
-        employee_profile = request.user.employee_profile
+        employee_profile = request.user
 
         if pk is not None:
             # Mark a specific notification as read

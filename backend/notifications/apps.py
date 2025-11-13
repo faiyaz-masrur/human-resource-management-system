@@ -7,16 +7,20 @@ from django.apps import AppConfig
 
 class NotificationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    
-    # <<< THIS LINE WAS MISSING OR INCORRECT >>>
     name = 'notifications' 
-    # <<< ----------------------------------- >>>
 
     # If you included the scheduler logic, it might look like this:
     def ready(self):
         # Your scheduler startup code here (make sure it's correct)
         try:
-            from . import scheduler
+            # Import the signal file so the handlers are registered
+            from .timers import send_review_notifications
+            from .timers import send_appraisal_time_notifications
+        except ImportError as e:
+            print(f"Error importing signals: {e}")
+
+        try:
+            from .timers import scheduler
             scheduler.start_scheduler()
         except ImportError:
             pass # Or handle the import error better

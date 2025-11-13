@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import EmployeeAppraisalTimer
+from .models import EmployeeAppraisalTimer, EmployeeAppraisal, ReportingManagerReview, HrReview, HodReview, CooReview, CeoReview, EmployeeAppraisalStatus, AppraisalDetails, AppraisalDetailsBackup
 
 
 @admin.register(EmployeeAppraisalTimer)
@@ -53,3 +53,15 @@ class EmployeeAppraisalTimerAdmin(admin.ModelAdmin):
 #         Prevents deleting the last remaining instance.
 #         """
 #         return FinalReviewerAppraisalTimer.objects.count() > 1
+
+
+
+admin.site.register(EmployeeAppraisal)
+admin.site.register(ReportingManagerReview)
+admin.site.register(HrReview)
+admin.site.register(HodReview)
+admin.site.register(CooReview)
+admin.site.register(CeoReview)
+admin.site.register(EmployeeAppraisalStatus)
+admin.site.register(AppraisalDetails)
+admin.site.register(AppraisalDetailsBackup)

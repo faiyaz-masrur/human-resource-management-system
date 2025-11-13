@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from appraisals.models import EmployeeAppraisalStatus
 from notifications.models import Notification
-from employees.models import Employee, Hr, Hod, Coo, Ceo
+from system.models import Employee, Hr, Hod, Coo, Ceo
 
 
 @receiver(post_save, sender=EmployeeAppraisalStatus)
@@ -44,7 +44,7 @@ def send_review_notification(sender, instance, created, **kwargs):
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
-                    "next_reviewer" : next_reviewer,
+                    "next_reviewer" : next_reviewer.hr,
                     "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your HR review.",
                 }
                 list.append(dict)
@@ -57,7 +57,7 @@ def send_review_notification(sender, instance, created, **kwargs):
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
-                    "next_reviewer" :   next_reviewer,
+                    "next_reviewer" :   next_reviewer.hod,
                     "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your HOD review.",
                 }
                 list.append(dict)
@@ -70,7 +70,7 @@ def send_review_notification(sender, instance, created, **kwargs):
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
-                    "next_reviewer" :   next_reviewer,
+                    "next_reviewer" :   next_reviewer.coo,
                     "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your COO review.",
                 }
                 list.append(dict)
@@ -79,23 +79,23 @@ def send_review_notification(sender, instance, created, **kwargs):
 
     elif instance.self_appraisal_done == "DONE" and instance.ceo_review_done == "PENDING":
 
-        next_reviewer = Ceo.objects.all()
+        next_reviewers = Ceo.objects.all()
         for next_reviewer in next_reviewers:
             if next_reviewer:
                 dict = {
-                    "next_reviewer" :   next_reviewer,
+                    "next_reviewer" :   next_reviewer.ceo,
                     "reviewer_message" : f"{employee.name}'s appraisal is now awaiting for your CEO review.",
                 }
                 list.append(dict)
                 employee_message = "Your appraisal is currently under review by CEO."
 
 
-    elif (instance.self_appraisal_done != "PENDING" and 
+    elif (instance.self_appraisal_done == "DONE" and 
           instance.rm_review_done != "PENDING" and
           instance.hr_review_done != "PENDING" and
           instance.hod_review_done != "PENDING" and
           instance.coo_review_done != "PENDING" and
-          instance.ceo_review_done != "PENDING"):
+          instance.ceo_review_done == "DONE"):
         
         employee_message = "Your appraisal process has been fully completed."
 
@@ -108,7 +108,7 @@ def send_review_notification(sender, instance, created, **kwargs):
             if next_reviewer and reviewer_message:
                 Notification.objects.create(
                     employee=next_reviewer,
-                    title="Review Submitted",
+                    title="Appraisal Review",
                     message=reviewer_message
                 )
 
