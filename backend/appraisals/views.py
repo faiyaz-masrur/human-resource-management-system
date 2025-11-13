@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from datetime import date
 from django.db.models import Q, BooleanField, ExpressionWrapper, F
 from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
@@ -562,11 +563,15 @@ class AllCeoReviewAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
 # ---------------- Appraisal Status ----------------
 
 class AppraisalStatusAPIView(ListAPIView):
-    queryset = EmployeeAppraisalStatus.objects.all()
     serializer_class = EmployeeAppraisalStatusSerializer
     permission_classes = [HasRoleWorkspacePermission]
     workspace = 'AllAppraisal'
     sub_workspace = 'AppraisalStatus'
+
+    def get_queryset(self):
+        today = date.today()
+        return EmployeeAppraisalStatus.objects.filter(appraisal_date__year=today.year, appraisal_date__month=today.month)
+    
 
 
 class AppraisalStatusView(RetrieveAPIView):

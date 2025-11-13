@@ -129,7 +129,7 @@ class HrReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             track.hr_review_done = 'DONE' 
             track.save()
         except Exception as e:
-            print(f"Error updating rm_review_done status track after creation: {e}") 
+            print(f"Error updating hr_review_done status track after creation: {e}") 
 
         try:
             appraisal_details = AppraisalDetails.objects.filter(employee=employee).first()
@@ -167,7 +167,7 @@ class HodReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             track.hod_review_done = 'DONE' 
             track.save()
         except Exception as e:
-            print(f"Error updating rm_review_done status track after creation: {e}") 
+            print(f"Error updating hod_review_done status track after creation: {e}") 
         
         try:
             appraisal_details = AppraisalDetails.objects.filter(employee=employee).first()
@@ -205,7 +205,7 @@ class CooReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             track.coo_review_done = 'DONE' 
             track.save()
         except Exception as e:
-            print(f"Error updating rm_review_done status track after creation: {e}") 
+            print(f"Error updating coo_review_done status track after creation: {e}") 
 
         try:
             appraisal_details = AppraisalDetails.objects.filter(employee=employee).first()
@@ -214,7 +214,7 @@ class CooReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             appraisal_details.coo_review = review_instance
             appraisal_details.save()
         except Exception as e:
-            print(f"Error adding hod_review relation in appraisal details: {e}") 
+            print(f"Error adding coo_review relation in appraisal details: {e}") 
 
         return review_instance
 
@@ -243,7 +243,7 @@ class CeoReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             track.ceo_review_done = 'DONE'
             track.save()
         except Exception as e:
-            print(f"Error updating rm_review_done status track after creation: {e}") 
+            print(f"Error updating ceo_review_done status track after creation: {e}") 
 
         try:
             appraisal_details = AppraisalDetails.objects.filter(employee=employee).first()
@@ -252,7 +252,7 @@ class CeoReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
             appraisal_details.ceo_review = review_instance
             appraisal_details.save()
         except Exception as e:
-            print(f"Error adding hod_review relation in appraisal details: {e}") 
+            print(f"Error adding ceo_review relation in appraisal details: {e}") 
 
         return review_instance
 

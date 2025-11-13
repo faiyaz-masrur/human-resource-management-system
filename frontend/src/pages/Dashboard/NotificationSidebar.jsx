@@ -10,10 +10,12 @@ const NotificationSidebar = ({ className, onClose }) => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await api.get('notifications/');
-      setNotifications(response.data);
+      const res = await api.get('notifications/');
+      console.log("Notification list:", res.data)
+      setNotifications(Array.isArray(res.data) ? res.data : res.data ? [res.data] : []);
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      setNotifications([])
     }
   };
 
@@ -47,6 +49,7 @@ const NotificationSidebar = ({ className, onClose }) => {
               </div>
               <div className="notification-content">
                 <p className="notification-title">{notification.title}</p>
+                <p className="notification-title">{notification.message}</p>
                 <span className="notification-time">
                   {new Date(notification.created_at).toLocaleString()}
                 </span>
