@@ -1,0 +1,53 @@
+-- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
+--
+-- Host: localhost    Database: performance_appraisal
+-- ------------------------------------------------------
+-- Server version	8.0.43
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `django_apscheduler_djangojob`
+--
+
+DROP TABLE IF EXISTS `django_apscheduler_djangojob`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `django_apscheduler_djangojob` (
+  `id` varchar(255) NOT NULL,
+  `next_run_time` datetime(6) DEFAULT NULL,
+  `job_state` longblob NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `django_apscheduler_djangojob_next_run_time_2f022619` (`next_run_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `django_apscheduler_djangojob`
+--
+
+LOCK TABLES `django_apscheduler_djangojob` WRITE;
+/*!40000 ALTER TABLE `django_apscheduler_djangojob` DISABLE KEYS */;
+INSERT INTO `django_apscheduler_djangojob` VALUES ('daily_combined_checks','2025-11-13 18:00:00.000000',_binary 'ÄïV\0\0\0\0\0\0}î(åversionîKåidîådaily_combined_checksîåfuncîå4notifications.timers.scheduler:daily_scheduled_tasksîåtriggerîåapscheduler.triggers.cronîåCronTriggerîìî)Åî}î(hKåtimezoneîåbuiltinsîågetattrîìîåzoneinfoîåZoneInfoîìîå	_unpickleîÜîRîå\nAsia/DhakaîKÜîRîå\nstart_dateîNåend_dateîNåfieldsî]î(å apscheduler.triggers.cron.fieldsîå	BaseFieldîìî)Åî}î(ånameîåyearîå\nis_defaultîàåexpressionsî]îå%apscheduler.triggers.cron.expressionsîå\rAllExpressionîìî)Åî}îåstepîNsbaubhå\nMonthFieldîìî)Åî}î(h\"åmonthîh$àh%]îh))Åî}îh,NsbaubhåDayOfMonthFieldîìî)Åî}î(h\"ådayîh$àh%]îh))Åî}îh,Nsbaubhå	WeekFieldîìî)Åî}î(h\"åweekîh$àh%]îh))Åî}îh,NsbaubhåDayOfWeekFieldîìî)Åî}î(h\"åday_of_weekîh$àh%]îh))Åî}îh,Nsbaubh)Åî}î(h\"åhourîh$âh%]îh\'åRangeExpressionîìî)Åî}î(h,NåfirstîK\0ålastîK\0ubaubh)Åî}î(h\"åminuteîh$âh%]îhR)Åî}î(h,NhUK\0hVK\0ubaubh)Åî}î(h\"åsecondîh$àh%]îhR)Åî}î(h,NhUK\0hVK\0ubaubeåjitterîNubåexecutorîådefaultîåargsî)åkwargsî}îh\"å4Daily Combined Appraisal & Notification Check (9 AM)îåmisfire_grace_timeîKåcoalesceîàå\rmax_instancesîKå\rnext_run_timeîådatetimeîådatetimeîìîC\n\È\0\0\0\0\0\0îhÜîRîu.');
+/*!40000 ALTER TABLE `django_apscheduler_djangojob` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-11-13 14:24:17
