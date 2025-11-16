@@ -10,8 +10,8 @@ CMD=${1:-web}
 if [ "$CMD" = "web" ]; then
   
   # Wait for database to be ready
-  echo "Waiting for database at $DB_HOST:3306..."
-  until nc -z "$DB_HOST" 3306; do
+  echo "Waiting for database at $DB_HOST:3307..."
+  until nc -z "$DB_HOST" 3307; do
     echo "Database not ready, waiting 2 seconds..."
     sleep 2
   done
