@@ -4,10 +4,10 @@
 # Set -e to ensure the script exits immediately if any command fails
 set -e
 
-echo "Stopping and cleaning up old containers..."
+#echo "Stopping and cleaning up old containers..."
 # Stop existing containers and clean up unused resources
-docker compose -f docker-compose.yml down
-docker system prune -f
+#docker compose -f docker-compose.yml down
+#docker system prune -f
 
 echo "Starting new containers with images (Forcibly pulling latest from registry):"
 echo "Backend: $BACKEND_IMAGE"
