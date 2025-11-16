@@ -38,7 +38,7 @@ User.objects.filter(email='$email').exists() or User.objects.create_superuser(em
 
   # Execute the web server command
   echo "Starting Gunicorn..."
-  exec gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
+  exec gunicorn backend.wsgi:application --bind 0.0.0.0:8005 --workers 2 --timeout 120
 
 elif [ "$CMD" = "worker" ]; then
   # --- Celery Worker Command ---
