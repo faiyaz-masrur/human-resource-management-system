@@ -99,7 +99,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': '3306',
+        'PORT': '3307',
 
     }
 }
@@ -174,6 +174,7 @@ CORS_ALLOWED_ORIGINS = [
     # Add your React frontend's URL here in production.
     # For development, you can use:
     "http://localhost:5173",
+    "http://172.17.231.72:3001",
 
 ]
 
@@ -207,7 +208,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@sonaliintellect.com' 
 EMAIL_HOST_PASSWORD = 'SP4ft@111'     
 DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  
-LOGIN_URL = 'http://localhost:5173/login'
+#LOGIN_URL = 'http://localhost:5173/login'
+LOGIN_URL = 'http://172.17.231.72:3001/login'
 
 # Company Information for Email Templates
 COMPANY_NAME = 'Sonali Intellect Limited'
