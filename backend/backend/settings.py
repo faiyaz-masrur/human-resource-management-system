@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "django_apscheduler",
     'attendance',
-    
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 SCHEDULER_AUTOSTART = True
@@ -250,20 +251,18 @@ SCHEDULER_AUTOSTART = True
 
 
 # set the celery broker url
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TASK_SERIALIZER = 'json'
 
 # set the celery result backend
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'django-db')
 
 # set the celery timezone
 CELERY_TIMEZONE = 'Asia/Dhaka'
 
-from celery.schedules import crontab
-
-CELERY_BEAT_SCHEDULE = {
-    "monthly_appraisal_task": {
-        "task": "appraisals.tasks.monthly_appraisal_task",  # path to your Celery task
-        "schedule": crontab(hour=0, minute=0, day_of_month=1),  # 1st of every month at 00:00 UTC
-        "args": (),  # any arguments if your task needs them
-    },
-}
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
