@@ -440,36 +440,24 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
 
         {/* Action Buttons - Updated for left/right positioning */}
         <div className="form-actions">
-          <div className="form-actions-right">
-            <button className="btn-secondary" onClick={onBack}>
-              Back
-            </button>
-            {
-              (personalDetails.id ? rolePermissions.edit : rolePermissions.create) ? (
-                <button 
-                  className="btn-success" 
-                  onClick={() => { onNext(); handleSave(); }}>
-                  Next
-                </button>
-              ) : (
-                <button 
-                  className="btn-primary" 
-                  onClick={onNext}
-                >
-                  Next
-                </button>
-              )
-            }
+          <div className="form-actions-left">
+            {(personalDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+              <button className="btn-success" onClick={handleSave}>
+                Save
+              </button>
+            )}
           </div>
-          {/*<div className="form-actions-right">
+          <div className="form-actions-right">
             <button className="btn-secondary" onClick={onBack}>
               Back
             </button>
             <button className="btn-primary" onClick={onNext}>
               Next
             </button>
-          </div> */}
+          </div>
+
         </div>
+        
       </div>
     </div>
   );

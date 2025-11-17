@@ -339,6 +339,22 @@ const CeoAppraisal = ({ view, appraisalDetails }) => {
       fontSize: "14px",
       cursor: "pointer",
     },
+    special_consideration:{
+      backgroundColor: "#fff",
+      padding: "8px 24px",
+      border: "1px solid #ddd",
+      borderRadius: "6px",
+      fontSize: "14px",
+      cursor: "pointer",
+      marginTop: "20px",
+    },
+    inputStyle: {
+    backgroundColor: "#fff",
+    border: "1px solid #ccc", 
+    padding: "4px",
+    margin: "0 5px",
+    width: "60px" 
+    },
   };
 
   // Small helper for white styled checkbox behavior
@@ -433,9 +449,13 @@ const CeoAppraisal = ({ view, appraisalDetails }) => {
         </div>
 
         {/* Remarks on Decision */}
-        <div>
-          <label>Special Consideration</label>
-        </div>
+          <div className='special_consideration'>
+            <label>
+              <strong>Special Consideration</strong>: Promote to
+              <input type='number' className='inputStyle' /> times
+            </label>
+          </div>
+
         <div style={styles.remarksSection}>
           <div style={styles.sectionHeader}>
             <label style={styles.sectionTitle}>Remarks on your decision</label>
