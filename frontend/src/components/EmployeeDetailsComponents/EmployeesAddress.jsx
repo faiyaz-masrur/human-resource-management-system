@@ -421,8 +421,8 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         {/* Save Button */}
         {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
           <div className="save-container">
-            <button className="save-btn" onClick={handleSave}>
-              Save
+            <button className="save-btn" onClick={() => { onNext(); handleSave(); }}>
+              Next
             </button>
           </div>
         )}

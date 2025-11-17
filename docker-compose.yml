@@ -4,7 +4,7 @@ services:
   backend:
     build: 
       context: ./backend
-    container_name: django_backend
+    container_name: django_backend_performance_appraisal
     volumes:
       - ./backend:/backend
       - static_volume:/backend/static
@@ -12,32 +12,31 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_NAME=performace_appraisal
-      - DB_USER=root
-      - DB_PASSWORD=root
-      - DJANGO_SUPERUSER_EMAIL=noreply@sonaliintellect.com
-      - DJANGO_SUPERUSER_PASSWORD=admin12345@
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: performance_appraisal
+      DB_USER: root
+      DB_PASSWORD: root
+      DJANGO_SUPERUSER_EMAIL: noreply@sonaliintellect.com
+      DJANGO_SUPERUSER_PASSWORD: admin12345@
     ports:
       - "8005:8005"
-    # --- ADDED HEALTHCHECK ---
     healthcheck:
       test: ["CMD-SHELL", "pgrep gunicorn || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 20s
+      start_period: 45s
 
   frontend:
     build: 
       context: ./frontend
-    container_name: react_frontend
+    container_name: react_frontend_performance_appraisal
     ports:
       - "3001:80"
-    # --- UPDATED DEPENDS_ON ---
     depends_on:
       backend:
-        condition: service_healthy # Ensure backend is ready and serving before starting NGINX
+        condition: service_healthy
     volumes:
       - static_volume:/static
       - media_volume:/media
@@ -45,16 +44,16 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: mysql_db_performance_appraisal
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: performace_appraisal
+      MYSQL_DATABASE: performance_appraisal
     volumes:
       - db_data:/var/lib/mysql
-    expose:
-      - "3307"
- 
+    ports:
+      - "3307:3306"  # host mapping; containers should still use 3306 internally
+
 volumes: 
   db_data:
   static_volume:

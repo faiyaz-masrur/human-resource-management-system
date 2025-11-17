@@ -70,7 +70,6 @@ class Designation(models.Model):
         null=True, blank=True,
         related_name="designation",
     )
-    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Designation"

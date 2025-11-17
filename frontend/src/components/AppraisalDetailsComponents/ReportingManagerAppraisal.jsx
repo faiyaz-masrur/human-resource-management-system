@@ -378,7 +378,7 @@ const ReportingManagerAppraisal = ({ view, appraisalDetails }) => {
         <div style={styles.section}>
           <div style={styles.header}>
             <label htmlFor="rm-achievements" style={styles.sectionTitle}>
-              Achievements/Goal Completion
+              Feedback on Achievements/Goal Completion
             </label>
             <span style={styles.wordCountLabel}>Maximum 1000 words</span>
           </div>
