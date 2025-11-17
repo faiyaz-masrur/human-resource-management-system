@@ -343,6 +343,7 @@ const Grades = () => {
       // FIX: Requesting the correct URL: /api/system/grades/
       if(rolePermissions.view){
         const res = await api.get(GRADES_API_URL);
+        console.log(res.data)
         setGrades(res.data || []);
       }
     } catch (err) {

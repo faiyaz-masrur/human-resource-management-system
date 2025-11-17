@@ -57,14 +57,16 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = "__all__"
 
-class DesignationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Designation
-        fields = "__all__"
-
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grade
+        fields = "__all__"
+
+class DesignationSerializer(serializers.ModelSerializer):
+    
+    grade = GradeSerializer(read_only=True)
+    class Meta:
+        model = Designation
         fields = "__all__"
 
 

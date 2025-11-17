@@ -418,6 +418,7 @@ const CeoAppraisal = ({ view, appraisalDetails }) => {
                   No
                 </label>
               </div>
+
               <input 
                 type="text" 
                 style={styles.input} 
@@ -432,6 +433,9 @@ const CeoAppraisal = ({ view, appraisalDetails }) => {
         </div>
 
         {/* Remarks on Decision */}
+        <div>
+          <label>Special Consideration</label>
+        </div>
         <div style={styles.remarksSection}>
           <div style={styles.sectionHeader}>
             <label style={styles.sectionTitle}>Remarks on your decision</label>

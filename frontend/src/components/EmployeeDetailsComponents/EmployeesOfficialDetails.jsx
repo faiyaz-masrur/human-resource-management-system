@@ -522,17 +522,26 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
         {/* to keep Save on left and Next on right */}
         <div className="form-actions">
-          <div className="form-actions-left">
-            {(isEditing ? rolePermissions.edit : rolePermissions.create) && (
-              <button className="btn-success" onClick={handleSave}>
-                Save
-              </button>
-            )}
-          </div>
           <div className="form-actions-right">
-            <button className="btn-primary" onClick={onNext}>
-              Next
-            </button>
+            {
+              (isEditing ? rolePermissions.edit : rolePermissions.create) ? (
+                // TRUE CASE: User has Edit/Create permission
+                <button 
+                  className="btn-success"  
+                  onClick={() => { onNext(); handleSave(); }}
+                >
+                  Next
+                </button>
+              ) : (
+                // FALSE CASE: User does NOT have Edit/Create permission
+                <button 
+                  className="btn-primary" 
+                  onClick={onNext}
+                >
+                  Next
+                </button>
+              )
+            }
           </div>
         </div>
       </div>

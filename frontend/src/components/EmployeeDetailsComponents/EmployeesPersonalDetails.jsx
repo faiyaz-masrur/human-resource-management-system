@@ -144,7 +144,15 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       toast.warning("National id is required.");
       return false;
     }
-    
+    if (!details.mergency_contact_name?.trim()) {
+      toast.warning("Emergency Conatct name is required.");
+      return false;
+      }
+
+    if (!details.mergency_contact_number?.trim()) {
+      toast.warning("Emergency Conatct number is required.");
+      return false;
+      }
     return true;
   };
 
@@ -398,6 +406,7 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               value={personalDetails.emergency_contact_name || ""}
               onChange={(e) => handleChange("emergency_contact_name", e.target.value)}
               disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
             />
           </div>
 
@@ -424,27 +433,42 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
               value={personalDetails.emergency_contact_number || ""}
               onChange={(e) => handleChange("emergency_contact_number", e.target.value)}
               disabled={personalDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              required
             />
           </div>
         </div>
 
         {/* Action Buttons - Updated for left/right positioning */}
         <div className="form-actions">
-          <div className="form-actions-left">
-            {(personalDetails.id ? rolePermissions.edit : rolePermissions.create) && (
-              <button className="btn-success" onClick={handleSave}>
-                Save
-              </button>
-            )}
-          </div>
           <div className="form-actions-right">
+            <button className="btn-secondary" onClick={onBack}>
+              Back
+            </button>
+            {
+              (personalDetails.id ? rolePermissions.edit : rolePermissions.create) ? (
+                <button 
+                  className="btn-success" 
+                  onClick={() => { onNext(); handleSave(); }}>
+                  Next
+                </button>
+              ) : (
+                <button 
+                  className="btn-primary" 
+                  onClick={onNext}
+                >
+                  Next
+                </button>
+              )
+            }
+          </div>
+          {/*<div className="form-actions-right">
             <button className="btn-secondary" onClick={onBack}>
               Back
             </button>
             <button className="btn-primary" onClick={onNext}>
               Next
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

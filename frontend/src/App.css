@@ -3290,6 +3290,14 @@
   color: #634b4b;
 }
 
+.employee-detail-label-note {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: bold; 
+  color: red; 
+  text-align: center; 
+  margin: 0 auto; 
+}
 .employee-detail-value {
   margin-top: 0.25rem;
   padding: 0.75rem;
