@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://172.17.231.72:8005/api';
+const baseURL = import.meta.env.VITE_API_URL;
 
 // Create an API instance without authentication interceptors
 const apiWithoutAuth = axios.create({

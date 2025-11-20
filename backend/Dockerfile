@@ -1,38 +1,44 @@
 FROM python:3.11-slim
 
-# Prevent Python from buffering stdout/stderr
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# Set working directory
-WORKDIR /backend
-
-# Install system dependencies (including netcat for DB wait)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    pkg-config \
-    libpq-dev \
-    libssl-dev \
-    libffi-dev \
-    python3-dev \
-    default-libmysqlclient-dev \
-    netcat-traditional \
-    procps \
+# System deps
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      pkg-config \
+      libssl-dev \
+      libffi-dev \
+      default-libmysqlclient-dev \
+      netcat-traditional \
+      procps \
+      curl \ 
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Create non-root user
+RUN groupadd -r app && useradd -r -g app -m -d /home/app app
 
-# Copy project code
-COPY . .
+# --- CREATE STATIC AND MEDIA FOLDERS ---
+RUN mkdir -p /backend/static /backend/media
 
-# Copy entrypoint script and make it executable
+WORKDIR /backend
+
+# Copy and install Python deps
+COPY requirements.txt /backend/requirements.txt
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /backend/requirements.txt
+
+# Copy project
+COPY . /backend
+
+# Make entrypoint executable and fix CRLF
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
-# --- CRITICAL FIX: Convert Windows (CRLF) line endings to Linux (LF) ---
-# This removes the hidden \r character at the end of each line, which causes the "no such file" error on Linux
-RUN sed -i 's/\r$//' /entrypoint.sh
+# Make app directory owned by non-root user
+RUN chown -R app:app /backend /entrypoint.sh
 
-# Set entrypoint
+USER app
+
 ENTRYPOINT ["/entrypoint.sh"]

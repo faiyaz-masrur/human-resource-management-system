@@ -51,7 +51,9 @@ from django.utils.encoding import force_bytes, force_str
 
 from rest_framework.permissions import AllowAny  
 User = get_user_model()
-
+from django.http import JsonResponse
+def health(request):
+    return JsonResponse({"status": "ok"})
 
 class UserDataApiView(generics.RetrieveAPIView):
     serializer_class = UserSerializer

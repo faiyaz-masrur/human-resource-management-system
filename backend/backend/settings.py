@@ -99,7 +99,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': '3307',
+        'PORT': os.environ.get('DB_PORT', '3306'),
 
     }
 }
@@ -140,10 +140,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # Directory where collectstatic will put files for serving
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Optional: Directories to look for additional static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'assets',
 ]
 
 
