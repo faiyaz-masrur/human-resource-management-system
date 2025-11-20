@@ -6,8 +6,29 @@ from .managers import CustomUserManager
 from django.utils.crypto import get_random_string
 from .choices import WORKSPACE_CHOICES, SUB_WORKSPACE_CHOICES
 
+
+
 def generate_employee_id():
-    return get_random_string(5).upper()  # Example: "A1B2C"
+    # Get the highest existing numeric employee ID
+    employees = Employee.objects.all()
+    max_id = 0
+    
+    for emp in employees:
+        try:
+            # Try to convert existing ID to integer
+            emp_id = int(emp.id)
+            if emp_id > max_id:
+                max_id = emp_id
+        except (ValueError, TypeError):
+            # Skip non-numeric IDs
+            continue
+    
+    # If no employees exist, return empty string (admin will enter first ID manually)
+    if max_id == 0:
+        return ""
+    
+    # Return next sequential ID
+    return str(max_id + 1)
 
 
 class Role(models.Model):

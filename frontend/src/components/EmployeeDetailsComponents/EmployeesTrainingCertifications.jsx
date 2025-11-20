@@ -44,14 +44,10 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         }
         const trainingData = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
         
-        // FIX: Transform server response to include file information properly
         const trainingsWithNumbers = trainingData.map((training, index) => {
-          // Extract file name from certificate URL or use existing certificate_name
           let certificate_name = training.certificate_name;
           
-          // If no certificate_name but we have a certificate URL, extract filename from URL
           if (!certificate_name && training.certificate) {
-            // Extract filename from URL (e.g., "/media/certificates/myfile.pdf" -> "myfile.pdf")
             const urlParts = training.certificate.split('/');
             certificate_name = urlParts[urlParts.length - 1];
           }
@@ -60,10 +56,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             ...training,
             trainingNumber: index + 1,
             isTemp: false,
-            // Ensure certificate_name is always set if file exists
             certificate_name: certificate_name || training.certificate_name,
-            // For saved records, we don't have the file object, but we have the URL
-            certificate_file: null // File object is only for new uploads
+            certificate_file: null
           };
         });
         
@@ -107,41 +101,29 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     return training.isTemp || (typeof training.id === 'string' && training.id.startsWith('temp-'));
   };
 
-  const handleChooseFile = (id) => {
-    const fileInput = document.getElementById(`file-input-${id}`);
-    if (fileInput) {
-      fileInput.click();
-    }
-  };
-
   const handleFileChange = (id, event) => {
     const file = event.target.files[0];
     console.log("File selected for training:", id, file);
     
     if (file) {
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast.warning("File size must be less than 5MB");
-        // Reset the file input
         event.target.value = '';
         return;
       }
 
-      // Validate file types
       const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
         toast.warning("Please select a valid file type (JPEG, PNG, PDF)");
-        // Reset the file input
         event.target.value = '';
         return;
       }
 
-      // Update the training with file information
       setTrainings(trainings.map(training => 
         training.id === id ? { 
           ...training, 
-          certificate_file: file, // Store the file object
-          certificate_name: file.name // Store the file name
+          certificate_file: file,
+          certificate_name: file.name
         } : training
       ));
       
@@ -153,7 +135,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     try {
       console.log("Downloading file for training:", training);
       
-      // If there's a file attached but not saved yet
       if (training.certificate_file && training.certificate_file instanceof File) {
         const url = URL.createObjectURL(training.certificate_file);
         const a = document.createElement('a');
@@ -167,14 +148,11 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         return;
       }
 
-      // If file is saved on server (has a URL)
       if (training.certificate && typeof training.certificate === 'string') {
-        // If it's a full URL
         if (training.certificate.startsWith('http')) {
           window.open(training.certificate, '_blank');
           toast.success("Opening file in new tab");
         } else {
-          // If it's a relative URL, construct full URL
           const fullUrl = `http://127.0.0.1:8000${training.certificate.startsWith('/') ? '' : '/'}${training.certificate}`;
           window.open(fullUrl, '_blank');
           toast.success("Opening file in new tab");
@@ -300,7 +278,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     
     console.log("Training to save:", trainingToSave);
     
-    // Create FormData for file upload
     const formData = new FormData();
     formData.append('title', trainingToSave.title);
     formData.append('institution', trainingToSave.institution);
@@ -311,7 +288,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
       formData.append('credential_id', trainingToSave.credential_id);
     }
     
-    // Append the file if it exists
     if (trainingToSave.certificate_file) {
       formData.append('certificate', trainingToSave.certificate_file);
     }
@@ -320,7 +296,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
       let response;
       if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)) {
         if (isTempTraining(trainingToSave)) {
-          // CREATE new training
           if (!rolePermissions.create) {
             toast.warning("You don't have permission to create.");
             return;
@@ -332,7 +307,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           });
           console.log("Created Training Response:", response?.data);
           if(response.status === 201){
-            // Extract filename from response if available
             let certificate_name = trainingToSave.certificate_name;
             if (!certificate_name && response.data.certificate) {
               const urlParts = response.data.certificate.split('/');
@@ -344,9 +318,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 ...response.data, 
                 trainingNumber: trainingToSave.trainingNumber, 
                 isTemp: false,
-                // PRESERVE FILE INFORMATION
                 certificate_name: certificate_name || trainingToSave.certificate_name,
-                certificate_file: null // Clear file object after successful save
+                certificate_file: null
               } : training
             ));
             toast.success("Training added successfully.");
@@ -354,7 +327,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             toast.error("Failed to add training!");
           }
         } else {
-          // UPDATE existing training
           if (!rolePermissions.edit) {
             toast.warning("You don't have permission to edit.");
             return;
@@ -366,7 +338,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           });
           console.log("Updated Training Response:", response.data);
           if(response.status === 200){
-            // Extract filename from response if available
             let certificate_name = trainingToSave.certificate_name;
             if (!certificate_name && response.data.certificate) {
               const urlParts = response.data.certificate.split('/');
@@ -377,9 +348,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
               training.id === id ? {
                 ...response.data, 
                 trainingNumber: trainingToSave.trainingNumber,
-                // PRESERVE FILE INFORMATION
                 certificate_name: certificate_name || trainingToSave.certificate_name,
-                certificate_file: null // Clear file object after successful save
+                certificate_file: null
               } : training
             ));
             toast.success("Training updated successfully.");
@@ -389,7 +359,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
         }
       } else if(view.isOwnProfileView) {
         if (isTempTraining(trainingToSave)) {
-          // CREATE new training
           if (!rolePermissions.create) {
             toast.warning("You don't have permission to create.");
             return;
@@ -401,7 +370,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           });
           console.log("Created Training Response:", response?.data);
           if(response.status === 201){
-            // Extract filename from response if available
             let certificate_name = trainingToSave.certificate_name;
             if (!certificate_name && response.data.certificate) {
               const urlParts = response.data.certificate.split('/');
@@ -413,9 +381,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 ...response.data, 
                 trainingNumber: trainingToSave.trainingNumber, 
                 isTemp: false,
-                // PRESERVE FILE INFORMATION
                 certificate_name: certificate_name || trainingToSave.certificate_name,
-                certificate_file: null // Clear file object after successful save
+                certificate_file: null
               } : training
             ));
             toast.success("Training added successfully.");
@@ -423,7 +390,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
             toast.error("Failed to add training!");
           }
         } else {
-          // UPDATE existing training
           if (!rolePermissions.edit) {
             toast.warning("You don't have permission to edit.");
             return;
@@ -435,7 +401,6 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
           });
           console.log("Updated Training Response:", response?.data);
           if(response.status === 200){
-            // Extract filename from response if available
             let certificate_name = trainingToSave.certificate_name;
             if (!certificate_name && response.data.certificate) {
               const urlParts = response.data.certificate.split('/');
@@ -446,9 +411,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
               training.id === id ? {
                 ...response.data, 
                 trainingNumber: trainingToSave.trainingNumber,
-                // PRESERVE FILE INFORMATION
                 certificate_name: certificate_name || trainingToSave.certificate_name,
-                certificate_file: null // Clear file object after successful save
+                certificate_file: null
               } : training
             ));
             toast.success("Training updated successfully.");
@@ -482,36 +446,35 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     <div className="training-certifications">
       <div className="training-container">
         <div className="section-header">
-          {/* <h2>Training/Certifications</h2> */}
+          <h2>Training/Certifications</h2>
         </div>
 
         {trainings.map((training) => {
           const isTemp = isTempTraining(training);
-          // FIX: Check for both certificate (URL from server) and certificate_name
-          const hasFile = training.certificate || training.certificate_name || training.certificate_file;
-          // FIX: Get display name - use certificate_name if available, otherwise extract from certificate URL
+          const hasCertificate = training.certificate || training.certificate_name || training.certificate_file;
           const displayFileName = training.certificate_name || 
             (training.certificate ? training.certificate.split('/').pop() : null);
           
           return (
             <div key={training.id} className="training-section">
               <div className="training-header">
-                <span>Training/Certification {training.trainingNumber}</span>
+                <span>Training/Certifications {training.trainingNumber}</span>
                 
                 {trainings.length > 1 && (
                   <button 
-                    className="delete-training-btn"
+                    className="remove-training-btn"
                     onClick={() => removeTraining(training.id)}
-                    title="Delete this training/certification"
+                    title="Remove this training/certification"
                   >
-                    ×
+                    Remove
                   </button>
                 )}
               </div>
 
+              {/* First Row: Title, Institution, Year */}
               <div className="form-row">
                 <div className="form-field">
-                  <label className="field-label">Title</label>
+                  <label className="field-label">Title*</label>
                   <input 
                     type="text" 
                     className="field-input"
@@ -521,9 +484,9 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                     disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
                   />
                 </div>
-                
+
                 <div className="form-field">
-                  <label className="field-label">Institution</label>
+                  <label className="field-label">Institution*</label>
                   <input 
                     type="text" 
                     className="field-input"
@@ -533,9 +496,9 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                     disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
                   />
                 </div>
-                
+
                 <div className="form-field">
-                  <label className="field-label">Year</label>
+                  <label className="field-label">Year*</label>
                   <select 
                     className="field-select"
                     value={training.issue_date || ""}
@@ -551,9 +514,10 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 </div>
               </div>
 
+              {/* Second Row: Type, Credential ID, Certificate */}
               <div className="form-row">
                 <div className="form-field">
-                  <label className="field-label">Type</label>
+                  <label className="field-label">Type*</label>
                   <select 
                     className="field-select"
                     value={training.type || ""}
@@ -566,7 +530,7 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="form-field">
                   <label className="field-label">Credential ID or Reference ID</label>
                   <input 
@@ -579,51 +543,56 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                   />
                 </div>
 
-                <div className="form-field">
-                  <label className="field-label">Attach Certificate</label>
-                  
-                  <div className="file-section-separated">
-                    <div className="choose-file-section">
-                      <input 
-                        id={`file-input-${training.id}`}
-                        type="file" 
-                        className="file-input-hidden"
-                        accept=".pdf,.jpg,.png,application/pdf,image/jpeg,image/png"
-                        onChange={(e) => handleFileChange(training.id, e)}
-                        disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
-                      />
-                      <button 
-                        type="button"
-                        className="choose-file-btn-separate"
-                        onClick={() => handleChooseFile(training.id)}
-                        disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
-                      >
-                        Choose File
-                      </button>
-                    </div>
-                    
-                    {hasFile && (
-                      <div className="file-action-buttons">
-                        <button 
-                          type="button"
-                          className="download-btn-separate"
-                          onClick={() => handleDownload(training)}
-                          title="Click to download the attached file"
-                        >
-                          Download
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* FIX: Always show file name if we have either certificate_name or certificate URL */}
-                  {displayFileName && (
-                    <div className="file-name-display">
-                      ✅ File: {displayFileName}
-                      {isTemp ? " (Ready to save)" : " "}
-                    </div>
-                  )}
-                </div>
+
+
+<div className="form-field">
+  <label className="field-label">Attach Certificate</label>
+  <div className="file-input-wrapper">
+    <input 
+      className="file-input-hidden"
+      type="file" 
+      id={`certificate-${training.id}`}
+      accept=".pdf,.jpg,.png" 
+      onChange={(e) => handleFileChange(training.id, e)}
+      disabled={isTemp ? !rolePermissions.create : !rolePermissions.edit}
+    />
+    
+    {/* FIXED: Make the file display area clickable for re-attaching */}
+    {hasCertificate ? (
+      <label 
+        htmlFor={`certificate-${training.id}`} 
+        className="file-display-with-download"
+        style={{cursor: 'pointer'}}
+      >
+        <div className="file-info">
+          <span className="file-name" title={displayFileName}>
+            {displayFileName}
+          </span>
+        </div>
+        <div className="file-actions">
+          <button 
+            className="download-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownload(training);
+            }}
+            title="Download"
+            type="button"
+          >
+            ↓
+          </button>
+        </div>
+      </label>
+    ) : (
+      <label 
+        htmlFor={`certificate-${training.id}`} 
+        className="file-label"
+      >
+        Attach File (.pdf / .jpg / .png)
+      </label>
+    )}
+  </div>
+</div>
               </div>
 
               {(isTemp ? rolePermissions.create : rolePermissions.edit) && (
@@ -634,26 +603,32 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
                 </div>
               )}
 
-              {/* <div className="divider"></div> */}
+              {training.trainingNumber < trainings.length && (
+                <hr className="divider" />
+              )}
             </div>
           );
         })}
 
-        <div className="add-new-section">
-          {rolePermissions.create && (
+        {rolePermissions.create && (
+          <div className="add-new-section">
             <button className="add-new-btn" onClick={addNewTraining}>
               + Add New Training/Certification
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="navigation-buttons">
-          <button className="back-btn" onClick={onBack}>Back</button>
-          <button className="next-btn" onClick={onNext}>Next</button>
-        </div>
+       {/* Navigation Buttons - Fixed order */}
+{/* Navigation Buttons - Fixed */}
+<div className="navigation-buttons">
+  <div style={{display: 'flex', gap: '10px', marginLeft: 'auto'}}>
+    <button className="back-btn" onClick={onBack}>Back</button>
+    <button className="next-btn" onClick={onNext}>Next</button>
+  </div>
+</div>
       </div>
     </div>
   );
-};
+}
 
 export default EmployeesTrainingCertifications;

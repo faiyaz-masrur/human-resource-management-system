@@ -259,7 +259,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
                   onClick={() => removeExperience(experience.id, experience.isTempId)}
                   title="Delete this experience"
                 >
-                  ×
+                Remove
                 </button>
               )}
             </div>
@@ -359,7 +359,6 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
       {/* Navigation Buttons - Back button on right side before Next */}
       <div className="navigation-buttons">
         <div className="left-buttons">
-          {/* Additional left buttons can go here if needed */}
         </div>
         <div className="right-buttons">
           <button className="back-btn" onClick={onBack}>Back</button>
