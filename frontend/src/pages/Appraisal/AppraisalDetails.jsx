@@ -227,6 +227,9 @@ const AppraisalDetails = ({ view }) => {
             />
           </div>
           <div>
+            <label className="employee-detail-label-note"> PLEASE SUBMIT CAREFULLY. YOU WILL NOT BE ABLE TO MAKE ANY CHANGES AFTER SUBMISSION. </label>
+          </div>
+          <div>
             {
               rolePermissions.edit && (
                 <button className='employee-detail-value-button' onClick={handleSetPeriod}>

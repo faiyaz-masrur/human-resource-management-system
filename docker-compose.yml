@@ -70,6 +70,7 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+        condition: service_healthy
     volumes:
       - hr_orbit_static_volume:/static:ro
       - hr_orbit_media_volume:/media:ro

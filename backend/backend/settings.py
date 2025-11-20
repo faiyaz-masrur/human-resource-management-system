@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'employees',
     "notifications.apps.NotificationsConfig",
     "django_apscheduler",
-    'attendance',
     'django_celery_beat',
     'django_celery_results',
 ]
@@ -208,8 +207,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@sonaliintellect.com' 
 EMAIL_HOST_PASSWORD = 'SP4ft@111'     
 DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  
-#LOGIN_URL = 'http://localhost:5173/login'
-LOGIN_URL = 'http://172.17.231.72:3001/login'
+LOGIN_URL = 'http://localhost:5173/login'
+#LOGIN_URL = 'http://172.17.231.72:3001/login'
 
 # Company Information for Email Templates
 COMPANY_NAME = 'Sonali Intellect Limited'

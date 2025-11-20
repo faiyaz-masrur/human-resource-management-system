@@ -120,8 +120,8 @@ const EmployeesTrainingCertifications = ({ view, employee_id, onNext, onBack }) 
     
     if (file) {
       // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.warning("File size must be less than 5MB");
+      if (file.size > 2 * 1024 * 1024) {
+        toast.warning("File size must be less than 2MB");
         // Reset the file input
         event.target.value = '';
         return;

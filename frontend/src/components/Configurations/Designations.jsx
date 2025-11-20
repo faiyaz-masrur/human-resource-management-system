@@ -82,7 +82,8 @@ const DesignationList = ({
         <table className="data-table">
           <thead>
             <tr>
-              {['ID', 'Name', 'Grade', 'Description']
+              {/*{['ID', 'Name', 'Grade', 'Description'] */}
+              {['ID', 'Name', 'Grade']
                 .concat((rolePermissions.edit || rolePermissions.delete) 
                   ? ['Actions'] : [])
                 .map(header => (
@@ -99,7 +100,7 @@ const DesignationList = ({
                   <td className="table-data-light table-data--name-light">{des.name}</td>
                   {/* Access the name property of the nested grade object */}
                   <td className="table-data-light">{des.grade ? des.grade.name : 'N/A'}</td> 
-                  <td className="table-data-light">{des.description || 'N/A'}</td>
+                  {/*<td className="table-data-light">{des.description || 'N/A'}</td> */}
                   {(rolePermissions.edit || rolePermissions.delete) && (
                     <td className="table-data-light">
                       <div className="action-buttons-light">
@@ -148,8 +149,8 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
   const isEditing = !!editingDesignation;
   const initialFormState = {
     name: '',
-    grade: '', // Stores the grade ID (integer)
-    description: ''
+    grade: '', 
+    //description: ''
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -182,7 +183,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
         name: editingDesignation.name || '',
         // Use the ID for the select field
         grade: editingDesignation.grade ? editingDesignation.grade.id : '',
-        description: editingDesignation.description || ''
+        //description: editingDesignation.description || ''
       });
     } else {
       setFormData(initialFormState);
@@ -208,7 +209,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
     const dataToSend = {
       ...formData,
       grade: formData.grade || null, // Ensure empty string becomes null for ForeignKey
-      description: formData.description || null,
+      //description: formData.description || null,
     };
 
     try {
@@ -302,7 +303,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
             </div>
           </div>
 
-          <div className="form-group-light">
+          {/*<div className="form-group-light">
             <label htmlFor="description">Description:</label>
             <textarea
               id="description"
@@ -314,7 +315,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
               placeholder="Describe the primary responsibilities and reporting structure for this designation."
               disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
             ></textarea>
-          </div>
+          </div> */}
         </div>
 
         <div className="form-actions-light">

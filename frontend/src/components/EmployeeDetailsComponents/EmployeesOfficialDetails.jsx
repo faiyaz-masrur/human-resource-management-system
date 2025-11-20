@@ -535,6 +535,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             </button>
           </div>
         </div>
+        
       </div>
     </div>
   );

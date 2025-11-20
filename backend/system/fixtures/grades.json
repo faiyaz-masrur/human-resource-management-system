@@ -12,6 +12,6 @@
     {"name": "T410", "description": "Vice President Level"},
     {"name": "T420", "description": "Senior Vice President Level"},
     {"name": "T430", "description": "Executive Vice President Level"},
-    {"name": "COO", "description": "Chief Operating Officer Level"},
-    {"name": "CEO", "description": "Chief Executive Officer Level"}
+    {"name": "TXXX", "description": "Executive Panel"},
+    {"name": "TXXX", "description": "Executive Panel"}
 ]
