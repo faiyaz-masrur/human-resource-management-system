@@ -73,14 +73,8 @@ const ForgetPasswordUpdate = () => {
 
     // REAL API CALL - Using axios directly (NO auto-redirects)
     try {
-<<<<<<< HEAD
       const response = await apiWithoutAuth.post(
         `system/auth/reset-password/${uid}/${token}/`, 
-=======
-      const response = await axios.post(
-        //http://172.17.231.72:8005/api/system/auth/reset-password/${uid}/${token}/
-        `http://127.0.0.1:8000/api/system/auth/reset-password/${uid}/${token}/`, 
->>>>>>> 9730ca2a5c88d874d60230aebf99f8ac2bad8c23
         {
           new_password: newPassword,
           confirm_password: confirmPassword,

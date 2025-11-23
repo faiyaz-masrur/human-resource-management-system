@@ -25,12 +25,7 @@ const UserLogin = () => {
     setIsSubmitting(true);
 
     try {
-<<<<<<< HEAD
       const response = await axios.post(`${baseURL}/system/auth/login/`, { 
-=======
-      // http://172.17.231.72:8005/api/system/auth/login/
-      const response = await axios.post('http://127.0.0.1:8000/api/system/auth/login/', { 
->>>>>>> 9730ca2a5c88d874d60230aebf99f8ac2bad8c23
         email, 
         password 
       });

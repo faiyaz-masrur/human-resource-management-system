@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'employees',
     "notifications.apps.NotificationsConfig",
     "django_apscheduler",
+    'attendance',
     'django_celery_beat',
     'django_celery_results',
 ]
