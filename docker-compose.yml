@@ -1,60 +1,114 @@
 version: '3.9'
 
 services:
-  backend:
-    build: 
-      context: ./backend
-    container_name: django_backend_performance_appraisal
+  db:
+    image: mysql:8.0
+    container_name: hr_orbit_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: performance_appraisal
     volumes:
-      - ./backend:/backend
-      - static_volume:/backend/static
-      - media_volume:/backend/media
+      - db_data_hr_orbit:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+
+  redis:
+    image: redis:7
+    container_name: hr_orbit_redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+
+  backend:
+    build:
+      context: ./backend
+    container_name: hr_orbit_backend
+    restart: unless-stopped
+    volumes:
+      # backend expects STATIC_ROOT=/backend/static and MEDIA_ROOT=/backend/media
+      - hr_orbit_static_volume:/backend/static
+      - hr_orbit_media_volume:/backend/media
     depends_on:
       - db
+      - redis
     environment:
       DB_HOST: db
-      DB_PORT: 3306
       DB_NAME: performance_appraisal
       DB_USER: root
-      DB_PASSWORD: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: django-db
       DJANGO_SUPERUSER_EMAIL: noreply@sonaliintellect.com
       DJANGO_SUPERUSER_PASSWORD: admin12345@
-    ports:
-      - "8005:8005"
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep gunicorn || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 45s
+
 
   frontend:
-    build: 
+    build:
       context: ./frontend
-    container_name: react_frontend_performance_appraisal
+    container_name: hr_orbit_frontend
+    restart: unless-stopped
     ports:
       - "3001:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     volumes:
-      - static_volume:/static
-      - media_volume:/media
+      - hr_orbit_static_volume:/static:ro
+      - hr_orbit_media_volume:/media:ro
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
-  db:
-    image: mysql:8.0
-    container_name: mysql_db_performance_appraisal
-    restart: always
+  celery_worker:
+    build:
+      context: ./backend
+    container_name: hr_orbit_celery_worker
+    restart: unless-stopped
+    command: celery -A backend.celery worker --pool=prefork --concurrency=1 --autoscale=2,1 -l info
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: performance_appraisal
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3307:3306"  # host mapping; containers should still use 3306 internally
+      DB_HOST: db
+      DB_NAME: performance_appraisal
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: django-db
+    depends_on:
+      - db
+      - redis
 
-volumes: 
-  db_data:
-  static_volume:
-  media_volume:
+  celery_beat:
+    build:
+      context: ./backend
+    container_name: hr_orbit_celery_beat
+    restart: unless-stopped
+    command: celery -A backend beat -l info
+    environment:
+      DB_HOST: db
+      DB_NAME: performance_appraisal
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: django-db
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  db_data_hr_orbit:
+  hr_orbit_static_volume:
+  hr_orbit_media_volume:

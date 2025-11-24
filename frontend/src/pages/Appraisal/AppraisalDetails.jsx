@@ -347,17 +347,21 @@ const AppraisalDetails = ({ view }) => {
               </div>
             </div>
             
-            <div className="compact-download-item">
-              <label className="employee-detail-label">Download Report</label>
-              <button 
-                className="compact-download-btn"
-                onClick={downloadAppraisalPDF}
-                disabled={!rolePermissions?.view}
-                title="Download Complete Appraisal as PDF"
-              >
-                📄 Download PDF
-              </button>
+            {/* Set Period Button */}
+            <div className="employee-detail-item">
+              <div className="set-period-container">
+                {rolePermissions.edit && (
+                  <button 
+                    className={`employee-detail-value-button ${settingPeriod ? 'loading' : ''}`}
+                    onClick={handleSetPeriod}
+                    disabled={settingPeriod || !appraisalDetails?.appraisal_start_date || !appraisalDetails?.appraisal_end_date}
+                  >
+                    {settingPeriod ? 'Setting Period...' : 'Set Period'}
+                  </button>
+                )}
+              </div>
             </div>
+          
 
             <div className="compact-warning-item">
               <label className="compact-warning-text"> 
@@ -366,20 +370,19 @@ const AppraisalDetails = ({ view }) => {
             </div>
           </div>
 
-          {/* Set Period Button */}
-          <div className="employee-detail-item">
-            <div className="set-period-container">
-              {rolePermissions.edit && (
-                <button 
-                  className={`employee-detail-value-button ${settingPeriod ? 'loading' : ''}`}
-                  onClick={handleSetPeriod}
-                  disabled={settingPeriod || !appraisalDetails?.appraisal_start_date || !appraisalDetails?.appraisal_end_date}
-                >
-                  {settingPeriod ? 'Setting Period...' : 'Set Period'}
-                </button>
-              )}
-            </div>
+          {/* Downlaod Button */}
+          <div className="compact-download-item">
+            <label className="employee-detail-label">Download Report</label>
+            <button 
+              className="compact-download-btn"
+              onClick={downloadAppraisalPDF}
+              disabled={!rolePermissions?.view}
+              title="Download Complete Appraisal as PDF"
+            >
+              📄 Download PDF
+            </button>
           </div>
+
         </div>
       </div>
 

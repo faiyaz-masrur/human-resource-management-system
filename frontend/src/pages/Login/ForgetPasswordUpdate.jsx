@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiWithoutAuth from '../../services/apiWithoutAuth';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+
 
 const ForgetPasswordUpdate = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -72,18 +73,12 @@ const ForgetPasswordUpdate = () => {
 
     // REAL API CALL - Using axios directly (NO auto-redirects)
     try {
-      const response = await axios.post(
-        //http://172.17.231.72:8005/api/system/auth/reset-password/${uid}/${token}/
-        `http://127.0.0.1:8000/api/system/auth/reset-password/${uid}/${token}/`, 
+      const response = await apiWithoutAuth.post(
+        `system/auth/reset-password/${uid}/${token}/`, 
         {
           new_password: newPassword,
           confirm_password: confirmPassword,
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
       );
 
       console.log(" Password reset successful:", response.data);

@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSadTear } from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL;
+
 const UserLogin = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,8 +25,7 @@ const UserLogin = () => {
     setIsSubmitting(true);
 
     try {
-      // http://172.17.231.72:8005/api/system/auth/login/
-      const response = await axios.post('http://127.0.0.1:8000/api/system/auth/login/', { 
+      const response = await axios.post(`${baseURL}/system/auth/login/`, { 
         email, 
         password 
       });

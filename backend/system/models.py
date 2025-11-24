@@ -8,7 +8,7 @@ from .choices import WORKSPACE_CHOICES, SUB_WORKSPACE_CHOICES
 
 
 
-def generate_employee_id():
+'''def generate_employee_id():
     # Get the highest existing numeric employee ID
     employees = Employee.objects.all()
     max_id = 0
@@ -28,7 +28,39 @@ def generate_employee_id():
         return ""
     
     # Return next sequential ID
+    return str(max_id + 1)'''
+
+from django.db import connection
+
+def generate_employee_id():
+    # Check table existence (avoid migration-time errors)
+    tables = connection.introspection.table_names()
+    if "system_employee" not in tables:
+        return ""  # Skip ID generation during migration
+
+    # Get all employees
+    employees = Employee.objects.all()
+    max_id = 0
+
+    for emp in employees:
+        try:
+            emp_id = int(emp.id)
+            if emp_id > max_id:
+                max_id = emp_id
+        except (ValueError, TypeError):
+            continue
+
+    # If no numeric IDs found
+    if max_id == 0:
+        # Generate a random 6-character alphanumeric string
+        while True:
+            random_id = get_random_string(length=4, allowed_chars='0123456789')
+            if not Employee.objects.filter(id=random_id).exists():
+                return random_id
+
     return str(max_id + 1)
+
+
 
 
 class Role(models.Model):
@@ -173,7 +205,7 @@ class Employee(AbstractUser):
 
     id = models.CharField(
         primary_key=True,
-        max_length=5, 
+        max_length=4, 
         unique=True,
         default=generate_employee_id,
     )

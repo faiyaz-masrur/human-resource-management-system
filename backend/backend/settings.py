@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "django_apscheduler",
     'attendance',
-    
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 SCHEDULER_AUTOSTART = True
@@ -98,7 +99,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': '3306',
+        'PORT': os.environ.get('DB_PORT', '3306'),
 
     }
 }
@@ -139,10 +140,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # Directory where collectstatic will put files for serving
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Optional: Directories to look for additional static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'assets',
 ]
 
 
@@ -173,13 +174,20 @@ CORS_ALLOWED_ORIGINS = [
     # Add your React frontend's URL here in production.
     # For development, you can use:
     "http://localhost:5173",
+    "http://localhost:3001",
     "http://172.17.231.72:3001",
 
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://172.17.231.72:3001",
+]
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=480),    
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=480),    
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),    
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),    
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -252,20 +260,18 @@ SCHEDULER_AUTOSTART = True
 
 
 # set the celery broker url
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/1')
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TASK_SERIALIZER = 'json'
 
 # set the celery result backend
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'django-db')
 
 # set the celery timezone
 CELERY_TIMEZONE = 'Asia/Dhaka'
 
-from celery.schedules import crontab
-
-CELERY_BEAT_SCHEDULE = {
-    "monthly_appraisal_task": {
-        "task": "appraisals.tasks.monthly_appraisal_task",  # path to your Celery task
-        "schedule": crontab(hour=0, minute=0, day_of_month=1),  # 1st of every month at 00:00 UTC
-        "args": (),  # any arguments if your task needs them
-    },
-}
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

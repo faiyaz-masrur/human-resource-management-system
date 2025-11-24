@@ -11,6 +11,11 @@ import NotificationSidebar from './NotificationSidebar';
 const DashboardLayout = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showRightPanel, setShowRightPanel] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const updateUnreadCount = (newVal) => {
+    setUnreadCount(newVal);
+  };
 
   // Toggle handlers
   const toggleSidebar = () => setShowSidebar(v => !v);
@@ -71,11 +76,14 @@ const DashboardLayout = () => {
       <NotificationSidebar
         className={`notification-sidebar ${showRightPanel ? 'show' : ''}`}
         onClose={() => setShowRightPanel(false)}
+        unreadCount={unreadCount}
+        updateUnreadCount={updateUnreadCount}
       />
 
       <Navbar
         onMenuClick={toggleSidebar}
-        onRightPanelClick={toggleRightPanel}
+        unreadCount={unreadCount}
+        updateUnreadCount={updateUnreadCount}
       />
 
       {/* Panel overlay for mobile/overlay mode */}

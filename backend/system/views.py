@@ -51,7 +51,9 @@ from django.utils.encoding import force_bytes, force_str
 
 from rest_framework.permissions import AllowAny  
 User = get_user_model()
-
+from django.http import JsonResponse
+def health(request):
+    return JsonResponse({"status": "ok"})
 
 class UserDataApiView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
@@ -204,10 +206,11 @@ class DesignationViewSet(viewsets.ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
-        grade_id = self.kwargs.get("grade_id") 
+        grade_id = self.kwargs.get("grade_id")
+        qs = Designation.objects.select_related("grade")
         if grade_id:
-            return Designation.objects.filter(grade_id=grade_id).order_by("name")
-        return Designation.objects.all().order_by("name")
+            qs = qs.filter(grade_id=grade_id)
+        return qs
     
 
 
@@ -247,6 +250,7 @@ class RolePermissionAPIView(
         role = self.kwargs.get("role")
         workspace = self.kwargs.get("workspace")
         sub_workspace = self.kwargs.get("sub_workspace")
+        pk = self.kwargs.get("pk")
 
         if role and workspace and sub_workspace:
             queryset = queryset.filter(role=role, workspace=workspace, sub_workspace=sub_workspace)
@@ -254,6 +258,8 @@ class RolePermissionAPIView(
             queryset = queryset.filter(role=role, workspace=workspace)
         elif role:
             queryset = queryset.filter(role=role)
+        elif pk:
+            queryset = queryset.filter(pk=pk)
         return queryset
 
     def get(self, request, *args, **kwargs):

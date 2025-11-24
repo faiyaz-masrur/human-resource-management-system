@@ -121,7 +121,7 @@ class EmployeeOfficialDetailSerializer(SmartUpdateSerializer):
             
         except Exception as e:
             raise serializers.ValidationError(f"Error creating employee: {str(e)}")
-        
+          
 
 
 class EmployeePersonalDetailSerializer(SmartUpdateSerializer):
