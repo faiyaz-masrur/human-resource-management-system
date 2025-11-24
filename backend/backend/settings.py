@@ -1,5 +1,4 @@
 from datetime import timedelta
-import os
 from pathlib import Path
 
 import os
@@ -21,9 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1d!c19o-q==2!khj0k%7_d3l+dknhw#!y(3oa4&l_70%y&c1kr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -36,10 +35,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework', # Add this to enable Django REST Framework
+    'rest_framework', 
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist', 
-    'corsheaders', # Add this to handle Cross-Origin Resource Sharing
+    'corsheaders', 
+    'celery',
     'system',
     'appraisals',
     'employees',
@@ -54,7 +54,9 @@ SCHEDULER_AUTOSTART = True
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-
+    # Added for static files in production when DEBUG=False
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,15 +65,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -124,17 +128,22 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# --- STATIC FILES (CSS, JavaScript, Images) ---
 
 STATIC_URL = 'static/'
+# Directory where collectstatic will put files for serving
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Optional: Directories to look for additional static files
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 
 MEDIA_URL = '/media/'
@@ -164,11 +173,13 @@ CORS_ALLOWED_ORIGINS = [
     # Add your React frontend's URL here in production.
     # For development, you can use:
     "http://localhost:5173",
+    "http://172.17.231.72:3001",
+
 ]
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=480),    
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=480),     
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=480),    
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -194,9 +205,10 @@ EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@sonaliintellect.com' 
-EMAIL_HOST_PASSWORD = 'SP4ft@111'         
+EMAIL_HOST_PASSWORD = 'SP4ft@111'     
 DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  
 LOGIN_URL = 'http://localhost:5173/login'
+#LOGIN_URL = 'http://172.17.231.72:3001/login'
 
 # Company Information for Email Templates
 COMPANY_NAME = 'Sonali Intellect Limited'
@@ -236,3 +248,24 @@ SCHEDULER_EXECUTORS = {
 # This keeps your database clean by removing jobs older than a week.
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # seconds
 SCHEDULER_AUTOSTART = True
+
+
+
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# set the celery timezone
+CELERY_TIMEZONE = 'Asia/Dhaka'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "monthly_appraisal_task": {
+        "task": "appraisals.tasks.monthly_appraisal_task",  # path to your Celery task
+        "schedule": crontab(hour=0, minute=0, day_of_month=1),  # 1st of every month at 00:00 UTC
+        "args": (),  # any arguments if your task needs them
+    },
+}

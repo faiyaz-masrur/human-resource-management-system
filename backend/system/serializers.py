@@ -24,19 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ['id', 'email', 'name', 'role']
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        # The default result (access/refresh tokens)
-        data = super().validate(attrs)
-        
-        # Serialize the user data and add it to the response
-        serializer = UserSerializer(self.user)
-        user_data = serializer.data
-        
-        data['user'] = user_data
-        return data
     
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -70,14 +57,16 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = "__all__"
 
-class DesignationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Designation
-        fields = "__all__"
-
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grade
+        fields = "__all__"
+
+class DesignationSerializer(serializers.ModelSerializer):
+    
+    grade = GradeSerializer(read_only=True)
+    class Meta:
+        model = Designation
         fields = "__all__"
 
 
@@ -91,7 +80,7 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RolePermission  # Accessing the through model
-        fields = ["id", "role_name", "role", "workspace", "sub_workspace", "view", "create", "edit", "delete"]
+        fields = ["id", "role_name", "role", "workspace", "sub_workspace", "view", "create", "edit", "delete", "download"]
 
 class ReportingManagerSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="manager.name", read_only=True)

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import SonaliLogo from "../../assets/sonali-logo.jpg";
 import LoginImage from "../../assets/login_page_image.png";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import * as far from '@fortawesome/free-regular-svg-icons';
+import { faFaceSadTear } from '@fortawesome/free-regular-svg-icons';
 import axios from 'axios';
 
 const UserLogin = () => {
@@ -17,14 +16,6 @@ const UserLogin = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Load error from sessionStorage on component mount
-  useEffect(() => {
-    const storedError = sessionStorage.getItem('loginError');
-    if (storedError) {
-      setError(storedError);
-      sessionStorage.removeItem('loginError');
-    }
-  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,35 +23,21 @@ const UserLogin = () => {
     setIsSubmitting(true);
 
     try {
+      // http://172.17.231.72:8005/api/system/auth/login/
       const response = await axios.post('http://127.0.0.1:8000/api/system/auth/login/', { 
         email, 
         password 
       });
-
-      // Clear any stored errors on success
-      sessionStorage.removeItem('loginError');
-      
-      login(response.data);
+      console.log("Login responce: ", response)
+      await login(
+        response.data.access,
+        response.data.refresh
+      );
       navigate('/');
-      
     } catch (err) {
       console.error('Login failed:', err);
-      
       let errorMsg = 'Login failed. Please check your credentials!';
-    
-      
-      // Set error in state AND sessionStorage
-      setError(errorMsg);
-     // sessionStorage.setItem('loginError', errorMsg);
-      
-      // Force the error to stay using multiple methods
-      //setTimeout(() => {
-       // const currentError = sessionStorage.getItem('loginError');
-       // if (currentError && currentError === errorMsg) {
-       //   setError(currentError);
-       // }
-      //}, 100);
-      
+      setError(errorMsg); 
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +45,6 @@ const UserLogin = () => {
 
   // Clear error when user starts typing
   const handleInputChange = (setter) => (e) => {
-    sessionStorage.removeItem('loginError');
     setError('');
     setter(e.target.value);
   };
@@ -112,7 +88,7 @@ const UserLogin = () => {
                   gap: '3px'
                 }}
               >
-                    <FontAwesomeIcon icon={far.faFaceSadTear} 
+                    <FontAwesomeIcon icon={faFaceSadTear} 
                     
                     />
                 <strong></strong> {error}

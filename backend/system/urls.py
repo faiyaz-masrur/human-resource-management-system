@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import (
-    MyTokenObtainPairView, 
+    UserDataApiView, 
     ChangePasswordView, 
     PasswordResetRequestView, 
     PasswordResetConfirmView,
@@ -20,6 +20,7 @@ from .views import (
     TrainingTypeListView,
 )
 from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
@@ -40,7 +41,7 @@ urlpatterns = [
     path("configurations/grade-specific-designations/<int:grade_id>/", DesignationViewSet.as_view({"get": "list"})),
 
     # 4. AUTH paths remain directly under 'api/system/'
-    path('auth/login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path("auth/change-password/", ChangePasswordView.as_view(), name="change-password"),
@@ -48,6 +49,7 @@ urlpatterns = [
     #path("auth/reset-password/<uuid:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
     path("auth/reset-password/<str:uid>/<str:token>/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
 
+    path("auth/get-user-data/", UserDataApiView.as_view(), name="get-user-data"),
 
     # 5. Other custom system paths remain directly under 'api/system/'
     path("configurations/reporting-managers-list/", ReportingManagerListView.as_view(), name="reporting-manager-list"),

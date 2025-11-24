@@ -1,76 +1,135 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+
+import api from "../../services/api";
+
+import RmReviewList from "../../components/AppraisalListComponents/RmReviewList";
+import HrReviewList from "../../components/AppraisalListComponents/HrReviewList";
+import HodReviewList from "../../components/AppraisalListComponents/HodReviewList";
+import CooReviewList from "../../components/AppraisalListComponents/CooReviewList";
+import CeoReviewList from "../../components/AppraisalListComponents/CeoReviewList";
 
 const ReviewAppraisals = () => {
-  // 2. Call useNavigate hook to get the navigation function
-  const navigate = useNavigate(); 
-    
-  const appraisals = [
-    { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', status: 'Completed', dept: 'R&D'},
-    { id: 1066, name: 'Saim Bin Salim', designation: 'Associate Business Analyst', status: 'Pending', dept: 'R&D'},
-    { id: 2010, name: 'Mamun Ur Rashid', designation: 'Assistant Vice President', status: 'Completed', dept: 'R&D'},
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("");
+  const [reviewPermissions, setReviewPermissions] = useState({});
+
+
+  const TABS = [
+    { key: "RM Review", perm: "EmployeeRmReview", component: RmReviewList },
+    { key: "HR Review", perm: "EmployeeHrReview", component: HrReviewList },
+    { key: "HOD Review", perm: "EmployeeHodReview", component: HodReviewList },
+    { key: "COO Review", perm: "EmployeeCooReview", component: CooReviewList },
+    { key: "CEO Review", perm: "EmployeeCeoReview", component: CeoReviewList },
   ];
 
-  const getStatusColor = (status) => {
-    return status === 'Completed' ? '#4CAF50' : '#F44336';
-  };
-  
-  // Use it for dynamic value for specific appraisal id
-  /*const handleEditAppraisal = (appraisalId) => {
-    navigate(`/appraisal/employee/${appraisalId}`); 
-    
-  };
-  */
 
-  // Use it for static value to show the static forms
-    const handleEditAppraisal = () => {
-    navigate('/appraisal/employee'); 
+  // Fetch permissions
+  useEffect(() => {
+    const fetchRolePermissions = async () => {
+      try {
+        const res = await api.get(
+          `system/role-permissions/${user.role}/${"ReviewAppraisal"}/`
+        );
+
+        const list = Array.isArray(res.data)
+          ? res.data
+          : res.data
+          ? [res.data]
+          : [];
+
+        const map = {};
+        list.forEach((p) => (map[p.sub_workspace] = p));
+        console.log("Review Appraisal role permissions:", map);
+        setReviewPermissions(map);
+      } catch (error) {
+        console.warn("Error fetching role permissions", error);
+      }
+    };
+
+    fetchRolePermissions();
+  }, []);
+
+
+  // ✅ Auto-select default tab based on first allowed permission
+  useEffect(() => {
+    if (!reviewPermissions || activeTab !== "") return;
+
+    for (const tab of TABS) {
+      const perm = reviewPermissions[tab.perm];
+      if (perm?.create || perm?.edit) {
+        setActiveTab(tab.key);
+        break;
+      }
+    }
+  }, [reviewPermissions]);
+
+  const getTabButtonClass = (tabName) => {
+    return `appraisal-tab-button ${activeTab === tabName ? "active-appraisal-tab" : ""}`;
+  };
+
+
+  const getStatusColor = (status) => {
+    return status === "Active" ? "#4CAF50" : "#F44336";
+  };
+
+
+  const getReviewColor = (status) => {
+    return status === "Completed" ? "#4CAF50" : "#F44336";
+  };
+
+
+  const handleEditAppraisal = (employee_id) => {
+    navigate(`/appraisal/review/details/${employee_id}`);
+  };
+
+
+  // ✅ Render selected tab component
+  const renderActiveComponent = () => {
+    const active = TABS.find((t) => t.key === activeTab);
+    if (!active) return null;
+
+    const Component = active.component;
+    return (
+      <Component
+        rolePermissions={reviewPermissions["ReviewAppraisalList"]}
+        getStatusColor={getStatusColor}
+        getReviewColor={getReviewColor}
+        handleEditAppraisal={handleEditAppraisal}
+      />
+    );
   };
 
   return (
     <div className="appraisal-list-container">
-      <h2 className="appraisal-list-title">All Pending Appraisals</h2>
-      <div className="appraisal-table-responsive">
-        <table className="appraisal-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Designation</th>
-              <th>Status</th>
-              <th>Dept</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appraisals.map((appraisal, index) => (
-              <tr key={index}>
-                <td>{appraisal.id}</td>
-                <td>{appraisal.name}</td>
-                <td>{appraisal.designation}</td>
-                <td>
-                  <span style={{ color: getStatusColor(appraisal.status), fontWeight: 'bold' }}>
-                    {appraisal.status}
-                  </span>
-                </td>
-                <td>{appraisal.dept}</td>
-                <td>
-                  <div className="ar-actions-cell">
-                    <button 
-                        className="action-button-light action-button--edit-light" 
-                        onClick={() => handleEditAppraisal()}
-                        title="edit appraisal"
-                    >
-                        &#9998; {/* Pen emoji for Edit */}
-                    </button>
-                  </div>
-                </td>
+      <h2 className="appraisal-list-title">Review Appraisals</h2>
+      {reviewPermissions["ReviewAppraisalList"]?.view && (
+        <div className="appraisal-tabs-container">
+          {/* ✅ Render only permitted tabs */}
+          <div className="appraisal-tabs-buttons">
+            {TABS.map((tab) => {
+              const perm = reviewPermissions[tab.perm];
+              if (!perm?.create && !perm?.edit) return null;
 
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={getTabButtonClass(tab.key)}
+                >
+                  {tab.key}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ✅ Render Active Component */}
+          <div className="appraisal-content">{renderActiveComponent()}</div>
+        </div>
+      )}
     </div>
   );
 };

@@ -9,9 +9,8 @@ import ChangePassword from './pages/Login/ChangePassword';
 import ForgetPassword from './pages/Login/ForgetPassword';
 import ForgetPasswordUpdate from './pages/Login/ForgetPasswordUpdate';
 
-import MyAppraisal from './pages/Appraisal/MyAppraisal';
+import AppraisalDetails from './pages/Appraisal/AppraisalDetails';
 import ReviewAppraisals from './pages/Appraisal/ReviewAppraisals';
-import AppraisalDetailsEmployee from './pages/Appraisal/AppraisalDetailsEmployee';
 import AllAppraisals from './pages/Appraisal/AllAppraisals';
 import AppraisalStatus from './pages/Appraisal/AppraisalStatus';
 import AppraisalSettings from './pages/Appraisal/AppraisalSettings';
@@ -30,13 +29,13 @@ import Roles from "./components/Configurations/Roles";
 // -------------------------
 // Attendance Components
 // -------------------------
-import MyAttendance from './pages/Attendance/MyAttendance';
-import MyAttendanceHistory from './pages/Attendance/MyAttendanceHistory';
-import ReconcileRequest from './pages/Attendance/ReconcileRequest';
-import GeoFenceMap from './pages/Attendance/GeoFenceMap';
-import AllAttendance from './pages/Attendance/AllAttendance';
-import EmployeeAttendance from './pages/Attendance/EmployeeAttendance';
-import AttendanceReport from './pages/Attendance/AttendanceReport';
+//import MyAttendance from './pages/Attendance/MyAttendance';
+//import MyAttendanceHistory from './pages/Attendance/MyAttendanceHistory';
+//import ReconcileRequest from './pages/Attendance/ReconcileRequest';
+//import GeoFenceMap from './pages/Attendance/GeoFenceMap';
+//import AllAttendance from './pages/Attendance/AllAttendance';
+//import EmployeeAttendance from './pages/Attendance/EmployeeAttendance';
+//import AttendanceReport from './pages/Attendance/AttendanceReport';
 
 
 function App() {
@@ -75,10 +74,11 @@ function App() {
           <Route path="/change-password" element={<ChangePassword />} />
 
           {/* Appraisal */}
-          <Route path="appraisal/my" element={<MyAppraisal />} />
-          <Route path="appraisal/review" element={<ReviewAppraisals />} />
-          <Route path="appraisal/employee" element={<AppraisalDetailsEmployee />} />
-          <Route path="appraisal/all" element={<AllAppraisals />} />
+          <Route path="appraisal/my" element={<AppraisalDetails view={{isMyAppraisal: true}}/>} />
+          <Route path="appraisal/review/list" element={<ReviewAppraisals />} />
+          <Route path="appraisal/all/list" element={<AllAppraisals />} />
+          <Route path="appraisal/review/details/:employee_id" element={<AppraisalDetails view={{isReviewAppraisal: true}}/>} />
+          <Route path="appraisal/all/details/:employee_id" element={<AppraisalDetails view={{isAllAppraisal: true}}/>} />
           <Route path="appraisal/status" element={<AppraisalStatus />} />
           <Route path="appraisal/settings" element={<AppraisalSettings />} />
 
@@ -97,7 +97,7 @@ function App() {
 
           {/* ---------------------- */}
           {/* Attendance Routes */}
-          {/* ---------------------- */}
+          {/* ---------------------- 
           <Route path="attendance/home" element={<MyAttendance />} />
           <Route path="attendance/history" element={<MyAttendanceHistory />} />
           <Route path="attendance/reconcile" element={<ReconcileRequest />} />
@@ -105,7 +105,7 @@ function App() {
           <Route path="/attendance/all" element={<AllAttendance />} />
           <Route path="/attendance/employee/:employeeId" element={<EmployeeAttendance />} />
           <Route path="/attendance/report" element={<AttendanceReport />} />
-
+            */}
         </Route>
       </Routes>
     </Router>

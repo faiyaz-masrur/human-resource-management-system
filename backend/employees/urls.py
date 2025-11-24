@@ -17,6 +17,9 @@ from .views import (EmployeeOfficialDetailViewSet,
                     EmployeeListView,
                     get_next_employee_id
 
+
+                    
+
 )
 
 router = DefaultRouter()
@@ -51,5 +54,8 @@ urlpatterns = [
     path('employee-list/', EmployeeListView.as_view(), name='employee-list'),
 
     path('next-employee-id/', get_next_employee_id, name='next-employee-id'),
+
+
+   
 
 ]

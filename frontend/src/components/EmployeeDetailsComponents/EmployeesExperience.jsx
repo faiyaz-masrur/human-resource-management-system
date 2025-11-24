@@ -57,7 +57,7 @@ const EmployeesExperience = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchExperiences();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   const addNewExperience = () => {
     if (!rolePermissions.create) {

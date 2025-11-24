@@ -52,6 +52,7 @@ class RolePermission(models.Model):
     create = models.BooleanField(default=False)
     edit = models.BooleanField(default=False)
     delete = models.BooleanField(default=False)
+    download = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "System Role Permission"
@@ -90,7 +91,6 @@ class Designation(models.Model):
         null=True, blank=True,
         related_name="designation",
     )
-    description = models.TextField(max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = "Designation"
@@ -98,12 +98,12 @@ class Designation(models.Model):
 
     def __str__(self):
         return self.name
-     
+    
 
 class ReportingManager(models.Model):
-    # Will be linked to Employee later
+
     manager = models.OneToOneField(
-        "Employee",   # string ref since Employee is defined later
+        "Employee",  
         on_delete=models.CASCADE,
         primary_key=True,
         related_name="as_manager"
@@ -111,6 +111,58 @@ class ReportingManager(models.Model):
 
     def __str__(self):
         return f"{self.manager.name}"
+    
+
+class Hr(models.Model):
+
+    hr = models.OneToOneField(
+        "Employee", 
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_hr"
+    )
+
+    def __str__(self):
+        return f"{self.hr.name}"
+    
+
+class Hod(models.Model):
+
+    hod = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_hod"
+    )
+
+    def __str__(self):
+        return f"{self.hod.name}"
+     
+
+class Coo(models.Model):
+
+    coo = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_coo"
+    )
+
+    def __str__(self):
+        return f"{self.coo.name}"
+    
+
+class Ceo(models.Model):
+
+    ceo = models.OneToOneField(
+        "Employee",  
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="as_ceo"
+    )
+
+    def __str__(self):
+        return f"{self.ceo.name}"
 
 
 class Employee(AbstractUser):
@@ -153,11 +205,9 @@ class Employee(AbstractUser):
         related_name="employees"
     )
 
-    basic_salary = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    basic_salary = models.IntegerField(
         null=True, blank=True,
-        default=0.00
+        default=0
     )
 
     reporting_manager = models.ForeignKey(

@@ -39,7 +39,7 @@ class Command(BaseCommand):
         # Create district mapping
         obj_mapping = {}
         for district in districts_data:
-            district_obj, created = BdDistrict.objects.get_or_create(name=district["district_name"])
+            district_obj, created = BdDistrict.objects.update_or_create(name=district["district_name"])
             obj_mapping[district["id"]] = district_obj
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created district: {district_obj.name}"))
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             if not district_obj:
                 raise ValueError(f"District ID {district_id} not found for thana {thana['thana_name']}")
 
-            thana_obj, created = BdThana.objects.get_or_create(
+            thana_obj, created = BdThana.objects.update_or_create(
                 name=thana["thana_name"], 
                 district=district_obj
             )
@@ -70,7 +70,7 @@ class Command(BaseCommand):
             blood_groups_data = json.load(f)
 
         for blood_group in blood_groups_data:
-            blood_group_obj, created = BloodGroup.objects.get_or_create(
+            blood_group_obj, created = BloodGroup.objects.update_or_create(
                 name=blood_group["name"], 
                 defaults={
                     'description': blood_group["description"]
@@ -85,7 +85,7 @@ class Command(BaseCommand):
             marital_status_data = json.load(f)
 
         for marital_status in marital_status_data:
-            marital_status_obj, created = MaritalStatus.objects.get_or_create(
+            marital_status_obj, created = MaritalStatus.objects.update_or_create(
                 name=marital_status["name"], 
                 defaults={
                     'description': marital_status["description"]
@@ -100,7 +100,7 @@ class Command(BaseCommand):
             emergency_contact_relationships_data = json.load(f)
 
         for emergency_contact_relationship in emergency_contact_relationships_data:
-            emergency_contact_relationship_obj, created = EmergencyContactRelationship.objects.get_or_create(
+            emergency_contact_relationship_obj, created = EmergencyContactRelationship.objects.update_or_create(
                 name=emergency_contact_relationship["name"], 
                 defaults={
                     'description': emergency_contact_relationship["description"]
@@ -115,7 +115,7 @@ class Command(BaseCommand):
             degrees_data = json.load(f)
 
         for degree in degrees_data:
-            degree_obj, created = Degree.objects.get_or_create(
+            degree_obj, created = Degree.objects.update_or_create(
                 name=degree["name"], 
                 defaults={
                     'description': degree["description"]
@@ -130,7 +130,7 @@ class Command(BaseCommand):
             specializations_data = json.load(f)
 
         for specialization in specializations_data:
-            specialization_obj, created = Specialization.objects.get_or_create(
+            specialization_obj, created = Specialization.objects.update_or_create(
                 name=specialization["name"], 
                 defaults={
                     'description': specialization["description"]
@@ -145,7 +145,7 @@ class Command(BaseCommand):
             training_type_data = json.load(f)
 
         for training_type in training_type_data:
-            training_type_obj, created = TrainingType.objects.get_or_create(
+            training_type_obj, created = TrainingType.objects.update_or_create(
                 name=training_type["name"], 
                 defaults={
                     'description': training_type["description"]
@@ -160,7 +160,7 @@ class Command(BaseCommand):
             departments_data = json.load(f)
 
         for department in departments_data:
-            department_obj, created = Department.objects.get_or_create(
+            department_obj, created = Department.objects.update_or_create(
                 name=department["name"], 
                 defaults={
                     'description': department["description"]
@@ -176,7 +176,7 @@ class Command(BaseCommand):
 
         obj_mapping = {}
         for grade in grades_data:
-            grade_obj, created = Grade.objects.get_or_create(
+            grade_obj, created = Grade.objects.update_or_create(
                 name=grade["name"], 
                 defaults={
                     'description': grade["description"]
@@ -197,12 +197,9 @@ class Command(BaseCommand):
             if not grade_obj:
                 raise ValueError(f"Grade '{grade_name}' not found for designation '{designation['name']}'")
 
-            designation_obj, created = Designation.objects.get_or_create(
+            designation_obj, created = Designation.objects.update_or_create(
                 name=designation["name"], 
-                grade=grade_obj, 
-                defaults={
-                    'description': designation["description"]
-                }
+                grade=grade_obj
             )
             if created:
                 self.stdout.write(self.style.SUCCESS(f"Created designation: {designation_obj.name}"))
@@ -215,7 +212,7 @@ class Command(BaseCommand):
 
         obj_mapping = {}
         for role in roles_data:
-            role_obj, created = Role.objects.get_or_create(
+            role_obj, created = Role.objects.update_or_create(
                 name=role["name"], 
                 defaults={
                     'description': role["description"]
@@ -244,7 +241,8 @@ class Command(BaseCommand):
                     'view': role_permission['view'],
                     'create': role_permission['create'],
                     'edit': role_permission['edit'],
-                    'delete': role_permission['delete']
+                    'delete': role_permission['delete'],
+                    'download': role_permission['download'],
                 }
             )
             if created:

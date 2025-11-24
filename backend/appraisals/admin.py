@@ -1,6 +1,7 @@
 
 from django.contrib import admin
-from .models import EmployeeAppraisalTimer, ReportingManagerAppraisalTimer, FinalReviewerAppraisalTimer
+from .models import EmployeeAppraisalTimer, EmployeeAppraisal, ReportingManagerReview, HrReview, HodReview, CooReview, CeoReview, EmployeeAppraisalStatus, AppraisalDetails
+#AppraisalDetailsBackup
 
 
 @admin.register(EmployeeAppraisalTimer)
@@ -21,35 +22,47 @@ class EmployeeAppraisalTimerAdmin(admin.ModelAdmin):
         return EmployeeAppraisalTimer.objects.count() > 1
 
 
-@admin.register(ReportingManagerAppraisalTimer)
-class ReportingManagerAppraisalTimerAdmin(admin.ModelAdmin):
-    list_display = ('reporting_manager_review_start', 'reporting_manager_review_end', 'reporting_manager_review_remind')
+# @admin.register(ReportingManagerAppraisalTimer)
+# class ReportingManagerAppraisalTimerAdmin(admin.ModelAdmin):
+#     list_display = ('reporting_manager_review_start', 'reporting_manager_review_end', 'reporting_manager_review_remind')
 
-    def has_add_permission(self, request):
-        """
-        Allows adding a new object only if no ReportingManagerAppraisalTimer exists yet.
-        """
-        return ReportingManagerAppraisalTimer.objects.count() == 0
+#     def has_add_permission(self, request):
+#         """
+#         Allows adding a new object only if no ReportingManagerAppraisalTimer exists yet.
+#         """
+#         return ReportingManagerAppraisalTimer.objects.count() == 0
 
-    def has_delete_permission(self, request, obj=None):
-        """
-        Prevents deleting the last remaining instance.
-        """
-        return ReportingManagerAppraisalTimer.objects.count() > 1
+#     def has_delete_permission(self, request, obj=None):
+#         """
+#         Prevents deleting the last remaining instance.
+#         """
+#         return ReportingManagerAppraisalTimer.objects.count() > 1
 
 
-@admin.register(FinalReviewerAppraisalTimer)
-class FinalReviewerAppraisalTimerAdmin(admin.ModelAdmin):
-    list_display = ('final_review_start', 'final_review_end', 'final_review_remind')
+# @admin.register(FinalReviewerAppraisalTimer)
+# class FinalReviewerAppraisalTimerAdmin(admin.ModelAdmin):
+#     list_display = ('final_review_start', 'final_review_end', 'final_review_remind')
 
-    def has_add_permission(self, request):
-        """
-        Allows adding a new object only if no FinalReviewerAppraisalTimer exists yet.
-        """
-        return FinalReviewerAppraisalTimer.objects.count() == 0
+#     def has_add_permission(self, request):
+#         """
+#         Allows adding a new object only if no FinalReviewerAppraisalTimer exists yet.
+#         """
+#         return FinalReviewerAppraisalTimer.objects.count() == 0
 
-    def has_delete_permission(self, request, obj=None):
-        """
-        Prevents deleting the last remaining instance.
-        """
-        return FinalReviewerAppraisalTimer.objects.count() > 1
+#     def has_delete_permission(self, request, obj=None):
+#         """
+#         Prevents deleting the last remaining instance.
+#         """
+#         return FinalReviewerAppraisalTimer.objects.count() > 1
+
+
+
+admin.site.register(EmployeeAppraisal)
+admin.site.register(ReportingManagerReview)
+admin.site.register(HrReview)
+admin.site.register(HodReview)
+admin.site.register(CooReview)
+admin.site.register(CeoReview)
+admin.site.register(EmployeeAppraisalStatus)
+admin.site.register(AppraisalDetails)
+#admin.site.register(AppraisalDetailsBackup)

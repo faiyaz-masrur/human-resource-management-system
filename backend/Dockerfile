@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     default-libmysqlclient-dev \
     netcat-traditional \
+    procps \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -28,6 +29,10 @@ COPY . .
 # Copy entrypoint script and make it executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# --- CRITICAL FIX: Convert Windows (CRLF) line endings to Linux (LF) ---
+# This removes the hidden \r character at the end of each line, which causes the "no such file" error on Linux
+RUN sed -i 's/\r$//' /entrypoint.sh
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]

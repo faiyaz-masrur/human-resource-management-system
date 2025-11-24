@@ -66,7 +66,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           return;
         }
         let res;
-        if(employee_id && view.isEmployeeProfileView){
+        if(employee_id && (view.isEmployeeProfileView || view.isAddNewEmployeeProfileView)){
           res = await api.get(`employees/empolyee-official-details/${employee_id}/`);
         } else if(view.isOwnProfileView){
           res = await api.get('employees/my-official-details/');
@@ -85,7 +85,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
     };
 
     fetchOfficialDetails();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
 
   // New: Fetch next employee ID when creating new employee
@@ -291,11 +291,11 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           console.log("New Employee:", res.status);
           if(res.status === 201){
             toast.success('Official details created successfully!');
-            setOfficialDetails(res?.data || officialdetails)
-            set_employee_id(res.data.id)
+            setOfficialDetails(res?.data || officialdetails);
+            set_employee_id(res.data.id);
             setIsEditing(true);
           } else {
-            toast.error('Failed to create official details!')
+            toast.error('Failed to create official details!');
           }
         }
       } else if(view.isOwnProfileView){ 
@@ -475,7 +475,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             >
               <option value="">-- Select --</option>
               {reportingManagerList.map((reporting_manager)=>(
-                <option key={reporting_manager.id} value={reporting_manager.id}>{reporting_manager.name}</option>
+                <option key={reporting_manager.manager} value={reporting_manager.manager}>{reporting_manager.name}</option>
               ))}
             </select>
           </div>
@@ -570,6 +570,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             </button>
           </div>
         </div>
+        
       </div>
     </div>
   );

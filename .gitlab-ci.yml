@@ -1,0 +1,136 @@
+
+image: docker:latest
+
+# Enable Docker-in-Docker service to allow running 'docker' commands
+services:
+  - docker:dind
+
+variables:
+  # Base image name for backend, tagged with the commit SHA
+  CI_REGISTRY_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+  # Base image name for frontend, tagged with the commit SHA
+  CI_REGISTRY_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA
+  # Latest tags for easy deployment reference
+  CI_REGISTRY_IMAGE_BACKEND_LATEST: $CI_REGISTRY_IMAGE/backend:latest
+  CI_REGISTRY_IMAGE_FRONTEND_LATEST: $CI_REGISTRY_IMAGE/frontend:latest
+
+stages:
+  - build
+  - test 
+  - deploy
+
+before_script:
+  # Log in to the GitLab Container Registry
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+# --- Build Jobs 
+build_backend:
+  stage: build
+  script:
+    # 1. Build the backend image using its Dockerfile in the './backend' context
+    - docker build -t $CI_REGISTRY_IMAGE_BACKEND ./backend
+    # 2. Also tag it as 'latest' (optional, but useful for quick reference)
+    - docker tag $CI_REGISTRY_IMAGE_BACKEND $CI_REGISTRY_IMAGE_BACKEND_LATEST
+    # 3. Push both tags to the registry
+    - docker push $CI_REGISTRY_IMAGE_BACKEND
+    - docker push $CI_REGISTRY_IMAGE_BACKEND_LATEST
+  # Only run if files in the backend directory change (optimization)
+  rules:
+    - changes:
+      - backend/**/*
+      - docker-compose.yml
+    # Run by default if no changes rule matches
+    - when: always
+
+build_frontend:
+  stage: build
+  script:
+    # 1. Build the frontend image using its Dockerfile in the './frontend' context
+    - docker build -t $CI_REGISTRY_IMAGE_FRONTEND ./frontend
+    # 2. Also tag it as 'latest'
+    - docker tag $CI_REGISTRY_IMAGE_FRONTEND $CI_REGISTRY_IMAGE_FRONTEND_LATEST
+    # 3. Push both tags to the registry
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND
+    - docker push $CI_REGISTRY_IMAGE_FRONTEND_LATEST
+  rules:
+    - changes:
+      - frontend/**/*
+      - docker-compose.yml
+    - when: always
+
+
+test_backend:
+  stage: test
+  image: docker:latest # Use the docker image to pull the built image
+  script:
+    # 1. Pull the recently built image from the registry
+    - docker pull $CI_REGISTRY_IMAGE_BACKEND
+    # 2. Run the tests. Adjust the command as needed (e.g., if you use 'npm test' or 'pytest').
+    # This command uses 'docker run' to execute a specific test command in the container.
+    - docker run --rm $CI_REGISTRY_IMAGE_BACKEND sh -c "echo 'Running backend tests...' && echo 'Test successful (placeholder)'" # <-- **Replace with your actual test command**
+  needs:
+    - build_backend
+  rules:
+    - changes:
+      - backend/**/*
+    - when: always
+
+### `test_frontend`
+
+
+test_frontend:
+  stage: test
+  image: docker:latest # Use the docker image to pull the built image
+  script:
+    # 1. Pull the recently built image from the registry
+    - docker pull $CI_REGISTRY_IMAGE_FRONTEND
+    # 2. Run the tests. Adjust the command as needed (e.g., 'npm test').
+    - docker run --rm $CI_REGISTRY_IMAGE_FRONTEND sh -c "echo 'Running frontend tests...' && echo 'Test successful (placeholder)'" # <-- **Replace with your actual test command**
+  needs:
+    - build_frontend
+  rules:
+    - changes:
+      - frontend/**/*
+    - when: always
+
+
+deploy_production:
+  stage: deploy
+  image: alpine/git:latest # Use a lightweight image with SSH capabilities
+  
+  before_script:
+    # Prepare SSH key from variable for deployment
+    - chmod 600 $ID_RSA
+    - eval $(ssh-agent -s)
+    - ssh-add $ID_RSA
+  
+  script:
+    # Use the YAML literal block scalar (|) to correctly pass the multi-line command to SSH.
+    - |
+      ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER_IP '
+        # Enable defensive shell options for the remote server
+        set -e
+        
+        # 1. Log in to the registry on the deployment server
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+        
+        # 2. Export environment variables for the deployment script
+        export BACKEND_IMAGE=$CI_REGISTRY_IMAGE_BACKEND_LATEST &&
+        export FRONTEND_IMAGE=$CI_REGISTRY_IMAGE_FRONTEND_LATEST &&
+        
+        # NOTE: CI_REGISTRY export is redundant, but harmless
+        # export CI_REGISTRY=$CI_REGISTRY && 
+        
+        # 3. Navigate to the project directory and run the deployment script
+        cd /performance_appraisal &&
+        sh deploy_script.sh
+      '
+      
+  environment:
+    name: production
+  when: manual # Only deploy manually to production
+  needs:
+    - build_backend
+    - build_frontend
+    - test_backend 
+    - test_frontend

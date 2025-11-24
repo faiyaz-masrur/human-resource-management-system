@@ -61,14 +61,14 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
     };
 
     fetchAttachments();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
 
   const handleFileChange = (field, e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.warning("File size must be less than 5MB");
+      if (file.size > 2 * 1024 * 1024) {
+        toast.warning("File size must be less than 2MB");
         return;
       }
 

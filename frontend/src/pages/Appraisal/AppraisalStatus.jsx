@@ -1,43 +1,48 @@
-import React from 'react';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
-// Dummy data to simulate employee records and their appraisal status
-const employeeData = [
-  { 
-    name: 'Liton Kumar Das', id: '1042', 
-    rm: true, // RM has completed their review (checked)
-    hr: false, // HR hasn't started/completed (unchecked)
-    hod: false, 
-    coo: false, 
-    ceo: false 
-  },
-  { 
-    name: 'Saim Bin Selim', id: '1125', 
-    rm: true, 
-    hr: true, // HR has completed
-    hod: true, // HOD has completed
-    coo: false, 
-    ceo: false 
-  },
-  { 
-    name: 'Bibi Mariom', id: '1190', 
-    rm: true, 
-    hr: true, 
-    hod: true, 
-    coo: true, 
-    ceo: true // All completed
-  },
-  { 
-    name: 'Faiyaz Masrur', id: '1194', 
-    rm: false, // RM review is pending
-    hr: false, 
-    hod: false, 
-    coo: false, 
-    ceo: false 
-  },
-];
+import api from "../../services/api";
+
 
 const AppraisalStatus = () => {
-  const reviewerColumns = ['RM', 'HR', 'HOD', 'COO', 'CEO'];
+  const { user } = useAuth();
+  const [appraisalStatusList, setAppraisalStatusList] = useState([]);
+  const [rolePermissions, setRolePermissions] = useState({});
+
+
+  useEffect(() => {
+      const fetchRolePermissions = async () => {
+          try {
+              const res = await api.get(`system/role-permissions/${user.role}/${"AllAppraisal"}/${"AppraisalStatus"}/`);
+              console.log("User role permission:", res?.data)
+              setRolePermissions(res?.data || {}); 
+          } catch (error) {
+              console.warn("Error fatching role permissions", error);
+              setRolePermissions({}); 
+          }
+      };
+
+      fetchRolePermissions();
+  }, []);
+
+
+  useEffect(() => {
+      const fetchAppraisalStatusList= async () => {
+          try {
+              if (rolePermissions?.view) {
+                  const res = await api.get(`appraisals/appraisal-status-list/`);
+                  console.log("Appraisal Status List:", res?.data);
+                  setAppraisalStatusList(Array.isArray(res.data) ? res.data : res.data ? [res.data] : [])
+              }  
+          } catch (error) {
+              console.warn("Error fetching appraisal status List:", error);
+              setAppraisalStatusList([]);
+          }
+      };
+
+      fetchAppraisalStatusList();
+  }, [rolePermissions]);
+
 
   return (
     <div className="appraisal-status-container">
@@ -47,30 +52,29 @@ const AppraisalStatus = () => {
         <table className="appraisal-status-table">
           <thead>
             <tr>
-              <th>Employee Name</th>
-              <th>Employee ID</th>
-              {reviewerColumns.map(col => (
-                <th key={col}>{col}</th>
-              ))}
+              <th>ID</th>
+              <th>NAME</th>
+              <th>DATE</th>
+              <th>Self</th>
+              <th>RM</th>
+              <th>HR</th>
+              <th>HOD</th>
+              <th>COO</th>
+              <th>CEO</th>
             </tr>
           </thead>
           <tbody>
-            {employeeData.map((employee) => (
-              <tr key={employee.id}>
-                <td>{employee.name}</td>
-                <td>{employee.id}</td>
-                
-                {/* Dynamically render the status checkboxes */}
-                {reviewerColumns.map(col => (
-                  <td key={`${employee.id}-${col.toLowerCase()}`} className="checkbox-cell">
-                    {/* The checked state is determined by the boolean value in the employee object */}
-                    <input 
-                      type="checkbox" 
-                      checked={employee[col.toLowerCase()]}
-                      readOnly // Makes the checkbox display status without being directly editable
-                    />
-                  </td>
-                ))}
+            {appraisalStatusList.map((status) => (
+              <tr key={status.emp_id}>
+                <td>{status.emp_id}</td>
+                <td>{status.emp_name}</td>
+                <td>{status.appraisal_date}</td>
+                <td>{status.self_appraisal_done}</td>
+                <td>{status.rm_review_done}</td>
+                <td>{status.hr_review_done}</td>
+                <td>{status.hod_review_done}</td>
+                <td>{status.coo_review_done}</td>
+                <td>{status.ceo_review_done}</td>
               </tr>
             ))}
           </tbody>

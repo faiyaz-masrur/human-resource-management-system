@@ -1,83 +1,74 @@
-// src/contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
+import api from "../services/api";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on first render
+
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    const storedUser = localStorage.getItem("user");
-    
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Error parsing stored user:", error);
-        localStorage.removeItem("user");
+    const initializeAuth = async () => {
+      const savedToken = localStorage.getItem("accessToken");
+
+      if (savedToken) {
+        setToken(savedToken);
+        await fetchUser(); 
+      } else {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    initializeAuth(); 
   }, []);
 
-  // Login function - FIXED
-  const login = (userData) => {
-    console.log("🔐 Login called with:", userData);
-    
-    // Store tokens
-    if (userData.access) {
-      localStorage.setItem('access_token', userData.access);
+
+  const fetchUser = async () => {
+    try {
+      setLoading(true)
+      const res = await api.get("system/auth/get-user-data/");
+      setUser(res.data);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      toast.error("Failed to fetch the user")
+      logout();
+    } finally {
+      setLoading(false);
     }
-    if (userData.refresh) {
-      localStorage.setItem('refresh_token', userData.refresh);
-    }
-    
-    // Handle user data - try different possible structures
-    let userToStore = null;
-    
-    if (userData.user) {
-      // Structure: { access, refresh, user: { ... } }
-      userToStore = userData.user;
-    } else if (userData.id || userData.email) {
-      // Structure: { access, refresh, id, email, ... }
-      userToStore = userData;
-    } else {
-      // If no user data, create minimal user object from tokens
-      userToStore = { 
-        id: Date.now(), // temporary ID
-        email: 'user@system.com', // temporary email
-        access_token: userData.access 
-      };
-    }
-    
-    console.log("✅ Storing user:", userToStore);
-    setUser(userToStore);
-    localStorage.setItem("user", JSON.stringify(userToStore));
   };
 
-  // Logout
+
+  const login = async (accessToken, refreshToken) => {
+    try {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      setToken(accessToken);
+      await fetchUser();
+      return true;
+    } catch (error) {
+      console.error("Login failed", error);
+      return false;
+    }
+  };
+
+  // ✅ Logout
   const logout = () => {
-    console.log("🔓 Logout called");
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
     setUser(null);
+    setToken(null);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, token, login, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

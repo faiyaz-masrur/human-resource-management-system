@@ -85,7 +85,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
     };
 
     fetchEducations();
-  }, [rolePermissions]);
+  }, [rolePermissions, employee_id]);
 
   useEffect(() => {
     const fetchDegreeList = async () => {
@@ -209,8 +209,8 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
       }
 
       // Check file size (50MB limit)
-      if (file.size > 50 * 1024 * 1024) {
-        alert("File size should be less than 50MB");
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size should be less than 2MB");
         return;
       }
 

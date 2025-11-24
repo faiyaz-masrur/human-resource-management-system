@@ -1,6 +1,6 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .serializers import (
-    MyTokenObtainPairSerializer, 
+    UserSerializer, 
     ChangePasswordSerializer, 
     PasswordResetRequestSerializer, 
     PasswordResetConfirmSerializer, 
@@ -34,6 +34,7 @@ from .models import (
     BdDistrict,
     BdThana,
     TrainingType,
+    Employee,
 )
 from rest_framework import generics, status, viewsets, views
 from .permissions import HasRoleWorkspacePermission
@@ -52,11 +53,13 @@ from rest_framework.permissions import AllowAny
 User = get_user_model()
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    """
-    Custom view for token creation to include user data in the response.
-    """
-    serializer_class = MyTokenObtainPairSerializer
+class UserDataApiView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
 
 
 
@@ -235,7 +238,7 @@ class RolePermissionAPIView(
     sub_workspace = "Role"
 
     def get_permissions(self):
-        if self.kwargs.get("workspace") and self.kwargs.get("sub_workspace"):
+        if self.request.method == "GET":
             return [IsAuthenticated()]
         return [permission() for permission in self.permission_classes]
 

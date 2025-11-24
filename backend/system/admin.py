@@ -14,6 +14,11 @@ from .models import (
     BdDistrict,
     BdThana,
     RolePermission,
+    ReportingManager,
+    Hr,
+    Hod,
+    Coo,
+    Ceo
 )
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
@@ -207,10 +212,15 @@ admin.site.site_header = "Performance Appraisal System Admin Portal"
 admin.site.site_title = "Performance Appraisal System Admin Portal"
 admin.site.index_title = "Performance Appraisal System Admin Portal"
 
-admin.site.register(Employee)
+
 admin.site.unregister(Group)
 admin.site.unregister(BlacklistedToken)
 admin.site.unregister(OutstandingToken)
 
-
+admin.site.register(Employee)
+admin.site.register(ReportingManager)
+admin.site.register(Hr)
+admin.site.register(Hod)
+admin.site.register(Coo)
+admin.site.register(Ceo)
 

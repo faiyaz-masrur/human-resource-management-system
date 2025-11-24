@@ -243,7 +243,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="MyEducation" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -251,7 +251,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="MyTrainingCertificate" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -259,7 +259,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="MyAttachment" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                             </div>
                         )}
@@ -272,7 +272,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="EmployeeList" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -312,7 +312,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="EmployeeEducation" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -320,7 +320,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="EmployeeTrainingCertificate" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'create', 'edit', 'delete']}
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -328,12 +328,12 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="EmployeeAttachment" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange}
-                                    permissionTypes={['view', 'create', 'edit', 'delete']} 
+                                    permissionTypes={['view', 'create', 'edit', 'delete', 'download']} 
                                 />
                             </div>
                         )}
                         
-                        {activeTab === 'Own Appraisal' && (
+                        {activeTab === 'My Appraisal' && (
                             <div className="urd-appraisal-permissions">
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -341,7 +341,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="MyAppraisalDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'edit']}
+                                    permissionTypes={['view', 'edit', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -471,7 +471,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section= "AppraisalStatus" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view']}
+                                    permissionTypes={['view', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -479,7 +479,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section= "AllAppraisalList" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'edit']}
+                                    permissionTypes={['view', 'edit', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
@@ -487,7 +487,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                                     section="AllAppraisalDetail" 
                                     permissions={permissions} 
                                     onChange={handleCheckboxChange} 
-                                    permissionTypes={['view', 'edit']}
+                                    permissionTypes={['view', 'edit', 'download']}
                                 />
                                 <PermissionRow 
                                     rolePermissions={rolePermissions} 
