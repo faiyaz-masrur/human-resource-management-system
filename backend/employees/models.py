@@ -80,12 +80,10 @@ class WorkExperience(models.Model):
     class Meta:
         ordering = ['id']
 
-# -----------------------------
-# Education Model
-# -----------------------------
 class Education(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='educations')
     degree = models.ForeignKey(Degree, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
+    custom_degree = models.CharField(max_length=255, null=True, blank=True)  # NEW FIELD
     institution = models.CharField(max_length=255, null=False, blank=False)
     passing_year = models.IntegerField(null=False, blank=False)
     specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees_education')
@@ -93,7 +91,8 @@ class Education(models.Model):
     certificate = models.FileField(upload_to='educational_certificates/', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.degree} from {self.institution}"
+        degree_name = self.custom_degree if self.custom_degree else (self.degree.name if self.degree else "No Degree")
+        return f"{degree_name} from {self.institution}"
 
 # -----------------------------
 # Training Certificate Model

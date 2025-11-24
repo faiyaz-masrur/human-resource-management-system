@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api'; 
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from "react-toastify";
 
 const ROLES_API_URL = 'system/configurations/roles/'; 
 
-const PERMISSIONS_API_URL = 'system/role-permissions/'; 
+const PERMISSIONS_API_URL = 'system/role-permissions'; 
 
 
 const PermissionRow = ({ rolePermissions, title, section, permissions, onChange, permissionTypes }) => (
@@ -47,7 +48,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
         setLoading(true);
         try {
             if(rolePermissions.view){
-                const res = await api.get(`${PERMISSIONS_API_URL}${roleId}/`); 
+                const res = await api.get(`${PERMISSIONS_API_URL}/${roleId}/`); 
                 console.log("Role permission List:", res?.data);
                 setPermissions(mapListToObj(res?.data)|| {});
             }
@@ -99,7 +100,7 @@ const UserRoleDetailsView = ({ rolePermissions, goToListView, currentRole, refre
                 console.log("Updated role:", roleResponse)
                 const rolePermissionsList = Object.values(permissions);
                 const updatePromises = rolePermissionsList.map(permission => 
-                    api.put(`${PERMISSIONS_API_URL}${permission.id}/`, permission)
+                    api.put(`${PERMISSIONS_API_URL}/update/${permission.id}/`, permission)
                 );
                 
                 const permissionsResponses = await Promise.all(updatePromises);

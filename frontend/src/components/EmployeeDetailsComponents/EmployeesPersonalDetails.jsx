@@ -144,12 +144,12 @@ const EmployeesPersonalDetails = ({ view, employee_id, onNext, onBack }) => {
       toast.warning("National id is required.");
       return false;
     }
-    if (!details.mergency_contact_name?.trim()) {
-      toast.warning("Emergency Conatct name is required.");
+    if (!details.emergency_contact_name?.trim()) {
+      toast.warning("Emergency Conatact name is required.");
       return false;
       }
 
-    if (!details.mergency_contact_number?.trim()) {
+    if (!details.emergency_contact_number?.trim()) {
       toast.warning("Emergency Conatct number is required.");
       return false;
       }

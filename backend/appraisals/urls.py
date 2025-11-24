@@ -31,7 +31,10 @@ from .views import (
     AllCeoReviewAPIView,
 
     AppraisalStatusAPIView,
-    AppraisalStatusView
+    AppraisalStatusView,
+
+    MyFullAppraisalDataAPIView,
+    ReviewFullAppraisalDataAPIView
 )
 
 urlpatterns = [
@@ -87,6 +90,10 @@ urlpatterns = [
 
     path('appraisal-status-list/', AppraisalStatusAPIView.as_view(), name='appraisal-status-list'),
     path('appraisal-status/<int:pk>/', AppraisalStatusView.as_view(), name='appraisal-status'),
+
+    path('my-full-appraisal-data/', MyFullAppraisalDataAPIView.as_view(), name='my-full-appraisal-data'),
+    path('review-full-appraisal-data/<str:employee_id>/', ReviewFullAppraisalDataAPIView.as_view(), name='review-full-appraisal-data'),
+    path('all-full-appraisal-data/<str:employee_id>/', ReviewFullAppraisalDataAPIView.as_view(), name='all-full-appraisal-data'),
 
 
 ]

@@ -264,7 +264,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               <label>Road/Block/Sector</label>
               <input
                 type="text"
-                placeholder="2"
+                placeholder=""
                 value={addressDetails.present_road_block_sector || ""}
                 onChange={(e) => handleChange("present_road_block_sector", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
@@ -273,10 +273,10 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
             {/* City/Village */}
             <div className="input-group">
-              <label>City/Village</label>
+              <label>Area</label>
               <input
                 type="text"
-                placeholder="Pallabi"
+                placeholder=""
                 value={addressDetails.present_city_village || ""}
                 onChange={(e) => handleChange("present_city_village", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
@@ -284,7 +284,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             </div>
 
             {/* Police Station */}
-            <div className="input-group">
+            {/* <div className="input-group">
               <label>Police Station</label>
               <select
                 value={addressDetails.present_police_station || ""}
@@ -296,7 +296,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
                   <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
             {/* District */}
             <div className="input-group">
@@ -321,7 +321,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               <label>Postal Code</label>
               <input
                 type="number"
-                placeholder="1216"
+                placeholder=""
                 value={addressDetails.present_postal_code || ""}
                 onChange={(e) => handleChange("present_postal_code", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
@@ -352,7 +352,7 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               <label>Road/Block/Sector</label>
               <input
                 type="text"
-                placeholder="2"
+                placeholder=""
                 value={addressDetails.permanent_road_block_sector || ""}
                 onChange={(e) => handleChange("permanent_road_block_sector", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
@@ -361,29 +361,14 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
 
             {/* City/Village */}
             <div className="input-group">
-              <label>City/Village</label>
+              <label>City/Village/Area</label>
               <input
                 type="text"
-                placeholder="Pallabi"
+                placeholder=""
                 value={addressDetails.permanent_city_village || ""}
                 onChange={(e) => handleChange("permanent_city_village", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
               />
-            </div>
-
-            {/* Police Station */}
-            <div className="input-group">
-              <label>Police Station</label>
-              <select
-                value={addressDetails.permanent_police_station || ""}
-                onChange={(e) => handleChange("permanent_police_station", e.target.value)}
-                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
-              >
-                <option value="">Pallabi</option>
-                {policeStationListParmanent.map((policeStation) => (
-                  <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
-                ))}
-              </select>
             </div>
 
             {/* District */}
@@ -404,12 +389,29 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
               </select>
             </div>
 
+
+            {/* Police Station */}
+            <div className="input-group">
+              <label>Police Station</label>
+              <select
+                value={addressDetails.permanent_police_station || ""}
+                onChange={(e) => handleChange("permanent_police_station", e.target.value)}
+                disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
+              >
+                <option value="">--</option>
+                {policeStationListParmanent.map((policeStation) => (
+                  <option key={policeStation.id} value={policeStation.id}>{policeStation.name}</option>
+                ))}
+              </select>
+            </div>
+
+
             {/* Postal Code */}
             <div className="input-group">
               <label>Postal Code</label>
               <input
                 type="number"
-                placeholder="1216"
+                placeholder=""
                 value={addressDetails.permanent_postal_code || ""}
                 onChange={(e) => handleChange("permanent_postal_code", e.target.value)}
                 disabled={addressDetails.id ? !rolePermissions.edit : !rolePermissions.create}
@@ -428,10 +430,14 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
         )}
       </div>
 
-      {/* Navigation Buttons */}
+         {/* Navigation Buttons - Back button on right side before Next */}
       <div className="navigation-buttons">
-        <button className="back-btn" onClick={onBack}>Back</button>
-        <button className="next-btn" onClick={onNext}>Next</button>
+        <div className="left-buttons">
+        </div>
+        <div className="right-buttons">
+          <button className="back-btn" onClick={onBack}>Back</button>
+          <button className="next-btn" onClick={onNext}>Next</button>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/employees/', include('employees.urls')),
     path('api/notifications/', include('notifications.urls')),
     path('attendance/', include('attendance.urls')),
+    path('health/', include('backend.health.urls')),
 ]
 
 if settings.DEBUG:

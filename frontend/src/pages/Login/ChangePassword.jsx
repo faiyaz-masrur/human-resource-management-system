@@ -53,7 +53,7 @@ const ChangePassword = () => {
 
     // API CALL 
     try {
-      const response = await api.put('/system/auth/change-password/', {
+      const response = await api.put('system/auth/change-password/', {
         old_password: oldPassword,
         new_password: newPassword,
         confirm_password: confirmPassword,

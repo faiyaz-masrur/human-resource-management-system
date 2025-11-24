@@ -63,11 +63,11 @@ class GradeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class DesignationSerializer(serializers.ModelSerializer):
-    
-    grade = GradeSerializer(read_only=True)
+    gradeName = serializers.CharField(source="grade.name", read_only=True)
     class Meta:
         model = Designation
-        fields = "__all__"
+        fields = ['id', 'name', 'grade', 'gradeName']
+        read_only_fields = ['id', 'gradeName']
 
 
 class RoleSerializer(serializers.ModelSerializer):

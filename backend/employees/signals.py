@@ -101,11 +101,11 @@ def create_or_update_appraisal_timer(sender, instance, created, **kwargs):
 
         AppraisalDetails.objects.create(
             employee=employee, 
-            reporting_manager=employee.reporting_manager,
-            appraisal_status=employee_appraisal_status,
+            #reporting_manager=employee.reporting_manager,
+            #appraisal_status=employee_appraisal_status,
             appraisal_start_date=employee_appraisal_timer.employee_self_appraisal_start if employee_appraisal_timer else None,
             appraisal_end_date=employee_appraisal_timer.employee_self_appraisal_end if employee_appraisal_timer else None,
-            factor=0.55,    
+            #factor=0.55,    
         )
         
 

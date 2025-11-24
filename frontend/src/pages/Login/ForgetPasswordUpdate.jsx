@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiWithoutAuth from '../../services/apiWithoutAuth';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+
 
 const ForgetPasswordUpdate = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -72,18 +73,12 @@ const ForgetPasswordUpdate = () => {
 
     // REAL API CALL - Using axios directly (NO auto-redirects)
     try {
-      const response = await axios.post(
-        //http://172.17.231.72:8005/api/system/auth/reset-password/${uid}/${token}/
-        `http://127.0.0.1:8000/api/system/auth/reset-password/${uid}/${token}/`, 
+      const response = await apiWithoutAuth.post(
+        `system/auth/reset-password/${uid}/${token}/`, 
         {
           new_password: newPassword,
           confirm_password: confirmPassword,
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
       );
 
       console.log(" Password reset successful:", response.data);
@@ -121,12 +116,15 @@ const ForgetPasswordUpdate = () => {
     <div className="update-password-container">
       <div className="update-form-section">
         <div className="form-content">
-          <h2>UPDATE PASSWORD</h2>
+          {/* Fixed heading - single line and centered */}
+          <h2 style={{ textAlign: 'center'}}>UPDATE PASSWORD</h2>
+          
           <form onSubmit={handleUpdate}>
             {message && (
               <div style={{ 
                 color: 'green', 
                 textAlign: 'center', 
+                 whiteSpace: 'nowrap',
                 marginBottom: '15px',
                 padding: '10px',
                 backgroundColor: '#f1f8e9',
@@ -178,17 +176,28 @@ const ForgetPasswordUpdate = () => {
               />
             </div>
             
-            <button 
-              type="submit" 
-              className="update-button"
-              disabled={isLoading || message} // Disable if success
-              style={{
-                backgroundColor: message ? '#6c757d' : '', // Gray if success
-                cursor: message ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {isLoading ? 'Updating...' : message ? 'Password Updated' : 'Update Password'}
-            </button>
+<button 
+  type="submit" 
+  className="update-button"
+  disabled={isLoading || message}
+  style={{
+    backgroundColor: message ? '#6c757d' : '#1976d2', // Blue background like in image
+    color: 'white',
+    cursor: message ? 'not-allowed' : 'pointer',
+    width: '40%',
+    padding: '14px',
+     border: 'none',
+    borderRadius: '7px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    whiteSpace: 'nowrap', // This forces text to stay on one line
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    marginLeft: '30%'
+  }}
+>
+  {isLoading ? 'Updating...' : message ? 'Password Updated' : 'Update Password'}
+</button>
 
             {/* Manual Back to Login Link - Always visible */}
             <div style={{ textAlign: 'center', marginTop: '20px' }}>

@@ -1645,50 +1645,7 @@
   cursor: not-allowed;
 }
 
-/* Navigation Buttons */
-.navigation-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #ebeef5;
-}
-
-.back-btn {
-  background: #909399;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 36px;
-  min-width: 90px;
-  transition: background-color 0.2s;
-}
-
-.back-btn:hover {
-  background: #7a7d83;
-}
-
-.next-btn {
-  background: #409eff;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 36px;
-  min-width: 90px;
-  transition: background-color 0.2s;
-}
-
-.next-btn:hover {
-  background: #337ecc;
-}
+/* This part of nevigation utton done at workexperience*/
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -1708,15 +1665,7 @@
     gap: 12px;
   }
   
-  .navigation-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .back-btn,
-  .next-btn {
-    width: 100%;
-  }
+
   
   .save-container {
     justify-content: center;
@@ -1777,23 +1726,19 @@
 
 /* Delete Button */
 .delete-experience-btn {
-  background: #ff4757;
+background: #007bff;
   color: white;
   border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: background-color 0.2s;
 }
 
 .delete-experience-btn:hover {
-  background: #ff3742;
+  background: #d0bab7;
 }
 
 /* Form Grid - EXACT layout like your image */
@@ -2136,7 +2081,7 @@
   white-space: nowrap;
 }
 
-/* 6. Employees Education Details CSS */
+/* 6. Employees Education CSS */
 /* Rest of your existing CSS remains the same */
 .education-container {
   width: 100%;
@@ -2153,6 +2098,7 @@
   margin-bottom: 30px;
   padding: 0;
 }
+
 
 .education-block:last-of-type {
   margin-bottom: 20px;
@@ -2171,23 +2117,19 @@
 }
 
 .delete-education-btn {
-  background: #ff4757;
+   background: #007bff;
   color: white;
   border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: background-color 0.2s;
 }
 
 .delete-education-btn:hover {
-  background: #ff3742;
+  background: #d0bab7;;
 }
 
 .education-grid {
@@ -2300,49 +2242,7 @@
   background: #337ecc;
 }
 
-.navigation-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #ebeef5;
-}
-
-.back-btn {
-  background: #909399;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 36px;
-  min-width: 90px;
-  transition: background-color 0.2s;
-}
-
-.back-btn:hover {
-  background: #7a7d83;
-}
-
-.next-btn {
-  background: #409eff;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  height: 36px;
-  min-width: 90px;
-  transition: background-color 0.2s;
-}
-
-.next-btn:hover {
-  background: #337ecc;
-}
+/* This part of nevigation utton done at workexperience*/
 
 @media (max-width: 1024px) {
   .education-grid {
@@ -2376,7 +2276,8 @@
   }
 }
 
-/* 6. EmployeesTrainingCertifications CSS*/
+
+/* src/components/EmployeeDetailsComponents/EmployeesTrainingCertifications.css */
 .training-certifications {
   width: 100%;
   font-family: Arial, sans-serif;
@@ -2420,24 +2321,20 @@
   align-items: center;
 }
 
-.delete-training-btn {
-  background: #ff4757;
+.remove-training-btn {
+  background: #007bff;
   color: white;
   border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: background-color 0.2s;
 }
 
-.delete-training-btn:hover {
-  background: #ff3742;
+.remove-training-btn:hover {
+  background: #d0bab7;
 }
 
 .form-row {
@@ -2461,7 +2358,6 @@
   margin-bottom: 2px;
 }
 
-/* FIXED: Input field styles with proper text color */
 .field-input {
   width: 100%;
   height: 35px;
@@ -2471,7 +2367,7 @@
   font-size: 13px;
   background-color: white;
   box-sizing: border-box;
-  color: #333; /* Fixed: Changed from white to dark color */
+  color: #333;
 }
 
 .field-input:focus {
@@ -2480,7 +2376,6 @@
   box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
 }
 
-/* FIXED: Better placeholder styling */
 .field-input::placeholder {
   color: #666;
   font-style: italic;
@@ -2488,31 +2383,6 @@
   font-size: 12px;
 }
 
-.field-input::-webkit-input-placeholder {
-  color: #666;
-  font-style: italic;
-  opacity: 1;
-}
-
-.field-input::-moz-placeholder {
-  color: #666;
-  font-style: italic;
-  opacity: 1;
-}
-
-.field-input:-ms-input-placeholder {
-  color: #666;
-  font-style: italic;
-  opacity: 1;
-}
-
-.field-input:-moz-placeholder {
-  color: #666;
-  font-style: italic;
-  opacity: 1;
-}
-
-/* FIXED: Select field styles */
 .field-select {
   width: 100%;
   height: 35px;
@@ -2536,7 +2406,6 @@
   box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.2);
 }
 
-/* Style for disabled inputs */
 .field-input:disabled,
 .field-select:disabled {
   background-color: #f5f5f5;
@@ -2548,83 +2417,92 @@
   color: #999;
 }
 
-/* File Upload Styles */
+/* File Upload Styles - FIXED */
 .file-input-hidden {
   display: none;
 }
 
-.file-section-separated {
+.file-input-wrapper {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-display-with-download {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 8px 12px;
+  min-height: 35px;
 }
 
-.choose-file-section {
+.file-info {
   flex: 1;
+  overflow: hidden;
 }
 
-.file-action-buttons {
+.file-name {
+  font-size: 13px;
+  color: #495057;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.file-actions {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
-.choose-file-btn-separate {
-  width: 100%;
-  height: 35px;
-  padding: 6px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  background: white;
-  color: #606266;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.choose-file-btn-separate:hover {
-  background: #f5f7fa;
-  border-color: #c0c4cc;
-}
-
-.choose-file-btn-separate:disabled {
-  background-color: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #e0e0e0;
-}
-
-.download-btn-separate {
-  height: 35px;
-  padding: 6px 12px;
-  border: 1px solid #67c23a;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  background: #67c23a;
+.download-btn {
+  background: #28a745;
   color: white;
-  transition: all 0.2s;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
+  transition: background-color 0.2s;
 }
 
-.download-btn-separate:hover {
-  background: #5daf34;
-  border-color: #5daf34;
+.download-btn:hover {
+  background: #218838;
 }
 
-.file-name-display {
-  font-size: 12px;
-  color: #409eff;
-  margin-top: 5px;
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  min-height: 35px;
+  transition: all 0.2s;
+}
+
+.file-label:hover {
+  background: #0056b3;
+  border-color: #0056b3;
+}
+
+.file-label:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .divider {
@@ -2692,8 +2570,7 @@
 
 .navigation-buttons {
   display: flex;
-  justify-content: flex-end; /* Align both buttons to right */
-  gap: 10px; /* Space between buttons */
+  justify-content: space-between;
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
@@ -2733,54 +2610,34 @@
   background: #0069d9;
 }
 
-
 @media (max-width: 768px) {
-  .navigation-buttons {
-    justify-content: flex-end;
-    gap: 10px;
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
   }
   
-  .file-section-separated {
+  .file-display-with-download {
     flex-direction: column;
     gap: 8px;
+    align-items: stretch;
   }
   
-  .choose-file-section,
-  .file-action-buttons {
-    width: 100%;
-  }
-  
-  .choose-file-btn-separate {
-    width: 100%;
-  }
-  
-  .file-action-buttons {
-    justify-content: space-between;
+  .file-actions {
+    justify-content: center;
   }
   
   .save-container {
     justify-content: center;
   }
   
-  .save-btn {
-    width: 100%;
-  }
-  
-  .add-new-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  
   .navigation-buttons {
     flex-direction: column;
     gap: 10px;
   }
   
-     .back-btn, .next-btn {
-    width: auto;
-    min-width: 80px;
+  .back-btn, .next-btn {
+    width: 100%;
   }
-
 }
 
 /* 8. EmployeesAttachment part CSS*/
@@ -3288,32 +3145,129 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: #634b4b;
+  margin-bottom: 0.25rem;
 }
 
-.employee-detail-label-note {
-  display: inline-block;
-  font-size: 0.875rem;
-  font-weight: bold; 
-  color: red; 
-  text-align: center; 
-  margin: 0 auto; 
-}
 .employee-detail-value {
   margin-top: 0.25rem;
   padding: 0.75rem;
   background-color: #0d57e00e;
   color:#000;
   border-radius: 0.375rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-
-.employee-detail-value-button{
+.employee-detail-value-button {
   margin-top: 0.25rem;
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
   background-color: #3B82F6;
   border-radius: 0.375rem;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.875rem;
 }
 
+/* Compact Row Styles */
+.compact-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: nowrap;
+  padding: 10px 0;
+}
+
+.compact-period-group {
+  display: flex;
+  gap: 20px;
+  flex: 2;
+}
+
+.compact-period-item {
+  flex: 1;
+  min-width: 160px;
+}
+
+.compact-date-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #0d57e00e;
+  color: #000;
+  font-size: 0.875rem;
+  height: 42px;
+  box-sizing: border-box;
+}
+
+.compact-download-item {
+  flex: 0.6;
+  min-width: 140px;
+}
+
+.compact-download-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 1px 20px 1px 20px;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  height: 50px;
+  margin-top: 0.25rem;
+  box-sizing: border-box;
+}
+
+.compact-download-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.compact-download-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.compact-warning-item {
+  flex: 2.5;
+  min-width: 500px;
+  margin: 0 0 0 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.compact-warning-text {
+  color: #dc3545;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin: 0;
+  padding: 8px 5px 8px 5px;
+  text-align: center;
+  background-color: #ffebee;
+  border: 1px solid #f5c6cb;
+  border-radius: 0.375rem;
+  width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.set-period-container {
+  width: 100%;
+  text-align: left;
+  margin-top: 10px;
+}
 
 /* Appraisal Tabs */
 .appraisal-tabs-container {
@@ -3354,7 +3308,6 @@
 .active-appraisal-tab:hover {
   background-color: #3B82F6;
 }
-
 /*
  * ===== Appraisal Form (New Styles) =====
  */

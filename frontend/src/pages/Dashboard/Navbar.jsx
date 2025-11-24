@@ -4,10 +4,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; 
 
-const Navbar = ({ onMenuClick, onRightPanelClick }) => {
+const Navbar = ({ onMenuClick, unreadCount, updateUnreadCount }) => {
     const { user, logout } = useAuth();
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0); 
+    const [dropdownOpen, setDropdownOpen] = useState(false); 
 
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     const navigate = useNavigate();
@@ -31,7 +30,10 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
     const fetchUnreadCount = async () => {
         try {
             const response = await api.get('notifications/unread-count/');
-            setUnreadCount(response.data.unread_count);
+            console.log("Notification unread count:", response.data)
+            if (response.data.unread_count){
+                updateUnreadCount(response.data.unread_count);
+            }      
         } catch (error) {
             console.error('Error fetching unread count:', error);
         }
@@ -87,7 +89,7 @@ const Navbar = ({ onMenuClick, onRightPanelClick }) => {
                 </div>
 
                 {/* 🔔 Notification Icon with Count */}
-                <span className="notification-toggle" onClick={onRightPanelClick} style={{ position: 'relative' }}>
+                <span className="notification-toggle" style={{ position: 'relative' }}>
                     <Bell size={20} />
                     {unreadCount > 0 && (
                         <span
