@@ -21,10 +21,10 @@ const DesignationList = ({
   const [searchTerm, setSearchTerm] = useState('');
 
   // NOTE: Mock data contains 'level' and 'department', which are not in the Django model.
-  // We filter only by 'name' and 'grade' (which will be an object with a name).
+  // We filter only by 'name' and 'grade' .
   const filteredDesignations = designations.filter(des =>
-    des.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (des.grade && des.grade.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    (des?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+    (des?.gradeName?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   );
 
   const handleDelete = async (id) => {
@@ -99,7 +99,7 @@ const DesignationList = ({
                   <td className="table-data-light">{des.id}</td>
                   <td className="table-data-light table-data--name-light">{des.name}</td>
                   {/* Access the name property of the nested grade object */}
-                  <td className="table-data-light">{des.grade ? des.grade.name : 'N/A'}</td> 
+                  <td className="table-data-light">{des.gradeName ? des.gradeName : 'N/A'}</td> 
                   {/*<td className="table-data-light">{des.description || 'N/A'}</td> */}
                   {(rolePermissions.edit || rolePermissions.delete) && (
                     <td className="table-data-light">
@@ -182,7 +182,7 @@ const DesignationForm = ({ rolePermissions, setCurrentView, fetchDesignations, e
       setFormData({
         name: editingDesignation.name || '',
         // Use the ID for the select field
-        grade: editingDesignation.grade ? editingDesignation.grade.id : '',
+        grade: editingDesignation.grade || '',
         //description: editingDesignation.description || ''
       });
     } else {
@@ -381,6 +381,7 @@ const Designations = () => {
       // FIX: Requesting the correct URL: /api/system/designations/
       if(rolePermissions.view){
         const res = await api.get(DESIGNATIONS_API_URL);
+        console.log("Designation list:", res?.data)
         setDesignations(res.data || []);
       }
     } catch (err) {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 
-const NotificationSidebar = ({ className, onClose }) => {
+const NotificationSidebar = ({ className, unreadCount, updateUnreadCount }) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [unreadCount]);
 
   const fetchNotifications = async () => {
     try {
@@ -25,6 +25,7 @@ const NotificationSidebar = ({ className, onClose }) => {
     try {
       await api.post('notifications/mark-all-read/');
       fetchNotifications(); // refresh list after marking all as read
+      updateUnreadCount(0);
     } catch (error) {
       console.error('Error marking all as read:', error);
     }

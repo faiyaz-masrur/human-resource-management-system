@@ -69,5 +69,5 @@ urlpatterns = [
     path("role-permissions/<int:role>/<str:workspace>/", RolePermissionAPIView.as_view(), name="role-permission-list"),
     path("role-permissions/<int:role>/<str:workspace>/<str:sub_workspace>/", RolePermissionAPIView.as_view(), name="role-permission-list"),
     path("role-permissions/", RolePermissionAPIView.as_view(), name="role-permission-create"),
-    path("role-permissions/<int:pk>/", RolePermissionAPIView.as_view(), name="role-permission-update"),
+    path("role-permissions/update/<int:pk>/", RolePermissionAPIView.as_view(), name="role-permission-update"),
 ]

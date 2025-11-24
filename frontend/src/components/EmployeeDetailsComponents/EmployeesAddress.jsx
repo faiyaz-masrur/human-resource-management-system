@@ -417,16 +417,17 @@ const EmployeesAddress = ({ view, employee_id, onNext, onBack }) => {
             </div>
           </div>
         </div>
-
-        {/* Save Button */}
-        {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
-          <div className="save-container">
-            <button className="save-btn" onClick={() => { onNext(); handleSave(); }}>
-              Next
-            </button>
-          </div>
-        )}
+        
       </div>
+
+      {/* Save Button */}
+      {(addressDetails.id ? rolePermissions.edit : rolePermissions.create) && (
+        <div className="save-container">
+          <button className="save-btn" onClick={handleSave}>
+            Save
+          </button>
+        </div>
+      )}
 
       {/* Navigation Buttons */}
       <div className="navigation-buttons">

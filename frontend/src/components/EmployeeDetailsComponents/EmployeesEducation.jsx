@@ -380,20 +380,7 @@ const EmployeesEducation = ({ view, employee_id, onNext, onBack }) => {
   return (
     <div className="education-container">
       <div className="education-content">
-        {/* Education Sections */}
-        {(educations.length === 0 ? [{
-          id: `temp-${Date.now()}`,
-          isTempId: true,
-          degree: '',
-          institution: '',
-          passing_year: '',
-          specialization: '',
-          result: '',
-          certificate: null,
-          certificate_file: null,
-          certificate_name: null,
-          educationNumber: 1
-        }] : educations).map((education) => {
+        {educations.map((education) => {
           const hasFile = education.certificate_file || education.certificate_name || education.certificate;
           const displayFileName = education.certificate_name || 
             (education.certificate ? education.certificate.split('/').pop() : null);

@@ -174,13 +174,20 @@ CORS_ALLOWED_ORIGINS = [
     # Add your React frontend's URL here in production.
     # For development, you can use:
     "http://localhost:5173",
+    "http://localhost:3001",
     "http://172.17.231.72:3001",
 
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://172.17.231.72:3001",
+]
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=480),    
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=480),    
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),    
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),    
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -253,7 +260,7 @@ SCHEDULER_AUTOSTART = True
 
 
 # set the celery broker url
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/1')
 
 CELERY_ACCEPT_CONTENT = ['application/json']
 

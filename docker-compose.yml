@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: performace_appraisal
+      MYSQL_DATABASE: performance_appraisal
     volumes:
       - db_data_hr_orbit:/var/lib/mysql
     healthcheck:
@@ -42,7 +42,7 @@ services:
       - redis
     environment:
       DB_HOST: db
-      DB_NAME: performace_appraisal
+      DB_NAME: performance_appraisal
       DB_USER: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       DB_PORT: 3306
@@ -52,12 +52,6 @@ services:
       CELERY_RESULT_BACKEND: django-db
       DJANGO_SUPERUSER_EMAIL: noreply@sonaliintellect.com
       DJANGO_SUPERUSER_PASSWORD: admin12345@
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 20
-      start_period: 120s
 
 
   frontend:
@@ -68,8 +62,7 @@ services:
     ports:
       - "3001:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     volumes:
       - hr_orbit_static_volume:/static:ro
       - hr_orbit_media_volume:/media:ro
@@ -83,7 +76,7 @@ services:
     command: celery -A backend.celery worker --pool=prefork --concurrency=1 --autoscale=2,1 -l info
     environment:
       DB_HOST: db
-      DB_NAME: performace_appraisal
+      DB_NAME: performance_appraisal
       DB_USER: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       DB_PORT: 3306
@@ -103,7 +96,7 @@ services:
     command: celery -A backend beat -l info
     environment:
       DB_HOST: db
-      DB_NAME: performace_appraisal
+      DB_NAME: performance_appraisal
       DB_USER: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       DB_PORT: 3306

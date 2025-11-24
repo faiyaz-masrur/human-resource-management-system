@@ -428,7 +428,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
           </div>
 
           <div className="form-group">
-            <label>Reporting Manager*</label>
+            <label>Reporting Manager</label>
             <select
               className="form-select"
               value={officialdetails.reporting_manager || ""}
@@ -436,7 +436,6 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
                 handleChange("reporting_manager", e.target.value)
               }
               disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
-              required
             >
               <option value="">-- Select --</option>
               {reportingManagerList.map((reporting_manager)=>(
@@ -450,7 +449,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
             <input
               type="number"
               className="form-input"
-              value={officialdetails.basic_salary || ""}
+              value={officialdetails.basic_salary || 0}
               onChange={(e) => handleChange("basic_salary", e.target.value)}
               disabled={isEditing ? !rolePermissions.edit : !rolePermissions.create}
               required
