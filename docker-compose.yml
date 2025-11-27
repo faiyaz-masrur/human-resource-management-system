@@ -6,7 +6,7 @@ services:
     container_name: hr_orbit_mysql_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: performance_appraisal
     volumes:
       - db_data_hr_orbit:/var/lib/mysql
@@ -31,6 +31,7 @@ services:
   backend:
     build:
       context: ./backend
+    image: ${CI_REGISTRY_IMAGE}/backend:latest
     container_name: hr_orbit_backend
     restart: unless-stopped
     volumes:
@@ -41,22 +42,28 @@ services:
       - db
       - redis
     environment:
+      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: False
       DB_HOST: db
       DB_NAME: performance_appraisal
-      DB_USER: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_PORT: 3306
       REDIS_HOST: redis
       REDIS_PORT: 6379
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: django-db
-      DJANGO_SUPERUSER_EMAIL: noreply@sonaliintellect.com
-      DJANGO_SUPERUSER_PASSWORD: admin12345@
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      LOGIN_URL: http://172.17.231.72:3001/login
 
 
   frontend:
     build:
       context: ./frontend
+    image: ${CI_REGISTRY_IMAGE}/frontend:latest
     container_name: hr_orbit_frontend
     restart: unless-stopped
     ports:
@@ -71,19 +78,27 @@ services:
   celery_worker:
     build:
       context: ./backend
+    image: ${CI_REGISTRY_IMAGE}/celery_worker:latest
     container_name: hr_orbit_celery_worker
     restart: unless-stopped
     command: celery -A backend.celery worker --pool=prefork --concurrency=1 --autoscale=2,1 -l info
     environment:
+      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: False
       DB_HOST: db
       DB_NAME: performance_appraisal
-      DB_USER: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_PORT: 3306
       REDIS_HOST: redis
       REDIS_PORT: 6379
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: django-db
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      LOGIN_URL: http://172.17.231.72:3001/login
     depends_on:
       - db
       - redis
@@ -91,19 +106,27 @@ services:
   celery_beat:
     build:
       context: ./backend
+    image: ${CI_REGISTRY_IMAGE}/celery_beat:latest
     container_name: hr_orbit_celery_beat
     restart: unless-stopped
     command: celery -A backend beat -l info
     environment:
+      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: False
       DB_HOST: db
       DB_NAME: performance_appraisal
-      DB_USER: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_PORT: 3306
       REDIS_HOST: redis
       REDIS_PORT: 6379
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: django-db
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      LOGIN_URL: http://172.17.231.72:3001/login
     depends_on:
       - db
       - redis

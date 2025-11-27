@@ -1,5 +1,4 @@
 # General ignores
-.env
 .DS_Store
 Thumbs.db
 
@@ -10,7 +9,7 @@ __pycache__/
 # Virtual environment
 myenv/
 venv/
-env/
+
 
 # Django-specific files
 db.sqlite3

@@ -1,8 +1,7 @@
+from dotenv import load_dotenv
 from datetime import timedelta
 from pathlib import Path
-
 import os
-from dotenv import load_dotenv
 load_dotenv()
 
 
@@ -17,10 +16,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1d!c19o-q==2!khj0k%7_d3l+dknhw#!y(3oa4&l_70%y&c1kr'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'True'
+DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = ['*']
 
@@ -95,11 +94,11 @@ DATABASES = {
     'default': {
 
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'performance_appraisal'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
 
     }
 }
@@ -212,13 +211,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'noreply@sonaliintellect.com' 
-EMAIL_HOST_PASSWORD = 'SP4ft@111'     
-DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  
-LOGIN_URL = 'http://localhost:5173/login'
-#LOGIN_URL = 'http://172.17.231.72:3001/login'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
 
-# Company Information for Email Templates
+
+LOGIN_URL = os.getenv('LOGIN_URL')
+
 COMPANY_NAME = 'Sonali Intellect Limited'
 
 # ... (Keep all your existing settings above this line)
@@ -260,7 +259,7 @@ SCHEDULER_AUTOSTART = True
 
 
 # set the celery broker url
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/1')
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 
 CELERY_ACCEPT_CONTENT = ['application/json']
 
@@ -269,7 +268,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 
 # set the celery result backend
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'django-db')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 
 # set the celery timezone
 CELERY_TIMEZONE = 'Asia/Dhaka'
