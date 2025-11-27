@@ -16,6 +16,39 @@ from .serializers import (
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
+from django.db.models import Max
+from rest_framework.decorators import api_view
+from rest_framework.response import Response 
+
+
+
+
+
+@api_view(['GET'])
+def get_next_employee_id(request):
+    """Get the next available employee ID based on highest existing numeric ID"""
+    try:
+        from system.models import Employee  # Import here to avoid circular import
+        employees = Employee.objects.all()
+        max_id = 0
+        
+        for emp in employees:
+            try:
+                emp_id = int(emp.id)
+                if emp_id > max_id:
+                    max_id = emp_id
+            except (ValueError, TypeError):
+                continue
+        
+        # If no employees with numeric IDs exist, return empty string
+        if max_id == 0:
+            return Response({'next_employee_id': ""})
+        
+        next_id = str(max_id + 1)
+        return Response({'next_employee_id': next_id})
+        
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 # View for admin to manage employee official details
 
@@ -26,6 +59,7 @@ class EmployeeOfficialDetailViewSet(viewsets.ModelViewSet):
     workspace = "Employee"
     sub_workspace = "EmployeeOfficialDetail"
 
+   
 
 class EmployeePersonalDetailView(
     mixins.CreateModelMixin,

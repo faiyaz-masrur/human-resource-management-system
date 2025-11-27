@@ -7,6 +7,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   const { user } = useAuth();
   const [gradeId, setGradeId] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [isLoadingNextId, setIsLoadingNextId] = useState(false)
 
   const defaultOfficialDetails = {
     id: "",
@@ -85,6 +86,36 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
 
     fetchOfficialDetails();
   }, [rolePermissions, employee_id]);
+
+
+  // New: Fetch next employee ID when creating new employee
+  useEffect(() => {
+    const fetchNextEmployeeId = async () => {
+      // Only auto-generate for new employees (not editing) and when there are existing employees
+      if (view.isAddNewEmployeeProfileView && !isEditing && rolePermissions.create) {
+        try {
+          setIsLoadingNextId(true);
+          const res = await api.get('employees/next-employee-id/');
+          console.log("Next employee ID:", res.data.next_employee_id);
+          
+          // Only set the ID if there's a next ID (meaning employees already exist)
+          if (res.data.next_employee_id) {
+            setOfficialDetails(prev => ({ 
+              ...prev, 
+              id: res.data.next_employee_id 
+            }));
+          }
+          // If empty string, admin will manually enter the first ID
+        } catch (error) {
+          console.warn("Error fetching next employee ID", error);
+        } finally {
+          setIsLoadingNextId(false);
+        }
+      }
+    };
+
+    fetchNextEmployeeId();
+  }, [view.isAddNewEmployeeProfileView, isEditing, rolePermissions.create]);
 
 
   useEffect(() => {
@@ -224,7 +255,7 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
   };
 
 
-  // ✅ Save (create if new, update if existing)
+  // Save (create if new, update if existing)
   const handleSave = async () => {
     try {
       if (!validateOfficialDetails(officialdetails)) return;
@@ -333,7 +364,11 @@ const EmployeesOfficialDetails = ({ view, employee_id, set_employee_id, onNext }
               onChange={(e) => handleChange("id", e.target.value)}
               disabled={isEditing ? true : !rolePermissions.create}
               required
+              placeholder={isLoadingNextId ? "Loading..." : ""}
             />
+            {isLoadingNextId && (
+              <small style={{color: '#666', fontSize: '12px'}}>Loading next employee ID...</small>
+            )}
           </div>
           <div className="form-group">
             <label>Email*</label>

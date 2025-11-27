@@ -521,6 +521,7 @@ const EmployeeAttachments = ({ view, employee_id, onBack, onSubmit }) => {
         </div>
         <div className="right-buttons">
           <button className="btn-back" onClick={onBack} type="button">Back</button>
+      
         </div>
       </div>
     </div>

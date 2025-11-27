@@ -261,14 +261,12 @@ class CeoReviewSerializer(AppraisalValidatorMixin, SmartUpdateSerializer):
 # --- AppraisalDetails Serializer ---
 
 class AppraisalDetailsSerializer(serializers.ModelSerializer):
-
     emp_id = serializers.CharField(source='employee.id', read_only=True)
     emp_name = serializers.CharField(source='employee.name', read_only=True)
     emp_dept = serializers.SerializerMethodField()
     emp_grade = serializers.SerializerMethodField()
     emp_des = serializers.SerializerMethodField()
     emp_join = serializers.DateField(source='employee.joining_date', read_only=True)
-    emp_basic_salary = serializers.IntegerField(source='employee.basic_salary', read_only=True)
     active_status = serializers.BooleanField(source='is_in_active_period', read_only=True)
 
     def get_emp_dept(self, obj):
@@ -283,16 +281,12 @@ class AppraisalDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppraisalDetails
         fields = [
-            "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "reporting_manager", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "appraisal_start_date", "appraisal_end_date", "factor", "active_status", "appraisal_status"
+            "id", "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join",
+            "appraisal_start_date", "appraisal_end_date", "active_status"
         ]
         read_only_fields = [
-            "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "emp_basic_salary",
-            "emp_appraisal", "reporting_manager", "rm_review", "hr_review", "hod_review", "coo_review", "ceo_review",
-            "factor", "active_status", "appraisal_status"
+            "id", "emp_id", "emp_name", "emp_dept", "emp_grade", "emp_des", "emp_join", "active_status"
         ]
-
 
 
 # --- Tracking Serializers ---

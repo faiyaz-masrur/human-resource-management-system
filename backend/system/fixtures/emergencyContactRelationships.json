@@ -2,9 +2,5 @@
     {"name": "Parent", "description": "Parent"},
     {"name": "Sibling", "description": "Sibling"},
     {"name": "Spouse", "description": "Spouse"},
-    {"name": "Friend", "description": "Friend"},
-    {"name": "Child", "description": "Child"},
-    {"name": "Relative", "description": "Uncle/Aunt"},
-    {"name": "Colleague", "description": "Colleague"},
     {"name": "Other", "description": "Other"}
   ]

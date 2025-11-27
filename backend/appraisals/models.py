@@ -413,30 +413,25 @@ class EmployeeAppraisalStatus(models.Model):
 
 class AppraisalDetails(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='appraisal_details')
-    reporting_manager = models.ForeignKey(ReportingManager, on_delete=models.SET_NULL, related_name='managed_appraisal_details', null=True, blank=True)
-    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    hod_review = models.OneToOneField(HodReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    coo_review = models.OneToOneField(CooReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    ceo_review = models.OneToOneField(CeoReview, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
-    appraisal_status = models.OneToOneField(EmployeeAppraisalStatus, on_delete=models.SET_NULL, related_name='appraisal_detail', null=True, blank=True)
+    
+    # ONLY these fields exist in your database
+    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, null=True, blank=True)
+    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, null=True, blank=True)
+    hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, null=True, blank=True)
+    hod_review = models.OneToOneField(HodReview, on_delete=models.SET_NULL, null=True, blank=True)
+    coo_review = models.OneToOneField(CooReview, on_delete=models.SET_NULL, null=True, blank=True)
+    ceo_review = models.OneToOneField(CeoReview, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    appraisal_start_date = models.DateField(null=True, blank=True)
+    appraisal_end_date = models.DateField(null=True, blank=True)
 
-    appraisal_start_date = models.DateField(null=True, blank=True, verbose_name='Appraisal Start Date')
-    appraisal_end_date = models.DateField(null=True, blank=True, verbose_name='Appraisal End Date')
-
-    factor = models.DecimalField(max_digits=10, decimal_places=2, default=0.55)
+    # REMOVE THESE - they don't exist in database:
+    # reporting_manager = ...
+    # appraisal_status = ...
+    # factor = ...
 
     def __str__(self):
         return f"Appraisal Details for {self.employee.name}"
-
-    def set_appraisal_start_date(self):
-        try:
-            timer = EmployeeAppraisalTimer.objects.filter(employee_id=self.employee).first()
-            if timer and timer.employee_self_appraisal_start:
-                self.appraisal_start_date = timer.employee_self_appraisal_start
-        except EmployeeAppraisalTimer.DoesNotExist:
-            pass
 
     def is_in_active_period(self):
         today = date.today()
@@ -446,6 +441,9 @@ class AppraisalDetails(models.Model):
             and self.appraisal_start_date <= today <= self.appraisal_end_date
         )
 
+
+
+
     
 
 
@@ -453,28 +451,28 @@ class AppraisalDetails(models.Model):
 # Appraisal Backup Model
 # -------------------------
     
-class AppraisalDetailsBackup(models.Model):
+# class AppraisalDetailsBackup(models.Model):
 
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='appraisal_details_backups')
-    reporting_manager = models.ForeignKey(ReportingManager, on_delete=models.SET_NULL, related_name='managed_appraisal_details_backups', null=True, blank=True)
-    emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
-    rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
-    hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
-    hod_review = models.OneToOneField(HodReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
-    coo_review = models.OneToOneField(CooReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
-    ceo_review = models.OneToOneField(CeoReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='appraisal_details_backups')
+#     #reporting_manager = models.ForeignKey(ReportingManager, on_delete=models.SET_NULL, related_name='managed_appraisal_details_backups', null=True, blank=True)
+#     emp_appraisal = models.OneToOneField(EmployeeAppraisal, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     rm_review = models.OneToOneField(ReportingManagerReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     hr_review = models.OneToOneField(HrReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     hod_review = models.OneToOneField(HodReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     coo_review = models.OneToOneField(CooReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
+#     ceo_review = models.OneToOneField(CeoReview, on_delete=models.SET_NULL, related_name='backup_appraisal_detail', null=True, blank=True)
 
 
-    appraisal_start_date = models.DateField(null=True, blank=True, verbose_name='Appraisal Start Date')
-    appraisal_end_date = models.DateField(null=True, blank=True, verbose_name='Appraisal End Date')
+#     appraisal_start_date = models.DateField(null=True, blank=True, verbose_name='Appraisal Start Date')
+#     appraisal_end_date = models.DateField(null=True, blank=True, verbose_name='Appraisal End Date')
 
-    factor = models.DecimalField(max_digits=10, decimal_places=2, default=0.55)
+#     factor = models.DecimalField(max_digits=10, decimal_places=2, default=0.55)
 
-    class Meta:
-        verbose_name_plural = "Appraisal Backups"
+#     class Meta:
+#         verbose_name_plural = "Appraisal Backups"
 
-    def __str__(self):
-        return f"Backup for {self.employee.name}"
+#     def __str__(self):
+#         return f"Backup for {self.employee.name}"
 
 
 

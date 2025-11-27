@@ -1,6 +1,7 @@
 
 from django.contrib import admin
-from .models import EmployeeAppraisalTimer, EmployeeAppraisal, ReportingManagerReview, HrReview, HodReview, CooReview, CeoReview, EmployeeAppraisalStatus, AppraisalDetails, AppraisalDetailsBackup
+from .models import EmployeeAppraisalTimer, EmployeeAppraisal, ReportingManagerReview, HrReview, HodReview, CooReview, CeoReview, EmployeeAppraisalStatus, AppraisalDetails
+#AppraisalDetailsBackup
 
 
 @admin.register(EmployeeAppraisalTimer)
@@ -64,4 +65,4 @@ admin.site.register(CooReview)
 admin.site.register(CeoReview)
 admin.site.register(EmployeeAppraisalStatus)
 admin.site.register(AppraisalDetails)
-admin.site.register(AppraisalDetailsBackup)
+#admin.site.register(AppraisalDetailsBackup)
